@@ -1,0 +1,6 @@
+Doom Library (C) 2015 Matt Tropiano et al.
+
+Slated for 1.0
+--------------
+
+- First release.

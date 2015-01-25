@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE project>
+<project name="project" default="compile">
+	
+	<!-- Folders and File Names -->
+	<tstamp>
+		<format property="build.date" pattern="yyyy.MM.dd.HHmmssSSS" locale="en,US"/>
+	</tstamp>
+	<property name="build.version.appendix" value="SNAPSHOT" />
+	<property name="build.version.number" value="${build.date}" />
+	<property name="build.version" value="${build.version.number}-${build.version.appendix}" />
+
+	<property name="src.dir" value="src" />
+	<property name="examples.dir" value="examples" />
+	<property name="bin.dir" value="bin" />
+
+	<property name="build.dir" value="build" />
+
+	<property name="jar.dir" value="${build.dir}/jar" />
+	<property name="docs.dir" value="${build.dir}/docs" />
+	<property name="zip.dir" value="${build.dir}/zip" />
+
+	<property name="jar.filename" value="${project.archive}-${build.version}.jar" />
+	<property name="jar.sources.filename" value="${project.archive}-${build.version}-sources.jar" />
+	<property name="jar.javadoc.filename" value="${project.archive}-${build.version}-javadoc.jar" />
+
+	<property name="zip.filename" value="${project.archive}-bin-${build.version}.zip" />
+	<property name="zip.sources.filename" value="${project.archive}-src-${build.version}.zip" />
+	<property name="zip.javadoc.filename" value="${project.archive}-javadocs-${build.version}.zip" />
+	
+	<!-- Filesets -->
+	
+	<patternset id="pattern.documents">
+		<include name="README.*" />
+		<include name="READ.ME" />
+		<include name="docs/*.*" />
+	</patternset>
+	
+	<fileset id="fileset.documents" dir=".">
+		<patternset refid="pattern.documents" />
+	</fileset>
+	
+	<!-- Targets -->
+
+	<target name="clean.compile" description="Cleans up the compiled binaries.">
+		<delete dir="${bin.dir}" includeemptydirs="true" casesensitive="false"/>
+	</target>
+
+	<target name="clean.jar" description="Cleans up the compiled JARs.">
+		<delete dir="${jar.dir}" includeemptydirs="true" casesensitive="false"/>
+	</target>
+	
+	<target name="clean.docs" description="Cleans up the compiled documentation.">
+		<delete dir="${docs.dir}" includeemptydirs="true" casesensitive="false" /> 
+	</target>
+
+	<target name="clean.zip" description="Cleans up the zipped archives.">
+		<delete dir="${zip.dir}" includeemptydirs="true" casesensitive="false" /> 
+	</target>
+
+	<target name="clean" depends="clean.jar, clean.docs, clean.zip, clean.compile"  description="Cleans up everything.">
+	</target>
+	
+	<target name="init.compile" depends="clean.compile" description="Initializes the compilation folders.">
+		<mkdir dir="${bin.dir}" />
+	</target>
+
+	<target name="init.docs" depends="clean.docs" description="Initializes the documentation folders.">
+		<mkdir dir="${docs.dir}" />
+	</target>
+
+	<target name="init.jar" depends="clean.jar" description="Initializes the JAR folders.">
+		<mkdir dir="${jar.dir}" />
+	</target>
+
+	<target name="init.zip" depends="clean.zip" description="Initializes the ZIP folders.">
+		<mkdir dir="${zip.dir}" />
+	</target>
+
+	<target name="javadoc" depends="init.docs" description="Builds the documentation.">
+        <javadoc access="protected" 
+        	additionalparam="-J-Xmx512m  " author="true" 
+        	classpath="${project.classpath}${path.separator}${bin.dir}" 
+        	doctitle="${project.javadoc.title}" 
+        	sourcepath="${src.dir}" 
+        	packagenames="${project.javadoc.packages}"
+        	destdir="${docs.dir}" 
+    		source="1.7" 
+        	splitindex="true" 
+        	use="true" 
+        	version="true" 
+        	nodeprecated="false" 
+        	nodeprecatedlist="false" 
+        	noindex="false" 
+        	nonavbar="false" 
+        	notree="false"
+    		>
+            <link href="http://download.oracle.com/javase/6/docs/api/"/>
+        </javadoc>
+    </target>	
+	
+	<target name="compile" depends="init.compile" description="Compiles the project.">
+		<javac 
+			source="1.7"
+			srcdir="${src.dir}" 
+			destdir="${bin.dir}"
+            includeAntRuntime="false"
+			classpath="${project.classpath}"
+			debug="off" 
+			/>
+	</target>
+
+	<target name="jar.bin" depends="init.jar, compile" description="JARs up the compiled files.">
+		<jar basedir="${bin.dir}" destfile="${jar.dir}/${jar.filename}" />
+	</target>
+	
+	<target name="jar.sources" depends="init.jar" description="JARs up the sources.">
+		<jar basedir="${src.dir}" destfile="${jar.dir}/${jar.sources.filename}" />
+	</target>
+
+	<target name="jar.javadoc" depends="init.jar, javadoc" description="JARs up the Javadoc files.">
+		<jar basedir="${docs.dir}" destfile="${jar.dir}/${jar.javadoc.filename}" />
+	</target>
+
+	<target name="jar" depends="jar.bin, jar.sources, jar.javadoc" description="Generates all JARs.">
+	</target>
+
+	<target name="zip.jar" depends="init.zip, jar.bin" description="Archives the JARs.">
+		<delete file="${zip.dir}/${zip.filename}" />
+		<zip basedir="${jar.dir}" destfile="${zip.dir}/${zip.filename}"></zip>
+		<zip destfile="${zip.dir}/${zip.filename}" update="true"  >
+			<fileset refid="fileset.documents" />
+		</zip>
+	</target>
+
+	<target name="zip.docs" depends="init.zip, javadoc" description="Archives the documentation.">
+		<delete file="${zip.dir}/${zip.javadoc.filename}" />
+		<zip basedir="${docs.dir}" destfile="${zip.dir}/${zip.javadoc.filename}" compress="true"></zip>
+	</target>
+	
+	<target name="zip.src" depends="init.zip" description="Archives the source code.">
+		<delete file="${zip.dir}/${zip.sources.filename}" />
+		<zip basedir="${src.dir}" destfile="${zip.dir}/${zip.sources.filename}" compress="true"></zip>
+		<zip destfile="${zip.dir}/${zip.filename}" update="true">
+			<fileset refid="fileset.documents" />
+		</zip>
+	</target>
+	
+	<target name="zip" depends="zip.jar, zip.docs, zip.src" description="Creates all archives.">
+	</target>
+
+	<target name="release" depends="zip">
+	</target>
+	
+</project>
