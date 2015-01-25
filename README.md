@@ -53,7 +53,7 @@ data structures for the Doom Engine and similar derivatives.
 ### Library
 
 Contained in this release is a series of libraries that allow reading, writing,
-and extracting data in Doom Engine structures, found in the net.mtrop.doom 
+and extracting data in Doom Engine structures, found in the **net.mtrop.doom** 
 packages. 
 
 ### Other
