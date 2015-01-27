@@ -33,7 +33,7 @@ data structures for the Doom Engine and similar derivatives.
 
 ### Implemented Features (so far)
 
-- Nothing yet. Deal w/ it.
+- Reads WAD files.
 
 ### Slated Features
 

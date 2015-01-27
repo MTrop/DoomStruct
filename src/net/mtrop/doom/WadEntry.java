@@ -17,11 +17,11 @@ import net.mtrop.doom.exception.DataConversionException;
 public class WadEntry
 {
 	/** The name of the entry. */
-	private String name;
+	String name;
 	/** The offset into the original WAD for the start of the data. */
-	private int offset;
+	int offset;
 	/** The size of the entry content in bytes. */
-	private int size;
+	int size;
 	
 	private WadEntry(String name, int offset, int size)
 	{
@@ -99,7 +99,28 @@ public class WadEntry
 	{
 		return size == 0;
 	}
-	
+
+	/**
+	 * Returns this entry's name as how it is represented in a WAD.
+	 * @return a byte array of length 8 containing the output data.
+	 */
+	public byte[] getNameBytes()
+	{
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		SuperWriter sw = new SuperWriter(bos, SuperWriter.LITTLE_ENDIAN);
+
+		try {
+			sw.writeASCIIString(name);
+			// null pad out to 8
+			for (int n = name.length(); n < 8; n++)
+				sw.writeByte((byte)0x00);
+		} catch (IOException e) {
+			// Should not happen.
+		}
+		
+		return bos.toByteArray();
+	}
+
 	/**
 	 * Returns this entry as a set of serialized bytes - how it is represented in a WAD.
 	 * @return a byte array of length 16 containing the output data.
@@ -120,6 +141,12 @@ public class WadEntry
 		}
 		
 		return bos.toByteArray();
+	}
+	
+	@Override
+	public String toString()
+	{
+		return String.format("WadEntry %-8s Offset: %d, Size: %d", name, offset, size);
 	}
 	
 }
