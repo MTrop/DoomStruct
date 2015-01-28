@@ -149,4 +149,11 @@ public interface MapObject
 	 */
 	public String getStringAttribute(String attributeName, String def);
 	
+	/**
+	 * Gets the byte representation of this object. 
+	 * This varies by implementation.
+	 * @return this object as a series of bytes.
+	 */
+	public byte[] getBytes();
+	
 }

@@ -67,14 +67,14 @@ public interface Linedef extends MapObject
 	public int getVertexEndReference();
 	
 	/**
-	 * @return the linedef's starting vertex reference index (in loaded maps).
+	 * @return the linedef's front sidedef reference index (in loaded maps).
 	 */
 	public int getSidedefFrontReference();
 	
 	/**
-	 * @return the linedef's ending vertex reference index (in loaded maps).
+	 * @return the linedef's back sidedef reference index (in loaded maps).
 	 */
-	public int getSidedefEndReference();
+	public int getSidedefBackReference();
 	
 	/**
 	 * This references the specific flag. 
