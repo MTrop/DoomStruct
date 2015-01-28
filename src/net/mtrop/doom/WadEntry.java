@@ -8,6 +8,7 @@ import com.blackrook.io.SuperReader;
 import com.blackrook.io.SuperWriter;
 
 import net.mtrop.doom.exception.DataConversionException;
+import net.mtrop.doom.util.NameUtils;
 
 /**
  * Abstraction of a single entry from a WAD.

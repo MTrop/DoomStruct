@@ -1,12 +1,10 @@
 package net.mtrop.doom.exception;
 
-import java.io.IOException;
-
 /**
- * An exception thrown when Doom Map information could not be read nor written.
+ * An exception thrown when Doom Map information is unavailable or malformed.
  * @author Matthew Tropiano
  */
-public class MapException extends IOException
+public class MapException extends RuntimeException
 {
 	private static final long serialVersionUID = 4553734950678544532L;
 

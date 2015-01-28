@@ -11,6 +11,7 @@ import java.util.Iterator;
 
 import net.mtrop.doom.exception.DataConversionException;
 import net.mtrop.doom.exception.WadException;
+import net.mtrop.doom.util.NameUtils;
 
 import com.blackrook.commons.Common;
 import com.blackrook.commons.linkedlist.Queue;
