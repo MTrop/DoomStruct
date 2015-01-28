@@ -17,7 +17,7 @@ public interface Vertex extends MapObject
 	public int getX();
 	
 	/**
-	 * @return vertex position, x-coordinate.
+	 * @return vertex position, y-coordinate.
 	 */
 	public int getY();
 	

@@ -9,6 +9,9 @@ import net.mtrop.doom.exception.MapException;
  */
 public interface MapObject
 {
+	/** Value used for null references to other map objects. */
+	public static final int NULL_REFERENCE = -1;
+	
 	/**
 	 * Gets the boolean value of an arbitrary object attribute.
 	 * Non-empty strings and non-zero numbers are <code>true</code>.
