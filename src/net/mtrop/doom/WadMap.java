@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
 
+import net.mtrop.doom.enums.WadType;
 import net.mtrop.doom.exception.WadException;
 
 import com.blackrook.commons.linkedlist.Queue;
@@ -29,7 +30,7 @@ import com.blackrook.io.SuperReader;
 public class WadMap implements Wad
 {
 	/** Type of Wad File (IWAD or PWAD). */
-	private Type type;
+	private WadType type;
 	/** The list of entries. */
 	protected List<WadEntry> entries;
 
@@ -79,7 +80,7 @@ public class WadMap implements Wad
 		entries.clear();
 
 		try {
-			type = Type.valueOf(sr.readASCIIString(4));
+			type = WadType.valueOf(sr.readASCIIString(4));
 		} catch (IllegalArgumentException e) {
 			throw new WadException("Not a WAD file.");
 		}
@@ -103,13 +104,13 @@ public class WadMap implements Wad
 	@Override
 	public boolean isIWAD()
 	{
-		return type == Type.IWAD;
+		return type == WadType.IWAD;
 	}
 
 	@Override
 	public boolean isPWAD()
 	{
-		return type == Type.PWAD;
+		return type == WadType.PWAD;
 	}
 
 	@Override

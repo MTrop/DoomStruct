@@ -1,7 +1,5 @@
 package net.mtrop.doom.exception;
 
-import java.io.IOException;
-
 /**
  * Exception thrown on a data export error of a Doom data structure.
  * Commonly occurs when a data structure contains a value that cannot
@@ -9,7 +7,7 @@ import java.io.IOException;
  * significance will occur.
  * @author Matthew Tropiano
  */
-public class DataExportException extends IOException
+public class DataExportException extends RuntimeException
 {
 	private static final long serialVersionUID = -2097234334808643177L;
 

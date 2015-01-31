@@ -12,16 +12,16 @@ public final class WadFileTest
 	{
 		Wad wad;
 		
-		wad = new WadBuffer("H:\\DoomDev\\Iwads\\doom2.wad");
+		wad = new WadBuffer(args[0]);
 		for (WadEntry e : wad)
 			out.info(e.toString());
 		out.info("*************************************************************");
-		wad = new WadFile("H:\\DoomDev\\Iwads\\doom2.wad");
+		wad = new WadFile(args[0]);
 		for (WadEntry e : wad)
 			out.info(e.toString());
 		Common.close((WadFile)wad);
 		out.info("*************************************************************");
-		wad = new WadMap("H:\\DoomDev\\Iwads\\doom2.wad");
+		wad = new WadMap(args[0]);
 		for (WadEntry e : wad)
 			out.info(e.toString());
 	}

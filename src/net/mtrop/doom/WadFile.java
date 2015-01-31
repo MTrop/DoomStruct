@@ -3,6 +3,7 @@ package net.mtrop.doom;
 import java.io.*;
 import java.util.Iterator;
 
+import net.mtrop.doom.enums.WadType;
 import net.mtrop.doom.exception.DataConversionException;
 import net.mtrop.doom.exception.WadException;
 import net.mtrop.doom.util.NameUtils;
@@ -34,7 +35,7 @@ public class WadFile extends RandomAccessFile implements Wad, Closeable
 	private List<WadEntry> entries;
 
 	/** Type of Wad File (IWAD or PWAD). */
-	private Type type;
+	private WadType type;
 
 	/** Offset of the beginning of the entry list. */
 	private int entryListOffset;
@@ -70,14 +71,14 @@ public class WadFile extends RandomAccessFile implements Wad, Closeable
 		// read header
 		read(buffer);
 		String head = new String(buffer,"ASCII");
-		if (!head.equals(Type.IWAD.toString()) && !head.equals(Type.PWAD.toString()))
+		if (!head.equals(WadType.IWAD.toString()) && !head.equals(WadType.PWAD.toString()))
 			throw new WadException("Not a Wad file or supported Wad file type.");
 
-		if (head.equals(Type.IWAD.toString()))
-			type = Type.IWAD;
+		if (head.equals(WadType.IWAD.toString()))
+			type = WadType.IWAD;
 			
-		if (head.equals(Type.PWAD.toString()))
-			type = Type.PWAD;
+		if (head.equals(WadType.PWAD.toString()))
+			type = WadType.PWAD;
 		
 		fileName = f.getName();
 		filePath = f.getPath();
@@ -144,7 +145,7 @@ public class WadFile extends RandomAccessFile implements Wad, Closeable
 	{
 		FileOutputStream fo = new FileOutputStream(f);
 		SuperWriter sw = new SuperWriter(fo,SuperWriter.LITTLE_ENDIAN);
-		sw.writeASCIIString(Type.PWAD.toString());
+		sw.writeASCIIString(WadType.PWAD.toString());
 		sw.writeInt(0);		// number of entries.
 		sw.writeInt(12);	// offset to entry list.
 		fo.close();
@@ -192,13 +193,13 @@ public class WadFile extends RandomAccessFile implements Wad, Closeable
 	@Override
 	public boolean isIWAD()
 	{
-		return type == Type.IWAD;
+		return type == WadType.IWAD;
 	}
 	
 	@Override
 	public boolean isPWAD()
 	{
-		return type == Type.PWAD;
+		return type == WadType.PWAD;
 	}
 	
 	@Override
@@ -602,7 +603,7 @@ public class WadFile extends RandomAccessFile implements Wad, Closeable
 	/**
 	 * Gets the type of WAD that this is.
 	 */
-	public Type getType()
+	public WadType getType()
 	{
 		return type;
 	}

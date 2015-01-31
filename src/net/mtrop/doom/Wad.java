@@ -24,11 +24,6 @@ import net.mtrop.doom.exception.DataConversionException;
  */
 public interface Wad extends Iterable<WadEntry>
 {
-	public enum Type
-	{
-		PWAD, IWAD;
-	}
-	
 	/**
 	 * Returns if a WAD is an Information WAD.
 	 */
