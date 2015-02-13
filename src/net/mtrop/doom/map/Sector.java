@@ -8,7 +8,9 @@ package net.mtrop.doom.map;
  */
 public interface Sector
 {
-
+	/** Blank texture name. */
+	public static final String TEXTURE_BLANK = "-";
+	
 	/**
 	 * @return the sector's floor height.
 	 */

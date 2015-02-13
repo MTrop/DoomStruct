@@ -7,6 +7,9 @@ package net.mtrop.doom.map;
  */
 public interface Sidedef
 {
+	/** Blank texture name. */
+	public static final String TEXTURE_BLANK = "-";
+	
 	/**
 	 * @return the sidedef's base texture offset X.
 	 */
@@ -35,6 +38,6 @@ public interface Sidedef
 	/**
 	 * @return the sidedef's sector reference index (in loaded maps).
 	 */
-	public int getSectorReference();
+	public int getSectorIndex();
 
 }

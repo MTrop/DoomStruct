@@ -14,6 +14,13 @@ import net.mtrop.doom.exception.DataExportException;
 public interface BinaryMapObject extends MapObject
 {
 	/**
+	 * Gets the byte representation of this object. 
+	 * @return this object as a series of bytes.
+	 * @throws DataExportException if a field cannot be reliably exported.
+	 */
+	public byte[] toBytes() throws DataExportException;
+
+	/**
 	 * Reads in the byte representation of this object and sets its fields.
 	 * @param data the byte array to read from. 
 	 * @throws IOException if a read error occurs.
@@ -26,14 +33,7 @@ public interface BinaryMapObject extends MapObject
 	 * @throws IOException if a read error occurs.
 	 */
 	public void readBytes(InputStream in) throws IOException;
-	
-	/**
-	 * Gets the byte representation of this object. 
-	 * @return this object as a series of bytes.
-	 * @throws DataExportException if a field cannot be reliably exported.
-	 */
-	public byte[] getBytes() throws DataExportException;
-	
+
 	/**
 	 * Writes this object to an {@link OutputStream}.
 	 * @param out the {@link OutputStream} to write to.

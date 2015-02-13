@@ -1,5 +1,7 @@
 package net.mtrop.doom.map.udmf;
 
+import net.mtrop.doom.exception.MapException;
+
 import com.blackrook.commons.AbstractMap;
 
 /**
@@ -54,7 +56,6 @@ public interface UDMFObject extends AbstractMap<String, Object>
 	 * Booleans are 1 if true, 0 if false.
 	 * @param attributeName the attribute name (may be standardized, depending on implementation).
 	 * @param value the attribute value.
-	 * @throws NumberFormatException if the value was originally a String and can't be converted.
 	 * @throws MapException if the attribute is not settable or the value is invalid.
 	 */
 	public void setIntegerAttribute(String attributeName, Integer value);

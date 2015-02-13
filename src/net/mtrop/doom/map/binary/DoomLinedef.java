@@ -56,7 +56,7 @@ public class DoomLinedef implements BinaryMapObject, Linedef
 	private boolean notDrawn;
 	/** Flag: Line blocks sound propagation. */
 	private boolean soundBlocking;
-	/** Flag: Line passes activation through to other lines. */
+	/** Flag: (Boom) Line passes activation through to other lines. */
 	private boolean passThru;
 
 	/**
@@ -68,6 +68,21 @@ public class DoomLinedef implements BinaryMapObject, Linedef
 		reset();
 	}
 
+	/**
+	 * Reads and creates a new DoomLinedef from an array of bytes.
+	 * This reads from the first 14 bytes of the stream.
+	 * The stream is NOT closed at the end.
+	 * @param bytes the byte array to read.
+	 * @return a new DoomLinedef with its fields set.
+	 * @throws IOException if the stream cannot be read.
+	 */
+	public static DoomLinedef create(byte[] bytes) throws IOException
+	{
+		DoomLinedef out = new DoomLinedef();
+		out.fromBytes(bytes);
+		return out;
+	}
+	
 	/**
 	 * Reads and creates a new DoomLinedef from an {@link InputStream} implementation.
 	 * This reads from the stream until enough bytes for a {@link DoomLinedef} are read.
@@ -313,19 +328,19 @@ public class DoomLinedef implements BinaryMapObject, Linedef
 	}
 
 	@Override
+	public byte[] toBytes() throws DataExportException
+	{
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		try { writeBytes(bos); } catch (IOException e) { /* Shouldn't happen. */ }
+		return bos.toByteArray();
+	}
+
+	@Override
 	public void fromBytes(byte[] data) throws IOException
 	{
 		ByteArrayInputStream bin = new ByteArrayInputStream(data);
 		readBytes(bin);
 		Common.close(bin);
-	}
-
-	@Override
-	public byte[] getBytes() throws DataExportException
-	{
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		try { writeBytes(bos); } catch (IOException e) { /* Shouldn't happen. */ }
-		return bos.toByteArray();
 	}
 
 	@Override
@@ -386,6 +401,31 @@ public class DoomLinedef implements BinaryMapObject, Linedef
 		sw.writeUnsignedShort(tag);
 		sw.writeShort((short)sidedefFrontIndex);
 		sw.writeShort((short)sidedefBackIndex);
+	}
+	
+	@Override
+	public String toString()
+	{
+		StringBuilder sb = new StringBuilder();
+		sb.append("Linedef");
+		sb.append(' ').append(vertexStartIndex).append(" to ").append(vertexEndIndex);
+		
+		if (impassable) sb.append(' ').append("IMPASSABLE");
+		if (monsterBlocking) sb.append(' ').append("MONSTERBLOCK");
+		if (twoSided) sb.append(' ').append("TWOSIDED");
+		if (upperUnpegged) sb.append(' ').append("UPPERUNPEGGED");
+		if (lowerUnpegged) sb.append(' ').append("LOWERUNPEGGED");
+		if (secret) sb.append(' ').append("SECRET");
+		if (soundBlocking) sb.append(' ').append("SOUNDBLOCKING");
+		if (notDrawn) sb.append(' ').append("NOTDRAWN");
+		if (mapped) sb.append(' ').append("MAPPED");
+		if (passThru) sb.append(' ').append("PASSTHRU");
+		
+		sb.append(' ').append("Special ").append(special);
+		sb.append(' ').append("Tag ").append(tag);
+		sb.append(' ').append("Front ").append(sidedefFrontIndex);
+		sb.append(' ').append("Back ").append(sidedefBackIndex);
+		return sb.toString();
 	}
 	
 }
