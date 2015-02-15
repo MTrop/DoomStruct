@@ -13,15 +13,14 @@ import com.blackrook.io.SuperWriter;
 import net.mtrop.doom.exception.DataConversionException;
 import net.mtrop.doom.exception.DataExportException;
 import net.mtrop.doom.map.BinaryMapObject;
-import net.mtrop.doom.map.Sidedef;
 import net.mtrop.doom.util.NameUtils;
 import net.mtrop.doom.util.RangeUtils;
 
 /**
- * Doom/Boom 30-byte format implementation of Sidedef.
+ * Doom/Boom 30-byte format implementation of a Sidedef.
  * @author Matthew Tropiano
  */
-public class DoomSidedef implements BinaryMapObject, Sidedef 
+public class DoomSidedef implements BinaryMapObject 
 {
 	
 	/** Sidedef X Offset. */
@@ -38,12 +37,14 @@ public class DoomSidedef implements BinaryMapObject, Sidedef
 	private int sectorIndex;
 	
 	/**
-	 * Creates a new sidedef with default values set.
-	 * @see #reset()
+	 * Creates a new sidedef.
 	 */
 	public DoomSidedef()
 	{
-		reset();
+		textureTop = TEXTURE_BLANK;
+		textureBottom = TEXTURE_BLANK;
+		textureMiddle = TEXTURE_BLANK;
+		sectorIndex = NULL_REFERENCE;
 	}
 	
 	/**
@@ -77,24 +78,6 @@ public class DoomSidedef implements BinaryMapObject, Sidedef
 	}
 	
 	/**
-	 * Resets this sidedef's properties to defaults.
-	 * <ul>
-	 * <li>All offsets are set to 0.</li>
-	 * <li>All textures are set to {@link Sidedef#TEXTURE_BLANK}.</li>
-	 * <li>The sector index is 0.</li>
-	 * </ul>
-	 */
-	public void reset()
-	{
-		offsetX = 0;
-		offsetY = 0;
-		textureTop = TEXTURE_BLANK;
-		textureBottom = TEXTURE_BLANK;
-		textureMiddle = TEXTURE_BLANK;
-		sectorIndex = NULL_REFERENCE;
-	}
-	
-	/**
 	 * Sets the sidedef's texture X offset.
 	 */
 	public void setOffsetX(int offsetX)
@@ -102,7 +85,9 @@ public class DoomSidedef implements BinaryMapObject, Sidedef
 		this.offsetX = offsetX;
 	}
 	
-	@Override
+	/**
+	 * @return the sidedef's texture X offset.
+	 */
 	public int getOffsetX()
 	{
 		return offsetX;
@@ -116,7 +101,9 @@ public class DoomSidedef implements BinaryMapObject, Sidedef
 		this.offsetY = offsetY;
 	}
 	
-	@Override
+	/**
+	 * @return the sidedef's texture Y offset.
+	 */
 	public int getOffsetY()
 	{
 		return offsetY;
@@ -132,7 +119,9 @@ public class DoomSidedef implements BinaryMapObject, Sidedef
 		this.textureTop = textureTop;
 	}
 	
-	@Override
+	/**
+	 * @return the top texture name.
+	 */
 	public String getTextureTop()
 	{
 		return textureTop;
@@ -148,7 +137,9 @@ public class DoomSidedef implements BinaryMapObject, Sidedef
 		this.textureBottom = textureBottom;
 	}
 	
-	@Override
+	/**
+	 * @return the bottom texture name.
+	 */
 	public String getTextureBottom()
 	{
 		return textureBottom;
@@ -164,7 +155,9 @@ public class DoomSidedef implements BinaryMapObject, Sidedef
 		this.textureMiddle = textureMiddle;
 	}
 	
-	@Override
+	/**
+	 * @return the middle texture name.
+	 */
 	public String getTextureMiddle()
 	{
 		return textureMiddle;
@@ -178,7 +171,9 @@ public class DoomSidedef implements BinaryMapObject, Sidedef
 		this.sectorIndex = sectorIndex;
 	}
 	
-	@Override
+	/**
+	 * @return the index of the sector.
+	 */
 	public int getSectorIndex()
 	{
 		return sectorIndex;

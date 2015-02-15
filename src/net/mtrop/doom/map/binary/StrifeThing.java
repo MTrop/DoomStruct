@@ -1,0 +1,204 @@
+package net.mtrop.doom.map.binary;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+import com.blackrook.commons.Common;
+import com.blackrook.io.SuperReader;
+import com.blackrook.io.SuperWriter;
+
+import net.mtrop.doom.exception.DataExportException;
+import net.mtrop.doom.map.BinaryMapObject;
+import net.mtrop.doom.util.RangeUtils;
+
+/**
+ * Doom/Boom 10-byte format implementation of Thing that uses
+ * Strife flags. This is essentially the same structure as a {@link DoomThing},
+ * except interpreted differently.
+ * @author Matthew Tropiano
+ */
+public class StrifeThing extends CommonThing implements BinaryMapObject
+{
+	/** Flag: Thing is an ally. */
+	protected boolean ally;
+	/** Flag: Thing is 25% translucent. */
+	protected boolean translucent25;
+	/** Flag: Thing is 75% translucent. */
+	protected boolean translucent75;
+	
+	/**
+	 * Creates a new thing.
+	 */
+	public StrifeThing()
+	{
+	}
+
+	/**
+	 * Reads and creates a new DoomThing from an array of bytes.
+	 * This reads from the first 10 bytes of the stream.
+	 * The stream is NOT closed at the end.
+	 * @param bytes the byte array to read.
+	 * @return a new DoomThing with its fields set.
+	 * @throws IOException if the stream cannot be read.
+	 */
+	public static StrifeThing create(byte[] bytes) throws IOException
+	{
+		StrifeThing out = new StrifeThing();
+		out.fromBytes(bytes);
+		return out;
+	}
+	
+	/**
+	 * Reads and creates a new DoomThing from an {@link InputStream} implementation.
+	 * This reads from the stream until enough bytes for a {@link StrifeThing} are read.
+	 * The stream is NOT closed at the end.
+	 * @param in the open {@link InputStream} to read from.
+	 * @return a new DoomThing with its fields set.
+	 * @throws IOException if the stream cannot be read.
+	 */
+	public static StrifeThing read(InputStream in) throws IOException
+	{
+		StrifeThing out = new StrifeThing();
+		out.readBytes(in);
+		return out;
+	}
+	
+	/**
+	 * @return true if this is flagged as an ally, false if not.
+	 */
+	public boolean isAlly()
+	{
+		return ally;
+	}
+
+	/**
+	 * Sets if this is flagged as an ally.
+	 */
+	public void setAlly(boolean ally)
+	{
+		this.ally = ally;
+	}
+	
+	/**
+	 * @return true if this is flagged as 25% translucent, false if not.
+	 */
+	public boolean isTranslucent25()
+	{
+		return translucent25;
+	}
+	
+	/**
+	 * Sets if this is flagged as 25% translucent.
+	 */
+	public void setTranslucent25(boolean translucent25)
+	{
+		this.translucent25 = translucent25;
+	}
+	
+	/**
+	 * @return true if this is flagged as 75% translucent, false if not.
+	 */
+	public boolean isTranslucent75()
+	{
+		return translucent75;
+	}
+
+	/**
+	 * Sets if this is flagged as 75% translucent.
+	 */
+	public void setTranslucent75(boolean translucent75)
+	{
+		this.translucent75 = translucent75;
+	}
+
+	@Override
+	public byte[] toBytes() throws DataExportException
+	{
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		try { writeBytes(bos); } catch (IOException e) { /* Shouldn't happen. */ }
+		return bos.toByteArray();
+	}
+
+	@Override
+	public void fromBytes(byte[] data) throws IOException
+	{
+		ByteArrayInputStream bin = new ByteArrayInputStream(data);
+		readBytes(bin);
+		Common.close(bin);
+	}
+
+	@Override
+	public void readBytes(InputStream in) throws IOException
+	{
+		SuperReader sr = new SuperReader(in, SuperReader.LITTLE_ENDIAN);
+		x = sr.readShort();
+		y = sr.readShort();
+		angle = sr.readUnsignedShort();
+		type = sr.readUnsignedShort();
+		
+		// bitflags
+		int flags = sr.readUnsignedShort();
+		easy = Common.bitIsSet(flags, (1 << 0));
+		medium = Common.bitIsSet(flags, (1 << 1));
+		hard = Common.bitIsSet(flags, (1 << 2));
+		ambush = Common.bitIsSet(flags, (1 << 3));
+		notSinglePlayer = Common.bitIsSet(flags, (1 << 4));
+		ambush = Common.bitIsSet(flags, (1 << 5));
+		ally = Common.bitIsSet(flags, (1 << 7));
+		translucent25 = Common.bitIsSet(flags, (1 << 8));
+		translucent75 = Common.bitIsSet(flags, (1 << 9));
+	}
+
+	@Override
+	public void writeBytes(OutputStream out) throws DataExportException, IOException
+	{
+		RangeUtils.checkShort("X-coordinate", x);
+		RangeUtils.checkShort("Y-coordinate", y);
+		RangeUtils.checkShort("Angle", angle);
+		RangeUtils.checkShort("Type", type);
+		
+		SuperWriter sw = new SuperWriter(out, SuperWriter.LITTLE_ENDIAN);
+		sw.writeShort((short)x);
+		sw.writeShort((short)y);
+		sw.writeShort((short)angle);
+		sw.writeShort((short)type);
+		
+		sw.writeUnsignedShort(Common.booleansToInt(
+			easy,
+			medium,
+			hard,
+			ambush,
+			notSinglePlayer,
+			ambush,
+			false,
+			ally,
+			translucent25,
+			translucent75
+		));		
+	}
+	
+	@Override
+	public String toString()
+	{
+		StringBuilder sb = new StringBuilder();
+		sb.append("Thing");
+		sb.append(" (").append(x).append(", ").append(y).append(")");
+		sb.append(" Type:").append(type);
+		sb.append(" Angle:").append(angle);
+
+		if (easy) sb.append(' ').append("EASY");
+		if (medium) sb.append(' ').append("MEDIUM");
+		if (hard) sb.append(' ').append("HARD");
+		if (ambush) sb.append(' ').append("AMBUSH");
+		if (notSinglePlayer) sb.append(' ').append("NOTSINGLEPLAYER");
+		if (ally) sb.append(' ').append("ALLY");
+		if (translucent25) sb.append(' ').append("TRANSLUCENT25");
+		if (translucent75) sb.append(' ').append("TRANSLUCENT75");
+		
+		return sb.toString();
+	}
+
+}

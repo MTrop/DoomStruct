@@ -13,7 +13,6 @@ import com.blackrook.io.SuperWriter;
 import net.mtrop.doom.exception.DataConversionException;
 import net.mtrop.doom.exception.DataExportException;
 import net.mtrop.doom.map.BinaryMapObject;
-import net.mtrop.doom.map.Sector;
 import net.mtrop.doom.util.NameUtils;
 import net.mtrop.doom.util.RangeUtils;
 
@@ -21,7 +20,7 @@ import net.mtrop.doom.util.RangeUtils;
  * Doom/Boom 26-byte format implementation of Sector.
  * @author Matthew Tropiano
  */
-public class DoomSector implements Sector, BinaryMapObject
+public class DoomSector implements BinaryMapObject
 {
 	/** Sector Floor height. */
 	private int floorHeight;
@@ -39,17 +38,17 @@ public class DoomSector implements Sector, BinaryMapObject
 	private int tag;
 	
 	/**
-	 * Creates a new sector with default values set.
-	 * @see #reset()
+	 * Creates a new sector.
 	 */
 	public DoomSector()
 	{
-		reset();
+		floorTexture = TEXTURE_BLANK;
+		ceilingTexture = TEXTURE_BLANK;
 	}
 	
 	/**
 	 * Reads and creates a new DoomSector from an array of bytes.
-	 * This reads from the first 30 bytes of the stream.
+	 * This reads from the first 26 bytes of the stream.
 	 * The stream is NOT closed at the end.
 	 * @param bytes the byte array to read.
 	 * @return a new DoomSector with its fields set.
@@ -78,26 +77,6 @@ public class DoomSector implements Sector, BinaryMapObject
 	}
 	
 	/**
-	 * Resets this sector's properties to defaults.
-	 * <ul>
-	 * <li>Both heights are set to 0.</li>
-	 * <li>All textures are set to {@link Sector#TEXTURE_BLANK}.</li>
-	 * <li>The light level is set to 0.</li>
-	 * <li>The special and tag are set to 0.</li>
-	 * </ul>
-	 */
-	public void reset()
-	{
-		floorHeight = 0;
-		ceilingHeight = 0;
-		floorTexture = TEXTURE_BLANK;
-		ceilingTexture = TEXTURE_BLANK;
-		lightLevel = 0;
-		special = 0;
-		tag = 0;
-	}
-	
-	/**
 	 * Sets this sector's floor height. 
 	 */
 	public void setFloorHeight(int floorHeight)
@@ -105,28 +84,32 @@ public class DoomSector implements Sector, BinaryMapObject
 		this.floorHeight = floorHeight;
 	}
 	
-	@Override
+	/**
+	 * @return the sector's floor height.
+	 */
 	public int getFloorHeight()
 	{
 		return floorHeight;
 	}
 
 	/**
-	 * Sets this sector's ceiling height. 
+	 * Sets the sector's ceiling height. 
 	 */
 	public void setCeilingHeight(int ceilingHeight)
 	{
 		this.ceilingHeight = ceilingHeight;
 	}
 	
-	@Override
+	/**
+	 * @return the sector's ceiling height.
+	 */
 	public int getCeilingHeight()
 	{
 		return ceilingHeight;
 	}
 
 	/**
-	 * Sets this sector's floor texture. 
+	 * Sets the sector's floor texture. 
 	 */
 	public void setFloorTexture(String floorTexture)
 	{
@@ -135,14 +118,16 @@ public class DoomSector implements Sector, BinaryMapObject
 		this.floorTexture = floorTexture;
 	}
 	
-	@Override
+	/**
+	 * @return the sector's floor texture.
+	 */
 	public String getFloorTexture()
 	{
 		return floorTexture;
 	}
 
 	/**
-	 * Sets this sector's ceiling texture. 
+	 * Sets the sector's ceiling texture. 
 	 */
 	public void setCeilingTexture(String ceilingTexture)
 	{
@@ -151,49 +136,57 @@ public class DoomSector implements Sector, BinaryMapObject
 		this.ceilingTexture = ceilingTexture;
 	}
 	
-	@Override
+	/**
+	 * @return the sector's ceiling texture. 
+	 */
 	public String getCeilingTexture()
 	{
 		return ceilingTexture;
 	}
 
 	/**
-	 * Sets this sector's light level. 
+	 * Sets the sector's light level. 
 	 */
 	public void setLightLevel(int lightLevel)
 	{
 		this.lightLevel = lightLevel;
 	}
 	
-	@Override
+	/**
+	 * @return the sector's light level.
+	 */
 	public int getLightLevel()
 	{
 		return lightLevel;
 	}
 
 	/**
-	 * Sets this sector's special. 
+	 * Sets the sector's special. 
 	 */
 	public void setSpecial(int special)
 	{
 		this.special = special;
 	}
 	
-	@Override
+	/**
+	 * @return the sector's special. 
+	 */
 	public int getSpecial()
 	{
 		return special;
 	}
 
 	/**
-	 * Sets this sector's tag. 
+	 * Sets the sector's tag. 
 	 */
 	public void setTag(int tag)
 	{
 		this.tag = tag;
 	}
 	
-	@Override
+	/**
+	 * @return the sector's tag.
+	 */
 	public int getTag()
 	{
 		return tag;

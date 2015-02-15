@@ -12,10 +12,9 @@ import com.blackrook.io.SuperWriter;
 
 import net.mtrop.doom.exception.DataExportException;
 import net.mtrop.doom.map.BinaryMapObject;
-import net.mtrop.doom.map.Vertex;
 import net.mtrop.doom.util.RangeUtils;
 
-public class DoomVertex implements BinaryMapObject, Vertex
+public class DoomVertex implements BinaryMapObject
 {
 	/** Vertex: X-coordinate. */
 	private int x;
@@ -24,11 +23,9 @@ public class DoomVertex implements BinaryMapObject, Vertex
 	
 	/**
 	 * Creates a new vertex with default values set.
-	 * @see #reset()
 	 */
 	public DoomVertex()
 	{
-		reset();
 	}
 
 	/**
@@ -62,15 +59,6 @@ public class DoomVertex implements BinaryMapObject, Vertex
 	}
 	
 	/**
-	 * Resets this vertex's value to (0, 0).
-	 */
-	public void reset()
-	{
-		x = 0;
-		y = 0;
-	}
-	
-	/**
 	 * Sets the coordinates of this vertex.
 	 * @param x the x-coordinate value.
 	 * @param y the y-coordinate value.
@@ -97,13 +85,17 @@ public class DoomVertex implements BinaryMapObject, Vertex
 		this.y = y;
 	}
 	
-	@Override
+	/**
+	 * @return the X-coordinate value of this vertex.
+	 */
 	public int getX()
 	{
 		return x;
 	}
 
-	@Override
+	/**
+	 * @return the Y-coordinate value of this vertex.
+	 */
 	public int getY()
 	{
 		return y;
@@ -136,8 +128,8 @@ public class DoomVertex implements BinaryMapObject, Vertex
 	@Override
 	public void writeBytes(OutputStream out) throws DataExportException, IOException
 	{
-		RangeUtils.checkShortUnsigned("X-coordinate", x);
-		RangeUtils.checkShortUnsigned("Y-coordinate", y);
+		RangeUtils.checkShort("X-coordinate", x);
+		RangeUtils.checkShort("Y-coordinate", y);
 
 		SuperWriter sw = new SuperWriter(out, SuperWriter.LITTLE_ENDIAN);
 		sw.writeShort((short)x);

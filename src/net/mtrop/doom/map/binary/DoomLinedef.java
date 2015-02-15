@@ -12,60 +12,24 @@ import com.blackrook.io.SuperWriter;
 
 import net.mtrop.doom.exception.DataExportException;
 import net.mtrop.doom.map.BinaryMapObject;
-import net.mtrop.doom.map.Linedef;
-import net.mtrop.doom.map.MapObject;
 import net.mtrop.doom.util.RangeUtils;
 
 /**
  * Doom/Boom 14-byte format implementation of Linedef.
  * @author Matthew Tropiano
  */
-public class DoomLinedef implements BinaryMapObject, Linedef 
+public class DoomLinedef extends CommonLinedef implements BinaryMapObject
 {
-
-	/** Vertex start. */
-	private int vertexStartIndex;
-	/** Vertex end. */
-	private int vertexEndIndex;
-
-	/** Front sidedef. */
-	private int sidedefFrontIndex;
-	/** Back sidedef. */
-	private int sidedefBackIndex;
-
-	/** Linedef special. */
-	private int special;
-	/** Linedef special tag. */
-	private int tag;
-
-	/** Flag: Creatures (players and monsters) cannot pass. */
-	private boolean impassable;
-	/** Flag: Monsters cannot pass. */
-	private boolean monsterBlocking;
-	/** Flag: Line has two sides: projectiles/hitscans can pass. */
-	private boolean twoSided;
-	/** Flag: Line's upper texture is drawn from top to bottom. */
-	private boolean upperUnpegged;
-	/** Flag: Line's lower texture is drawn from bottom to top. */
-	private boolean lowerUnpegged;
-	/** Flag: Line's drawn like one-sided impassable ones on automap. */
-	private boolean secret;
-	/** Flag: Line's immediately drawn on automap. */
-	private boolean mapped;
-	/** Flag: Line's NEVER drawn on automap. */
-	private boolean notDrawn;
-	/** Flag: Line blocks sound propagation. */
-	private boolean soundBlocking;
 	/** Flag: (Boom) Line passes activation through to other lines. */
-	private boolean passThru;
+	protected boolean passThru;
+	/** Linedef special tag. */
+	protected int tag;
 
 	/**
-	 * Creates a new linedef with default values set.
-	 * @see #reset()
+	 * Creates a new linedef.
 	 */
 	public DoomLinedef()
 	{
-		reset();
 	}
 
 	/**
@@ -99,86 +63,11 @@ public class DoomLinedef implements BinaryMapObject, Linedef
 	}
 	
 	/**
-	 * Resets this linedef's properties to defaults.
-	 * <ul>
-	 * <li>All references/indices are {@link MapObject#NULL_REFERENCE}.</li>
-	 * <li>All flags are <code>false</code> except for IMPASSABLE.</li>
-	 * <li>Special and Tag are set to 0.</li>
-	 * </ul>
+	 * Sets this linedef's special tag.
 	 */
-	public void reset()
+	public void setTag(int tag)
 	{
-		vertexStartIndex = NULL_REFERENCE;
-		vertexEndIndex = NULL_REFERENCE;
-		sidedefFrontIndex = NULL_REFERENCE;
-		sidedefBackIndex = NULL_REFERENCE;
-		special = 0;
-		tag = 0;
-		impassable = true;
-		monsterBlocking = false;
-		twoSided = false;
-		upperUnpegged = false;
-		lowerUnpegged = false;
-		secret = false;
-		mapped = false;
-		notDrawn = false;
-		soundBlocking = false;
-		passThru = false;
-	}
-	
-	@Override
-	public int getVertexStartIndex()
-	{
-		return vertexStartIndex;
-	}
-
-	public void setVertexStartIndex(int vertexStartIndex)
-	{
-		this.vertexStartIndex = vertexStartIndex;
-	}
-
-	@Override
-	public int getVertexEndIndex()
-	{
-		return vertexEndIndex;
-	}
-
-	public void setVertexEndIndex(int vertexEndIndex)
-	{
-		this.vertexEndIndex = vertexEndIndex;
-	}
-
-	@Override
-	public int getSidedefFrontIndex()
-	{
-		return sidedefFrontIndex;
-	}
-
-	public void setSidedefFrontIndex(int sidedefFrontIndex)
-	{
-		this.sidedefFrontIndex = sidedefFrontIndex;
-	}
-
-	@Override
-	public int getSidedefBackIndex()
-	{
-		return sidedefBackIndex;
-	}
-
-	public void setSidedefBackIndex(int sidedefBackIndex)
-	{
-		this.sidedefBackIndex = sidedefBackIndex;
-	}
-
-	@Override
-	public int getSpecial()
-	{
-		return special;
-	}
-
-	public void setSpecial(int special)
-	{
-		this.special = special;
+		this.tag = tag;
 	}
 
 	/**
@@ -190,128 +79,11 @@ public class DoomLinedef implements BinaryMapObject, Linedef
 	}
 
 	/**
-	 * Sets this linedef's special tag.
+	 * Sets if this line's activated special does not block the activation search.
 	 */
-	public void setTag(int tag)
+	public void setPassThru(boolean passThru)
 	{
-		this.tag = tag;
-	}
-
-	/**
-	 * @return true if this blocks - at the very least - player and monster movement, false if not.
-	 */
-	public boolean isImpassable()
-	{
-		return impassable;
-	}
-
-	public void setImpassable(boolean impassable)
-	{
-		this.impassable = impassable;
-	}
-
-	/**
-	 * @return true if this line blocks monsters, false if not.
-	 */
-	public boolean isMonsterBlocking()
-	{
-		return monsterBlocking;
-	}
-
-	public void setMonsterBlocking(boolean monsterBlocking)
-	{
-		this.monsterBlocking = monsterBlocking;
-	}
-
-	/**
-	 * @return true if this line is two-sided, false if not.
-	 */
-	public boolean isTwoSided()
-	{
-		return twoSided;
-	}
-
-	public void setTwoSided(boolean twoSided)
-	{
-		this.twoSided = twoSided;
-	}
-
-	/**
-	 * @return true if this line's upper texture is unpegged, false if not.
-	 */
-	public boolean isUpperUnpegged()
-	{
-		return upperUnpegged;
-	}
-
-	public void setUpperUnpegged(boolean upperUnpegged)
-	{
-		this.upperUnpegged = upperUnpegged;
-	}
-
-	/**
-	 * @return true if this line's lower texture is unpegged, false if not.
-	 */
-	public boolean isLowerUnpegged()
-	{
-		return lowerUnpegged;
-	}
-
-	public void setLowerUnpegged(boolean lowerUnpegged)
-	{
-		this.lowerUnpegged = lowerUnpegged;
-	}
-
-	/**
-	 * @return true if this line is shown as one-sided on the automap, false if not.
-	 */
-	public boolean isSecret()
-	{
-		return secret;
-	}
-
-	public void setSecret(boolean secret)
-	{
-		this.secret = secret;
-	}
-
-	/**
-	 * @return true if this line is always drawn on the automap, false if not.
-	 */
-	public boolean isMapped()
-	{
-		return mapped;
-	}
-
-	public void setMapped(boolean mapped)
-	{
-		this.mapped = mapped;
-	}
-
-	/**
-	 * @return true if this line is not drawn on the automap, false if so.
-	 */
-	public boolean isNotDrawn()
-	{
-		return notDrawn;
-	}
-
-	public void setNotDrawn(boolean notDrawn)
-	{
-		this.notDrawn = notDrawn;
-	}
-
-	/**
-	 * @return true if this line blocks sound (must be doubled-up to block sound completely), false if not.
-	 */
-	public boolean isSoundBlocking()
-	{
-		return soundBlocking;
-	}
-
-	public void setSoundBlocking(boolean soundBlocking)
-	{
-		this.soundBlocking = soundBlocking;
+		this.passThru = passThru;
 	}
 
 	/**
@@ -320,11 +92,6 @@ public class DoomLinedef implements BinaryMapObject, Linedef
 	public boolean isPassThru()
 	{
 		return passThru;
-	}
-
-	public void setPassThru(boolean passThru)
-	{
-		this.passThru = passThru;
 	}
 
 	@Override
@@ -409,6 +176,9 @@ public class DoomLinedef implements BinaryMapObject, Linedef
 		StringBuilder sb = new StringBuilder();
 		sb.append("Linedef");
 		sb.append(' ').append(vertexStartIndex).append(" to ").append(vertexEndIndex);
+		sb.append(' ').append("Sidedef ");
+		sb.append(' ').append("Front ").append(sidedefFrontIndex);
+		sb.append(' ').append("Back ").append(sidedefBackIndex);
 		
 		if (impassable) sb.append(' ').append("IMPASSABLE");
 		if (monsterBlocking) sb.append(' ').append("MONSTERBLOCK");
@@ -423,9 +193,9 @@ public class DoomLinedef implements BinaryMapObject, Linedef
 		
 		sb.append(' ').append("Special ").append(special);
 		sb.append(' ').append("Tag ").append(tag);
-		sb.append(' ').append("Front ").append(sidedefFrontIndex);
-		sb.append(' ').append("Back ").append(sidedefBackIndex);
 		return sb.toString();
 	}
+	
+	
 	
 }
