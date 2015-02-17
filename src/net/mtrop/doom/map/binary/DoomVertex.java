@@ -10,11 +10,10 @@ import com.blackrook.commons.Common;
 import com.blackrook.io.SuperReader;
 import com.blackrook.io.SuperWriter;
 
-import net.mtrop.doom.exception.DataExportException;
-import net.mtrop.doom.map.BinaryMapObject;
+import net.mtrop.doom.map.BinaryObject;
 import net.mtrop.doom.util.RangeUtils;
 
-public class DoomVertex implements BinaryMapObject
+public class DoomVertex implements BinaryObject
 {
 	/** Vertex: X-coordinate. */
 	private int x;
@@ -30,8 +29,7 @@ public class DoomVertex implements BinaryMapObject
 
 	/**
 	 * Reads and creates a new DoomVertex from an array of bytes.
-	 * This reads from the first 4 bytes of the stream.
-	 * The stream is NOT closed at the end.
+	 * This reads from the first 4 bytes of the array.
 	 * @param bytes the byte array to read.
 	 * @return a new DoomVertex with its fields set.
 	 * @throws IOException if the stream cannot be read.
@@ -65,23 +63,27 @@ public class DoomVertex implements BinaryMapObject
 	 */
 	public void set(int x, int y)
 	{
-		this.x = x;
-		this.y = y;
+		setX(x);
+		setY(y);
 	}
 	
 	/**
 	 * Sets the X-coordinate value of this vertex.
+	 * @throws IllegalArgumentException if x is outside of the range -32768 to 32767.
 	 */
 	public void setX(int x)
 	{
+		RangeUtils.checkShort("X-coordinate", x);
 		this.x = x;
 	}
 	
 	/**
 	 * Sets the Y-coordinate value of this vertex.
+	 * @throws IllegalArgumentException if y is outside of the range -32768 to 32767.
 	 */
 	public void setY(int y)
 	{
+		RangeUtils.checkShort("Y-coordinate", y);
 		this.y = y;
 	}
 	
@@ -102,7 +104,7 @@ public class DoomVertex implements BinaryMapObject
 	}
 
 	@Override
-	public byte[] toBytes() throws DataExportException
+	public byte[] toBytes()
 	{
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		try { writeBytes(bos); } catch (IOException e) { /* Shouldn't happen. */ }
@@ -126,7 +128,7 @@ public class DoomVertex implements BinaryMapObject
 	}
 
 	@Override
-	public void writeBytes(OutputStream out) throws DataExportException, IOException
+	public void writeBytes(OutputStream out) throws IOException
 	{
 		RangeUtils.checkShort("X-coordinate", x);
 		RangeUtils.checkShort("Y-coordinate", y);

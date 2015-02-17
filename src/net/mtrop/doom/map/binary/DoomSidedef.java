@@ -10,9 +10,7 @@ import com.blackrook.commons.Common;
 import com.blackrook.io.SuperReader;
 import com.blackrook.io.SuperWriter;
 
-import net.mtrop.doom.exception.DataConversionException;
-import net.mtrop.doom.exception.DataExportException;
-import net.mtrop.doom.map.BinaryMapObject;
+import net.mtrop.doom.map.BinaryObject;
 import net.mtrop.doom.util.NameUtils;
 import net.mtrop.doom.util.RangeUtils;
 
@@ -20,7 +18,7 @@ import net.mtrop.doom.util.RangeUtils;
  * Doom/Boom 30-byte format implementation of a Sidedef.
  * @author Matthew Tropiano
  */
-public class DoomSidedef implements BinaryMapObject 
+public class DoomSidedef implements BinaryObject 
 {
 	
 	/** Sidedef X Offset. */
@@ -49,8 +47,7 @@ public class DoomSidedef implements BinaryMapObject
 	
 	/**
 	 * Reads and creates a new DoomSidedef from an array of bytes.
-	 * This reads from the first 30 bytes of the stream.
-	 * The stream is NOT closed at the end.
+	 * This reads from the first 30 bytes of the array.
 	 * @param bytes the byte array to read.
 	 * @return a new DoomSidedef with its fields set.
 	 * @throws IOException if the stream cannot be read.
@@ -79,9 +76,11 @@ public class DoomSidedef implements BinaryMapObject
 	
 	/**
 	 * Sets the sidedef's texture X offset.
+	 * @throws IllegalArgumentException if the offset is outside the range -32768 to 32767.
 	 */
 	public void setOffsetX(int offsetX)
 	{
+		RangeUtils.checkShort("X-offset", offsetX);
 		this.offsetX = offsetX;
 	}
 	
@@ -95,9 +94,11 @@ public class DoomSidedef implements BinaryMapObject
 
 	/**
 	 * Sets the sidedef's texture Y offset.
+	 * @throws IllegalArgumentException if the offset is outside the range -32768 to 32767.
 	 */
 	public void setOffsetY(int offsetY)
 	{
+		RangeUtils.checkShort("Y-offset", offsetY);
 		this.offsetY = offsetY;
 	}
 	
@@ -111,11 +112,12 @@ public class DoomSidedef implements BinaryMapObject
 
 	/**
 	 * Sets the top texture name.
+	 * @throw IllegalArgumentException if the texture name is invalid. 
 	 */
 	public void setTextureTop(String textureTop)
 	{
 		if (!NameUtils.isValidTextureName(textureTop))
-			throw new DataConversionException("Texture name is invalid.");
+			throw new IllegalArgumentException("Texture name is invalid.");
 		this.textureTop = textureTop;
 	}
 	
@@ -129,11 +131,12 @@ public class DoomSidedef implements BinaryMapObject
 
 	/**
 	 * Sets the bottom texture name.
+	 * @throw IllegalArgumentException if the texture name is invalid. 
 	 */
 	public void setTextureBottom(String textureBottom)
 	{
 		if (!NameUtils.isValidTextureName(textureBottom))
-			throw new DataConversionException("Texture name is invalid.");
+			throw new IllegalArgumentException("Texture name is invalid.");
 		this.textureBottom = textureBottom;
 	}
 	
@@ -147,11 +150,12 @@ public class DoomSidedef implements BinaryMapObject
 
 	/**
 	 * Sets the middle texture name.
+	 * @throw IllegalArgumentException if the texture name is invalid. 
 	 */
 	public void setTextureMiddle(String textureMiddle)
 	{
 		if (!NameUtils.isValidTextureName(textureMiddle))
-			throw new DataConversionException("Texture name is invalid.");
+			throw new IllegalArgumentException("Texture name is invalid.");
 		this.textureMiddle = textureMiddle;
 	}
 	
@@ -165,9 +169,11 @@ public class DoomSidedef implements BinaryMapObject
 
 	/**
 	 * Sets the sector reference index for this sidedef.
+	 * @throws IllegalArgumentException if the offset is outside the range 0 to 65535.
 	 */
 	public void setSectorIndex(int sectorIndex)
 	{
+		RangeUtils.checkShort("Sector Index", sectorIndex);
 		this.sectorIndex = sectorIndex;
 	}
 	
@@ -180,7 +186,7 @@ public class DoomSidedef implements BinaryMapObject
 	}
 
 	@Override
-	public byte[] toBytes() throws DataExportException
+	public byte[] toBytes()
 	{
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		try { writeBytes(bos); } catch (IOException e) { /* Shouldn't happen. */ }
@@ -208,12 +214,8 @@ public class DoomSidedef implements BinaryMapObject
 	}
 
 	@Override
-	public void writeBytes(OutputStream out) throws DataExportException, IOException
+	public void writeBytes(OutputStream out) throws IOException
 	{
-		RangeUtils.checkShort("X-offset", offsetX);
-		RangeUtils.checkShort("Y-offset", offsetY);
-		RangeUtils.checkShort("Sector Index", sectorIndex);
-		
 		SuperWriter sw = new SuperWriter(out, SuperWriter.LITTLE_ENDIAN);
 		sw.writeShort((short)offsetX);
 		sw.writeShort((short)offsetY);

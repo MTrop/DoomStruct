@@ -1,4 +1,4 @@
-package net.mtrop.doom.map.binary;
+package net.mtrop.doom.struct;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,22 +9,16 @@ import com.blackrook.commons.Common;
 import com.blackrook.commons.logging.Logger;
 import com.blackrook.commons.logging.LoggingFactory;
 
-public class DoomSectorTest
+public final class BlockmapTest
 {
 	public static void main(String[] args) throws IOException
 	{
-		Logger logger = LoggingFactory.createConsoleLoggerFor(DoomSectorTest.class);
+		Logger logger = LoggingFactory.createConsoleLoggerFor(BlockmapTest.class);
 		
 		WadFile wad = new WadFile(args[0]);
-		InputStream in = wad.getDataAsStream("SECTORS");
+		InputStream in = wad.getDataAsStream("BLOCKMAP");
 
-		int i = 0;
-		byte[] b = new byte[26];
-		while (in.read(b) > 0)
-		{
-			DoomSector object = DoomSector.create(b);
-			logger.info((i++) + " " + object);
-		}
+		Blockmap blockmap = Blockmap.read(in);
 		
 		Common.close(in);
 		Common.close(wad);

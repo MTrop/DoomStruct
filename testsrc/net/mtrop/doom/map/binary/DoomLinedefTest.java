@@ -21,7 +21,10 @@ public class DoomLinedefTest
 		int i = 0;
 		byte[] b = new byte[14];
 		while (in.read(b) > 0)
-			logger.info((i++) + " " + DoomLinedef.create(b));
+		{
+			DoomLinedef object = DoomLinedef.create(b);
+			logger.info((i++) + " " + object);
+		}
 		
 		Common.close(in);
 		Common.close(wad);

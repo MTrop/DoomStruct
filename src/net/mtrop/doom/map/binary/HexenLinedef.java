@@ -11,15 +11,14 @@ import com.blackrook.commons.Common;
 import com.blackrook.io.SuperReader;
 import com.blackrook.io.SuperWriter;
 
-import net.mtrop.doom.exception.DataExportException;
-import net.mtrop.doom.map.BinaryMapObject;
+import net.mtrop.doom.map.BinaryObject;
 import net.mtrop.doom.util.RangeUtils;
 
 /**
  * Hexen/ZDoom 16-byte format implementation of Linedef.
  * @author Matthew Tropiano
  */
-public class HexenLinedef extends CommonLinedef implements BinaryMapObject 
+public class HexenLinedef extends CommonLinedef implements BinaryObject 
 {
 	/** Special activation: player walks over. */
 	public static final int ACTIVATION_PLAYER_CROSSES = 0;
@@ -79,8 +78,7 @@ public class HexenLinedef extends CommonLinedef implements BinaryMapObject
 
 	/**
 	 * Reads and creates a new HexenLinedef from an array of bytes.
-	 * This reads from the first 14 bytes of the stream.
-	 * The stream is NOT closed at the end.
+	 * This reads from the first 14 bytes of the array.
 	 * @param bytes the byte array to read.
 	 * @return a new HexenLinedef with its fields set.
 	 * @throws IOException if the stream cannot be read.
@@ -156,11 +154,21 @@ public class HexenLinedef extends CommonLinedef implements BinaryMapObject
 	}
 	
 	/**
-	 * @return gets the array of special arguments.
+	 * Sets the linedef special type. 
+	 * @throws IllegalArgumentException if special is outside the range 0 to 255.
 	 */
-	public int[] getArguments()
+	public void setSpecial(int special)
 	{
-		return arguments;
+		RangeUtils.checkByteUnsigned("Special", special);
+		this.special = special;
+	}
+
+	/**
+	 * @return the linedef special type. 
+	 */
+	public int getSpecial()
+	{
+		return special;
 	}
 
 	/**
@@ -171,11 +179,24 @@ public class HexenLinedef extends CommonLinedef implements BinaryMapObject
 	{
 		if (arguments.length > 5)
 			 throw new IllegalArgumentException("Length of arguments is greater than 5.");
-		System.arraycopy(arguments, 0, this.arguments, 0, Math.min(arguments.length, this.arguments.length));
+		
+		for (int i = 0; i < arguments.length; i++)
+		{
+			RangeUtils.checkByteUnsigned("Argument " + i, arguments[i]);
+			this.arguments[i] = arguments[i];
+		}
+	}
+
+	/**
+	 * @return gets the array of special arguments.
+	 */
+	public int[] getArguments()
+	{
+		return arguments;
 	}
 
 	@Override
-	public byte[] toBytes() throws DataExportException
+	public byte[] toBytes()
 	{
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		try { writeBytes(bos); } catch (IOException e) { /* Shouldn't happen. */ }
@@ -227,19 +248,8 @@ public class HexenLinedef extends CommonLinedef implements BinaryMapObject
 	}
 
 	@Override
-	public void writeBytes(OutputStream out) throws DataExportException, IOException 
+	public void writeBytes(OutputStream out) throws IOException 
 	{
-		RangeUtils.checkShortUnsigned("Vertex Start Index", vertexStartIndex);
-		RangeUtils.checkShortUnsigned("Vertex End Index", vertexEndIndex);
-		RangeUtils.checkByteUnsigned("Special", special);
-		RangeUtils.checkByteUnsigned("Argument 0", arguments[0]);
-		RangeUtils.checkByteUnsigned("Argument 1", arguments[1]);
-		RangeUtils.checkByteUnsigned("Argument 2", arguments[2]);
-		RangeUtils.checkByteUnsigned("Argument 3", arguments[3]);
-		RangeUtils.checkByteUnsigned("Argument 4", arguments[4]);
-		RangeUtils.checkRange("Sidedef Front Index", -1, Short.MAX_VALUE, sidedefFrontIndex);
-		RangeUtils.checkRange("Sidedef Back Index", -1, Short.MAX_VALUE, sidedefBackIndex);
-
 		SuperWriter sw = new SuperWriter(out, SuperWriter.LITTLE_ENDIAN);
 		sw.writeUnsignedShort(vertexStartIndex);
 		sw.writeUnsignedShort(vertexEndIndex);

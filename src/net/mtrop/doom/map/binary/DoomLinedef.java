@@ -10,15 +10,14 @@ import com.blackrook.commons.Common;
 import com.blackrook.io.SuperReader;
 import com.blackrook.io.SuperWriter;
 
-import net.mtrop.doom.exception.DataExportException;
-import net.mtrop.doom.map.BinaryMapObject;
+import net.mtrop.doom.map.BinaryObject;
 import net.mtrop.doom.util.RangeUtils;
 
 /**
  * Doom/Boom 14-byte format implementation of Linedef.
  * @author Matthew Tropiano
  */
-public class DoomLinedef extends CommonLinedef implements BinaryMapObject
+public class DoomLinedef extends CommonLinedef implements BinaryObject
 {
 	/** Flag: (Boom) Line passes activation through to other lines. */
 	protected boolean passThru;
@@ -34,8 +33,7 @@ public class DoomLinedef extends CommonLinedef implements BinaryMapObject
 
 	/**
 	 * Reads and creates a new DoomLinedef from an array of bytes.
-	 * This reads from the first 14 bytes of the stream.
-	 * The stream is NOT closed at the end.
+	 * This reads from the first 14 bytes of the array.
 	 * @param bytes the byte array to read.
 	 * @return a new DoomLinedef with its fields set.
 	 * @throws IOException if the stream cannot be read.
@@ -64,9 +62,11 @@ public class DoomLinedef extends CommonLinedef implements BinaryMapObject
 	
 	/**
 	 * Sets this linedef's special tag.
+	 * 
 	 */
 	public void setTag(int tag)
 	{
+		RangeUtils.checkShortUnsigned("Tag", tag);
 		this.tag = tag;
 	}
 
@@ -95,7 +95,7 @@ public class DoomLinedef extends CommonLinedef implements BinaryMapObject
 	}
 
 	@Override
-	public byte[] toBytes() throws DataExportException
+	public byte[] toBytes()
 	{
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		try { writeBytes(bos); } catch (IOException e) { /* Shouldn't happen. */ }
@@ -138,15 +138,8 @@ public class DoomLinedef extends CommonLinedef implements BinaryMapObject
 	}
 
 	@Override
-	public void writeBytes(OutputStream out) throws DataExportException, IOException 
+	public void writeBytes(OutputStream out) throws IOException 
 	{
-		RangeUtils.checkShortUnsigned("Vertex Start Index", vertexStartIndex);
-		RangeUtils.checkShortUnsigned("Vertex End Index", vertexEndIndex);
-		RangeUtils.checkShortUnsigned("Special", special);
-		RangeUtils.checkShortUnsigned("Tag", tag);
-		RangeUtils.checkRange("Sidedef Front Index", -1, Short.MAX_VALUE, sidedefFrontIndex);
-		RangeUtils.checkRange("Sidedef Back Index", -1, Short.MAX_VALUE, sidedefBackIndex);
-
 		SuperWriter sw = new SuperWriter(out, SuperWriter.LITTLE_ENDIAN);
 		sw.writeUnsignedShort(vertexStartIndex);
 		sw.writeUnsignedShort(vertexEndIndex);

@@ -1,6 +1,7 @@
 package net.mtrop.doom.map.binary;
 
 import net.mtrop.doom.map.MapObject;
+import net.mtrop.doom.util.RangeUtils;
 
 /**
  * Contains common elements of all binary things.
@@ -42,8 +43,8 @@ public abstract class CommonThing implements MapObject
 	 */
 	public void set(int x, int y)
 	{
-		this.x = x;
-		this.y = y;
+		setX(x);
+		setY(y);
 	}
 
 	/**
@@ -56,9 +57,11 @@ public abstract class CommonThing implements MapObject
 
 	/**
 	 * Sets the position X-coordinate.
+	 * @throws IllegalArgumentException if x is outside of the range -32768 to 32767.
 	 */
 	public void setX(int x)
 	{
+		RangeUtils.checkShort("X-coordinate", x);
 		this.x = x;
 	}
 
@@ -72,9 +75,11 @@ public abstract class CommonThing implements MapObject
 
 	/**
 	 * Sets the position Y-coordinate.
+	 * @throws IllegalArgumentException if y is outside of the range -32768 to 32767.
 	 */
 	public void setY(int y)
 	{
+		RangeUtils.checkShort("Y-coordinate", y);
 		this.y = y;
 	}
 
@@ -88,9 +93,11 @@ public abstract class CommonThing implements MapObject
 
 	/**
 	 * Sets the angle (in degrees). 
+	 * @throws IllegalArgumentException if angle is outside of the range -32768 to 32767.
 	 */
 	public void setAngle(int angle)
 	{
+		RangeUtils.checkShort("Angle", angle);
 		this.angle = angle;
 	}
 
@@ -104,9 +111,11 @@ public abstract class CommonThing implements MapObject
 
 	/**
 	 * Sets thing type (a.k.a. editor number). 
+	 * @throws IllegalArgumentException if type is outside of the range 0 to 65535.
 	 */
 	public void setType(int type)
 	{
+		RangeUtils.checkShortUnsigned("Type", type);
 		this.type = type;
 	}
 

@@ -10,9 +10,7 @@ import com.blackrook.commons.Common;
 import com.blackrook.io.SuperReader;
 import com.blackrook.io.SuperWriter;
 
-import net.mtrop.doom.exception.DataConversionException;
-import net.mtrop.doom.exception.DataExportException;
-import net.mtrop.doom.map.BinaryMapObject;
+import net.mtrop.doom.map.BinaryObject;
 import net.mtrop.doom.util.NameUtils;
 import net.mtrop.doom.util.RangeUtils;
 
@@ -20,7 +18,7 @@ import net.mtrop.doom.util.RangeUtils;
  * Doom/Boom 26-byte format implementation of Sector.
  * @author Matthew Tropiano
  */
-public class DoomSector implements BinaryMapObject
+public class DoomSector implements BinaryObject
 {
 	/** Sector Floor height. */
 	private int floorHeight;
@@ -48,8 +46,7 @@ public class DoomSector implements BinaryMapObject
 	
 	/**
 	 * Reads and creates a new DoomSector from an array of bytes.
-	 * This reads from the first 26 bytes of the stream.
-	 * The stream is NOT closed at the end.
+	 * This reads from the first 26 bytes of the array.
 	 * @param bytes the byte array to read.
 	 * @return a new DoomSector with its fields set.
 	 * @throws IOException if the stream cannot be read.
@@ -78,9 +75,11 @@ public class DoomSector implements BinaryMapObject
 	
 	/**
 	 * Sets this sector's floor height. 
+	 * @throws IllegalArgumentException if floorHeight is outside of the range -32768 to 32767.
 	 */
 	public void setFloorHeight(int floorHeight)
 	{
+		RangeUtils.checkShort("Floor Height", floorHeight);
 		this.floorHeight = floorHeight;
 	}
 	
@@ -94,9 +93,11 @@ public class DoomSector implements BinaryMapObject
 
 	/**
 	 * Sets the sector's ceiling height. 
+	 * @throws IllegalArgumentException if floorHeight is outside of the range -32768 to 32767.
 	 */
 	public void setCeilingHeight(int ceilingHeight)
 	{
+		RangeUtils.checkShort("Ceiling Height", ceilingHeight);
 		this.ceilingHeight = ceilingHeight;
 	}
 	
@@ -109,12 +110,13 @@ public class DoomSector implements BinaryMapObject
 	}
 
 	/**
-	 * Sets the sector's floor texture. 
+	 * Sets the sector's floor texture.
+	 * @throw IllegalArgumentException if the texture name is invalid. 
 	 */
 	public void setFloorTexture(String floorTexture)
 	{
 		if (!NameUtils.isValidTextureName(floorTexture))
-			throw new DataConversionException("Texture name is invalid.");
+			throw new IllegalArgumentException("Texture name is invalid.");
 		this.floorTexture = floorTexture;
 	}
 	
@@ -128,11 +130,12 @@ public class DoomSector implements BinaryMapObject
 
 	/**
 	 * Sets the sector's ceiling texture. 
+	 * @throw IllegalArgumentException if the texture name is invalid. 
 	 */
 	public void setCeilingTexture(String ceilingTexture)
 	{
 		if (!NameUtils.isValidTextureName(ceilingTexture))
-			throw new DataConversionException("Texture name is invalid.");
+			throw new IllegalArgumentException("Texture name is invalid.");
 		this.ceilingTexture = ceilingTexture;
 	}
 	
@@ -146,9 +149,11 @@ public class DoomSector implements BinaryMapObject
 
 	/**
 	 * Sets the sector's light level. 
+	 * @throws IllegalArgumentException if lightLevel is outside the range 0 to 255.
 	 */
 	public void setLightLevel(int lightLevel)
 	{
+		RangeUtils.checkShort("Light Level", lightLevel);
 		this.lightLevel = lightLevel;
 	}
 	
@@ -162,9 +167,11 @@ public class DoomSector implements BinaryMapObject
 
 	/**
 	 * Sets the sector's special. 
+	 * @throws IllegalArgumentException if special is outside the range 0 to 65535.
 	 */
 	public void setSpecial(int special)
 	{
+		RangeUtils.checkShort("Special", special);
 		this.special = special;
 	}
 	
@@ -178,9 +185,11 @@ public class DoomSector implements BinaryMapObject
 
 	/**
 	 * Sets the sector's tag. 
+	 * @throws IllegalArgumentException if tag is outside the range 0 to 65535.
 	 */
 	public void setTag(int tag)
 	{
+		RangeUtils.checkShort("Tag", tag);
 		this.tag = tag;
 	}
 	
@@ -193,7 +202,7 @@ public class DoomSector implements BinaryMapObject
 	}
 
 	@Override
-	public byte[] toBytes() throws DataExportException
+	public byte[] toBytes()
 	{
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		try { writeBytes(bos); } catch (IOException e) { /* Shouldn't happen. */ }
@@ -222,14 +231,8 @@ public class DoomSector implements BinaryMapObject
 	}
 
 	@Override
-	public void writeBytes(OutputStream out) throws DataExportException, IOException
+	public void writeBytes(OutputStream out) throws IOException
 	{
-		RangeUtils.checkShort("Floor Height", floorHeight);
-		RangeUtils.checkShort("Ceiling Height", ceilingHeight);
-		RangeUtils.checkShort("Light Level", lightLevel);
-		RangeUtils.checkShort("Special", special);
-		RangeUtils.checkShort("Tag", tag);
-
 		SuperWriter sw = new SuperWriter(out, SuperWriter.LITTLE_ENDIAN);
 		sw.writeShort((short)floorHeight);
 		sw.writeShort((short)ceilingHeight);

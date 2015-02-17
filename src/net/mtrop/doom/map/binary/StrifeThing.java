@@ -11,8 +11,7 @@ import com.blackrook.io.SuperReader;
 import com.blackrook.io.SuperWriter;
 
 import net.mtrop.doom.exception.DataExportException;
-import net.mtrop.doom.map.BinaryMapObject;
-import net.mtrop.doom.util.RangeUtils;
+import net.mtrop.doom.map.BinaryObject;
 
 /**
  * Doom/Boom 10-byte format implementation of Thing that uses
@@ -20,7 +19,7 @@ import net.mtrop.doom.util.RangeUtils;
  * except interpreted differently.
  * @author Matthew Tropiano
  */
-public class StrifeThing extends CommonThing implements BinaryMapObject
+public class StrifeThing extends CommonThing implements BinaryObject
 {
 	/** Flag: Thing is an ally. */
 	protected boolean ally;
@@ -38,8 +37,7 @@ public class StrifeThing extends CommonThing implements BinaryMapObject
 
 	/**
 	 * Reads and creates a new DoomThing from an array of bytes.
-	 * This reads from the first 10 bytes of the stream.
-	 * The stream is NOT closed at the end.
+	 * This reads from the first 10 bytes of the array.
 	 * @param bytes the byte array to read.
 	 * @return a new DoomThing with its fields set.
 	 * @throws IOException if the stream cannot be read.
@@ -115,7 +113,7 @@ public class StrifeThing extends CommonThing implements BinaryMapObject
 	}
 
 	@Override
-	public byte[] toBytes() throws DataExportException
+	public byte[] toBytes()
 	{
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		try { writeBytes(bos); } catch (IOException e) { /* Shouldn't happen. */ }
@@ -155,11 +153,6 @@ public class StrifeThing extends CommonThing implements BinaryMapObject
 	@Override
 	public void writeBytes(OutputStream out) throws DataExportException, IOException
 	{
-		RangeUtils.checkShort("X-coordinate", x);
-		RangeUtils.checkShort("Y-coordinate", y);
-		RangeUtils.checkShort("Angle", angle);
-		RangeUtils.checkShort("Type", type);
-		
 		SuperWriter sw = new SuperWriter(out, SuperWriter.LITTLE_ENDIAN);
 		sw.writeShort((short)x);
 		sw.writeShort((short)y);

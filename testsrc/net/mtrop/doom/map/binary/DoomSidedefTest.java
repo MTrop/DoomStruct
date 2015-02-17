@@ -21,7 +21,10 @@ public class DoomSidedefTest
 		int i = 0;
 		byte[] b = new byte[30];
 		while (in.read(b) > 0)
-			logger.info((i++) + " " + DoomSidedef.create(b));
+		{
+			DoomSidedef object = DoomSidedef.create(b);
+			logger.info((i++) + " " + object);
+		}
 		
 		Common.close(in);
 		Common.close(wad);

@@ -11,15 +11,14 @@ import com.blackrook.commons.Common;
 import com.blackrook.io.SuperReader;
 import com.blackrook.io.SuperWriter;
 
-import net.mtrop.doom.exception.DataExportException;
-import net.mtrop.doom.map.BinaryMapObject;
+import net.mtrop.doom.map.BinaryObject;
 import net.mtrop.doom.util.RangeUtils;
 
 /**
  * Hexen/ZDoom 20-byte format implementation of Thing.
  * @author Matthew Tropiano
  */
-public class HexenThing extends DoomThing implements BinaryMapObject
+public class HexenThing extends DoomThing implements BinaryObject
 {
 	/** Thing ID. */
 	protected int tid;
@@ -50,8 +49,7 @@ public class HexenThing extends DoomThing implements BinaryMapObject
 
 	/**
 	 * Reads and creates a new HexenThing from an array of bytes.
-	 * This reads from the first 10 bytes of the stream.
-	 * The stream is NOT closed at the end.
+	 * This reads from the first 10 bytes of the array.
 	 * @param bytes the byte array to read.
 	 * @return a new HexenThing with its fields set.
 	 * @throws IOException if the stream cannot be read.
@@ -216,9 +214,11 @@ public class HexenThing extends DoomThing implements BinaryMapObject
 
 	/**
 	 * Sets the special action for this thing.
+	 * @throws IllegalArgumentException if special is outside the range 0 to 255.
 	 */
 	public void setSpecial(int special)
 	{
+		RangeUtils.checkByteUnsigned("Special", special);
 		this.special = special;
 	}
 	
@@ -238,11 +238,16 @@ public class HexenThing extends DoomThing implements BinaryMapObject
 	{
 		if (arguments.length > 5)
 			 throw new IllegalArgumentException("Length of arguments is greater than 5.");
-		System.arraycopy(arguments, 0, this.arguments, 0, Math.min(arguments.length, this.arguments.length));
+
+		for (int i = 0; i < arguments.length; i++)
+		{
+			RangeUtils.checkByteUnsigned("Argument " + i, arguments[i]);
+			this.arguments[i] = arguments[i];
+		}
 	}
 	
 	@Override
-	public byte[] toBytes() throws DataExportException
+	public byte[] toBytes()
 	{
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		try { writeBytes(bos); } catch (IOException e) { /* Shouldn't happen. */ }
@@ -291,7 +296,7 @@ public class HexenThing extends DoomThing implements BinaryMapObject
 	}
 
 	@Override
-	public void writeBytes(OutputStream out) throws DataExportException, IOException
+	public void writeBytes(OutputStream out) throws IOException
 	{
 		RangeUtils.checkShortUnsigned("Thing ID", tid);
 		RangeUtils.checkShort("X-coordinate", x);

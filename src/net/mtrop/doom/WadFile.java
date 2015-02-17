@@ -22,8 +22,11 @@ import com.blackrook.io.SuperWriter;
  * which being dictated by the length of the entry list (as the list grows, so does the time it takes to write/change it).
  * @author Matthew Tropiano
  */
-public class WadFile extends RandomAccessFile implements Wad, Closeable
+public class WadFile implements Wad, Closeable
 {
+	/** File handle. */
+	private RandomAccessFile file;
+	
 	/** WAD File's name (equivalent to File.getName()). */
 	private String fileName;
 	/** WAD File's path (equivalent to File.getPath()). */
@@ -61,15 +64,18 @@ public class WadFile extends RandomAccessFile implements Wad, Closeable
 	 * @throws FileNotFoundException if the file can't be found.
 	 * @throws SecurityException if you don't have permission to access the file.
 	 * @throws WadException if the file isn't a Wad file.
-	 * @throws NullPointerException if "f" is null.
+	 * @throws NullPointerException if <code>f</code> is null.
 	 */
 	public WadFile(File f) throws IOException, WadException
 	{
-		super(f,"rws");
+		if (!f.exists())
+			throw new FileNotFoundException(f.getPath() + " does not exist!");
+		
+		file = new RandomAccessFile(f,"rws");
 		byte[] buffer = new byte[4];
 
 		// read header
-		read(buffer);
+		file.read(buffer);
 		String head = new String(buffer,"ASCII");
 		if (!head.equals(WadType.IWAD.toString()) && !head.equals(WadType.PWAD.toString()))
 			throw new WadException("Not a Wad file or supported Wad file type.");
@@ -84,22 +90,22 @@ public class WadFile extends RandomAccessFile implements Wad, Closeable
 		filePath = f.getPath();
 		fileAbsolutePath = f.getAbsolutePath();
 		
-		read(buffer);
+		file.read(buffer);
 		int size = SuperReader.bytesToInt(buffer,SuperReader.LITTLE_ENDIAN);
 
-		read(buffer);
+		file.read(buffer);
 		entryListOffset = SuperReader.bytesToInt(buffer,SuperReader.LITTLE_ENDIAN);
 		
 		entries = new List<WadEntry>((size + 1) * 2);
 		
 		// seek to entry list.
-		seek(entryListOffset);
+		file.seek(entryListOffset);
 		
 		// read entries.
 		byte[] entrybytes = new byte[16];
 		for (int i = 0; i < size; i++)
 		{
-			read(entrybytes);
+			file.read(entrybytes);
 			WadEntry entry = WadEntry.create(entrybytes);
 			if (entry.getName().length() > 0 || entry.getSize() > 0)
 				entries.add(entry);
@@ -108,18 +114,18 @@ public class WadFile extends RandomAccessFile implements Wad, Closeable
 
 	private void writeEntryList() throws IOException
 	{
-		seek(entryListOffset);
+		file.seek(entryListOffset);
 		for (WadEntry wfe : entries)
-			write(wfe.getBytes());
-		if (getFilePointer() < length())
-			setLength(getFilePointer());
+			file.write(wfe.getBytes());
+		if (file.getFilePointer() < file.length())
+			file.setLength(file.getFilePointer());
 	}
 
 	private void writeHeader() throws IOException
 	{
-		seek(4);
-		write(SuperWriter.intToBytes(entries.size(),SuperWriter.LITTLE_ENDIAN));
-		write(SuperWriter.intToBytes(entryListOffset,SuperWriter.LITTLE_ENDIAN));
+		file.seek(4);
+		file.write(SuperWriter.intToBytes(entries.size(),SuperWriter.LITTLE_ENDIAN));
+		file.write(SuperWriter.intToBytes(entryListOffset,SuperWriter.LITTLE_ENDIAN));
 	}
 
 	/**
@@ -127,7 +133,7 @@ public class WadFile extends RandomAccessFile implements Wad, Closeable
 	 * @param path	the path of the new file in the form of a String.
 	 * @return		a reference to the newly created WadFile, already open.
 	 * @throws IOException if the file can't be written.
-	 * @throws NullPointerException if "path" is null.
+	 * @throws NullPointerException if <code>path</code> is null.
 	 */
 	public static WadFile createWadFile(String path) throws IOException
 	{
@@ -139,7 +145,7 @@ public class WadFile extends RandomAccessFile implements Wad, Closeable
 	 * @param f		the file object referring to the new Wad.
 	 * @return		a reference to the newly created WadFile, already open.
 	 * @throws IOException if the file can't be written.
-	 * @throws NullPointerException if "f" is null.
+	 * @throws NullPointerException if <code>f</code> is null.
 	 */
 	public static WadFile createWadFile(File f) throws IOException
 	{
@@ -214,8 +220,8 @@ public class WadFile extends RandomAccessFile implements Wad, Closeable
 		WadEntry entry = WadEntry.create(entryName, data.length, entryListOffset);
 		entries.add(entry);
 		writeHeader();
-		seek(entryListOffset);
-		write(data);
+		file.seek(entryListOffset);
+		file.write(data);
 		writeEntryList();
 		return entry;
 	}
@@ -226,8 +232,8 @@ public class WadFile extends RandomAccessFile implements Wad, Closeable
 		WadEntry entry = WadEntry.create(entryName, data.length, entryListOffset);
 		entries.add(index, entry);
 
-		seek(entryListOffset);
-		write(data);
+		file.seek(entryListOffset);
+		file.write(data);
 		entryListOffset += data.length;
 		writeHeader();
 		writeEntryList();
@@ -248,11 +254,11 @@ public class WadFile extends RandomAccessFile implements Wad, Closeable
 		for (WadEntry we : out)
 			entries.add(we);
 
-		seek(entryListOffset);
+		file.seek(entryListOffset);
 		
 		for (int i = 0; i < entryNames.length; i++)
 		{
-			write(data[i].length);
+			file.write(data[i].length);
 			entryListOffset += data[i].length;
 		}
 
@@ -275,11 +281,11 @@ public class WadFile extends RandomAccessFile implements Wad, Closeable
 		for (WadEntry we : out)
 			entries.add(index++, we);
 
-		seek(entryListOffset);
+		file.seek(entryListOffset);
 		
 		for (int i = 0; i < entryNames.length; i++)
 		{
-			write(data[i].length);
+			file.write(data[i].length);
 			entryListOffset += data[i].length;
 		}
 
@@ -327,10 +333,10 @@ public class WadFile extends RandomAccessFile implements Wad, Closeable
 		while (dataOffset < entryListOffset)
 		{
 			int amount = Math.min(entryListOffset - dataOffset, buffer.length);
-			seek(dataOffset);
-			int readAmount = read(buffer, 0, amount);
-			seek(offset);
-			write(buffer, 0, readAmount);
+			file.seek(dataOffset);
+			int readAmount = file.read(buffer, 0, amount);
+			file.seek(offset);
+			file.write(buffer, 0, readAmount);
 			offset += readAmount;
 			dataOffset += readAmount;
 		}
@@ -361,8 +367,8 @@ public class WadFile extends RandomAccessFile implements Wad, Closeable
 		entry.name = newName;
 
 		// update in file.
-		seek(entryListOffset + (16 * index) + 8);
-		write(entry.getNameBytes());
+		file.seek(entryListOffset + (16 * index) + 8);
+		file.write(entry.getNameBytes());
 	}
 
 	@Override
@@ -436,8 +442,8 @@ public class WadFile extends RandomAccessFile implements Wad, Closeable
 	{
 		byte[] out = new byte[entry.getSize()];
 		try {
-			seek(entry.getOffset());
-			read(out, 0, entry.getSize());
+			file.seek(entry.getOffset());
+			file.read(out, 0, entry.getSize());
 		} catch (IndexOutOfBoundsException e) {
 			throw new IOException(e);
 		}
@@ -612,6 +618,12 @@ public class WadFile extends RandomAccessFile implements Wad, Closeable
 	public Iterator<WadEntry> iterator()
 	{
 		return entries.iterator();
+	}
+
+	@Override
+	public void close() throws IOException
+	{
+		file.close();
 	}
 
 }

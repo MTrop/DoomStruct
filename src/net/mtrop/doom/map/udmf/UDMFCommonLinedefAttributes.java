@@ -24,8 +24,6 @@ public interface UDMFCommonLinedefAttributes
 	public static final String ATTRIB_FLAG_DONT_DRAW = "dontdraw";
 	/** Linedef flag: Already revealed on automap. */
 	public static final String ATTRIB_FLAG_MAPPED = "mapped";
-	/** Linedef flag: Linedef passes its activation through to another line. */
-	public static final String ATTRIB_FLAG_PASSTHRU = "passuse";
 
 	/** Linedef Special type. */
 	public static final String ATTRIB_SPECIAL = "special";

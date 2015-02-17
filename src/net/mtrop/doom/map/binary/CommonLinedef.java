@@ -1,6 +1,7 @@
 package net.mtrop.doom.map.binary;
 
 import net.mtrop.doom.map.MapObject;
+import net.mtrop.doom.util.RangeUtils;
 
 /**
  * Contains common elements of all binary linedef.
@@ -50,9 +51,11 @@ public abstract class CommonLinedef implements MapObject
 	
 	/**
 	 * Sets the starting vertex index.
+	 * @throws IllegalArgumentException if index is outside the range 0 to 65535.
 	 */
 	public void setVertexStartIndex(int vertexStartIndex)
 	{
+		RangeUtils.checkShortUnsigned("Vertex Start Index", vertexStartIndex);
 		this.vertexStartIndex = vertexStartIndex;
 	}
 	/**
@@ -64,9 +67,11 @@ public abstract class CommonLinedef implements MapObject
 	}
 	/**
 	 * Sets the ending vertex index.
+	 * @throws IllegalArgumentException if index is outside the range 0 to 65535.
 	 */
 	public void setVertexEndIndex(int vertexEndIndex)
 	{
+		RangeUtils.checkShortUnsigned("Vertex End Index", vertexEndIndex);
 		this.vertexEndIndex = vertexEndIndex;
 	}
 	/**
@@ -78,9 +83,11 @@ public abstract class CommonLinedef implements MapObject
 	}
 	/**
 	 * Sets the front sidedef index.
+	 * @throws IllegalArgumentException if special is outside the range -1 to 32767.
 	 */
 	public void setSidedefFrontIndex(int sidedefFrontIndex)
 	{
+		RangeUtils.checkRange("Sidedef Front Index", -1, Short.MAX_VALUE, sidedefFrontIndex);
 		this.sidedefFrontIndex = sidedefFrontIndex;
 	}
 	/**
@@ -92,9 +99,11 @@ public abstract class CommonLinedef implements MapObject
 	}
 	/**
 	 * Sets the back sidedef index.
+	 * @throws IllegalArgumentException if special is outside the range -1 to 32767.
 	 */
 	public void setSidedefBackIndex(int sidedefBackIndex)
 	{
+		RangeUtils.checkRange("Sidedef Back Index", -1, Short.MAX_VALUE, sidedefBackIndex);
 		this.sidedefBackIndex = sidedefBackIndex;
 	}
 	/**
@@ -104,11 +113,14 @@ public abstract class CommonLinedef implements MapObject
 	{
 		return sidedefBackIndex;
 	}
+	
 	/**
 	 * Sets the linedef special type. 
+	 * @throws IllegalArgumentException if special is outside the range 0 to 65535.
 	 */
 	public void setSpecial(int special)
 	{
+		RangeUtils.checkShortUnsigned("Special", special);
 		this.special = special;
 	}
 	/**

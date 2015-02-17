@@ -11,6 +11,12 @@ import com.blackrook.commons.hash.CaseInsensitiveHashMap;
  */
 public class UDMFObject extends CaseInsensitiveHashMap<Object>
 {
+	/** Creates a new UDMFObject. */
+	public UDMFObject()
+	{
+		super(DEFAULT_CAPACITY, 1.0f);
+	}
+	
 	/**
 	 * Gets the boolean value of an arbitrary object attribute.
 	 * Non-empty strings and non-zero numbers are <code>true</code>.
