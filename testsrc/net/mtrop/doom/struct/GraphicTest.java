@@ -1,7 +1,10 @@
 package net.mtrop.doom.struct;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
+
+import javax.imageio.ImageIO;
 
 import net.mtrop.doom.WadFile;
 import net.mtrop.doom.graphics.Flat;
@@ -17,13 +20,16 @@ public final class GraphicTest
 		WadFile wad = new WadFile(args[0]);
 
 		Palette pal = Palette.create(wad.getData("PLAYPAL"));
-		Flat f = Flat.create(320, 200, wad.getData("TITLEPIC"));
+		Flat f = Flat.create(64, 64, wad.getData("FWATER1"));
 		Picture p = Picture.create(wad.getData("TROOA1"));
 
 		Common.close(wad);
 
 		BufferedImage fi = GraphicUtils.createImage(f, pal);
 		BufferedImage pi = GraphicUtils.createImage(p, pal);
+		
+		ImageIO.write(fi, "PNG", new File("out.png"));
+		ImageIO.write(pi, "PNG", new File("out2.png"));
 		
 	}
 
