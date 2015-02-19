@@ -1,8 +1,10 @@
-package net.mtrop.doom.map;
+package net.mtrop.doom;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+
+import net.mtrop.doom.map.MapObject;
 
 /**
  * Common elements of all map objects that are loaded from binary data.

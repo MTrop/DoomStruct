@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import net.mtrop.doom.map.BinaryObject;
+import net.mtrop.doom.BinaryObject;
 import net.mtrop.doom.util.RangeUtils;
 
 import com.blackrook.commons.Common;
@@ -22,7 +22,6 @@ import com.blackrook.io.SuperWriter;
  * <p>
  * The method {@link #readBytes(InputStream)} will read until it detects the end of the DEMO
  * information.
- * @since 2.6.0
  * @author Matthew Tropiano
  */
 public class Demo implements BinaryObject

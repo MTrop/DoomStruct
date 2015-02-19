@@ -2,7 +2,7 @@ package net.mtrop.doom.struct;
 
 import java.io.*;
 
-import net.mtrop.doom.map.BinaryObject;
+import net.mtrop.doom.BinaryObject;
 
 import com.blackrook.commons.Common;
 import com.blackrook.commons.math.RMath;
@@ -25,13 +25,12 @@ public class Colormap implements BinaryObject
 	protected int[] indices;
 
 	/**
-	 * Creates a new colormap where all indices point to palette color 0.
+	 * Creates a new identity colormap where all indices point to their own index.
 	 */
 	public Colormap()
 	{
 		indices = new int[NUM_INDICES];
-		for (int i = 0; i < NUM_INDICES; i++)
-			indices[i] = 0;
+		setIdentity();
 	}
 	
 	/**
@@ -42,18 +41,6 @@ public class Colormap implements BinaryObject
 		System.arraycopy(map.indices, 0, indices, 0, NUM_INDICES);
 	}
 	
-	/**
-	 * Creates a color map where each color is mapped to its own index
-	 * (index 0 is palette color 0 ... index 255 is palette color 255).
-	 * @return a new color map with the specified indices already mapped.
-	 */
-	public static Colormap createIdentityMap()
-	{
-		Colormap out = new Colormap();
-		out.setIdentity();
-		return out;
-	}
-
 	/**
 	 * Reads and creates a new Colormap object from an array of bytes.
 	 * This reads the first 256 bytes from the array.
@@ -83,6 +70,51 @@ public class Colormap implements BinaryObject
 		return out;
 	}
 	
+	/**
+	 * Reads and creates new Colormap from an array of bytes.
+	 * This reads from the first 256 * <code>count</code> bytes of the array.
+	 * @param bytes the byte array to read.
+	 * @param count the amount of objects to read.
+	 * @return an array of Colormap objects with its fields set.
+	 * @throws IOException if the stream cannot be read.
+	 */
+	public static Colormap[] create(byte[] bytes, int count) throws IOException
+	{
+		return read(new ByteArrayInputStream(bytes), count);
+	}
+
+	/**
+	 * Reads and creates a new Colormap from an {@link InputStream} implementation.
+	 * This reads from the stream until enough bytes for <code>count</code> {@link Colormap}s are read.
+	 * The stream is NOT closed at the end.
+	 * @param in the open {@link InputStream} to read from.
+	 * @param count the amount of objects to read.
+	 * @return an array of Colormap objects with its fields set.
+	 * @throws IOException if the stream cannot be read.
+	 */
+	public static Colormap[] read(InputStream in, int count) throws IOException
+	{
+		Colormap[] out = new Colormap[count];
+		for (int i = 0; i < count; i++)
+		{
+			out[i] = new Colormap();
+			out[i].readBytes(in);
+		}
+		return out;
+	}
+
+	/**
+	 * Creates a color map where each color is mapped to its own index
+	 * (index 0 is palette color 0 ... index 255 is palette color 255).
+	 * @return a new color map with the specified indices already mapped.
+	 */
+	public static Colormap createIdentityMap()
+	{
+		Colormap out = new Colormap();
+		out.setIdentity();
+		return out;
+	}
+
 	/**
 	 * Resets the color map to where each color is mapped to its own index
 	 * (index 0 is palette color 0 ... index 255 is palette color 255).
@@ -172,5 +204,7 @@ public class Colormap implements BinaryObject
 	{
 		return "Colormap " + java.util.Arrays.toString(indices);
 	}
+	
+	
 	
 }

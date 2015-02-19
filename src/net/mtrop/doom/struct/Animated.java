@@ -6,8 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import net.mtrop.doom.BinaryObject;
 import net.mtrop.doom.exception.DataExportException;
-import net.mtrop.doom.map.BinaryObject;
 import net.mtrop.doom.util.NameUtils;
 
 import com.blackrook.commons.Common;
@@ -19,9 +19,6 @@ import com.blackrook.io.SuperWriter;
  * This class represents the contents of a Boom Engine ANIMATED
  * lump. This lump contains extended information regarding animated
  * flats and textures.
- * <p>
- * NOTE: {@link Animated#readBytes(InputStream)} will read chunks of 23 bytes until it detects
- * the end of the ANIMATED entry list, NOT once it detects the end of the stream.
  * @author Matthew Tropiano
  */
 public class Animated extends List<Animated.Entry> implements BinaryObject
@@ -62,7 +59,7 @@ public class Animated extends List<Animated.Entry> implements BinaryObject
 	
 	/**
 	 * Reads and creates a new Animated from an {@link InputStream} implementation.
-	 * This reads from the stream until enough bytes for a {@link Animated} are read.
+	 * This reads from the stream until enough bytes for a full {@link Animated} lump are read.
 	 * The stream is NOT closed at the end.
 	 * @param in the open {@link InputStream} to read from.
 	 * @return a new Animated with its fields set.
@@ -184,7 +181,7 @@ public class Animated extends List<Animated.Entry> implements BinaryObject
 		 */
 		Entry()
 		{
-			this(null, "\0\0\0\0\0\0\0\0", "\\0\\0\\0\\0\\0\\0\\0\\0", 1);
+			this(null, "\0\0\0\0\0\0\0\0", "\0\0\0\0\0\0\0\0", 1);
 		}
 		
 		/**
@@ -344,9 +341,10 @@ public class Animated extends List<Animated.Entry> implements BinaryObject
 			}
 			else
 				sw.writeByte((byte)-1);
-			sw.writeASCIIString(lastName);
+			
+			sw.writeBytes(NameUtils.toASCIIBytes(lastName, 8));
 			sw.writeBoolean(false); // ensure null terminal
-			sw.writeASCIIString(firstName);
+			sw.writeBytes(NameUtils.toASCIIBytes(firstName, 8));
 			sw.writeBoolean(false); // ensure null terminal
 			sw.writeInt(ticks);
 		}
@@ -355,7 +353,7 @@ public class Animated extends List<Animated.Entry> implements BinaryObject
 		public String toString()
 		{
 			StringBuilder sb = new StringBuilder();
-			sb.append("ANIMATED "); 
+			sb.append("Animated "); 
 			sb.append(type != null ? TextureType.values()[type.ordinal()] : "[TERMINAL]");
 			sb.append(' ');
 			sb.append(lastName);

@@ -6,8 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import net.mtrop.doom.BinaryObject;
 import net.mtrop.doom.exception.DataExportException;
-import net.mtrop.doom.map.BinaryObject;
 import net.mtrop.doom.util.RangeUtils;
 
 import com.blackrook.commons.Common;

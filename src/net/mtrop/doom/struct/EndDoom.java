@@ -16,7 +16,7 @@ import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 
-import net.mtrop.doom.map.BinaryObject;
+import net.mtrop.doom.BinaryObject;
 
 import com.blackrook.commons.Common;
 import com.blackrook.io.SuperReader;

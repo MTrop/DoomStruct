@@ -10,8 +10,8 @@ import com.blackrook.commons.Common;
 import com.blackrook.io.SuperReader;
 import com.blackrook.io.SuperWriter;
 
+import net.mtrop.doom.BinaryObject;
 import net.mtrop.doom.exception.DataExportException;
-import net.mtrop.doom.map.BinaryObject;
 
 /**
  * Doom/Boom 10-byte format implementation of Thing that uses
@@ -36,7 +36,7 @@ public class StrifeThing extends CommonThing implements BinaryObject
 	}
 
 	/**
-	 * Reads and creates a new DoomThing from an array of bytes.
+	 * Reads and creates a new StrifeThing from an array of bytes.
 	 * This reads from the first 10 bytes of the array.
 	 * @param bytes the byte array to read.
 	 * @return a new DoomThing with its fields set.
@@ -50,17 +50,50 @@ public class StrifeThing extends CommonThing implements BinaryObject
 	}
 	
 	/**
-	 * Reads and creates a new DoomThing from an {@link InputStream} implementation.
+	 * Reads and creates a new StrifeThing from an {@link InputStream} implementation.
 	 * This reads from the stream until enough bytes for a {@link StrifeThing} are read.
 	 * The stream is NOT closed at the end.
 	 * @param in the open {@link InputStream} to read from.
-	 * @return a new DoomThing with its fields set.
+	 * @return a new StrifeThing with its fields set.
 	 * @throws IOException if the stream cannot be read.
 	 */
 	public static StrifeThing read(InputStream in) throws IOException
 	{
 		StrifeThing out = new StrifeThing();
 		out.readBytes(in);
+		return out;
+	}
+	
+	/**
+	 * Reads and creates new StrifeThing from an array of bytes.
+	 * This reads from the first 20 * <code>count</code> bytes of the array.
+	 * @param bytes the byte array to read.
+	 * @param count the amount of objects to read.
+	 * @return an array of StrifeThing objects with its fields set.
+	 * @throws IOException if the stream cannot be read.
+	 */
+	public static StrifeThing[] create(byte[] bytes, int count) throws IOException
+	{
+		return read(new ByteArrayInputStream(bytes), count);
+	}
+	
+	/**
+	 * Reads and creates a new StrifeThing from an {@link InputStream} implementation.
+	 * This reads from the stream until enough bytes for <code>count</code> {@link StrifeThing}s are read.
+	 * The stream is NOT closed at the end.
+	 * @param in the open {@link InputStream} to read from.
+	 * @param count the amount of objects to read.
+	 * @return an array of StrifeThing objects with its fields set.
+	 * @throws IOException if the stream cannot be read.
+	 */
+	public static StrifeThing[] read(InputStream in, int count) throws IOException
+	{
+		StrifeThing[] out = new StrifeThing[count];
+		for (int i = 0; i < count; i++)
+		{
+			out[i] = new StrifeThing();
+			out[i].readBytes(in);
+		}
 		return out;
 	}
 	
