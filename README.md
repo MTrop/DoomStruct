@@ -17,7 +17,7 @@ Releases will be found [here]. (link not working, yet - no releases).
 
 ### Required Libraries
 
-Black Rook Commons 2.14.0+  
+Black Rook Commons 2.20.2+  
 [https://github.com/BlackRookSoftware/Common](https://github.com/BlackRookSoftware/Common)
 
 Black Rook Common I/O 2.3.0+  
