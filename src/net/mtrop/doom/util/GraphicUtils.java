@@ -1,10 +1,14 @@
 package net.mtrop.doom.util;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
 import net.mtrop.doom.graphics.Flat;
 import net.mtrop.doom.graphics.Picture;
 import net.mtrop.doom.struct.Colormap;
+import net.mtrop.doom.struct.EndDoom;
 import net.mtrop.doom.struct.Palette;
 
 /**
@@ -13,6 +17,26 @@ import net.mtrop.doom.struct.Palette;
  */
 public final class GraphicUtils
 {
+	/** ANSI color table. */
+	public static final Color[] ANSI_COLORS = {
+		new Color(0,0,0),		//black
+		new Color(0,0,171),		//blue
+		new Color(0,171,0),		//green
+		new Color(0,153,153),	//cyan
+		new Color(171,0,0),		//red
+		new Color(153,0,153), 	//magenta
+		new Color(153,102,0),	//brown
+		new Color(171,171,171),	//light gray
+		new Color(84,84,84),	//dark gray
+		new Color(102,102,255),	//light blue
+		new Color(102,255,102),	//light green
+		new Color(102,255,255),	//light cyan
+		new Color(255,102,102),	//light red
+		new Color(255,102,255),	//light magenta
+		new Color(255,255,102),	//yellow
+		new Color(255,255,255)	//white
+	};
+
 	private GraphicUtils()
 	{
 	}
@@ -166,5 +190,42 @@ public final class GraphicUtils
 		
 		return out;
 	}
+
+	/**
+	 * Returns the EndDoom data rendered to a BufferedImage.
+	 * @param endoom the EndDoom lump to render.
+	 * @param blinking if true, this will render the "blinking" characters.
+	 * @return a BufferedImage that represents the graphic image in RGB color (including transparency).
+	 */
+	public static BufferedImage createImageForEndDoom(EndDoom endoom, boolean blinking)
+	{
+		BufferedImage out = new BufferedImage(640, 300, BufferedImage.TYPE_INT_ARGB);
+		Font font = new Font("Lucida Console", Font.PLAIN, 13);
+		char[] ch = new char[1];
+		Graphics2D g = (Graphics2D)out.getGraphics();
+		g.setFont(font);
+		g.setColor(ANSI_COLORS[0]);
+		g.fillRect(0, 0, 640, 300);
+		
+		for (int r = 0; r < 25; r++)
+			for (int c = 0; c < 80; c++)
+			{
+				g.setColor(ANSI_COLORS[endoom.getBackgroundColor(r, c)]);
+				g.fillRect(c*8, r*12, 8, 12);
+			}
+		
+		for (int r = 24; r >= 0; r--)
+			for (int c = 79; c >= 0; c--)
+			{
+				if (blinking || (!blinking && endoom.getBlinking(r, c)))
+				{
+					g.setColor(ANSI_COLORS[endoom.getForegroundColor(r, c)]);
+					ch[0] = endoom.getCharAt(r, c);
+					g.drawChars(ch, 0, 1, c*8, r*12+10);
+				}
+			}
+		return out;
+	}
+	
 	
 }

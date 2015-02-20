@@ -34,21 +34,21 @@ data structures for the Doom Engine and similar derivatives.
 ### Implemented Features (so far)
 
 - Reads WAD files.
-
-### Slated Features
-
 - Reads all Doom map and data structures in Doom, Hexen/ZDoom, or Strife 
   formats. This includes textures, patches, lines, vertices, things, sectors,
   nodes, palettes, colormaps, text, PNG data, MUS data, flats, blockmaps,
   reject, and even ENDOOM-type VGA lumps.
-- Can read/edit Boom-engine data lumps like ANIMATED and SWITCHES. 
-- Contains libraries for predicting game types for maps and Wads.
-- Can read both WAD and PK3 package types.
 - Contains a utility class for converting Doom graphics to standard Java
   graphics structures.
+- Can read/edit Boom-engine data lumps like ANIMATED and SWITCHES. 
+- Full UDMF parsing/writing support.
+
+### Slated Features
+
+- Contains libraries for predicting game types for maps and Wads.
+- Can read PK3 package type.
 - Contains a utility class for visualizing maps for graphic export or
   rendering to a canvas.
-- Full UDMF parsing/writing support.
 
 ### Library
 

@@ -22,14 +22,17 @@ public final class GraphicTest
 		Palette pal = Palette.create(wad.getData("PLAYPAL"));
 		Flat f = Flat.create(64, 64, wad.getData("FWATER1"));
 		Picture p = Picture.create(wad.getData("TROOA1"));
+		EndDoom endoom = EndDoom.create(wad.getData("ENDOOM"));
 
 		Common.close(wad);
 
 		BufferedImage fi = GraphicUtils.createImage(f, pal);
 		BufferedImage pi = GraphicUtils.createImage(p, pal);
+		BufferedImage ei = GraphicUtils.createImageForEndDoom(endoom, true);
 		
 		ImageIO.write(fi, "PNG", new File("out.png"));
 		ImageIO.write(pi, "PNG", new File("out2.png"));
+		ImageIO.write(ei, "PNG", new File("endoom.png"));
 		
 	}
 
