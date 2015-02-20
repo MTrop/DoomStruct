@@ -74,7 +74,7 @@ public class Blockmap implements BinaryObject
 	 * This reads from the stream until enough bytes for a {@link Blockmap} are read.
 	 * The stream is NOT closed at the end.
 	 * @param in the open {@link InputStream} to read from.
-	 * @return a new Blockmap with its fields set.
+	 * @return a new Blockmap object.
 	 * @throws IOException if the stream cannot be read.
 	 */
 	public static Blockmap read(InputStream in) throws IOException

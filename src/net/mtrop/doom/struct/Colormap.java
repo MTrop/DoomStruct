@@ -18,8 +18,7 @@ import com.blackrook.io.SuperReader;
 public class Colormap implements BinaryObject
 {
 	/** The number of total indices in a standard Doom color map. */
-	public static final int
-	NUM_INDICES = 256;
+	public static final int NUM_INDICES = 256;
 	
 	/** The index list in this map. */
 	protected int[] indices;

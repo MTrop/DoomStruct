@@ -331,19 +331,6 @@ public class HexenThing extends DoomThing implements BinaryObject
 	@Override
 	public void writeBytes(OutputStream out) throws IOException
 	{
-		RangeUtils.checkShortUnsigned("Thing ID", tid);
-		RangeUtils.checkShort("X-coordinate", x);
-		RangeUtils.checkShort("Y-coordinate", y);
-		RangeUtils.checkShort("Z Height", z);
-		RangeUtils.checkShort("Angle", angle);
-		RangeUtils.checkShort("Type", type);
-		RangeUtils.checkByteUnsigned("Special", special);
-		RangeUtils.checkByteUnsigned("Argument 0", arguments[0]);
-		RangeUtils.checkByteUnsigned("Argument 1", arguments[1]);
-		RangeUtils.checkByteUnsigned("Argument 2", arguments[2]);
-		RangeUtils.checkByteUnsigned("Argument 3", arguments[3]);
-		RangeUtils.checkByteUnsigned("Argument 4", arguments[4]);
-		
 		SuperWriter sw = new SuperWriter(out, SuperWriter.LITTLE_ENDIAN);
 		sw.writeUnsignedShort(tid);
 		sw.writeShort((short)x);
