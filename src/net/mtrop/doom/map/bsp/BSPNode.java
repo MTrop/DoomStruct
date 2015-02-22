@@ -19,6 +19,9 @@ import com.blackrook.io.SuperWriter;
  */
 public class BSPNode implements BinaryObject
 {
+	/** Byte length of this object. */
+	public static final int LENGTH = 28;
+
 	/** Leaf node value. */
 	public static final int LEAF_NODE_INDEX = 0xffff8000;
 	
@@ -36,9 +39,9 @@ public class BSPNode implements BinaryObject
 	protected int[] leftRect;
 
 	/** This node's right child index or subsector index. */
-	protected int rightIndex;
+	protected int rightSubsectorIndex;
 	/** This node's left child index or subsector index. */
-	protected int leftIndex;
+	protected int leftSubsectorIndex;
 
 	/**
 	 * Creates a new BSP Node.
@@ -51,8 +54,8 @@ public class BSPNode implements BinaryObject
 		partitionDeltaY = 0;
 		rightRect = new int[4];
 		leftRect = new int[4];
-		rightIndex = 0;
-		leftIndex = 0;
+		rightSubsectorIndex = 0;
+		leftSubsectorIndex = 0;
 	}
 
 	/**
@@ -160,14 +163,14 @@ public class BSPNode implements BinaryObject
 	 * Sets this node's right subsector index. 
 	 * @throws IllegalArgumentException if the value is outside the range 0 to 32767, or isn't {@link BSPNode#LEAF_NODE_INDEX}. 
 	 */
-	public void setRightIndex(int val)
+	public void setRightSubsectorIndex(int val)
 	{
 		if (val == LEAF_NODE_INDEX)
-			rightIndex = val;
+			rightSubsectorIndex = val;
 		else
 		{
-			RangeUtils.checkRange("Right Subsector Index", 0, 32767, rightIndex);
-			rightIndex = val;
+			RangeUtils.checkRange("Right Subsector Index", 0, 32767, rightSubsectorIndex);
+			rightSubsectorIndex = val;
 		}
 	}
 
@@ -175,14 +178,14 @@ public class BSPNode implements BinaryObject
 	 * Sets this node's left subsector index. 
 	 * @throws IllegalArgumentException if the value is outside the range 0 to 32767, or isn't {@link BSPNode#LEAF_NODE_INDEX}. 
 	 */
-	public void setLeftIndex(int val)
+	public void setLeftSubsectorIndex(int val)
 	{
 		if (val == LEAF_NODE_INDEX)
-			leftIndex = val;
+			leftSubsectorIndex = val;
 		else
 		{
-			RangeUtils.checkRange("Left Subsector Index", 0, 32767, leftIndex);
-			leftIndex = val;
+			RangeUtils.checkRange("Left Subsector Index", 0, 32767, leftSubsectorIndex);
+			leftSubsectorIndex = val;
 		}
 	}
 
@@ -231,15 +234,15 @@ public class BSPNode implements BinaryObject
 	 */
 	public boolean getRightChildIsLeaf()
 	{
-		return rightIndex == LEAF_NODE_INDEX;
+		return rightSubsectorIndex == LEAF_NODE_INDEX;
 	}
 
 	/** 
 	 * @return this node's right subsector index. 
 	 */
-	public int getRightIndex()
+	public int getRightSubsectorIndex()
 	{
-		return rightIndex;
+		return rightSubsectorIndex;
 	}
 
 	/** 
@@ -247,15 +250,15 @@ public class BSPNode implements BinaryObject
 	 */
 	public boolean getLeftChildIsLeaf()
 	{
-		return leftIndex == LEAF_NODE_INDEX;
+		return leftSubsectorIndex == LEAF_NODE_INDEX;
 	}
 
 	/** 
 	 * @return this node's left subsector index. 
 	 */
-	public int getLeftIndex()
+	public int getLeftSubsectorIndex()
 	{
-		return leftIndex;
+		return leftSubsectorIndex;
 	}
 
 	@Override
@@ -286,8 +289,8 @@ public class BSPNode implements BinaryObject
 			rightRect[i] = sr.readShort();
 		for (int i = 0; i < 4; i++)
 			leftRect[i] = sr.readShort();
-		rightIndex = sr.readShort();
-		leftIndex = sr.readShort();
+		rightSubsectorIndex = sr.readShort();
+		leftSubsectorIndex = sr.readShort();
 	}
 
 	@Override
@@ -302,8 +305,8 @@ public class BSPNode implements BinaryObject
 			sw.writeShort((short)rightRect[i]);
 		for (int i = 0; i < 4; i++)
 			sw.writeShort((short)leftRect[i]);
-		sw.writeShort((short)rightIndex);
-		sw.writeShort((short)leftIndex);
+		sw.writeShort((short)rightSubsectorIndex);
+		sw.writeShort((short)leftSubsectorIndex);
 	}
 
 }

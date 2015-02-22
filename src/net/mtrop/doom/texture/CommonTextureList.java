@@ -23,12 +23,12 @@ import com.blackrook.io.SuperWriter;
  * All textures are stored in here, usually named TEXTURE1 or TEXTURE2 in a WAD.
  * @author Matthew Tropiano
  */
-public abstract class TextureList<T extends Texture<?>> extends CaseInsensitiveMappedVector<T> implements BinaryObject
+public abstract class CommonTextureList<T extends CommonTexture<?>> extends CaseInsensitiveMappedVector<T> implements BinaryObject
 {
 	/**
 	 * Creates a new TextureList with a default starting capacity.
 	 */
-	public TextureList()
+	public CommonTextureList()
 	{
 		super();
 	}
@@ -36,7 +36,7 @@ public abstract class TextureList<T extends Texture<?>> extends CaseInsensitiveM
 	/**
 	 * Creates a new TextureList with a specific starting capacity.
 	 */
-	public TextureList(int capacity)
+	public CommonTextureList(int capacity)
 	{
 		super(capacity);
 	}

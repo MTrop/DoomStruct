@@ -16,7 +16,7 @@ public class HexenLinedefTest
 		Logger logger = LoggingFactory.createConsoleLoggerFor(HexenLinedefTest.class);
 		
 		WadFile wad = new WadFile(args[0]);
-		InputStream in = wad.getDataAsStream("LINEDEFS");
+		InputStream in = wad.getInputStream("LINEDEFS");
 
 		int i = 0;
 		byte[] b = new byte[16];

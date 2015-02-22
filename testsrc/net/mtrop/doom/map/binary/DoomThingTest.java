@@ -16,7 +16,7 @@ public class DoomThingTest
 		Logger logger = LoggingFactory.createConsoleLoggerFor(DoomThingTest.class);
 		
 		WadFile wad = new WadFile(args[0]);
-		InputStream in = wad.getDataAsStream("THINGS");
+		InputStream in = wad.getInputStream("THINGS");
 
 		int i = 0;
 		byte[] b = new byte[10];

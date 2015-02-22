@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import net.mtrop.doom.WadFile;
 import net.mtrop.doom.map.binary.DoomSector;
+import net.mtrop.doom.map.bsp.BSPReject;
 
 import com.blackrook.commons.Common;
 import com.blackrook.commons.logging.Logger;
@@ -20,7 +21,7 @@ public final class RejectTest
 		byte[] data2 = wad.getData("REJECT");
 
 		DoomSector[] sectors = DoomSector.create(data, data.length / 26);
-		Reject reject = new Reject(sectors.length);
+		BSPReject reject = new BSPReject(sectors.length);
 		reject.fromBytes(data2);
 		
 		Common.close(wad);

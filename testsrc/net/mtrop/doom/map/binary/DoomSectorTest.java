@@ -16,7 +16,7 @@ public class DoomSectorTest
 		Logger logger = LoggingFactory.createConsoleLoggerFor(DoomSectorTest.class);
 		
 		WadFile wad = new WadFile(args[0]);
-		InputStream in = wad.getDataAsStream("SECTORS");
+		InputStream in = wad.getInputStream("SECTORS");
 
 		int i = 0;
 		byte[] b = new byte[26];

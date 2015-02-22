@@ -16,7 +16,7 @@ public final class DemoTest
 		Logger logger = LoggingFactory.createConsoleLoggerFor(DemoTest.class);
 		
 		WadFile wad = new WadFile(args[0]);
-		InputStream in = wad.getDataAsStream("DEMO1");
+		InputStream in = wad.getInputStream("DEMO1");
 
 		Demo demo = Demo.read(in);
 		logger.info(demo);

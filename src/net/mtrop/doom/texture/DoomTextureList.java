@@ -12,7 +12,7 @@ import com.blackrook.io.SuperReader;
  * All textures are stored in here, usually named TEXTURE1 or TEXTURE2 in the WAD.
  * @author Matthew Tropiano
  */
-public class DoomTextureList extends TextureList<DoomTexture> implements BinaryObject
+public class DoomTextureList extends CommonTextureList<DoomTexture> implements BinaryObject
 {
 	/**
 	 * Creates a new TextureList with a default starting capacity.

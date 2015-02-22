@@ -16,7 +16,7 @@ public final class PaletteTest
 		Logger logger = LoggingFactory.createConsoleLoggerFor(PaletteTest.class);
 		
 		WadFile wad = new WadFile(args[0]);
-		InputStream in = wad.getDataAsStream("PLAYPAL");
+		InputStream in = wad.getInputStream("PLAYPAL");
 
 		logger.info(Palette.read(in));
 			

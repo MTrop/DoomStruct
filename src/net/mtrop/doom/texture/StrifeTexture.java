@@ -14,7 +14,7 @@ import com.blackrook.io.SuperWriter;
  * Strife Textures use Strife's texture representation. 
  * @author Matthew Tropiano
  */
-public class StrifeTexture extends Texture<StrifeTexture.Patch>
+public class StrifeTexture extends CommonTexture<StrifeTexture.Patch>
 {
 	/**
 	 * Reads and creates a new StrifeTexture object from an array of bytes.
@@ -81,7 +81,7 @@ public class StrifeTexture extends Texture<StrifeTexture.Patch>
 	/**
 	 * Singular patch entry for a texture.
 	 */
-	public static class Patch extends net.mtrop.doom.texture.Patch
+	public static class Patch extends net.mtrop.doom.texture.CommonPatch
 	{
 		@Override
 		public void readBytes(InputStream in) throws IOException

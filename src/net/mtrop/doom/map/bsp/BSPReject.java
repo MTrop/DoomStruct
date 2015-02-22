@@ -1,4 +1,4 @@
-package net.mtrop.doom.struct;
+package net.mtrop.doom.map.bsp;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -19,7 +19,7 @@ import com.blackrook.io.SuperWriter;
  * "see" other sectors on the map used for thing sight algorithms. 
  * @author Matthew Tropiano
  */
-public class Reject implements BinaryObject
+public class BSPReject implements BinaryObject
 {
 	/** The reject grid itself. */
 	private boolean[][] grid;
@@ -28,7 +28,7 @@ public class Reject implements BinaryObject
 	 * Creates a new blank reject grid.
 	 * @param sectors the number of sectors.
 	 */
-	public Reject(int sectors)
+	public BSPReject(int sectors)
 	{
 		grid = new boolean[sectors][sectors];
 	}
@@ -84,7 +84,5 @@ public class Reject implements BinaryObject
 				sw.writeBit(grid[i][j]);
 		sw.flushBits();
 	}
-	
-	
 
 }

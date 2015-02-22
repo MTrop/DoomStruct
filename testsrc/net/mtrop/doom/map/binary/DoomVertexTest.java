@@ -16,7 +16,7 @@ public class DoomVertexTest
 		Logger logger = LoggingFactory.createConsoleLoggerFor(DoomVertexTest.class);
 		
 		WadFile wad = new WadFile(args[0]);
-		InputStream in = wad.getDataAsStream("VERTEXES");
+		InputStream in = wad.getInputStream("VERTEXES");
 
 		int i = 0;
 		byte[] b = new byte[4];

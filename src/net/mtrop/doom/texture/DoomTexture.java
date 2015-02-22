@@ -14,7 +14,7 @@ import com.blackrook.io.SuperWriter;
  * Doom Textures have the same binary representation in Heretic and Hexen. 
  * @author Matthew Tropiano
  */
-public class DoomTexture extends Texture<DoomTexture.Patch>
+public class DoomTexture extends CommonTexture<DoomTexture.Patch>
 {
 	
 	/**
@@ -88,7 +88,7 @@ public class DoomTexture extends Texture<DoomTexture.Patch>
 	/**
 	 * Singular patch entry for a texture.
 	 */
-	public static class Patch extends net.mtrop.doom.texture.Patch
+	public static class Patch extends net.mtrop.doom.texture.CommonPatch
 	{
 		@Override
 		public void readBytes(InputStream in) throws IOException

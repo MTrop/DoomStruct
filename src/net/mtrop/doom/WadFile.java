@@ -451,7 +451,7 @@ public class WadFile implements Wad, Closeable
 	}
 
 	@Override	
-	public InputStream getDataAsStream(int n) throws IOException
+	public InputStream getInputStream(int n) throws IOException
 	{
 		WadEntry e = getEntry(n);
 		if (e == null)
@@ -463,7 +463,7 @@ public class WadFile implements Wad, Closeable
 	}
 
 	@Override	
-	public InputStream getDataAsStream(String WadEntry) throws IOException
+	public InputStream getInputStream(String WadEntry) throws IOException
 	{
 		WadEntry e = getEntry(WadEntry);
 		if (e == null)
@@ -475,7 +475,7 @@ public class WadFile implements Wad, Closeable
 	}
 
 	@Override	
-	public InputStream getDataAsStream(String WadEntry, int start) throws IOException
+	public InputStream getInputStream(String WadEntry, int start) throws IOException
 	{
 		int i = getIndexOf(WadEntry,start);
 		byte[] b = i != -1 ? getData(i) : null;
@@ -485,7 +485,7 @@ public class WadFile implements Wad, Closeable
 	}
 
 	@Override	
-	public InputStream getDataAsStream(WadEntry WadEntry) throws IOException
+	public InputStream getInputStream(WadEntry WadEntry) throws IOException
 	{
 		return new ByteArrayInputStream(getData(WadEntry));
 	}

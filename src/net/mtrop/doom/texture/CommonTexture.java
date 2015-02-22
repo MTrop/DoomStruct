@@ -16,7 +16,7 @@ import net.mtrop.doom.util.RangeUtils;
  * Common contents of texture definitions.
  * @author Matthew Tropiano
  */
-public abstract class Texture<P extends Patch> implements BinaryObject, Iterable<P>, Comparable<Texture<?>>
+public abstract class CommonTexture<P extends CommonPatch> implements BinaryObject, Iterable<P>, Comparable<CommonTexture<?>>
 {
 	/** Texture name. */
 	protected String name;
@@ -30,7 +30,7 @@ public abstract class Texture<P extends Patch> implements BinaryObject, Iterable
 	/**
 	 * Creates a new texture.
 	 */
-	public Texture()
+	public CommonTexture()
 	{
 		name = "UNNAMED";
 		width = 0;
@@ -146,7 +146,7 @@ public abstract class Texture<P extends Patch> implements BinaryObject, Iterable
 	}
 
 	@Override
-	public int compareTo(Texture<?> o)
+	public int compareTo(CommonTexture<?> o)
 	{
 		return name.compareTo(o.name);
 	}

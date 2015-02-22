@@ -17,7 +17,7 @@ public final class AnimatedTest
 		Logger logger = LoggingFactory.createConsoleLoggerFor(AnimatedTest.class);
 		
 		WadFile wad = new WadFile(args[0]);
-		InputStream in = wad.getDataAsStream("ANIMATED");
+		InputStream in = wad.getInputStream("ANIMATED");
 
 		Animated animated = Animated.read(in);
 		for (Animated.Entry entry : animated)

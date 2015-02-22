@@ -179,7 +179,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws IOException if the data couldn't be retrieved.
 	 * @throws ArrayIndexOutOfBoundsException if n &lt; 0 or &gt; size.
 	 */
-	public InputStream getDataAsStream(int n) throws IOException;
+	public InputStream getInputStream(int n) throws IOException;
 
 	/**
 	 * Retrieves the data of the first occurrance of a particular entry and returns it as a stream.
@@ -189,7 +189,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws IOException if the data couldn't be retrieved.
 	 * @throws NullPointerException if "entry" is null.
 	 */
-	public InputStream getDataAsStream(String entryName) throws IOException;
+	public InputStream getInputStream(String entryName) throws IOException;
 
 	/**
 	 * Retrieves the data of the first occurrance of a particular entry from a starting index and returns it as a stream.
@@ -201,7 +201,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws NullPointerException if "entry" is null.
 	 * @throws ArrayIndexOutOfBoundsException if start &lt; 0 or &gt; size.
 	 */
-	public InputStream getDataAsStream(String entryName, int start) throws IOException;
+	public InputStream getInputStream(String entryName, int start) throws IOException;
 
 	/**
 	 * Retrieves the data of the specified entry from a starting index and returns it as a stream.
@@ -211,7 +211,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws IOException if the data couldn't be retrieved or the entry's offsets breach the file extents.
 	 * @throws NullPointerException if "entry" is null.
 	 */
-	public InputStream getDataAsStream(WadEntry entry) throws IOException;
+	public InputStream getInputStream(WadEntry entry) throws IOException;
 
 	/**
 	 * Returns the number of entries in this Wad.

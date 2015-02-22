@@ -11,7 +11,6 @@ import com.blackrook.io.SuperReader;
 import com.blackrook.io.SuperWriter;
 
 import net.mtrop.doom.BinaryObject;
-import net.mtrop.doom.exception.DataExportException;
 
 /**
  * Doom/Boom 10-byte format implementation of Thing that uses
@@ -21,6 +20,9 @@ import net.mtrop.doom.exception.DataExportException;
  */
 public class StrifeThing extends CommonThing implements BinaryObject
 {
+	/** Byte length of this object. */
+	public static final int LENGTH = 10;
+
 	/** Flag: Thing is an ally. */
 	protected boolean ally;
 	/** Flag: Thing is 25% translucent. */
@@ -184,7 +186,7 @@ public class StrifeThing extends CommonThing implements BinaryObject
 	}
 
 	@Override
-	public void writeBytes(OutputStream out) throws DataExportException, IOException
+	public void writeBytes(OutputStream out) throws IOException
 	{
 		SuperWriter sw = new SuperWriter(out, SuperWriter.LITTLE_ENDIAN);
 		sw.writeShort((short)x);

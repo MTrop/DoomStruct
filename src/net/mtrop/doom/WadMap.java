@@ -8,6 +8,7 @@ import java.util.Iterator;
 
 import net.mtrop.doom.enums.WadType;
 import net.mtrop.doom.exception.WadException;
+import net.mtrop.doom.map.DoomMap;
 
 import com.blackrook.commons.linkedlist.Queue;
 import com.blackrook.commons.list.List;
@@ -237,25 +238,25 @@ public class WadMap implements Wad
 	}
 
 	@Override	
-	public InputStream getDataAsStream(int n) throws IOException
+	public InputStream getInputStream(int n) throws IOException
 	{
 		throw new UnsupportedOperationException("This class does not support getDataAsStream()");
 	}
 
 	@Override	
-	public InputStream getDataAsStream(String WadEntry) throws IOException
+	public InputStream getInputStream(String WadEntry) throws IOException
 	{
 		throw new UnsupportedOperationException("This class does not support getDataAsStream()");
 	}
 
 	@Override	
-	public InputStream getDataAsStream(String WadEntry, int start) throws IOException
+	public InputStream getInputStream(String WadEntry, int start) throws IOException
 	{
 		throw new UnsupportedOperationException("This class does not support getDataAsStream()");
 	}
 
 	@Override	
-	public InputStream getDataAsStream(WadEntry WadEntry) throws IOException
+	public InputStream getInputStream(WadEntry WadEntry) throws IOException
 	{
 		throw new UnsupportedOperationException("This class does not support getDataAsStream()");
 	}

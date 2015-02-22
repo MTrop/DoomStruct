@@ -19,6 +19,9 @@ import net.mtrop.doom.util.RangeUtils;
  */
 public class DoomLinedef extends CommonLinedef implements BinaryObject
 {
+	/** Byte length of this object. */
+	public static final int LENGTH = 14;
+
 	/** Flag: (Boom) Line passes activation through to other lines. */
 	protected boolean passThru;
 	/** Linedef special tag. */

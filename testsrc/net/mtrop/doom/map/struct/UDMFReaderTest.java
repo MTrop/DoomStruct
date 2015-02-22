@@ -20,7 +20,7 @@ public class UDMFReaderTest
 		Logger logger = LoggingFactory.createConsoleLoggerFor(UDMFReaderTest.class);
 		
 		WadFile wad = new WadFile(args[0]);
-		InputStream in = wad.getDataAsStream("TEXTMAP");
+		InputStream in = wad.getInputStream("TEXTMAP");
 
 		UDMFTable udmftable = UDMFReader.readData(in);
 		StringWriter writer = new StringWriter();

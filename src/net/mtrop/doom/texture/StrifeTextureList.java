@@ -12,7 +12,7 @@ import com.blackrook.io.SuperReader;
  * All textures are stored in here, usually named TEXTURE1 or TEXTURE2 in the WAD.
  * @author Matthew Tropiano
  */
-public class StrifeTextureList extends TextureList<StrifeTexture> implements BinaryObject
+public class StrifeTextureList extends CommonTextureList<StrifeTexture> implements BinaryObject
 {
 	/**
 	 * Creates a new TextureList with a default starting capacity.

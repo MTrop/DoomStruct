@@ -20,6 +20,9 @@ import net.mtrop.doom.util.RangeUtils;
  */
 public class HexenThing extends DoomThing implements BinaryObject
 {
+	/** Byte length of this object. */
+	public static final int LENGTH = 20;
+
 	/** Thing ID. */
 	protected int tid;
 	/** Thing Z position relative to sector plane. */

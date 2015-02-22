@@ -16,7 +16,7 @@ public class DoomSidedefTest
 		Logger logger = LoggingFactory.createConsoleLoggerFor(DoomSidedefTest.class);
 		
 		WadFile wad = new WadFile(args[0]);
-		InputStream in = wad.getDataAsStream("SIDEDEFS");
+		InputStream in = wad.getInputStream("SIDEDEFS");
 
 		int i = 0;
 		byte[] b = new byte[30];

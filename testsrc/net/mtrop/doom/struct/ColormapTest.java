@@ -16,7 +16,7 @@ public final class ColormapTest
 		Logger logger = LoggingFactory.createConsoleLoggerFor(ColormapTest.class);
 		
 		WadFile wad = new WadFile(args[0]);
-		InputStream in = wad.getDataAsStream("COLORMAP");
+		InputStream in = wad.getInputStream("COLORMAP");
 
 		Colormap colormap = Colormap.read(in);
 		

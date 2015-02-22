@@ -20,6 +20,9 @@ import com.blackrook.io.SuperWriter;
  */
 public class BSPSubsector implements BinaryObject
 {
+	/** Byte length of this object. */
+	public static final int LENGTH = 4;
+
 	/** This Subsector's BSP Segment count. */
 	protected int segCount;
 	/** This Subsector's starting segment index. */

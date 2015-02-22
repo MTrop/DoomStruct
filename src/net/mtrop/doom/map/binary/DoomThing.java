@@ -11,7 +11,6 @@ import com.blackrook.io.SuperReader;
 import com.blackrook.io.SuperWriter;
 
 import net.mtrop.doom.BinaryObject;
-import net.mtrop.doom.exception.DataExportException;
 
 /**
  * Doom/Boom 10-byte format implementation of Thing.
@@ -19,6 +18,9 @@ import net.mtrop.doom.exception.DataExportException;
  */
 public class DoomThing extends CommonThing implements BinaryObject
 {
+	/** Byte length of this object. */
+	public static final int LENGTH = 10;
+	
 	/** Flag: Thing is not in Cooperative. */
 	protected boolean notCooperative;
 	/** Flag: Thing is not in Deathmatch. */
@@ -181,7 +183,7 @@ public class DoomThing extends CommonThing implements BinaryObject
 	}
 
 	@Override
-	public void writeBytes(OutputStream out) throws DataExportException, IOException
+	public void writeBytes(OutputStream out) throws IOException
 	{
 		SuperWriter sw = new SuperWriter(out, SuperWriter.LITTLE_ENDIAN);
 		sw.writeShort((short)x);

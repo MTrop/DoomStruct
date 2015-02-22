@@ -20,6 +20,9 @@ import net.mtrop.doom.util.RangeUtils;
  */
 public class DoomSector implements BinaryObject
 {
+	/** Byte length of this object. */
+	public static final int LENGTH = 26;
+
 	/** Sector Floor height. */
 	private int floorHeight;
 	/** Sector Ceiling height. */

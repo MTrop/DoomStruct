@@ -61,7 +61,7 @@ public abstract class CommonThing implements MapObject
 	 */
 	public void setX(int x)
 	{
-		RangeUtils.checkShort("X-coordinate", x);
+		RangeUtils.checkShort("Position X", x);
 		this.x = x;
 	}
 
@@ -79,7 +79,7 @@ public abstract class CommonThing implements MapObject
 	 */
 	public void setY(int y)
 	{
-		RangeUtils.checkShort("Y-coordinate", y);
+		RangeUtils.checkShort("Position Y", y);
 		this.y = y;
 	}
 

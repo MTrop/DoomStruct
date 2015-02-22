@@ -15,6 +15,9 @@ import net.mtrop.doom.util.RangeUtils;
 
 public class DoomVertex implements BinaryObject
 {
+	/** Byte length of this object. */
+	public static final int LENGTH = 4;
+
 	/** Vertex: X-coordinate. */
 	private int x;
 	/** Vertex: X-coordinate. */

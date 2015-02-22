@@ -12,7 +12,7 @@ import com.blackrook.commons.Common;
 /**
  * Singular patch entry for a texture.
  */
-public abstract class Patch implements BinaryObject
+public abstract class CommonPatch implements BinaryObject
 {
 	/** Horizontal offset of the patch. */
 	protected int originX;
@@ -21,7 +21,7 @@ public abstract class Patch implements BinaryObject
 	/** Index of patch in patch names lump to use. */
 	protected int patchIndex;
 
-	public Patch()
+	public CommonPatch()
 	{
 		originX = 0;
 		originY = 0;

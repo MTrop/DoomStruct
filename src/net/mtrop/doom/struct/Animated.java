@@ -7,7 +7,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import net.mtrop.doom.BinaryObject;
-import net.mtrop.doom.exception.DataExportException;
 import net.mtrop.doom.util.NameUtils;
 
 import com.blackrook.commons.Common;
@@ -330,7 +329,7 @@ public class Animated extends List<Animated.Entry> implements BinaryObject
 		}
 
 		@Override
-		public void writeBytes(OutputStream out) throws IOException, DataExportException
+		public void writeBytes(OutputStream out) throws IOException
 		{
 			SuperWriter sw = new SuperWriter(out, SuperWriter.LITTLE_ENDIAN);
 			if (type != null) 

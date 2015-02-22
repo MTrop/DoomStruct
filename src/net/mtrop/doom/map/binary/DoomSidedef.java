@@ -20,7 +20,9 @@ import net.mtrop.doom.util.RangeUtils;
  */
 public class DoomSidedef implements BinaryObject 
 {
-	
+	/** Byte length of this object. */
+	public static final int LENGTH = 30;
+
 	/** Sidedef X Offset. */
 	private int offsetX;
 	/** Sidedef Y Offset. */

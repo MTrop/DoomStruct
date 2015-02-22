@@ -19,6 +19,9 @@ import com.blackrook.io.SuperWriter;
  */
 public class BSPSegment implements BinaryObject
 {
+	/** Byte length of this object. */
+	public static final int LENGTH = 12;
+
 	/** Direction along linedef (same). */
 	public final static int DIRECTION_SAME_AS_LINEDEF = 0;
 	/** Direction along linedef (opposite). */

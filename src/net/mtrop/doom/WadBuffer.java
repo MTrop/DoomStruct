@@ -357,7 +357,7 @@ public class WadBuffer implements Wad
 	}
 	
 	@Override	
-	public InputStream getDataAsStream(int n) throws IOException
+	public InputStream getInputStream(int n) throws IOException
 	{
 		WadEntry e = getEntry(n);
 		if (e == null)
@@ -369,7 +369,7 @@ public class WadBuffer implements Wad
 	}
 	
 	@Override	
-	public InputStream getDataAsStream(String entryName) throws IOException
+	public InputStream getInputStream(String entryName) throws IOException
 	{
 		WadEntry e = getEntry(entryName);
 		if (e == null)
@@ -381,7 +381,7 @@ public class WadBuffer implements Wad
 	}
 
 	@Override	
-	public InputStream getDataAsStream(String entryName, int start) throws IOException
+	public InputStream getInputStream(String entryName, int start) throws IOException
 	{
 		int i = getIndexOf(entryName,start);
 		byte[] b = i != -1 ? getData(i) : null;
@@ -391,7 +391,7 @@ public class WadBuffer implements Wad
 	}
 	
 	@Override	
-	public InputStream getDataAsStream(WadEntry entry) throws IOException
+	public InputStream getInputStream(WadEntry entry) throws IOException
 	{
 		return new ByteArrayInputStream(getData(entry));
 	}

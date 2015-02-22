@@ -20,6 +20,9 @@ import net.mtrop.doom.util.RangeUtils;
  */
 public class HexenLinedef extends CommonLinedef implements BinaryObject 
 {
+	/** Byte length of this object. */
+	public static final int LENGTH = 16;
+
 	/** Special activation: player walks over. */
 	public static final int ACTIVATION_PLAYER_CROSSES = 0;
 	/** Special activation: player uses. */

@@ -1,13 +1,13 @@
-package net.mtrop.doom.struct;
+package net.mtrop.doom.map.bsp;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Iterator;
 
 import net.mtrop.doom.BinaryObject;
-import net.mtrop.doom.exception.DataExportException;
 import net.mtrop.doom.util.RangeUtils;
 
 import com.blackrook.commons.Common;
@@ -20,11 +20,11 @@ import com.blackrook.io.SuperReader;
 import com.blackrook.io.SuperWriter;
 
 /**
- * Representation of the BLOCKMAP lump for a map.
+ * Representation of the Blockmap lump for a map.
  * This aids in collision detection for linedefs.
  * @author Matthew Tropiano
  */
-public class Blockmap implements BinaryObject
+public class BSPBlockmap implements BinaryObject
 {
 	/** Grid origin X-coordinate. */
 	private int startX;
@@ -37,49 +37,52 @@ public class Blockmap implements BinaryObject
 	/**
 	 * Creates a new Blockmap, startX and startY set to 0.
 	 */
-	public Blockmap()
+	public BSPBlockmap()
 	{
 		this(0, 0);
 	}
 	
 	/**
 	 * Creates a new Blockmap.
-	 * @param startX	the grid lower-left start position (x-axis).
-	 * @param startY	the grid lower-left start position (y-axis).
+	 * @param startX the grid lower-left start position (x-axis).
+	 * @param startY the grid lower-left start position (y-axis).
+	 * @throws IllegalArgumentException if <code>startX</code> or <code>startY</code> is outside the range of -32768 to 32767.
 	 */
-	public Blockmap(int startX, int startY)
+	public BSPBlockmap(int startX, int startY)
 	{
+		RangeUtils.checkShort("Grid start X", startX);
+		RangeUtils.checkShort("Grid start Y", startY);
 		this.startX = startX;
 		this.startY = startY;
 		
-		innerMap = new SparseQueueGridMap<Integer>(65535/128, 65535/128);
+		innerMap = new SparseQueueGridMap<Integer>(512, 512);
 	}
 	
 	/**
-	 * Reads and creates a new Blockmap object from an array of bytes.
-	 * This reads until it reaches the end of the blockmap.
+	 * Reads and creates a new BSPBlockmap object from an array of bytes.
+	 * This reads until it reaches the end of the BSPBlockmap.
 	 * @param bytes the byte array to read.
-	 * @return a new Blockmap object.
+	 * @return a new BSPBlockmap object.
 	 * @throws IOException if the stream cannot be read.
 	 */
-	public static Blockmap create(byte[] bytes) throws IOException
+	public static BSPBlockmap create(byte[] bytes) throws IOException
 	{
-		Blockmap out = new Blockmap();
+		BSPBlockmap out = new BSPBlockmap();
 		out.fromBytes(bytes);
 		return out;
 	}
 	
 	/**
-	 * Reads and creates a new Blockmap from an {@link InputStream} implementation.
-	 * This reads from the stream until enough bytes for a {@link Blockmap} are read.
+	 * Reads and creates a new BSPBlockmap from an {@link InputStream} implementation.
+	 * This reads from the stream until enough bytes for a {@link BSPBlockmap} are read.
 	 * The stream is NOT closed at the end.
 	 * @param in the open {@link InputStream} to read from.
-	 * @return a new Blockmap object.
+	 * @return a new BSPBlockmap object.
 	 * @throws IOException if the stream cannot be read.
 	 */
-	public static Blockmap read(InputStream in) throws IOException
+	public static BSPBlockmap read(InputStream in) throws IOException
 	{
-		Blockmap out = new Blockmap();
+		BSPBlockmap out = new BSPBlockmap();
 		out.readBytes(in);
 		return out;
 	}
@@ -89,12 +92,14 @@ public class Blockmap implements BinaryObject
 	 * @param x	the grid row.
 	 * @param y	the grid column.
 	 * @param linedefIndex	the linedef index to add.
-	 * @throw {@link IllegalArgumentException} if x, y, or linedefIndex is less than 0.
+	 * @throw {@link IllegalArgumentException} if <code>x</code> or <code>y</code> is outside the range 0 to 512 
+	 * 		or <code>linedefIndex</code> is outside the range 0 to 65535.
 	 */
 	public void addIndex(int x, int y, int linedefIndex)
 	{
-		if (x < 0 || y < 0 || linedefIndex < 0)
-			throw new IllegalArgumentException("Column, Row, or Index is out of range.");
+		RangeUtils.checkRange("Block X", 0, 512, x);
+		RangeUtils.checkRange("Block Y", 0, 512, y);
+		RangeUtils.checkShortUnsigned("Linedef Index", linedefIndex);
 		innerMap.enqueue(x, y, linedefIndex);
 	}
 	
@@ -103,12 +108,14 @@ public class Blockmap implements BinaryObject
 	 * @param x	the grid column.
 	 * @param y	the grid row.
 	 * @param linedefIndex	the linedef index to remove.
-	 * @throw {@link IllegalArgumentException} if x, y, or linedefIndex is less than 0.
+	 * @throw {@link IllegalArgumentException} if <code>x</code> or <code>y</code> is outside the range 0 to 512 
+	 * 		or <code>linedefIndex</code> is outside the range 0 to 65535.
 	 */
 	public boolean removeIndex(int x, int y, int linedefIndex)
 	{
-		if (x < 0 || y < 0 || linedefIndex < 0)
-			throw new IllegalArgumentException("Column, Row, or Index is out of range.");
+		RangeUtils.checkRange("Block X", 0, 512, x);
+		RangeUtils.checkRange("Block Y", 0, 512, y);
+		RangeUtils.checkShortUnsigned("Linedef Index", linedefIndex);
 		return innerMap.get(x, y).remove(linedefIndex);
 	}
 
@@ -117,22 +124,10 @@ public class Blockmap implements BinaryObject
 	 * @param x	the grid column.
 	 * @param y	the grid row.
 	 */
-	public Queue<Integer> getIndexList(int x, int y)
+	public Iterator<Integer> getIndexList(int x, int y)
 	{
-		return innerMap.get(x, y);
-	}
-
-	/**
-	 * Returns the list of linedef indices in a particular block using map position.
-	 * May return null if the point lies completely outside the grid.
-	 * @param posX	the map position, X-coordinate.
-	 * @param posY	the map position, Y-coordinate.
-	 */
-	public Queue<Integer> getIndexListAtPosition(float posX, float posY)
-	{
-		int x = getColumnByMapPosition(posX);
-		int y = getRowByMapPosition(posY);
-		return getIndexList(x, y);
+		Queue<Integer> queue = innerMap.get(x, y);
+		return queue != null ? queue.iterator() : null;
 	}
 
 	/**
@@ -156,7 +151,7 @@ public class Blockmap implements BinaryObject
 	 * according to this grid's startX value.
 	 * If posX is < startX, this returns -1.
 	 */
-	protected int getColumnByMapPosition(float posX)
+	public int getColumnByMapPosition(float posX)
 	{
 		if (posX < startX)
 			return -1;
@@ -168,7 +163,7 @@ public class Blockmap implements BinaryObject
 	 * according to this grid's startY value.
 	 * If posY is < startY, this returns -1.
 	 */
-	protected int getRowByMapPosition(float posY)
+	public int getRowByMapPosition(float posY)
 	{
 		if (posY < startY)
 			return -1;
@@ -176,27 +171,16 @@ public class Blockmap implements BinaryObject
 	}
 
 	/**
-	 * Checks this data structure for data export integrity for the Doom format. 
-	 * @throws DataExportException if a bad criterion is found.
+	 * Returns an iterator of linedef indices in a particular block using map position.
+	 * May return null if the point lies completely outside the grid.
+	 * @param posX the map position, X-coordinate.
+	 * @param posY the map position, Y-coordinate.
 	 */
-	protected void callExportCheck() throws DataExportException
+	public Iterator<Integer> getIteratorForPosition(float posX, float posY)
 	{
-		RangeUtils.checkShort("Grid start X", (int)startX);
-		RangeUtils.checkShort("Grid start Y", (int)startY);
-		int max_x = 0;
-		int max_y = 0;
-		int idx = 0;
-		for (ObjectPair<Pair, Queue<Integer>> hp : innerMap)
-		{
-			Pair p = hp.getKey();
-			max_x = Math.max(max_x, p.x);
-			max_y = Math.max(max_y, p.y);
-			for (Integer i : hp.getValue())
-				idx = Math.max(idx,i);
-		}
-		RangeUtils.checkShortUnsigned("Columns", max_x);
-		RangeUtils.checkShortUnsigned("Rows", max_y);
-		RangeUtils.checkShortUnsigned("Linedef index", idx);
+		int x = getColumnByMapPosition(posX);
+		int y = getRowByMapPosition(posY);
+		return getIndexList(x, y);
 	}
 
 	@Override
@@ -279,7 +263,6 @@ public class Blockmap implements BinaryObject
 	@Override
 	public void writeBytes(OutputStream out) throws IOException
 	{
-		callExportCheck();
 		SuperWriter sw = new SuperWriter(out, SuperWriter.LITTLE_ENDIAN);
 		sw.writeShort((short)startX);
 		sw.writeShort((short)startY);
