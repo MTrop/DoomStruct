@@ -1,7 +1,5 @@
 package net.mtrop.doom.map.udmf;
 
-import net.mtrop.doom.exception.MapException;
-
 import com.blackrook.commons.Reflect;
 import com.blackrook.commons.hash.CaseInsensitiveHashMap;
 
@@ -24,7 +22,6 @@ public class UDMFObject extends CaseInsensitiveHashMap<Object>
 	 * @param attributeName the attribute name (may be standardized, depending on implementation).
 	 * @param value the attribute value.
 	 * @throws NumberFormatException if the value was originally a String and can't be converted.
-	 * @throws MapException if the attribute is not settable or the value is invalid.
 	 */
 	public void setBoolean(String attributeName, Boolean value)
 	{
@@ -70,7 +67,6 @@ public class UDMFObject extends CaseInsensitiveHashMap<Object>
 	 * Booleans are 1 if true, 0 if false.
 	 * @param attributeName the attribute name (may be standardized, depending on implementation).
 	 * @param value the attribute value.
-	 * @throws MapException if the attribute is not settable or the value is invalid.
 	 */
 	public void setInteger(String attributeName, Integer value)
 	{
@@ -122,7 +118,6 @@ public class UDMFObject extends CaseInsensitiveHashMap<Object>
 	 * @param attributeName the attribute name (may be standardized, depending on implementation).
 	 * @param value the attribute value.
 	 * @throws NumberFormatException if the value was originally a String and can't be converted.
-	 * @throws MapException if the attribute is not settable or the value is invalid.
 	 */
 	public void setFloat(String attributeName, Float value)
 	{
@@ -168,7 +163,6 @@ public class UDMFObject extends CaseInsensitiveHashMap<Object>
 	 * If the value is promotable to String (integers/floats/booleans), it is promoted to a String.
 	 * @param attributeName the attribute name (may be standardized, depending on implementation).
 	 * @param value the attribute value.
-	 * @throws MapException if the attribute is not settable or the value is invalid.
 	 */
 	public void setString(String attributeName, String value)
 	{

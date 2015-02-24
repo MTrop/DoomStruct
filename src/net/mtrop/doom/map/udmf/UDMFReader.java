@@ -228,104 +228,53 @@ public final class UDMFReader
 				nextToken();
 				return true;
 			}
-			else if (IntegerValue())
+			else if (NumericValue())
 				return true;
-			else if (FloatValue())
-				return true;
-			
+
 			addErrorMessage("Expected valid value.");
 			return false; 
 		}
 		
 		/*
-		 * IntegerValue := PLUS INTEGER | MINUS INTEGER | INTEGER 
+		 * NumericValue := PLUS NUMBER | MINUS NUMBER | NUMBER 
 		 */
-		private boolean IntegerValue()
+		private boolean NumericValue()
 		{
 			if (matchType(ULexer.TYPE_MINUS))
 			{
 				if (currentType(ULexer.TYPE_NUMBER))
 				{
-					try {
-						currentValue = -Integer.parseInt(currentToken().getLexeme());
-					} catch (NumberFormatException e) {
-						return false;
-					}
-					nextToken();
-					return true;
+					String lexeme = currentToken().getLexeme();
+					if (lexeme.startsWith("0X") || lexeme.startsWith("0x"))
+						currentValue = Integer.parseInt(lexeme.substring(2), 16);
+					else if (lexeme.contains("."))
+						currentValue = Float.parseFloat(lexeme);
+					else
+						currentValue = Integer.parseInt(lexeme);
 				}
 			}
 			else if (matchType(ULexer.TYPE_PLUS))
 			{
 				if (currentType(ULexer.TYPE_NUMBER))
 				{
-					try {
-						currentValue = Integer.parseInt(currentToken().getLexeme());
-					} catch (NumberFormatException e) {
-						return false;
-					}
-					nextToken();
-					return true;
+					String lexeme = currentToken().getLexeme();
+					if (lexeme.startsWith("0X") || lexeme.startsWith("0x"))
+						currentValue = Integer.parseInt(lexeme.substring(2), 16);
+					else if (lexeme.contains("."))
+						currentValue = Float.parseFloat(lexeme);
+					else
+						currentValue = Integer.parseInt(lexeme);
 				}
 			}
 			else if (currentType(ULexer.TYPE_NUMBER))
 			{
-				{
-					try {
-						currentValue = Integer.parseInt(currentToken().getLexeme());
-					} catch (NumberFormatException e) {
-						return false;
-					}
-					nextToken();
-					return true;
-				}
-			}
-			
-			return false;
-		}
-		
-		/*
-		 * FloatValue := PLUS FLOAT | MINUS FLOAT | FLOAT 
-		 */
-		private boolean FloatValue()
-		{
-			if (matchType(ULexer.TYPE_MINUS))
-			{
-				if (currentType(ULexer.TYPE_NUMBER))
-				{
-					try {
-						currentValue = -Float.parseFloat(currentToken().getLexeme());
-					} catch (NumberFormatException e) {
-						return false;
-					}
-					nextToken();
-					return true;
-				}
-			}
-			else if (matchType(ULexer.TYPE_PLUS))
-			{
-				if (currentType(ULexer.TYPE_NUMBER))
-				{
-					try {
-						currentValue = Float.parseFloat(currentToken().getLexeme());
-					} catch (NumberFormatException e) {
-						return false;
-					}
-					nextToken();
-					return true;
-				}
-			}
-			else if (currentType(ULexer.TYPE_NUMBER))
-			{
-				{
-					try {
-						currentValue = Float.parseFloat(currentToken().getLexeme());
-					} catch (NumberFormatException e) {
-						return false;
-					}
-					nextToken();
-					return true;
-				}
+				String lexeme = currentToken().getLexeme();
+				if (lexeme.startsWith("0X") || lexeme.startsWith("0x"))
+					currentValue = Integer.parseInt(lexeme.substring(2), 16);
+				else if (lexeme.contains("."))
+					currentValue = Float.parseFloat(lexeme);
+				else
+					currentValue = Integer.parseInt(lexeme);
 			}
 			
 			return false;

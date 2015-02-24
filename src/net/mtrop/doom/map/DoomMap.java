@@ -1,10 +1,7 @@
 package net.mtrop.doom.map;
 
 import net.mtrop.doom.map.binary.DoomLinedef;
-import net.mtrop.doom.map.binary.DoomSector;
-import net.mtrop.doom.map.binary.DoomSidedef;
 import net.mtrop.doom.map.binary.DoomThing;
-import net.mtrop.doom.map.binary.DoomVertex;
 
 import com.blackrook.commons.list.List;
 
@@ -12,17 +9,10 @@ import com.blackrook.commons.list.List;
  * Doom map in Doom Format.
  * @author Matthew Tropiano
  */
-public class DoomMap
+public class DoomMap extends CommonMap
 {
-	
 	/** List of Things. */
 	private List<DoomThing> things;
-	/** List of Sectors. */
-	private List<DoomSector> sectors;
-	/** List of Vertices. */
-	private List<DoomVertex> vertices;
-	/** List of Sidedefs. */
-	private List<DoomSidedef> sidedefs;
 	/** List of Linedefs. */
 	private List<DoomLinedef> linedefs;
 	
@@ -31,15 +21,13 @@ public class DoomMap
 	 */
 	public DoomMap()
 	{
+		super();
 		things = new List<DoomThing>(100);
-		sectors = new List<DoomSector>(33);
-		vertices = new List<DoomVertex>(200);
-		sidedefs = new List<DoomSidedef>(200);
 		linedefs = new List<DoomLinedef>(100);
 	}
 	
 	/**
-	 * @return the list of things.
+	 * @return the underlying list of things.
 	 */
 	public List<DoomThing> getThings()
 	{
@@ -57,57 +45,23 @@ public class DoomMap
 			this.things.add(obj);
 	}
 
-	public List<DoomSector> getSectors()
-	{
-		return sectors;
-	}
-
-	public void setSectors(DoomSector ... sectors)
-	{
-		this.sectors.clear();
-		for (DoomSector obj : sectors)
-			this.sectors.add(obj);
-	}
-
-	public List<DoomVertex> getVertices()
-	{
-		return vertices;
-	}
-
-	public void setVertices(DoomVertex ... vertices)
-	{
-		this.vertices.clear();
-		for (DoomVertex obj : vertices)
-			this.vertices.add(obj);
-	}
-
-	public List<DoomSidedef> getSidedefs()
-	{
-		return sidedefs;
-	}
-
-	public void setSidedefs(DoomSidedef ... sidedefs)
-	{
-		this.sidedefs.clear();
-		for (DoomSidedef obj : sidedefs)
-			this.sidedefs.add(obj);
-	}
-
+	/**
+	 * @return the underlying list of linedefs.
+	 */
 	public List<DoomLinedef> getLinedefs()
 	{
 		return linedefs;
 	}
 
+	/**
+	 * Replaces the list of linedefs in the map.
+	 * Input objects are copied to the underlying list.
+	 */
 	public void setLinedefs(DoomLinedef ... linedefs)
 	{
 		this.linedefs.clear();
 		for (DoomLinedef obj : linedefs)
 			this.linedefs.add(obj);
 	}
-	
-	
-	
-	
-	
 	
 }
