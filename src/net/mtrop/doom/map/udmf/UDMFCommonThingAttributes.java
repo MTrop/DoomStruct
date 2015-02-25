@@ -4,7 +4,7 @@ package net.mtrop.doom.map.udmf;
  * Contains common thing attributes on some UDMF structures.
  * @author Matthew Tropiano
  */
-public interface UDMFCommonThingAttributes
+public interface UDMFCommonThingAttributes extends UDMFCommonAttributes
 {
 	/** Thing position: x-coordinate. */
 	public static final String ATTRIB_POSITION_X = "x";

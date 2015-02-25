@@ -39,7 +39,7 @@ public class BSPSubsector implements BinaryObject
 	
 	/**
 	 * Reads and creates a new BSPSubsector from an array of bytes.
-	 * This reads from the first 12 bytes of the array.
+	 * This reads from the first 4 bytes of the array.
 	 * @param bytes the byte array to read.
 	 * @return a new BSPSubsector with its fields set.
 	 * @throws IOException if the stream cannot be read.
@@ -63,6 +63,39 @@ public class BSPSubsector implements BinaryObject
 	{
 		BSPSubsector out = new BSPSubsector();
 		out.readBytes(in);
+		return out;
+	}
+	
+	/**
+	 * Reads and creates new BSPSubsectors from an array of bytes.
+	 * This reads from the first 4 * <code>count</code> bytes of the array.
+	 * @param bytes the byte array to read.
+	 * @param count the amount of objects to read.
+	 * @return an array of BSPSubsector objects with its fields set.
+	 * @throws IOException if the stream cannot be read.
+	 */
+	public static BSPSubsector[] create(byte[] bytes, int count) throws IOException
+	{
+		return read(new ByteArrayInputStream(bytes), count);
+	}
+	
+	/**
+	 * Reads and creates new BSPSubsectors from an {@link InputStream} implementation.
+	 * This reads from the stream until enough bytes for <code>count</code> {@link BSPSubsector}s are read.
+	 * The stream is NOT closed at the end.
+	 * @param in the open {@link InputStream} to read from.
+	 * @param count the amount of objects to read.
+	 * @return an array of BSPSubsector objects with its fields set.
+	 * @throws IOException if the stream cannot be read.
+	 */
+	public static BSPSubsector[] read(InputStream in, int count) throws IOException
+	{
+		BSPSubsector[] out = new BSPSubsector[count];
+		for (int i = 0; i < count; i++)
+		{
+			out[i] = new BSPSubsector();
+			out[i].readBytes(in);
+		}
 		return out;
 	}
 	

@@ -90,7 +90,7 @@ public class DoomSector implements BinaryObject
 	}
 	
 	/**
-	 * Reads and creates a new DoomSector from an {@link InputStream} implementation.
+	 * Reads and creates new DoomSectors from an {@link InputStream} implementation.
 	 * This reads from the stream until enough bytes for <code>count</code> {@link DoomSector}s are read.
 	 * The stream is NOT closed at the end.
 	 * @param in the open {@link InputStream} to read from.

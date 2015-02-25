@@ -4,7 +4,7 @@ package net.mtrop.doom.map.udmf;
  * Contains common sidedef attributes on some UDMF structures.
  * @author Matthew Tropiano
  */
-public interface UDMFCommonSidedefAttributes
+public interface UDMFCommonSidedefAttributes extends UDMFCommonAttributes
 {
 	/** Sidedef base texture offset X. */
 	public static final String ATTRIB_OFFSET_X = "offsetx";

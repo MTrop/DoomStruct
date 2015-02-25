@@ -4,7 +4,7 @@ package net.mtrop.doom.map.udmf;
  * Contains common sector attributes on some UDMF structures.
  * @author Matthew Tropiano
  */
-public interface UDMFCommonSectorAttributes
+public interface UDMFCommonSectorAttributes extends UDMFCommonAttributes
 {
 	/** Sector floor height. */
 	public static final String ATTRIB_HEIGHT_FLOOR = "heightfloor";

@@ -87,6 +87,39 @@ public class BSPNode implements BinaryObject
 		return out;
 	}
 	
+	/**
+	 * Reads and creates new BSPNodes from an array of bytes.
+	 * This reads from the first 28 * <code>count</code> bytes of the array.
+	 * @param bytes the byte array to read.
+	 * @param count the amount of objects to read.
+	 * @return an array of BSPNode objects with its fields set.
+	 * @throws IOException if the stream cannot be read.
+	 */
+	public static BSPNode[] create(byte[] bytes, int count) throws IOException
+	{
+		return read(new ByteArrayInputStream(bytes), count);
+	}
+	
+	/**
+	 * Reads and creates new BSPNodes from an {@link InputStream} implementation.
+	 * This reads from the stream until enough bytes for <code>count</code> {@link BSPNode}s are read.
+	 * The stream is NOT closed at the end.
+	 * @param in the open {@link InputStream} to read from.
+	 * @param count the amount of objects to read.
+	 * @return an array of BSPNode objects with its fields set.
+	 * @throws IOException if the stream cannot be read.
+	 */
+	public static BSPNode[] read(InputStream in, int count) throws IOException
+	{
+		BSPNode[] out = new BSPNode[count];
+		for (int i = 0; i < count; i++)
+		{
+			out[i] = new BSPNode();
+			out[i].readBytes(in);
+		}
+		return out;
+	}
+	
 	/** 
 	 * Sets this node's partition line's X-coordinate. 
 	 * @throws IllegalArgumentException if the value is outside the range -32768 to 32767. 

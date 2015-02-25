@@ -60,7 +60,7 @@ public class DoomVertex implements BinaryObject
 	}
 	
 	/**
-	 * Reads and creates new DoomVertex from an array of bytes.
+	 * Reads and creates new DoomVertexes from an array of bytes.
 	 * This reads from the first 4 * <code>count</code> bytes of the array.
 	 * @param bytes the byte array to read.
 	 * @param count the amount of objects to read.
@@ -73,7 +73,7 @@ public class DoomVertex implements BinaryObject
 	}
 	
 	/**
-	 * Reads and creates a new DoomVertex from an {@link InputStream} implementation.
+	 * Reads and creates new DoomVertexes from an {@link InputStream} implementation.
 	 * This reads from the stream until enough bytes for <code>count</code> {@link DoomVertex}s are read.
 	 * The stream is NOT closed at the end.
 	 * @param in the open {@link InputStream} to read from.

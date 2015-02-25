@@ -15,18 +15,12 @@ public class BSPTree
 	private List<BSPSubsector> subsectors;
 	/** Nodes: List of Nodes. */
 	private List<BSPNode> nodes;
-	/** Map Blockmap. */
-	private BSPBlockmap blockmap;
-	/** Map Reject. */
-	private BSPReject reject;
 	
 	public BSPTree()
 	{
 		segs = new List<BSPSegment>(100);
 		subsectors = new List<BSPSubsector>(100);
 		nodes = new List<BSPNode>(100);
-		blockmap = null;
-		reject = null;
 	}
 
 	public List<BSPSegment> getSegs()
@@ -63,26 +57,6 @@ public class BSPTree
 		this.nodes.clear();
 		for (BSPNode obj : nodes)
 			this.nodes.add(obj);
-	}
-
-	public BSPBlockmap getBlockmap()
-	{
-		return blockmap;
-	}
-
-	public void setBlockmap(BSPBlockmap blockmap)
-	{
-		this.blockmap = blockmap;
-	}
-
-	public BSPReject getReject()
-	{
-		return reject;
-	}
-
-	public void setReject(BSPReject reject)
-	{
-		this.reject = reject;
 	}
 
 }

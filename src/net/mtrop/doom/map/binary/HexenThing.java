@@ -80,7 +80,7 @@ public class HexenThing extends DoomThing implements BinaryObject
 	}
 	
 	/**
-	 * Reads and creates new HexenThing from an array of bytes.
+	 * Reads and creates new HexenThings from an array of bytes.
 	 * This reads from the first 20 * <code>count</code> bytes of the array.
 	 * @param bytes the byte array to read.
 	 * @param count the amount of objects to read.
@@ -93,7 +93,7 @@ public class HexenThing extends DoomThing implements BinaryObject
 	}
 	
 	/**
-	 * Reads and creates a new HexenThing from an {@link InputStream} implementation.
+	 * Reads and creates new HexenThings from an {@link InputStream} implementation.
 	 * This reads from the stream until enough bytes for <code>count</code> {@link HexenThing}s are read.
 	 * The stream is NOT closed at the end.
 	 * @param in the open {@link InputStream} to read from.

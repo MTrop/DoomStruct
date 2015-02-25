@@ -65,7 +65,7 @@ public class DoomThing extends CommonThing implements BinaryObject
 	}
 	
 	/**
-	 * Reads and creates new DoomThing from an array of bytes.
+	 * Reads and creates new DoomThings from an array of bytes.
 	 * This reads from the first 10 * <code>count</code> bytes of the array.
 	 * @param bytes the byte array to read.
 	 * @param count the amount of objects to read.
@@ -78,7 +78,7 @@ public class DoomThing extends CommonThing implements BinaryObject
 	}
 	
 	/**
-	 * Reads and creates a new DoomThing from an {@link InputStream} implementation.
+	 * Reads and creates new DoomThings from an {@link InputStream} implementation.
 	 * This reads from the stream until enough bytes for <code>count</code> {@link DoomThing}s are read.
 	 * The stream is NOT closed at the end.
 	 * @param in the open {@link InputStream} to read from.

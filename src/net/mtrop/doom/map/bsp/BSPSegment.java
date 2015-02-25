@@ -91,6 +91,39 @@ public class BSPSegment implements BinaryObject
 		return out;
 	}
 	
+	/**
+	 * Reads and creates new BSPSegments from an array of bytes.
+	 * This reads from the first 12 * <code>count</code> bytes of the array.
+	 * @param bytes the byte array to read.
+	 * @param count the amount of objects to read.
+	 * @return an array of BSPSegment objects with its fields set.
+	 * @throws IOException if the stream cannot be read.
+	 */
+	public static BSPSegment[] create(byte[] bytes, int count) throws IOException
+	{
+		return read(new ByteArrayInputStream(bytes), count);
+	}
+	
+	/**
+	 * Reads and creates new BSPSegments from an {@link InputStream} implementation.
+	 * This reads from the stream until enough bytes for <code>count</code> {@link BSPSegment}s are read.
+	 * The stream is NOT closed at the end.
+	 * @param in the open {@link InputStream} to read from.
+	 * @param count the amount of objects to read.
+	 * @return an array of BSPSegment objects with its fields set.
+	 * @throws IOException if the stream cannot be read.
+	 */
+	public static BSPSegment[] read(InputStream in, int count) throws IOException
+	{
+		BSPSegment[] out = new BSPSegment[count];
+		for (int i = 0; i < count; i++)
+		{
+			out[i] = new BSPSegment();
+			out[i].readBytes(in);
+		}
+		return out;
+	}
+	
 	/** 
 	 * Sets this Seg's start vertex index reference. 
 	 * @throws IllegalArgumentException if the provided value is outside the range 0 to 65535.

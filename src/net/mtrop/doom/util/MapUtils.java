@@ -7,11 +7,18 @@ import net.mtrop.doom.Wad;
 import net.mtrop.doom.WadEntry;
 import net.mtrop.doom.exception.MapException;
 import net.mtrop.doom.map.DoomMap;
+import net.mtrop.doom.map.HexenMap;
 import net.mtrop.doom.map.binary.DoomLinedef;
 import net.mtrop.doom.map.binary.DoomSector;
 import net.mtrop.doom.map.binary.DoomSidedef;
 import net.mtrop.doom.map.binary.DoomThing;
 import net.mtrop.doom.map.binary.DoomVertex;
+import net.mtrop.doom.map.binary.HexenLinedef;
+import net.mtrop.doom.map.binary.HexenThing;
+import net.mtrop.doom.map.bsp.BSPNode;
+import net.mtrop.doom.map.bsp.BSPSegment;
+import net.mtrop.doom.map.bsp.BSPSubsector;
+import net.mtrop.doom.map.bsp.BSPTree;
 
 import com.blackrook.commons.hash.CaseInsensitiveHash;
 import com.blackrook.commons.list.List;
@@ -157,22 +164,22 @@ public final class MapUtils
 	}
 	
 	/**
-	 * Creates a {@link DoomMap} from a starting entry in a {@link Wad}.
+	 * Creates a {@link HexenMap} from a starting entry in a {@link Wad}.
 	 * If there is more than one header in the WAD that matches the header, the last one is found.
 	 * @param wad the WAD to read from.
 	 * @param headerName the map header name to search for.
-	 * @return a DoomMap with all objects set.
+	 * @return a HexenMap with all objects set.
 	 * @throws MapException if map information is incomplete, or can't be found.
 	 * @throws IOException if the WAD can't be read from.
 	 * @throws UnsupportedOperationException if attempting to read from a {@link Wad} type that does not contain data.
 	 */
-	public static DoomMap createHexenMap(Wad wad, String headerName) throws MapException, IOException
+	public static HexenMap createHexenMap(Wad wad, String headerName) throws MapException, IOException
 	{
 		int index = wad.getLastIndexOf(headerName);
 		if (index < 0)
 			throw new MapException("Cannot find map by header name "+headerName);
 		
-		DoomMap map = new DoomMap();
+		HexenMap map = new HexenMap();
 		int count = getMapEntryCount(wad, index);
 		
 		for (int i = 0; i < count; i++)
@@ -195,7 +202,7 @@ public final class MapUtils
 				case LUMP_THINGS:
 				{
 					byte[] b = wad.getData(entry);
-					map.setThings(DoomThing.create(b, b.length / DoomThing.LENGTH));
+					map.setThings(HexenThing.create(b, b.length / HexenThing.LENGTH));
 				}
 				break;
 	
@@ -223,7 +230,7 @@ public final class MapUtils
 				case LUMP_LINEDEFS:
 				{
 					byte[] b = wad.getData(entry);
-					map.setLinedefs(DoomLinedef.create(b, b.length / DoomLinedef.LENGTH));
+					map.setLinedefs(HexenLinedef.create(b, b.length / HexenLinedef.LENGTH));
 				}
 				break;
 			}
@@ -232,6 +239,60 @@ public final class MapUtils
 		return map;
 	}
 
+	/**
+	 * Creates a {@link BSPTree} from a starting map entry in a {@link Wad}.
+	 * If there is more than one header in the WAD that matches the header, the last one is found.
+	 * @param wad the WAD to read from.
+	 * @param headerName the map header name to search for.
+	 * @return a BSPTree with all objects set.
+	 * @throws MapException if map information is incomplete, or can't be found.
+	 * @throws IOException if the WAD can't be read from.
+	 * @throws UnsupportedOperationException if attempting to read from a {@link Wad} type that does not contain data.
+	 */
+	public static BSPTree createBSPTree(Wad wad, String headerName) throws MapException, IOException
+	{
+		int index = wad.getLastIndexOf(headerName);
+		if (index < 0)
+			throw new MapException("Cannot find map by header name "+headerName);
+		
+		int count = getMapEntryCount(wad, index);
+		
+		WadEntry ssectors = null;
+		WadEntry segs = null;
+		WadEntry nodes = null;
+		
+		for (int i = 0; i < count; i++)
+		{
+			WadEntry entry = wad.getEntry(i + index);
+			String name = entry.getName();
+			if (name.equals(LUMP_SSECTORS))
+				ssectors = entry;
+			else if (name.equals(LUMP_SEGS))
+				nodes = entry;
+			else if (name.equals(LUMP_NODES))
+				nodes = entry;
+		}
+		
+		if (segs == null)
+			throw new MapException("BSP Tree information is incomplete. Missing SEGS.");
+		if (ssectors == null)
+			throw new MapException("BSP Tree information is incomplete. Missing SSECTORS.");
+		if (nodes == null)
+			throw new MapException("BSP Tree information is incomplete. Missing NODES.");
+		
+		BSPTree out = new BSPTree();
+		byte[] data = null;
+
+		data = wad.getData(segs);
+		out.setSegs(BSPSegment.create(data, data.length / BSPSegment.LENGTH));
+		data = wad.getData(ssectors);
+		out.setSubsectors(BSPSubsector.create(data, data.length / BSPSubsector.LENGTH));
+		data = wad.getData(nodes);
+		out.setNodes(BSPNode.create(data, data.length / BSPNode.LENGTH));
+		
+		return out;
+	}
+	
 	/**
 	 * Returns all of the indices of every map in the wad.
 	 * This algorithm checks for "THINGS" or "TEXTMAP" lumps - the first 
