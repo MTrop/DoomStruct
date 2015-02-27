@@ -8,6 +8,7 @@ import net.mtrop.doom.WadEntry;
 import net.mtrop.doom.exception.MapException;
 import net.mtrop.doom.map.DoomMap;
 import net.mtrop.doom.map.HexenMap;
+import net.mtrop.doom.map.StrifeMap;
 import net.mtrop.doom.map.binary.DoomLinedef;
 import net.mtrop.doom.map.binary.DoomSector;
 import net.mtrop.doom.map.binary.DoomSidedef;
@@ -15,6 +16,7 @@ import net.mtrop.doom.map.binary.DoomThing;
 import net.mtrop.doom.map.binary.DoomVertex;
 import net.mtrop.doom.map.binary.HexenLinedef;
 import net.mtrop.doom.map.binary.HexenThing;
+import net.mtrop.doom.map.binary.StrifeThing;
 import net.mtrop.doom.map.bsp.BSPNode;
 import net.mtrop.doom.map.bsp.BSPSegment;
 import net.mtrop.doom.map.bsp.BSPSubsector;
@@ -164,6 +166,82 @@ public final class MapUtils
 	}
 	
 	/**
+	 * Creates a {@link StrifeMap} from a starting entry in a {@link Wad}.
+	 * If there is more than one header in the WAD that matches the header, the last one is found.
+	 * @param wad the WAD to read from.
+	 * @param headerName the map header name to search for.
+	 * @return a StrifeMap with all objects set.
+	 * @throws MapException if map information is incomplete, or can't be found.
+	 * @throws IOException if the WAD can't be read from.
+	 * @throws UnsupportedOperationException if attempting to read from a {@link Wad} type that does not contain data.
+	 */
+	public static StrifeMap createStrifeMap(Wad wad, String headerName) throws MapException, IOException
+	{
+		int index = wad.getLastIndexOf(headerName);
+		if (index < 0)
+			throw new MapException("Cannot find map by header name "+headerName);
+		
+		StrifeMap map = new StrifeMap();
+		int count = getMapEntryCount(wad, index);
+		
+		for (int i = 0; i < count; i++)
+		{
+			String name = wad.getEntry(i + index).getName();
+			if (name.equals(LUMP_BEHAVIOR))
+				throw new MapException("Map is not a Strife-formatted map.");
+			else if (name.equals(LUMP_TEXTMAP))
+				throw new MapException("Map is not a Strife-formatted map. Format is UDMF.");
+			else if (name.equals(LUMP_ENDMAP))
+				throw new MapException("Map is not a Strife-formatted map. Format is UDMF.");
+		}
+		
+		for (int i = 0; i < count; i++)
+		{
+			WadEntry entry = wad.getEntry(i + index);
+			String name = entry.getName();
+			switch (name)
+			{
+				case LUMP_THINGS:
+				{
+					byte[] b = wad.getData(entry);
+					map.setThings(StrifeThing.create(b, b.length / StrifeThing.LENGTH));
+				}
+				break;
+
+				case LUMP_SECTORS:
+				{
+					byte[] b = wad.getData(entry);
+					map.setSectors(DoomSector.create(b, b.length / DoomSector.LENGTH));
+				}
+				break;
+
+				case LUMP_VERTICES:
+				{
+					byte[] b = wad.getData(entry);
+					map.setVertices(DoomVertex.create(b, b.length / DoomVertex.LENGTH));
+				}
+				break;
+
+				case LUMP_SIDEDEFS:
+				{
+					byte[] b = wad.getData(entry);
+					map.setSidedefs(DoomSidedef.create(b, b.length / DoomSidedef.LENGTH));
+				}
+				break;
+
+				case LUMP_LINEDEFS:
+				{
+					byte[] b = wad.getData(entry);
+					map.setLinedefs(DoomLinedef.create(b, b.length / DoomLinedef.LENGTH));
+				}
+				break;
+			}
+		}
+		
+		return map;
+	}
+	
+	/**
 	 * Creates a {@link HexenMap} from a starting entry in a {@link Wad}.
 	 * If there is more than one header in the WAD that matches the header, the last one is found.
 	 * @param wad the WAD to read from.
@@ -181,17 +259,21 @@ public final class MapUtils
 		
 		HexenMap map = new HexenMap();
 		int count = getMapEntryCount(wad, index);
-		
+
+		boolean hasBehavior = false;
 		for (int i = 0; i < count; i++)
 		{
 			String name = wad.getEntry(i + index).getName();
 			if (name.equals(LUMP_BEHAVIOR))
-				throw new MapException("Map is not a Doom-formatted map.");
+				hasBehavior = true;
 			else if (name.equals(LUMP_TEXTMAP))
-				throw new MapException("Map is not a Doom-formatted map. Format is UDMF.");
+				throw new MapException("Map is not a Hexen-formatted map. Format is UDMF.");
 			else if (name.equals(LUMP_ENDMAP))
-				throw new MapException("Map is not a Doom-formatted map. Format is UDMF.");
+				throw new MapException("Map is not a Hexen-formatted map. Format is UDMF.");
 		}
+		
+		if (!hasBehavior)
+			throw new MapException("Map is not a Hexen-formatted map. Format is Doom.");
 		
 		for (int i = 0; i < count; i++)
 		{

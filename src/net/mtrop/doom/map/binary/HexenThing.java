@@ -24,7 +24,7 @@ public class HexenThing extends DoomThing implements BinaryObject
 	public static final int LENGTH = 20;
 
 	/** Thing ID. */
-	protected int tid;
+	protected int id;
 	/** Thing Z position relative to sector plane. */
 	protected int z;
 
@@ -126,6 +126,22 @@ public class HexenThing extends DoomThing implements BinaryObject
 	public void setZ(int z)
 	{
 		this.z = z;
+	}
+
+	/**
+	 * @return the thing's id (for tagged specials).
+	 */
+	public int getId()
+	{
+		return id;
+	}
+
+	/**
+	 * Sets the thing's id. 
+	 */
+	public void setId(int id)
+	{
+		this.id = id;
 	}
 
 	/**
@@ -302,7 +318,7 @@ public class HexenThing extends DoomThing implements BinaryObject
 	public void readBytes(InputStream in) throws IOException
 	{
 		SuperReader sr = new SuperReader(in, SuperReader.LITTLE_ENDIAN);
-		tid = sr.readUnsignedShort();
+		id = sr.readUnsignedShort();
 		x = sr.readShort();
 		y = sr.readShort();
 		z = sr.readShort();
@@ -335,7 +351,7 @@ public class HexenThing extends DoomThing implements BinaryObject
 	public void writeBytes(OutputStream out) throws IOException
 	{
 		SuperWriter sw = new SuperWriter(out, SuperWriter.LITTLE_ENDIAN);
-		sw.writeUnsignedShort(tid);
+		sw.writeUnsignedShort(id);
 		sw.writeShort((short)x);
 		sw.writeShort((short)y);
 		sw.writeShort((short)z);
@@ -373,7 +389,7 @@ public class HexenThing extends DoomThing implements BinaryObject
 		sb.append(" Z:").append(z);
 		sb.append(" Type:").append(type);
 		sb.append(" Angle:").append(angle);
-		sb.append(" ID:").append(tid);
+		sb.append(" ID:").append(id);
 		
 		if (easy) sb.append(' ').append("EASY");
 		if (medium) sb.append(' ').append("MEDIUM");
