@@ -1,3 +1,10 @@
+/*******************************************************************************
+ * Copyright (c) 2015 Matt Tropiano
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Lesser Public License v2.1
+ * which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
+ ******************************************************************************/
 package net.mtrop.doom;
 
 import java.io.File;
@@ -9,6 +16,8 @@ import java.util.Iterator;
 import net.mtrop.doom.enums.WadType;
 import net.mtrop.doom.exception.WadException;
 import net.mtrop.doom.map.DoomMap;
+import net.mtrop.doom.map.HexenMap;
+import net.mtrop.doom.map.StrifeMap;
 
 import com.blackrook.commons.linkedlist.Queue;
 import com.blackrook.commons.list.List;
@@ -25,7 +34,7 @@ import com.blackrook.io.SuperReader;
  * stream.
  * <p>
  * Despite the name, this is not a structure that reads Doom Map information.
- * Use {@link DoomMap} for that purpose.  
+ * Use {@link DoomMap}, {@link HexenMap}, or {@link StrifeMap} for that purpose.  
  * @author Matthew Tropiano
  */
 public class WadMap implements Wad

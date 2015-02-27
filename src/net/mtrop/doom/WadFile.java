@@ -1,10 +1,16 @@
+/*******************************************************************************
+ * Copyright (c) 2015 Matt Tropiano
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Lesser Public License v2.1
+ * which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
+ ******************************************************************************/
 package net.mtrop.doom;
 
 import java.io.*;
 import java.util.Iterator;
 
 import net.mtrop.doom.enums.WadType;
-import net.mtrop.doom.exception.DataConversionException;
 import net.mtrop.doom.exception.WadException;
 import net.mtrop.doom.util.NameUtils;
 
@@ -362,7 +368,7 @@ public class WadFile implements Wad, Closeable
 			throw new IOException("Index is out of range.");
 		
 		if (!NameUtils.isValidEntryName(newName))
-			throw new DataConversionException("Entry name \""+newName+"\" does not fit entry requirements.");
+			throw new IllegalArgumentException("Entry name \""+newName+"\" does not fit entry requirements.");
 		
 		entry.name = newName;
 

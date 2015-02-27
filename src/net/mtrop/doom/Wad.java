@@ -1,9 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2015 Matt Tropiano
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Lesser Public License v2.1
+ * which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
+ ******************************************************************************/
 package net.mtrop.doom;
 
 import java.io.IOException;
 import java.io.InputStream;
-
-import net.mtrop.doom.exception.DataConversionException;
 
 /**
  * Base interface for all WAD file type implementations for reading and writing to WAD structures, either in memory or
@@ -239,7 +244,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @param entryName the name of the entry to add this as (corrected automatically).
 	 * @param data the bytes of data to add as this wad's data.
 	 * @return a WadEntry that describes the added data.
-	 * @throws DataConversionException if the provided name is not a valid name.
+	 * @throws IllegalArgumentException if the provided name is not a valid name.
 	 * @throws IOException if the data cannot be written.
 	 * @throws NullPointerException if "entryName" or "data" is null.
 	 */
@@ -254,7 +259,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @param entryName the name of the entry to add this as (corrected automatically).
 	 * @param data the bytes of data to add as this wad's data.
 	 * @return a WadEntry that describes the added data.
-	 * @throws DataConversionException if the provided name is not a valid name.
+	 * @throws IllegalArgumentException if the provided name is not a valid name.
 	 * @throws IOException if the data cannot be written.
 	 * @throws NullPointerException if "entryName" or "data" is null.
 	 */
@@ -291,7 +296,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * Adds an entry marker to the Wad (entry with 0 size, 0 offset).
 	 * 
 	 * @param name Name of the entry.
-	 * @throws DataConversionException if the provided name is not a valid name.
+	 * @throws IllegalArgumentException if the provided name is not a valid name.
 	 * @throws IOException if the entry cannot be written.
 	 * @throws NullPointerException if "name" is null.
 	 */
@@ -301,7 +306,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * Adds an entry marker to the Wad (entry with 0 size, 0 offset).
 	 * 
 	 * @param name Name of the entry.
-	 * @throws DataConversionException if the provided name is not a valid name.
+	 * @throws IllegalArgumentException if the provided name is not a valid name.
 	 * @throws IOException if the entry cannot be written.
 	 * @throws NullPointerException if "name" is null.
 	 */
@@ -312,7 +317,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * 
 	 * @param index the index of the entry to replace.
 	 * @param data the data to replace the entry with.
-	 * @throws DataConversionException if the provided name is not a valid name.
+	 * @throws IllegalArgumentException if the provided name is not a valid name.
 	 * @throws IOException if the entry cannot be written.
 	 * @throws NullPointerException if "data" is null.
 	 */
@@ -323,7 +328,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * 
 	 * @param index the index of the entry to rename.
 	 * @param newName the new name of the entry.
-	 * @throws DataConversionException if the provided name is not a valid name.
+	 * @throws IllegalArgumentException if the provided name is not a valid name.
 	 * @throws IOException if the entry cannot be renamed.
 	 */
 	public void renameEntry(int index, String newName) throws IOException;

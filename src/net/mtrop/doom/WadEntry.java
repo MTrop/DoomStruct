@@ -1,3 +1,10 @@
+/*******************************************************************************
+ * Copyright (c) 2015 Matt Tropiano
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Lesser Public License v2.1
+ * which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
+ ******************************************************************************/
 package net.mtrop.doom;
 
 import java.io.ByteArrayInputStream;
@@ -7,7 +14,6 @@ import java.io.IOException;
 import com.blackrook.io.SuperReader;
 import com.blackrook.io.SuperWriter;
 
-import net.mtrop.doom.exception.DataConversionException;
 import net.mtrop.doom.util.NameUtils;
 
 /**
@@ -37,16 +43,16 @@ public class WadEntry
 	 * @param offset the offset into the WAD in bytes.
 	 * @param size the size of the entry in bytes.
 	 * @return the constructed WadEntry.
-	 * @throws DataConversionException if the name is invalid or the offset or size is negative.
+	 * @throws IllegalArgumentException if the name is invalid or the offset or size is negative.
 	 */
 	public static WadEntry create(String name, int offset, int size)
 	{
 		if (!NameUtils.isValidEntryName(name))
-			throw new DataConversionException("Entry name \""+name+"\" does not fit entry requirements.");
+			throw new IllegalArgumentException("Entry name \""+name+"\" does not fit entry requirements.");
 		if (offset < 0)
-			throw new DataConversionException("Entry offset is negative.");
+			throw new IllegalArgumentException("Entry offset is negative.");
 		if (size < 0)
-			throw new DataConversionException("Entry size is negative.");
+			throw new IllegalArgumentException("Entry size is negative.");
 		
 		return new WadEntry(name, offset, size); 
 	}
@@ -56,7 +62,6 @@ public class WadEntry
 	 * Reads the first 16 bytes.
 	 * @param data the byte representation of the entry.
 	 * @return the constructed WadEntry.
-	 * @throws DataConversionException if the name is invalid or the offset or size is negative.
 	 * @throws IOException if the data cannot be read for some reason.
 	 */
 	public static WadEntry create(byte[] data) throws IOException
@@ -64,7 +69,7 @@ public class WadEntry
 		SuperReader sr = new SuperReader(new ByteArrayInputStream(data), SuperReader.LITTLE_ENDIAN);
 		int offset = sr.readInt();
 		int size = sr.readInt();
-		String name = NameUtils.toValidEntryName(sr.readASCIIString(8));
+		String name = NameUtils.nullTrim(sr.readASCIIString(8)).toUpperCase();
 		return new WadEntry(name, offset, size); 
 	}
 	
