@@ -12,6 +12,7 @@ import java.util.Iterator;
 
 import net.mtrop.doom.Wad;
 import net.mtrop.doom.WadEntry;
+import net.mtrop.doom.enums.MapFormat;
 import net.mtrop.doom.exception.MapException;
 import net.mtrop.doom.map.DoomMap;
 import net.mtrop.doom.map.HexenMap;
@@ -97,6 +98,79 @@ public final class MapUtils
 	private MapUtils() {}
 
 	/**
+	 * Creates a {@link DoomMap} from an entry index in a {@link Wad} that denotes a map header.
+	 * If there is more than one header in the WAD that matches the header, the last one is found.
+	 * @param wad the WAD to read from.
+	 * @param index the index of the map header entry.
+	 * @return a DoomMap with all objects set.
+	 * @throws MapException if map information is incomplete, or can't be found.
+	 * @throws IOException if the WAD can't be read from.
+	 * @throws UnsupportedOperationException if attempting to read from a {@link Wad} type that does not contain data.
+	 */
+	public static DoomMap createDoomMap(Wad wad, int index) throws MapException, IOException
+	{
+		int count = getMapEntryCount(wad, index);
+		
+		for (int i = 0; i < count; i++)
+		{
+			String name = wad.getEntry(i + index).getName();
+			if (name.equals(LUMP_BEHAVIOR))
+				throw new MapException("Map is not a Doom-formatted map.");
+			else if (name.equals(LUMP_TEXTMAP))
+				throw new MapException("Map is not a Doom-formatted map. Format is UDMF.");
+			else if (name.equals(LUMP_ENDMAP))
+				throw new MapException("Map is not a Doom-formatted map. Format is UDMF.");
+		}
+
+		DoomMap map = new DoomMap();
+
+		for (int i = 0; i < count; i++)
+		{
+			WadEntry entry = wad.getEntry(i + index);
+			String name = entry.getName();
+			switch (name)
+			{
+				case LUMP_THINGS:
+				{
+					byte[] b = wad.getData(entry);
+					map.setThings(DoomThing.create(b, b.length / DoomThing.LENGTH));
+				}
+				break;
+
+				case LUMP_SECTORS:
+				{
+					byte[] b = wad.getData(entry);
+					map.setSectors(DoomSector.create(b, b.length / DoomSector.LENGTH));
+				}
+				break;
+
+				case LUMP_VERTICES:
+				{
+					byte[] b = wad.getData(entry);
+					map.setVertices(DoomVertex.create(b, b.length / DoomVertex.LENGTH));
+				}
+				break;
+
+				case LUMP_SIDEDEFS:
+				{
+					byte[] b = wad.getData(entry);
+					map.setSidedefs(DoomSidedef.create(b, b.length / DoomSidedef.LENGTH));
+				}
+				break;
+
+				case LUMP_LINEDEFS:
+				{
+					byte[] b = wad.getData(entry);
+					map.setLinedefs(DoomLinedef.create(b, b.length / DoomLinedef.LENGTH));
+				}
+				break;
+			}
+		}
+		
+		return map;
+	}
+	
+		/**
 	 * Creates a {@link DoomMap} from a starting entry in a {@link Wad}.
 	 * If there is more than one header in the WAD that matches the header, the last one is found.
 	 * @param wad the WAD to read from.
@@ -112,20 +186,36 @@ public final class MapUtils
 		if (index < 0)
 			throw new MapException("Cannot find map by header name "+headerName);
 		
-		DoomMap map = new DoomMap();
+		return createDoomMap(wad, index);
+	}
+	
+	/**
+	 * Creates a {@link StrifeMap} from an entry index in a {@link Wad} that denotes a map header.
+	 * If there is more than one header in the WAD that matches the header, the last one is found.
+	 * @param wad the WAD to read from.
+	 * @param index the index of the map header entry.
+	 * @return a StrifeMap with all objects set.
+	 * @throws MapException if map information is incomplete, or can't be found.
+	 * @throws IOException if the WAD can't be read from.
+	 * @throws UnsupportedOperationException if attempting to read from a {@link Wad} type that does not contain data.
+	 */
+	public static StrifeMap createStrifeMap(Wad wad, int index) throws MapException, IOException
+	{
 		int count = getMapEntryCount(wad, index);
 		
 		for (int i = 0; i < count; i++)
 		{
 			String name = wad.getEntry(i + index).getName();
 			if (name.equals(LUMP_BEHAVIOR))
-				throw new MapException("Map is not a Doom-formatted map.");
+				throw new MapException("Map is not a Strife-formatted map.");
 			else if (name.equals(LUMP_TEXTMAP))
-				throw new MapException("Map is not a Doom-formatted map. Format is UDMF.");
+				throw new MapException("Map is not a Strife-formatted map. Format is UDMF.");
 			else if (name.equals(LUMP_ENDMAP))
-				throw new MapException("Map is not a Doom-formatted map. Format is UDMF.");
+				throw new MapException("Map is not a Strife-formatted map. Format is UDMF.");
 		}
 		
+		StrifeMap map = new StrifeMap();
+
 		for (int i = 0; i < count; i++)
 		{
 			WadEntry entry = wad.getEntry(i + index);
@@ -135,7 +225,7 @@ public final class MapUtils
 				case LUMP_THINGS:
 				{
 					byte[] b = wad.getData(entry);
-					map.setThings(DoomThing.create(b, b.length / DoomThing.LENGTH));
+					map.setThings(StrifeThing.create(b, b.length / StrifeThing.LENGTH));
 				}
 				break;
 
@@ -187,84 +277,23 @@ public final class MapUtils
 		int index = wad.getLastIndexOf(headerName);
 		if (index < 0)
 			throw new MapException("Cannot find map by header name "+headerName);
-		
-		StrifeMap map = new StrifeMap();
-		int count = getMapEntryCount(wad, index);
-		
-		for (int i = 0; i < count; i++)
-		{
-			String name = wad.getEntry(i + index).getName();
-			if (name.equals(LUMP_BEHAVIOR))
-				throw new MapException("Map is not a Strife-formatted map.");
-			else if (name.equals(LUMP_TEXTMAP))
-				throw new MapException("Map is not a Strife-formatted map. Format is UDMF.");
-			else if (name.equals(LUMP_ENDMAP))
-				throw new MapException("Map is not a Strife-formatted map. Format is UDMF.");
-		}
-		
-		for (int i = 0; i < count; i++)
-		{
-			WadEntry entry = wad.getEntry(i + index);
-			String name = entry.getName();
-			switch (name)
-			{
-				case LUMP_THINGS:
-				{
-					byte[] b = wad.getData(entry);
-					map.setThings(StrifeThing.create(b, b.length / StrifeThing.LENGTH));
-				}
-				break;
-
-				case LUMP_SECTORS:
-				{
-					byte[] b = wad.getData(entry);
-					map.setSectors(DoomSector.create(b, b.length / DoomSector.LENGTH));
-				}
-				break;
-
-				case LUMP_VERTICES:
-				{
-					byte[] b = wad.getData(entry);
-					map.setVertices(DoomVertex.create(b, b.length / DoomVertex.LENGTH));
-				}
-				break;
-
-				case LUMP_SIDEDEFS:
-				{
-					byte[] b = wad.getData(entry);
-					map.setSidedefs(DoomSidedef.create(b, b.length / DoomSidedef.LENGTH));
-				}
-				break;
-
-				case LUMP_LINEDEFS:
-				{
-					byte[] b = wad.getData(entry);
-					map.setLinedefs(DoomLinedef.create(b, b.length / DoomLinedef.LENGTH));
-				}
-				break;
-			}
-		}
-		
-		return map;
+	
+		return createStrifeMap(wad, index);
 	}
 	
+	
 	/**
-	 * Creates a {@link HexenMap} from a starting entry in a {@link Wad}.
+	 * Creates a {@link HexenMap} from an entry index in a {@link Wad} that denotes a map header.
 	 * If there is more than one header in the WAD that matches the header, the last one is found.
 	 * @param wad the WAD to read from.
-	 * @param headerName the map header name to search for.
+	 * @param index the index of the map header entry.
 	 * @return a HexenMap with all objects set.
 	 * @throws MapException if map information is incomplete, or can't be found.
 	 * @throws IOException if the WAD can't be read from.
 	 * @throws UnsupportedOperationException if attempting to read from a {@link Wad} type that does not contain data.
 	 */
-	public static HexenMap createHexenMap(Wad wad, String headerName) throws MapException, IOException
+	public static HexenMap createHexenMap(Wad wad, int index) throws MapException, IOException
 	{
-		int index = wad.getLastIndexOf(headerName);
-		if (index < 0)
-			throw new MapException("Cannot find map by header name "+headerName);
-		
-		HexenMap map = new HexenMap();
 		int count = getMapEntryCount(wad, index);
 
 		boolean hasBehavior = false;
@@ -282,6 +311,7 @@ public final class MapUtils
 		if (!hasBehavior)
 			throw new MapException("Map is not a Hexen-formatted map. Format is Doom.");
 		
+		HexenMap map = new HexenMap();
 		for (int i = 0; i < count; i++)
 		{
 			WadEntry entry = wad.getEntry(i + index);
@@ -326,6 +356,25 @@ public final class MapUtils
 		}
 		
 		return map;
+	}
+	
+	/**
+	 * Creates a {@link HexenMap} from a starting entry in a {@link Wad}.
+	 * If there is more than one header in the WAD that matches the header, the last one is found.
+	 * @param wad the WAD to read from.
+	 * @param headerName the map header name to search for.
+	 * @return a HexenMap with all objects set.
+	 * @throws MapException if map information is incomplete, or can't be found.
+	 * @throws IOException if the WAD can't be read from.
+	 * @throws UnsupportedOperationException if attempting to read from a {@link Wad} type that does not contain data.
+	 */
+	public static HexenMap createHexenMap(Wad wad, String headerName) throws MapException, IOException
+	{
+		int index = wad.getLastIndexOf(headerName);
+		if (index < 0)
+			throw new MapException("Cannot find map by header name "+headerName);
+		
+		return createHexenMap(wad, index);
 	}
 
 	/**
@@ -384,8 +433,7 @@ public final class MapUtils
 	
 	/**
 	 * Returns all of the indices of every map in the wad.
-	 * This algorithm checks for "THINGS" or "TEXTMAP" lumps - the first 
-	 * entry in a map. If it finds one, the previous entry is the header.
+	 * This algorithm scans for map entry names. If it finds one, the previous entry is the probably the header.
 	 * @param wad the {@link Wad} to search inside.
 	 * @return an array of all of the entry indices of maps. 
 	 */
@@ -425,8 +473,7 @@ public final class MapUtils
 
 	/**
 	 * Returns all of the entry names of every map in the wad.
-	 * This algorithm checks for "THINGS" or "TEXTMAP" lumps - the typical 
-	 * first entry in a map. If it finds one, the previous entry is the header.
+	 * This algorithm scans for map entry names. If it finds one, the previous entry is the probably the header.
 	 * @param wad the DoomWad to search in.
 	 * @return an array of all of the entry indices of maps. 
 	 */
@@ -438,6 +485,50 @@ public final class MapUtils
 		for (int index : entryIndices)
 			out[i++] = wad.getEntry(index).getName();
 		return out;
+	}
+
+	/**
+	 * Figures out a map's format by its entry listing.
+	 * Due to the nature of this algorithm, this cannot return {@link MapFormat#STRIFE}.
+	 * @param wad the WAD to read from.
+	 * @param index the index of the map header entry.
+	 * @return a {@link MapFormat} that details the map format type, or null if it cannot be figured out.
+	 */
+	public static MapFormat getMapFormat(Wad wad, int index)
+	{
+		int count = getMapEntryCount(wad, index);
+
+		if (count <= 1)
+			return null;
+		
+		for (int i = 0; i < count; i++)
+		{
+			String name = wad.getEntry(i + index).getName();
+			if (name.equals(LUMP_BEHAVIOR))
+				return MapFormat.HEXEN;
+			else if (name.equals(LUMP_TEXTMAP))
+				return MapFormat.UDMF;
+			else if (name.equals(LUMP_ENDMAP))
+				return MapFormat.UDMF;
+		}
+
+		return MapFormat.DOOM;
+	}
+
+	/**
+	 * Figures out a map's format by its entry listing.
+	 * Due to the nature of this algorithm, this cannot return {@link MapFormat#STRIFE}.
+	 * @param wad the WAD to read from.
+	 * @param headerName the map header name to search for.
+	 * @return a {@link MapFormat} that details the map format type, or null if it cannot be figured out, nor if the header can be found.
+	 */
+	public static MapFormat getMapFormat(Wad wad, String headerName)
+	{
+		int index = wad.getLastIndexOf(headerName);
+		if (index < 0)
+			return null;
+	
+		return getMapFormat(wad, index);
 	}
 
 	/**

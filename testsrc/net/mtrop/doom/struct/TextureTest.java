@@ -38,6 +38,7 @@ public final class TextureTest
 			for (DoomTexture.Patch patch : tex)
 				logger.infof("\t%-8s (%d, %d)", pnames.getByIndex(patch.getPatchIndex()), patch.getOriginX(), patch.getOriginY());
 		}
+		
 		/*
 		for (DoomTexture tex : texture2)
 		{

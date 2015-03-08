@@ -15,7 +15,8 @@ import java.io.OutputStream;
 import net.mtrop.doom.BinaryObject;
 
 import com.blackrook.commons.Common;
-import com.blackrook.commons.map.CaseInsensitiveMappedVector;
+import com.blackrook.commons.Sizable;
+import com.blackrook.commons.map.AbstractMappedVector;
 import com.blackrook.io.SuperWriter;
 
 /**
@@ -23,7 +24,7 @@ import com.blackrook.io.SuperWriter;
  * All textures are stored in here, usually named TEXTURE1 or TEXTURE2 in a WAD.
  * @author Matthew Tropiano
  */
-public abstract class CommonTextureList<T extends CommonTexture<?>> extends CaseInsensitiveMappedVector<T> implements BinaryObject
+public abstract class CommonTextureList<T extends CommonTexture<?>> extends AbstractMappedVector<T, String> implements BinaryObject, Sizable
 {
 	/**
 	 * Creates a new TextureList with a default starting capacity.

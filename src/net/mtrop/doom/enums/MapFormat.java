@@ -15,6 +15,8 @@ public enum MapFormat
 {
 	/** Format commonly used by Doom, Boom, and MBF/SMMU ports, plus Heretic. */
 	DOOM,
+	/** Format used in Strife - Doom format, except some objects have different flags. */
+	STRIFE,
 	/** Format commonly used by Hexen and ZDoom-derivative ports. */
 	HEXEN,
 	/** Format commonly used by all extensible ports. */

@@ -21,9 +21,12 @@ import com.blackrook.commons.Common;
 public final class NameUtils
 {
 	/** A regex pattern that matches valid entry names. */
-	public static Pattern ENTRY_NAME = Pattern.compile("[A-Z0-9\\[\\]\\-\\_\\\\]{1,8}");
+	public static final Pattern ENTRY_NAME = Pattern.compile("[A-Z0-9\\[\\]\\-\\_\\\\]{1,8}");
 	/** A regex pattern that matches valid texture names. */
-	public static Pattern TEXTURE_NAME = Pattern.compile("(\\-|[A-Z0-9\\-\\_]{1,8})");
+	public static final Pattern TEXTURE_NAME = Pattern.compile("(\\-|[A-Z0-9\\-\\_]{1,8})");
+
+	/** The name of the "blank" texture. */
+	public static final String EMPTY_TEXTURE_NAME = "-";
 
 	private NameUtils()
 	{
@@ -83,7 +86,7 @@ public final class NameUtils
 			return name;
 		
 		if (Common.isEmpty(name))
-			return "-";
+			return "";
 			
 		// remove diacritics
 		name = Normalizer.normalize(name, Form.NFC);
@@ -151,7 +154,7 @@ public final class NameUtils
 			return name;
 		
 		if (Common.isEmpty(name))
-			return "-";
+			return EMPTY_TEXTURE_NAME;
 			
 		// remove diacritics
 		name = Normalizer.normalize(name, Form.NFC);
