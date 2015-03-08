@@ -22,7 +22,6 @@ import com.blackrook.commons.map.AbstractMappedVector;
 
 /**
  * A helper class for the ridiculous TEXTUREx and PNAMES setup that Doom Texture definitions use.
- * Can be exported to {@link CommonTextureList}s and {@link PatchNames} objects for export.
  * @author Matthew Tropiano
  */
 public class TextureSet implements Sizable
