@@ -24,7 +24,18 @@
 	<property name="project.javadoc.title" value="Doom Struct" />
 	<property name="project.classpath" value="${common.lib}${S}${common.io.lib}${S}${common.lang.lib}" />
 	<property name="project.javadoc.packages" value="
-		net.mtrop.doom
+		net.mtrop.doom,
+		net.mtrop.doom.enums,
+		net.mtrop.doom.exception,
+		net.mtrop.doom.graphics,
+		net.mtrop.doom.map,
+		net.mtrop.doom.map.binary,
+		net.mtrop.doom.map.bsp,
+		net.mtrop.doom.map.udmf,
+		net.mtrop.doom.struct,
+		net.mtrop.doom.texture,
+		net.mtrop.doom.util,
+		net.mtrop.doom.util.resource
 		"
 	/>
 
