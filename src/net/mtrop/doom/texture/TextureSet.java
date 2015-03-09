@@ -91,7 +91,16 @@ public class TextureSet implements Sizable
 	}
 	
 	/**
-	 * Creates a new entry for a texture.
+	 * Adds a texture entry to this texture set.
+	 * @param texture the texture to add.
+	 */
+	public void addTexture(Texture texture)
+	{
+		textureList.add(texture);
+	}
+
+	/**
+	 * Creates a new entry for a texture, already added.
 	 * @param textureName the name of the texture to add.
 	 * @return a new, empty texture.
 	 */
