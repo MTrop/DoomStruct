@@ -48,14 +48,6 @@ public class Flat implements BinaryObject, GraphicObject
 	private byte[] pixels;
 	
 	/**
-	 * Creates a new flat with dimensions (1, 1).
-	 */
-	public Flat()
-	{
-		this(1, 1);
-	}
-	
-	/**
 	 * Creates a new flat.
 	 * @param width	the width of the flat in pixels. Must be greater than 1.
 	 * @param height the height of the flat in pixels. Must be greater than 1.
