@@ -45,10 +45,10 @@ public final class UDMFWriter
 		
 		writeFields(table.getGlobalFields(), pw, "");
 
-		for (String strName : table.getAllStructNames())
+		for (String strName : table.getAllObjectNames())
 		{
 			int x = 0;
-			for (UDMFObject struct : table.getStructs(strName))
+			for (UDMFObject struct : table.getObjects(strName))
 			{
 				writeStructStart(strName, pw, x, "");
 				writeFields(struct, pw, "\t");
