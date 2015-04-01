@@ -12,11 +12,21 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
+import com.blackrook.commons.AbstractSet;
+
 import net.mtrop.doom.graphics.Flat;
 import net.mtrop.doom.graphics.Picture;
 import net.mtrop.doom.struct.Colormap;
 import net.mtrop.doom.struct.EndDoom;
 import net.mtrop.doom.struct.Palette;
+import net.mtrop.doom.texture.DoomTexture;
+import net.mtrop.doom.texture.DoomTextureList;
+import net.mtrop.doom.texture.PatchNames;
+import net.mtrop.doom.texture.StrifeTexture;
+import net.mtrop.doom.texture.StrifeTextureList;
+import net.mtrop.doom.texture.TextureSet;
+import net.mtrop.doom.texture.TextureSet.Texture;
+import net.mtrop.doom.texture.TextureSet.Texture.Patch;
 
 /**
  * Graphics utility methods for image types.
@@ -234,5 +244,101 @@ public final class GraphicUtils
 		return out;
 	}
 	
+	/**
+	 * Exports this {@link TextureSet}'s contents into a PNAMES and TEXTUREx lump.
+	 * This looks up patch indices as it exports - if a patch name does not exist in <code>pnames</code>,
+	 * it is added.
+	 * <p>
+	 * In the end, <code>pnames</code> and <code>textures</code> will be the objects whose contents will change.
+	 * @param textureSet the set of textures to export.
+	 * @param pnames the patch names lump.
+	 * @param textures the texture list to write to.
+	 * @param nameSet the set of texture names that will be written to the texture list. Can be null (exports all names).
+	 * @param excludeSet if <code>nameSet</code> is null and this is true, the set is treated as an exclusion set, not inclusion.
+	 */
+	public static void exportTextureSet(TextureSet textureSet, PatchNames pnames, DoomTextureList textures, AbstractSet<String> nameSet, boolean excludeSet)
+	{
+		for (Texture texture : textureSet)
+		{
+			if (nameSet == null || (excludeSet && !nameSet.contains(texture.getName())) || (!excludeSet && nameSet.contains(texture.getName())))
+			{
+				DoomTexture ndt = new DoomTexture();
+				ndt.setName(texture.getName());
+				ndt.setWidth(texture.getWidth());
+				ndt.setHeight(texture.getHeight());
+				
+				int index = -1;
+				for (int i = 0; i < texture.getPatchCount(); i++)
+				{
+					Patch patch = texture.getPatch(i);
+					
+					String pname = patch.getName();
+					
+					index = pnames.getIndexOf(pname);
+					if (index == -1)
+					{
+						pnames.add(pname);
+						index = pnames.getIndexOf(pname);
+					}	
+					
+					DoomTexture.Patch ndtp = new DoomTexture.Patch();
+					ndtp.setOriginX(patch.getOriginX());
+					ndtp.setOriginY(patch.getOriginY());
+					ndtp.setPatchIndex(index);
+					ndt.addPatch(ndtp);
+				}
+				
+				textures.add(ndt);
+			}
+		}
+	}
+	
+	/**
+	 * Exports this {@link TextureSet}'s contents into a PNAMES and TEXTUREx lump.
+	 * This looks up patch indices as it exports - if a patch name does not exist in <code>pnames</code>,
+	 * it is added.  
+	 * @param textureSet the set of textures to export.
+	 * @param pnames the patch names lump.
+	 * @param textures the texture list to write to.
+	 * @param nameSet the set of texture names that will be written to the texture list. Can be null (exports all names).
+	 * @param excludeSet if <code>nameSet</code> is null and this is true, the set is treated as an exclusion set, not inclusion.
+	 */
+	public static void exportTextureSet(TextureSet textureSet, PatchNames pnames, StrifeTextureList textures, AbstractSet<String> nameSet, boolean excludeSet)
+	{
+		for (Texture texture : textureSet)
+		{
+			if (nameSet == null || (excludeSet && !nameSet.contains(texture.getName())) || (!excludeSet && nameSet.contains(texture.getName())))
+			{
+				StrifeTexture ndt = new StrifeTexture();
+				ndt.setName(texture.getName());
+				ndt.setWidth(texture.getWidth());
+				ndt.setHeight(texture.getHeight());
+				
+				int index = -1;
+				for (int i = 0; i < texture.getPatchCount(); i++)
+				{
+					Patch patch = texture.getPatch(i);
+					
+					String pname = patch.getName();
+					
+					index = pnames.getIndexOf(pname);
+					if (index == -1)
+					{
+						pnames.add(pname);
+						index = pnames.getIndexOf(pname);
+					}	
+					
+					StrifeTexture.Patch ndtp = new StrifeTexture.Patch();
+					ndtp.setOriginX(patch.getOriginX());
+					ndtp.setOriginY(patch.getOriginY());
+					ndtp.setPatchIndex(index);
+					ndt.addPatch(ndtp);
+				}
+				
+				textures.add(ndt);
+			}
+		}
+	}
+
 	
 }

@@ -26,6 +26,11 @@ Black Rook Common I/O 2.3.0+
 Black Rook Common Lang 2.6.0+  
 [https://github.com/BlackRookSoftware/CommonLang](https://github.com/BlackRookSoftware/CommonLang)
 
+### Source
+
+The MASTER branch contains stable code. The DEVELOP branch's contents may always
+shift. Until a release, the API of this library will be in flux!
+
 ### Introduction
 
 The purpose of the Doom Struct project is to provide a means to read/write

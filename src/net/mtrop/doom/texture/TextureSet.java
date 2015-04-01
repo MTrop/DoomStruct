@@ -21,7 +21,7 @@ import com.blackrook.commons.list.List;
 import com.blackrook.commons.map.AbstractMappedVector;
 
 /**
- * A helper class for the TEXTUREx and PNAMES setup that Doom Texture definitions use.
+ * A helper class for the ridiculous TEXTUREx and PNAMES setup that Doom Texture definitions use.
  * @author Matthew Tropiano
  */
 public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
@@ -196,15 +196,15 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 	}
 
 	@Override
-	public Iterator<Texture> iterator()
-	{
-		return textureList.iterator();
-	}
-
-	@Override
 	public boolean isEmpty()
 	{
 		return size() == 0;
+	}
+
+	@Override
+	public Iterator<Texture> iterator()
+	{
+		return textureList.iterator();
 	}
 
 	/**
