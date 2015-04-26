@@ -21,8 +21,6 @@ public final class RejectTest
 {
 	public static void main(String[] args) throws IOException
 	{
-		Logger logger = LoggingFactory.createConsoleLoggerFor(RejectTest.class);
-		
 		WadFile wad = new WadFile(args[0]);
 		byte[] data = wad.getData("SECTORS");
 		byte[] data2 = wad.getData("REJECT");

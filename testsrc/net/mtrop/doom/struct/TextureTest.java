@@ -13,6 +13,8 @@ import net.mtrop.doom.WadFile;
 import net.mtrop.doom.texture.DoomTexture;
 import net.mtrop.doom.texture.DoomTextureList;
 import net.mtrop.doom.texture.PatchNames;
+import net.mtrop.doom.texture.TextureSet;
+import net.mtrop.doom.texture.TextureSet.Texture;
 
 import com.blackrook.commons.Common;
 import com.blackrook.commons.logging.Logger;
@@ -32,11 +34,22 @@ public final class TextureTest
 
 		Common.close(wad);
 
+		/*
 		for (DoomTexture tex : texture1)
 		{
 			logger.infof("%-8s %dx%d %d patches", tex.getName(), tex.getWidth(), tex.getHeight(), tex.getPatchCount());
 			for (DoomTexture.Patch patch : tex)
 				logger.infof("\t%-8s (%d, %d)", pnames.getByIndex(patch.getPatchIndex()), patch.getOriginX(), patch.getOriginY());
+		}
+		*/
+		
+		TextureSet set = new TextureSet(pnames, texture1);
+		
+		for (Texture tex : set)
+		{
+			logger.infof("%-8s %dx%d %d patches", tex.getName(), tex.getWidth(), tex.getHeight(), tex.getPatchCount());
+			for (Texture.Patch patch : tex)
+				logger.infof("\t%-8s (%d, %d)", patch.getName(), patch.getOriginX(), patch.getOriginY());
 		}
 		
 		/*
