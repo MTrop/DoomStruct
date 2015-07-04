@@ -252,44 +252,44 @@ public final class GraphicUtils
 	 * In the end, <code>pnames</code> and <code>textures</code> will be the objects whose contents will change.
 	 * @param textureSet the set of textures to export.
 	 * @param pnames the patch names lump.
-	 * @param textures the texture list to write to.
-	 * @param nameSet the set of texture names that will be written to the texture list. Can be null (exports all names).
-	 * @param excludeSet if <code>nameSet</code> is null and this is true, the set is treated as an exclusion set, not inclusion.
+	 * @param texture1 the first texture list to write to.
+	 * @param texture2 the second texture list to write to. Can be null.
+	 * @param texure1NameSet the set of texture names that will be written to the first texture list. Can be null (exports all names to <code>texture1</code>).
 	 */
-	public static void exportTextureSet(TextureSet textureSet, PatchNames pnames, DoomTextureList textures, AbstractSet<String> nameSet, boolean excludeSet)
+	public static void exportTextureSet(TextureSet textureSet, PatchNames pnames, DoomTextureList texture1, DoomTextureList texture2, AbstractSet<String> texure1NameSet)
 	{
 		for (Texture texture : textureSet)
 		{
-			if (nameSet == null || (excludeSet && !nameSet.contains(texture.getName())) || (!excludeSet && nameSet.contains(texture.getName())))
+			DoomTexture ndt = new DoomTexture();
+			ndt.setName(texture.getName());
+			ndt.setWidth(texture.getWidth());
+			ndt.setHeight(texture.getHeight());
+			
+			int index = -1;
+			for (int i = 0; i < texture.getPatchCount(); i++)
 			{
-				DoomTexture ndt = new DoomTexture();
-				ndt.setName(texture.getName());
-				ndt.setWidth(texture.getWidth());
-				ndt.setHeight(texture.getHeight());
+				Patch patch = texture.getPatch(i);
 				
-				int index = -1;
-				for (int i = 0; i < texture.getPatchCount(); i++)
+				String pname = patch.getName();
+				
+				index = pnames.getIndexOf(pname);
+				if (index == -1)
 				{
-					Patch patch = texture.getPatch(i);
-					
-					String pname = patch.getName();
-					
+					pnames.add(pname);
 					index = pnames.getIndexOf(pname);
-					if (index == -1)
-					{
-						pnames.add(pname);
-						index = pnames.getIndexOf(pname);
-					}	
-					
-					DoomTexture.Patch ndtp = new DoomTexture.Patch();
-					ndtp.setOriginX(patch.getOriginX());
-					ndtp.setOriginY(patch.getOriginY());
-					ndtp.setPatchIndex(index);
-					ndt.addPatch(ndtp);
-				}
+				}	
 				
-				textures.add(ndt);
+				DoomTexture.Patch ndtp = new DoomTexture.Patch();
+				ndtp.setOriginX(patch.getOriginX());
+				ndtp.setOriginY(patch.getOriginY());
+				ndtp.setPatchIndex(index);
+				ndt.addPatch(ndtp);
 			}
+
+			if (texure1NameSet == null || !texure1NameSet.contains(texture.getName()) || texure1NameSet.contains(texture.getName()))
+				texture1.add(ndt);
+			else
+				texture2.add(ndt);
 		}
 	}
 	
@@ -297,46 +297,48 @@ public final class GraphicUtils
 	 * Exports this {@link TextureSet}'s contents into a PNAMES and TEXTUREx lump.
 	 * This looks up patch indices as it exports - if a patch name does not exist in <code>pnames</code>,
 	 * it is added.  
+	 * <p>
+	 * In the end, <code>pnames</code> and <code>textures</code> will be the objects whose contents will change.
 	 * @param textureSet the set of textures to export.
 	 * @param pnames the patch names lump.
-	 * @param textures the texture list to write to.
-	 * @param nameSet the set of texture names that will be written to the texture list. Can be null (exports all names).
-	 * @param excludeSet if <code>nameSet</code> is null and this is true, the set is treated as an exclusion set, not inclusion.
+	 * @param texture1 the first texture list to write to.
+	 * @param texture2 the first texture list to write to. Can be null.
+	 * @param texure1NameSet the set of texture names that will be written to the first texture list. Can be null (exports all names to <code>texture1</code>).
 	 */
-	public static void exportTextureSet(TextureSet textureSet, PatchNames pnames, StrifeTextureList textures, AbstractSet<String> nameSet, boolean excludeSet)
+	public static void exportTextureSet(TextureSet textureSet, PatchNames pnames, StrifeTextureList texture1, StrifeTextureList texture2, AbstractSet<String> texure1NameSet)
 	{
 		for (Texture texture : textureSet)
 		{
-			if (nameSet == null || (excludeSet && !nameSet.contains(texture.getName())) || (!excludeSet && nameSet.contains(texture.getName())))
+			StrifeTexture ndt = new StrifeTexture();
+			ndt.setName(texture.getName());
+			ndt.setWidth(texture.getWidth());
+			ndt.setHeight(texture.getHeight());
+			
+			int index = -1;
+			for (int i = 0; i < texture.getPatchCount(); i++)
 			{
-				StrifeTexture ndt = new StrifeTexture();
-				ndt.setName(texture.getName());
-				ndt.setWidth(texture.getWidth());
-				ndt.setHeight(texture.getHeight());
+				Patch patch = texture.getPatch(i);
 				
-				int index = -1;
-				for (int i = 0; i < texture.getPatchCount(); i++)
+				String pname = patch.getName();
+				
+				index = pnames.getIndexOf(pname);
+				if (index == -1)
 				{
-					Patch patch = texture.getPatch(i);
-					
-					String pname = patch.getName();
-					
+					pnames.add(pname);
 					index = pnames.getIndexOf(pname);
-					if (index == -1)
-					{
-						pnames.add(pname);
-						index = pnames.getIndexOf(pname);
-					}	
-					
-					StrifeTexture.Patch ndtp = new StrifeTexture.Patch();
-					ndtp.setOriginX(patch.getOriginX());
-					ndtp.setOriginY(patch.getOriginY());
-					ndtp.setPatchIndex(index);
-					ndt.addPatch(ndtp);
-				}
+				}	
 				
-				textures.add(ndt);
+				StrifeTexture.Patch ndtp = new StrifeTexture.Patch();
+				ndtp.setOriginX(patch.getOriginX());
+				ndtp.setOriginY(patch.getOriginY());
+				ndtp.setPatchIndex(index);
+				ndt.addPatch(ndtp);
 			}
+			
+			if (texure1NameSet == null || !texure1NameSet.contains(texture.getName()) || texure1NameSet.contains(texture.getName()))
+				texture1.add(ndt);
+			else
+				texture2.add(ndt);
 		}
 	}
 
