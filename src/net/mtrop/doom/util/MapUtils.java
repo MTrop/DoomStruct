@@ -406,7 +406,7 @@ public final class MapUtils
 			if (name.equals(LUMP_SSECTORS))
 				ssectors = entry;
 			else if (name.equals(LUMP_SEGS))
-				nodes = entry;
+				segs = entry;
 			else if (name.equals(LUMP_NODES))
 				nodes = entry;
 		}
