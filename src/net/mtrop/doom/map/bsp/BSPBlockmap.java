@@ -19,8 +19,8 @@ import net.mtrop.doom.util.RangeUtils;
 
 import com.blackrook.commons.Common;
 import com.blackrook.commons.ObjectPair;
-import com.blackrook.commons.grid.SparseQueueGridMap;
 import com.blackrook.commons.hash.HashedQueueMap;
+import com.blackrook.commons.index.SparseQueueGridIndex;
 import com.blackrook.commons.linkedlist.Queue;
 import com.blackrook.commons.math.Pair;
 import com.blackrook.io.SuperReader;
@@ -39,7 +39,7 @@ public class BSPBlockmap implements BinaryObject
 	private int startY;
 
 	/** Grid mapping to linedef indices. */
-	private SparseQueueGridMap<Integer> innerMap;
+	private SparseQueueGridIndex<Integer> innerMap;
 	
 	/**
 	 * Creates a new Blockmap, startX and startY set to 0.
@@ -62,7 +62,7 @@ public class BSPBlockmap implements BinaryObject
 		this.startX = startX;
 		this.startY = startY;
 		
-		innerMap = new SparseQueueGridMap<Integer>(512, 512);
+		innerMap = new SparseQueueGridIndex<Integer>();
 	}
 	
 	/**

@@ -115,12 +115,12 @@ public final class UDMFReader
 
 		private boolean StructureList()
 		{
-			if (currentType(ULexer.TYPE_IDENTIFIER))
+			if (currentType(ULexerKernel.TYPE_IDENTIFIER))
 			{
 				currentId = currentToken().getLexeme();
 				nextToken();
 				
-				if (currentType(ULexer.TYPE_EQUALS))
+				if (currentType(ULexerKernel.TYPE_EQUALS))
 				{
 					nextToken();
 					
@@ -130,8 +130,11 @@ public final class UDMFReader
 						return false;
 					}
 					
-					if (!matchTypeStrict(ULexer.TYPE_SEMICOLON))
+					if (!matchType(ULexerKernel.TYPE_SEMICOLON))
+					{
+						addErrorMessage("Expected \";\" to terminate field statement.");
 						return false;
+					}
 					
 					structStack.peek().put(currentId, currentValue);
 					currentId = null;
@@ -139,24 +142,27 @@ public final class UDMFReader
 					
 					return true;
 				}
-				else if (currentType(ULexer.TYPE_LBRACE))
+				else if (currentType(ULexerKernel.TYPE_LBRACE))
 				{
 					currentStructType = currentId;
 					nextToken();
 					
-					UDMFObject struct = new UDMFObject();
-					structStack.push(struct);
+					UDMFObject object = new UDMFObject();
+					structStack.push(object);
 					if (!FieldExpressionList())
 					{
 						structStack.pop();
 						return false;
 					}
 
-					if (!matchTypeStrict(ULexer.TYPE_RBRACE))
+					if (!matchType(ULexerKernel.TYPE_RBRACE))
+					{
+						addErrorMessage("Expected \"}\" to terminate object.");
 						return false;
+					}
 
 					structStack.pop();
-					table.addStruct(currentStructType, struct);
+					table.addStruct(currentStructType, object);
 					return true;
 				}
 				else
@@ -165,7 +171,7 @@ public final class UDMFReader
 					return false;
 				}
 			}
-			else if (currentType(ULexer.TYPE_END_OF_STREAM))
+			else if (currentType(ULexerKernel.TYPE_END_OF_STREAM))
 				return true;
 
 			addErrorMessage("Expected global value or structure.");
@@ -178,8 +184,11 @@ public final class UDMFReader
 			currentId = currentToken().getLexeme();
 			nextToken();
 			
-			if (!matchTypeStrict(ULexer.TYPE_EQUALS))
+			if (!matchType(ULexerKernel.TYPE_EQUALS))
+			{
+				addErrorMessage("Expected \"=\" after field.");
 				return false;
+			}
 			
 			if (!Value())
 			{
@@ -187,8 +196,11 @@ public final class UDMFReader
 				return false;
 			}
 			
-			if (!matchTypeStrict(ULexer.TYPE_SEMICOLON))
+			if (!matchType(ULexerKernel.TYPE_SEMICOLON))
+			{
+				addErrorMessage("Expected \";\" to terminate field statement.");
 				return false;
+			}
 			
 			structStack.peek().put(currentId, currentValue);
 			currentId = null;
@@ -202,7 +214,7 @@ public final class UDMFReader
 		 */
 		private boolean FieldExpressionList()
 		{
-			if (currentType(ULexer.TYPE_IDENTIFIER))
+			if (currentType(ULexerKernel.TYPE_IDENTIFIER))
 			{
 				if (!doField())
 					return false;
@@ -217,19 +229,19 @@ public final class UDMFReader
 		 */
 		private boolean Value()
 		{
-			if (currentType(ULexer.TYPE_STRING))
+			if (currentType(ULexerKernel.TYPE_STRING))
 			{
 				currentValue = currentToken().getLexeme();
 				nextToken();
 				return true;
 			}
-			else if (currentType(ULexer.TYPE_TRUE))
+			else if (currentType(ULexerKernel.TYPE_TRUE))
 			{
 				currentValue = true;
 				nextToken();
 				return true;
 			}
-			else if (currentType(ULexer.TYPE_FALSE))
+			else if (currentType(ULexerKernel.TYPE_FALSE))
 			{
 				currentValue = false;
 				nextToken();
@@ -247,9 +259,9 @@ public final class UDMFReader
 		 */
 		private boolean NumericValue()
 		{
-			if (matchType(ULexer.TYPE_MINUS))
+			if (matchType(ULexerKernel.TYPE_MINUS))
 			{
-				if (currentType(ULexer.TYPE_NUMBER))
+				if (currentType(ULexerKernel.TYPE_NUMBER))
 				{
 					String lexeme = currentToken().getLexeme();
 					if (lexeme.startsWith("0X") || lexeme.startsWith("0x"))
@@ -260,9 +272,9 @@ public final class UDMFReader
 						currentValue = Integer.parseInt(lexeme);
 				}
 			}
-			else if (matchType(ULexer.TYPE_PLUS))
+			else if (matchType(ULexerKernel.TYPE_PLUS))
 			{
-				if (currentType(ULexer.TYPE_NUMBER))
+				if (currentType(ULexerKernel.TYPE_NUMBER))
 				{
 					String lexeme = currentToken().getLexeme();
 					if (lexeme.startsWith("0X") || lexeme.startsWith("0x"))
@@ -273,7 +285,7 @@ public final class UDMFReader
 						currentValue = Integer.parseInt(lexeme);
 				}
 			}
-			else if (currentType(ULexer.TYPE_NUMBER))
+			else if (currentType(ULexerKernel.TYPE_NUMBER))
 			{
 				String lexeme = currentToken().getLexeme();
 				if (lexeme.startsWith("0X") || lexeme.startsWith("0x"))
@@ -287,35 +299,17 @@ public final class UDMFReader
 			return false;
 		}
 		
-		@Override
-		protected String getTypeErrorText(int tokenType)
-		{
-			switch (tokenType)
-			{
-				case ULexer.TYPE_LBRACE:
-					return "'{'";
-				case ULexer.TYPE_RBRACE:
-					return "'}'";
-				case ULexer.TYPE_EQUALS:
-					return "'='";
-				case ULexer.TYPE_SEMICOLON:
-					return "';'";
-				case ULexer.TYPE_PLUS:
-					return "'+'";
-				case ULexer.TYPE_MINUS:
-					return "'-'";
-			}
-			return null;
-		}
-}
+	}
 
+	// Lexer kernel.
+	private static final ULexerKernel KERNEL = new ULexerKernel();
+
+	
 	/**
-	 * Lexer for the UDMFParser.
-	 * @author Matthew Tropiano
+	 * Kernel for UDMF parser.
 	 */
-	private static class ULexer extends Lexer
+	private static class ULexerKernel extends LexerKernel
 	{
-
 		public static final int TYPE_COMMENT =		0;
 		public static final int TYPE_TRUE = 		1;
 		public static final int TYPE_FALSE = 		2;
@@ -325,16 +319,16 @@ public final class UDMFReader
 		public static final int TYPE_SEMICOLON = 	6;
 		public static final int TYPE_PLUS = 		7;
 		public static final int TYPE_MINUS = 		8;
-		
-		private static final LexerKernel KERNEL = new LexerKernel()
-		{{
+
+		private ULexerKernel()
+		{
 			addCommentStartDelimiter("/*", TYPE_COMMENT);
 			addCommentLineDelimiter("//", TYPE_COMMENT);
 			addCommentEndDelimiter("*/", TYPE_COMMENT);
 			
 			addCaseInsensitiveKeyword("true", TYPE_TRUE);
 			addCaseInsensitiveKeyword("false", TYPE_FALSE);
-
+	
 			addStringDelimiter('"', '"');
 			
 			addDelimiter(";", TYPE_SEMICOLON);
@@ -343,8 +337,16 @@ public final class UDMFReader
 			addDelimiter("}", TYPE_RBRACE);
 			addDelimiter("+", TYPE_PLUS);
 			addDelimiter("-", TYPE_MINUS);
-		}};
+		}
 		
+	}
+	
+	/**
+	 * Lexer for the UDMFParser.
+	 * @author Matthew Tropiano
+	 */
+	private static class ULexer extends Lexer
+	{
 		public ULexer(Reader reader)
 		{
 			super(KERNEL, "UDMFLexer", reader);
@@ -352,5 +354,4 @@ public final class UDMFReader
 
 	}
 
-	
 }
