@@ -66,7 +66,7 @@ public final class NameUtils
 	 */
 	public static boolean isValidEntryName(String name)
 	{
-		return name != null && name.matches(ENTRY_NAME.pattern());
+		return name != null && ENTRY_NAME.matcher(name).matches();
 	}
 
 	/**
@@ -132,7 +132,7 @@ public final class NameUtils
 	 */
 	public static boolean isValidTextureName(String name)
 	{
-		return name != null && name.matches(TEXTURE_NAME.pattern());
+		return name != null && TEXTURE_NAME.matcher(name).matches();
 	}
 
 	/**

@@ -67,6 +67,14 @@ public class DoomTextureList extends CommonTextureList<DoomTexture> implements B
 	}
 	
 	@Override
+	public DoomTexture createTexture(String texture) 
+	{
+		DoomTexture out = new DoomTexture();
+		out.setName(texture);
+		return out;
+	}
+
+	@Override
 	public void readBytes(InputStream in) throws IOException
 	{
 		clear();

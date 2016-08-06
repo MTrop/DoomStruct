@@ -65,7 +65,15 @@ public class StrifeTextureList extends CommonTextureList<StrifeTexture> implemen
 		out.readBytes(in);
 		return out;
 	}
-	
+
+	@Override
+	public StrifeTexture createTexture(String texture) 
+	{
+		StrifeTexture out = new StrifeTexture();
+		out.setName(texture);
+		return out;
+	}
+
 	@Override
 	public void readBytes(InputStream in) throws IOException
 	{

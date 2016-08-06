@@ -53,6 +53,14 @@ public class StrifeTexture extends CommonTexture<StrifeTexture.Patch>
 	}
 	
 	@Override
+	public Patch createPatch() 
+	{
+		Patch out = new Patch();
+		patches.add(out);
+		return out;
+	}
+
+	@Override
 	public void readBytes(InputStream in) throws IOException
 	{
 		SuperReader sr = new SuperReader(in,SuperReader.LITTLE_ENDIAN);

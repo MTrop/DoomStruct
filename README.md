@@ -1,6 +1,6 @@
 # Doom Struct
 
-Copyright (c) 2015 Matt Tropiano  
+Copyright (c) 2015 - 2016 Matt Tropiano  
 
 ### NOTICE
 

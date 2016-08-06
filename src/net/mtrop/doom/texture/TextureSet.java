@@ -165,7 +165,7 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 	}
 
 	/**
-	 * Shifts the ordering of a patch.
+	 * Shifts the ordering of a texture.
 	 * @see AbstractMappedVector#shift(int, int)
 	 */
 	public void shiftTexture(int index, int newIndex)

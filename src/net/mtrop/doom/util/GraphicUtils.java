@@ -245,7 +245,7 @@ public final class GraphicUtils
 	}
 	
 	/**
-	 * Exports this {@link TextureSet}'s contents into a PNAMES and TEXTUREx lump.
+	 * Exports a {@link TextureSet}'s contents into a PNAMES and TEXTUREx lump.
 	 * This looks up patch indices as it exports - if a patch name does not exist in <code>pnames</code>,
 	 * it is added.
 	 * <p>
@@ -279,11 +279,10 @@ public final class GraphicUtils
 					index = pnames.getIndexOf(pname);
 				}	
 				
-				DoomTexture.Patch ndtp = new DoomTexture.Patch();
+				DoomTexture.Patch ndtp = ndt.createPatch();
 				ndtp.setOriginX(patch.getOriginX());
 				ndtp.setOriginY(patch.getOriginY());
 				ndtp.setPatchIndex(index);
-				ndt.addPatch(ndtp);
 			}
 
 			if (texure1NameSet == null || !texure1NameSet.contains(texture.getName()) || texure1NameSet.contains(texture.getName()))
@@ -294,7 +293,7 @@ public final class GraphicUtils
 	}
 	
 	/**
-	 * Exports this {@link TextureSet}'s contents into a PNAMES and TEXTUREx lump.
+	 * Exports a {@link TextureSet}'s contents into a PNAMES and TEXTUREx lump.
 	 * This looks up patch indices as it exports - if a patch name does not exist in <code>pnames</code>,
 	 * it is added.  
 	 * <p>
@@ -328,11 +327,10 @@ public final class GraphicUtils
 					index = pnames.getIndexOf(pname);
 				}	
 				
-				StrifeTexture.Patch ndtp = new StrifeTexture.Patch();
+				StrifeTexture.Patch ndtp = ndt.createPatch();
 				ndtp.setOriginX(patch.getOriginX());
 				ndtp.setOriginY(patch.getOriginY());
 				ndtp.setPatchIndex(index);
-				ndt.addPatch(ndtp);
 			}
 			
 			if (texure1NameSet == null || !texure1NameSet.contains(texture.getName()) || texure1NameSet.contains(texture.getName()))

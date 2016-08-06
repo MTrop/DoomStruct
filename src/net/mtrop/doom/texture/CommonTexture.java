@@ -12,6 +12,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Iterator;
 
+import com.blackrook.commons.AbstractVector;
 import com.blackrook.commons.Common;
 import com.blackrook.commons.list.List;
 
@@ -99,29 +100,29 @@ public abstract class CommonTexture<P extends CommonPatch> implements BinaryObje
 		RangeUtils.checkShortUnsigned("Height", height);
 		this.height = height;
 	}
+
+	/**
+	 * Creates a new patch entry on this texture, at the end of the list.
+	 * The patch has no information set on it, including its name index value and offsets.
+	 * @return a newly-added Patch object.
+	 */
+	public abstract P createPatch();
 	
 	/**
-	 * Adds a patch entry to this texture.
-	 * @param p	the patch to add.
-	 * @throws IllegalArgumentException if the patch would make the patch count exceeds 65535.
+	 * Shifts the ordering of a patch on this texture.
+	 * The ordering of the patches in this texture will change depending on the indexes provided.
+	 * @param oldIndex the index to shift.
+	 * @param newIndex the destination index.
+	 * @see AbstractVector#shift(int, int)
 	 */
-	public void addPatch(P p)
+	public void shiftPatch(int oldIndex, int newIndex)
 	{
-		RangeUtils.checkShortUnsigned("Number of patches", patches.size());
-		patches.add(p);
-	}
-	
-	/**
-	 * Removes a patch entry from this texture.
-	 * @param p	the patch to remove.
-	 */
-	public boolean removePatch(P p)
-	{
-		return patches.remove(p);
+		patches.shift(oldIndex, newIndex);
 	}
 	
 	/**
 	 * Removes a patch entry from this texture by index.
+	 * The ordering of the patches in this texture will change depending on the index provided.
 	 * @param i	the index of the patch to remove.
 	 */
 	public P removePatch(int i)

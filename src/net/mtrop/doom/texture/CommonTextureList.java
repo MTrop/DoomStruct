@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import net.mtrop.doom.BinaryObject;
+import net.mtrop.doom.util.NameUtils;
 
 import com.blackrook.commons.Common;
 import com.blackrook.commons.Sizable;
@@ -22,6 +23,7 @@ import com.blackrook.io.SuperWriter;
 /**
  * This is the lump that contains a collection of textures.
  * All textures are stored in here, usually named TEXTURE1 or TEXTURE2 in a WAD.
+ * Most creation methods in this object are factory-style, due to the diversity of implemented texture formats.
  * @author Matthew Tropiano
  */
 public abstract class CommonTextureList<T extends CommonTexture<?>> extends AbstractMappedVector<T, String> implements BinaryObject, Sizable
@@ -45,7 +47,7 @@ public abstract class CommonTextureList<T extends CommonTexture<?>> extends Abst
 	/**
 	 * Gets the index of a texture in this lump by its name.
 	 * @param name the name of the texture.
-	 * @return a valid index of found, or -1 if not.
+	 * @return a valid index if found, or -1 if not.
 	 */
 	public int getTextureIndex(String name)
 	{
@@ -53,14 +55,23 @@ public abstract class CommonTextureList<T extends CommonTexture<?>> extends Abst
 	}
 	
 	/**
-	 * Gets the index of a texture in this lump by its name.
+	 * Gets a texture in this lump by its name.
 	 * @param name the name of the texture.
-	 * @return a valid index of found, or -1 if not.
+	 * @return a valid index if found, or -1 if not.
 	 */
 	public T getByName(String name)
 	{
 		return getUsingKey(name);
 	}
+	
+	/**
+	 * Creates a new texture in this list with no patches, at the end of the list.
+	 * @param name the name of the texture.
+	 * @return a new, empty texture object added to this list. 
+	 * @throws IllegalArgumentException if the provided name is not a valid name for a texture.
+	 * @see NameUtils#isValidTextureName(String)
+	 */
+	public abstract T createTexture(String name);
 	
 	@Override
 	public byte[] toBytes()
