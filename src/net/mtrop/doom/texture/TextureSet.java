@@ -10,6 +10,7 @@ package net.mtrop.doom.texture;
 import java.util.Comparator;
 import java.util.Iterator;
 
+import net.mtrop.doom.exception.TextureException;
 import net.mtrop.doom.texture.TextureSet.Texture.Patch;
 import net.mtrop.doom.util.NameUtils;
 
@@ -32,12 +33,13 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 	/**
 	 * Creates a new TextureSet using an existing Patch Name lump and a series of Texture Lumps.
 	 * @param pnames the patch name lump.
-	 * @param textureLumps the list of texture lumps.
+	 * @param textureLists the list of texture lists.
+	 * @throws TextureException if a texture references an invalid index in pnames.
 	 */
 	@SafeVarargs
-	public TextureSet(PatchNames pnames, final CommonTextureList<?> ... textureLumps)
+	public TextureSet(PatchNames pnames, final CommonTextureList<?> ... textureLists)
 	{
-		this.textureList = new AbstractMappedVector<TextureSet.Texture, String>(textureLumps.length * 100)
+		this.textureList = new AbstractMappedVector<TextureSet.Texture, String>(textureLists.length * 100)
 		{
 			@Override
 			protected String getMappingKey(Texture object)
@@ -46,7 +48,7 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 			}
 		};
 		
-		for (CommonTextureList<?> lump : textureLumps)
+		for (CommonTextureList<?> lump : textureLists)
 		{
 			for (int i = 0; i < lump.size(); i++)
 			{
@@ -62,6 +64,8 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 				{
 					CommonPatch p = t.getPatch(j);
 					String patchName = pnames.getByIndex(p.getPatchIndex());
+					if (patchName == null)
+						throw new TextureException("Index "+j+" in PNAMES does not exist!");
 					Patch newpatch = newtex.createPatch(patchName);
 					newpatch.setOriginX(p.getOriginX());
 					newpatch.setOriginY(p.getOriginY());

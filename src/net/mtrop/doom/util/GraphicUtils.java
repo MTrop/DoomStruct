@@ -11,14 +11,19 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 import com.blackrook.commons.AbstractSet;
 
+import net.mtrop.doom.WadFile;
+import net.mtrop.doom.exception.TextureException;
+import net.mtrop.doom.exception.WadException;
 import net.mtrop.doom.graphics.Flat;
 import net.mtrop.doom.graphics.Picture;
 import net.mtrop.doom.struct.Colormap;
 import net.mtrop.doom.struct.EndDoom;
 import net.mtrop.doom.struct.Palette;
+import net.mtrop.doom.texture.CommonTextureList;
 import net.mtrop.doom.texture.DoomTexture;
 import net.mtrop.doom.texture.DoomTextureList;
 import net.mtrop.doom.texture.PatchNames;
@@ -241,6 +246,64 @@ public final class GraphicUtils
 					g.drawChars(ch, 0, 1, c*8, r*12+10);
 				}
 			}
+		return out;
+	}
+	
+	/**
+	 * Imports a {@link TextureSet} from a WAD File.
+	 * This searches for the TEXTURE1/2 lumps and the PNAMES entry, and builds a new TextureSet
+	 * from them. If the WAD does NOT contain a TEXTUREx entry, the returned set will be empty.
+	 * If TEXTURE1/2 is present, but NOT PNAMES, a {@link TextureException} will be thrown.
+	 * @param wf the WAD file to read from containing the required entries.
+	 * @return a new texture set equivalent to the parsed data.
+	 * @throws TextureException if a texture lump was found, but not PNAMES.
+	 * @throws WadException if the WAD itself cannot be read.
+	 * @throws IOException if an entry in a WAD file cannot be read.
+	 */
+	public static TextureSet importTextureSet(WadFile wf) throws WadException, IOException
+	{
+		PatchNames patchNames = null;
+		CommonTextureList<?> textureList1 = null;
+		CommonTextureList<?> textureList2 = null;
+		
+		byte[] textureData = wf.getData("TEXTURE1");
+		boolean isStrife = false;
+		
+		// figure out if Strife or Doom Texture Lump.
+		if (WadUtils.isStrifeTextureData(textureData))
+		{
+			textureList1 = StrifeTextureList.create(textureData);
+			isStrife = true;
+		}
+		else
+		{
+			textureList1 = DoomTextureList.create(textureData);
+			isStrife = false;
+		}
+
+		textureData = wf.getData("TEXTURE2");
+		
+		if (textureData != null)
+		{
+			if (isStrife)
+				textureList2 = StrifeTextureList.create(textureData);
+			else
+				textureList2 = DoomTextureList.create(textureData);
+		}
+		
+		textureData = wf.getData("PNAMES");
+		if (textureData == null)
+			throw new TextureException("File \""+wf.getFilePath()+"\" has TEXTUREx without PNAMES!\n");
+
+		patchNames = PatchNames.create(textureData);
+		
+		TextureSet out;
+		
+		if (textureList2 != null)
+			out = new TextureSet(patchNames, textureList1, textureList2);
+		else
+			out = new TextureSet(patchNames, textureList1);
+
 		return out;
 	}
 	
