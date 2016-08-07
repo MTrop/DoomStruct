@@ -58,8 +58,6 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 				newtex.setWidth(t.getWidth());
 				newtex.setHeight(t.getHeight());
 				
-				textureList.add(newtex);
-
 				for (int j = 0; j < t.getPatchCount(); j++)
 				{
 					CommonPatch p = t.getPatch(j);
@@ -115,6 +113,7 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 		
 		Texture out = new Texture();
 		out.setName(textureName);
+		textureList.add(out);
 		return out;
 	}
 

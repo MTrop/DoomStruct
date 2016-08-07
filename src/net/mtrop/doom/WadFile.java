@@ -433,7 +433,10 @@ public class WadFile implements Wad, Closeable
 	@Override	
 	public byte[] getData(String entryName) throws IOException
 	{
-		return getData(getEntry(entryName));
+		WadEntry entry = getEntry(entryName);
+		if (entry == null)
+			return null;
+		return getData(entry);
 	}
 
 	@Override	
