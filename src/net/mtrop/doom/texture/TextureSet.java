@@ -10,16 +10,15 @@ package net.mtrop.doom.texture;
 import java.util.Comparator;
 import java.util.Iterator;
 
-import net.mtrop.doom.exception.TextureException;
-import net.mtrop.doom.texture.TextureSet.Texture.Patch;
-import net.mtrop.doom.util.NameUtils;
-
 import com.blackrook.commons.AbstractVector;
 import com.blackrook.commons.Common;
 import com.blackrook.commons.Sizable;
 import com.blackrook.commons.linkedlist.Queue;
 import com.blackrook.commons.list.List;
 import com.blackrook.commons.map.AbstractMappedVector;
+
+import net.mtrop.doom.exception.TextureException;
+import net.mtrop.doom.util.NameUtils;
 
 /**
  * A helper class for the TEXTUREx and PNAMES setup that Doom Texture definitions use.
@@ -211,59 +210,8 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 	/**
 	 * A class that represents a single composite Texture entry.
 	 */
-	public static class Texture implements Iterable<Patch>, Sizable
+	public static class Texture implements Iterable<TextureSet.Patch>, Sizable
 	{
-		/**
-		 * Texture patch.
-		 */
-		public static class Patch
-		{
-			/** Patch name. */
-			private String name;
-			/** Offset X. */
-			private int originX;
-			/** Offset Y. */
-			private int originY;
-			
-			private Patch(String name)
-			{
-				this.name = name;
-				originX = 0;
-				originY = 0;
-			}
-			
-			/** Returns the patch name. */
-			public String getName()
-			{
-				return name;
-			}
-
-			/** Returns the patch offset X. */
-			public int getOriginX()
-			{
-				return originX;
-			}
-			
-			/** Sets the patch offset X. */
-			public void setOriginX(int originX)
-			{
-				this.originX = originX;
-			}
-			
-			/** Returns the patch offset Y. */
-			public int getOriginY()
-			{
-				return originY;
-			}
-			
-			/** Sets the patch offset Y. */
-			public void setOriginY(int originY)
-			{
-				this.originY = originY;
-			}
-			
-		}
-		
 		/** Texture name. */
 		private String name;
 		/** Texture width. */
@@ -272,14 +220,14 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 		private int height;
 		
 		/** Patch entry. */
-		private List<Texture.Patch> patches;
+		private List<TextureSet.Patch> patches;
 		
 		private Texture(String name)
 		{
 			this.name = name;
 			width = 0;
 			height = 0;
-			patches = new List<Texture.Patch>(2);
+			patches = new List<TextureSet.Patch>(2);
 		}
 		
 		/** 
@@ -386,5 +334,56 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 			return size() == 0;
 		}
 
+	}
+
+	/**
+	 * Texture patch.
+	 */
+	public static class Patch
+	{
+		/** Patch name. */
+		private String name;
+		/** Offset X. */
+		private int originX;
+		/** Offset Y. */
+		private int originY;
+		
+		private Patch(String name)
+		{
+			this.name = name;
+			originX = 0;
+			originY = 0;
+		}
+		
+		/** Returns the patch name. */
+		public String getName()
+		{
+			return name;
+		}
+	
+		/** Returns the patch offset X. */
+		public int getOriginX()
+		{
+			return originX;
+		}
+		
+		/** Sets the patch offset X. */
+		public void setOriginX(int originX)
+		{
+			this.originX = originX;
+		}
+		
+		/** Returns the patch offset Y. */
+		public int getOriginY()
+		{
+			return originY;
+		}
+		
+		/** Sets the patch offset Y. */
+		public void setOriginY(int originY)
+		{
+			this.originY = originY;
+		}
+		
 	}
 }

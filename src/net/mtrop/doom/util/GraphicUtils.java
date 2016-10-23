@@ -31,7 +31,7 @@ import net.mtrop.doom.texture.StrifeTexture;
 import net.mtrop.doom.texture.StrifeTextureList;
 import net.mtrop.doom.texture.TextureSet;
 import net.mtrop.doom.texture.TextureSet.Texture;
-import net.mtrop.doom.texture.TextureSet.Texture.Patch;
+import net.mtrop.doom.texture.TextureSet.Patch;
 
 /**
  * Graphics utility methods for image types.

@@ -49,7 +49,7 @@
         	sourcepath="${src.dir}" 
         	packagenames="${project.javadoc.packages}"
         	destdir="${docs.dir}" 
-    		source="1.7" 
+    		source="1.8" 
         	splitindex="true" 
         	use="true" 
         	version="true" 
