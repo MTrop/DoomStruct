@@ -132,37 +132,37 @@ public class WadMap implements Wad
 	@Override
 	public WadEntry addData(String entryName, byte[] data) throws IOException
 	{
-		throw new UnsupportedOperationException("This class does not support getDataAsStream()");
+		throw new UnsupportedOperationException("This class does not support addData()");
 	}
 
 	@Override
 	public WadEntry addDataAt(int index, String entryName, byte[] data) throws IOException
 	{
-		throw new UnsupportedOperationException("This class does not support getDataAsStream()");
+		throw new UnsupportedOperationException("This class does not support addDataAt()");
 	}
 
 	@Override
 	public WadEntry[] addAllData(String[] entryNames, byte[][] data) throws IOException
 	{
-		throw new UnsupportedOperationException("This class does not support getDataAsStream()");
+		throw new UnsupportedOperationException("This class does not support addAllData()");
 	}
 
 	@Override
 	public WadEntry[] addAllDataAt(int index, String[] entryNames, byte[][] data) throws IOException
 	{
-		throw new UnsupportedOperationException("This class does not support getDataAsStream()");
+		throw new UnsupportedOperationException("This class does not support addAllDataAt()");
 	}
 
 	@Override
 	public WadEntry addMarker(String name) throws IOException
 	{
-		throw new UnsupportedOperationException("This class does not support getDataAsStream()");
+		throw new UnsupportedOperationException("This class does not support addMarker()");
 	}
 
 	@Override
 	public WadEntry addMarkerAt(int index, String name) throws IOException
 	{
-		throw new UnsupportedOperationException("This class does not support getDataAsStream()");
+		throw new UnsupportedOperationException("This class does not support addMarkerAt()");
 	}
 
 	@Override	
@@ -180,19 +180,19 @@ public class WadMap implements Wad
 	@Override
 	public void deleteEntry(int n) throws IOException
 	{
-		throw new UnsupportedOperationException("This class does not support getDataAsStream()");
+		throw new UnsupportedOperationException("This class does not support deleteEntry()");
 	}
 
 	@Override
 	public void renameEntry(int index, String newName) throws IOException
 	{
-		throw new UnsupportedOperationException("This class does not support getDataAsStream()");
+		throw new UnsupportedOperationException("This class does not support renameEntry()");
 	}
 
 	@Override
 	public void replaceEntry(int index, byte[] data) throws IOException
 	{
-		throw new UnsupportedOperationException("This class does not support getDataAsStream()");
+		throw new UnsupportedOperationException("This class does not support replaceEntry()");
 	}
 
 	@Override
@@ -213,25 +213,25 @@ public class WadMap implements Wad
 	@Override
 	public void unmapEntries(int startIndex, WadEntry[] entryList) throws IOException
 	{
-		throw new UnsupportedOperationException("This class does not support getDataAsStream()");
+		throw new UnsupportedOperationException("This class does not support unmapEntries()");
 	}
 
 	@Override
 	public void setEntries(WadEntry[] entryList) throws IOException
 	{
-		throw new UnsupportedOperationException("This class does not support getDataAsStream()");
+		throw new UnsupportedOperationException("This class does not support setEntries()");
 	}
 
 	@Override	
 	public byte[] getData(int n) throws IOException
 	{
-		throw new UnsupportedOperationException("This class does not support getDataAsStream()");
+		throw new UnsupportedOperationException("This class does not support getData()");
 	}
 
 	@Override	
 	public byte[] getData(String entryName) throws IOException
 	{
-		throw new UnsupportedOperationException("This class does not support getDataAsStream()");
+		throw new UnsupportedOperationException("This class does not support getData()");
 	}
 
 	@Override	
@@ -243,31 +243,31 @@ public class WadMap implements Wad
 	@Override	
 	public byte[] getData(WadEntry entry) throws IOException
 	{
-		throw new UnsupportedOperationException("This class does not support getDataAsStream()");
+		throw new UnsupportedOperationException("This class does not support getData()");
 	}
 
 	@Override	
 	public InputStream getInputStream(int n) throws IOException
 	{
-		throw new UnsupportedOperationException("This class does not support getDataAsStream()");
+		throw new UnsupportedOperationException("This class does not support getInputStream()");
 	}
 
 	@Override	
 	public InputStream getInputStream(String WadEntry) throws IOException
 	{
-		throw new UnsupportedOperationException("This class does not support getDataAsStream()");
+		throw new UnsupportedOperationException("This class does not support getInputStream()");
 	}
 
 	@Override	
 	public InputStream getInputStream(String WadEntry, int start) throws IOException
 	{
-		throw new UnsupportedOperationException("This class does not support getDataAsStream()");
+		throw new UnsupportedOperationException("This class does not support getInputStream()");
 	}
 
 	@Override	
 	public InputStream getInputStream(WadEntry WadEntry) throws IOException
 	{
-		throw new UnsupportedOperationException("This class does not support getDataAsStream()");
+		throw new UnsupportedOperationException("This class does not support getInputStream()");
 	}
 
 	@Override	

@@ -340,7 +340,8 @@ public class WadBuffer implements Wad
 	@Override	
 	public byte[] getData(String entryName) throws IOException
 	{
-		return getData(getEntry(entryName));
+		WadEntry entry = getEntry(entryName);
+		return entry != null ? getData(entry) : null;
 	}
 
 	@Override	

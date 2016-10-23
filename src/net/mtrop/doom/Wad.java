@@ -150,7 +150,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @param entryName the name of the entry to find.
 	 * @return a byte array of the data, or null if the entry doesn't exist.
 	 * @throws IOException if the data couldn't be retrieved.
-	 * @throws NullPointerException if "entry" is null.
+	 * @throws NullPointerException if "entryName" is null.
 	 */
 	public byte[] getData(String entryName) throws IOException;
 
@@ -197,7 +197,7 @@ public interface Wad extends Iterable<WadEntry>
 	public InputStream getInputStream(String entryName) throws IOException;
 
 	/**
-	 * Retrieves the data of the first occurrance of a particular entry from a starting index and returns it as a stream.
+	 * Retrieves the data of the first occurrence of a particular entry from a starting index and returns it as a stream.
 	 * 
 	 * @param entryName the name of the entry to find.
 	 * @param start the index with which to start the search.

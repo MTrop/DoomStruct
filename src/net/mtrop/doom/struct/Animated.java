@@ -88,9 +88,9 @@ public class Animated extends List<Animated.Entry> implements BinaryObject
 	 */
 	public void addFlat(String lastName, String firstName, int ticks)
 	{
-		if (NameUtils.isValidEntryName(lastName))
+		if (!NameUtils.isValidEntryName(lastName))
 			throw new IllegalArgumentException("Last texture name is invalid.");
-		else if (NameUtils.isValidEntryName(firstName))
+		else if (!NameUtils.isValidEntryName(firstName))
 			throw new IllegalArgumentException("First texture name is invalid.");
 		else if (ticks < 1 || ticks > Integer.MAX_VALUE)
 			throw new IllegalArgumentException("Frame ticks must be between 1 and 2^31 - 1.");
@@ -121,9 +121,9 @@ public class Animated extends List<Animated.Entry> implements BinaryObject
 	 */
 	public void addTexture(String lastName, String firstName, int ticks, boolean decals)
 	{
-		if (NameUtils.isValidTextureName(lastName))
+		if (!NameUtils.isValidTextureName(lastName))
 			throw new IllegalArgumentException("Last texture name is invalid.");
-		else if (NameUtils.isValidTextureName(firstName))
+		else if (!NameUtils.isValidTextureName(firstName))
 			throw new IllegalArgumentException("First texture name is invalid.");
 		else if (ticks < 1 || ticks > Integer.MAX_VALUE)
 			throw new IllegalArgumentException("Frame ticks must be between 1 and 2^31 - 1.");
