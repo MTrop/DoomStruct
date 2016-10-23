@@ -13,5 +13,5 @@ package net.mtrop.doom;
  */
 public class WadIndex
 {
-
+	// TODO: FINISH.
 }

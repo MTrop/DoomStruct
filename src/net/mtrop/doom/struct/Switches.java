@@ -12,12 +12,14 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Iterator;
 
 import net.mtrop.doom.BinaryObject;
 import net.mtrop.doom.util.NameUtils;
 
 import com.blackrook.commons.AbstractVector;
 import com.blackrook.commons.Common;
+import com.blackrook.commons.Sizable;
 import com.blackrook.commons.list.List;
 import com.blackrook.io.SuperReader;
 import com.blackrook.io.SuperWriter;
@@ -28,7 +30,7 @@ import com.blackrook.io.SuperWriter;
  * used for in-game switches.
  * @author Matthew Tropiano
  */
-public class Switches implements BinaryObject
+public class Switches implements BinaryObject, Iterable<Switches.Entry>, Sizable
 {
 	/** Enumeration of game types. */
 	public static enum Game
@@ -163,6 +165,24 @@ public class Switches implements BinaryObject
 		for (Entry e : entryList) 
 			e.writeBytes(out);
 		(new Entry()).writeBytes(out); // write blank terminal.
+	}
+
+	@Override
+	public Iterator<Entry> iterator()
+	{
+		return entryList.iterator();
+	}
+
+	@Override
+	public int size() 
+	{
+		return entryList.size();
+	}
+
+	@Override
+	public boolean isEmpty() 
+	{
+		return entryList.isEmpty();
 	}
 
 	/** Entry for Switches. */

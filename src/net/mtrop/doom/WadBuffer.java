@@ -34,6 +34,8 @@ import com.blackrook.io.SuperWriter;
  */
 public class WadBuffer implements Wad
 {
+	private static final byte[] NO_DATA = new byte[0];
+	
 	/** Type of Wad File (IWAD or PWAD). */
 	private WadType type;
 	/** The data itself. */
@@ -236,13 +238,13 @@ public class WadBuffer implements Wad
 	@Override
 	public WadEntry addMarker(String name) throws IOException
 	{
-		return addData(name, new byte[0]);
+		return addData(name, NO_DATA);
 	}
 
 	@Override
 	public WadEntry addMarkerAt(int index, String name) throws IOException
 	{
-		return addDataAt(index, name, new byte[0]);
+		return addDataAt(index, name, NO_DATA);
 	}
 
 	@Override	

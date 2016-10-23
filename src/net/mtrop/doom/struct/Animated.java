@@ -12,11 +12,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Iterator;
 
 import net.mtrop.doom.BinaryObject;
 import net.mtrop.doom.util.NameUtils;
 
 import com.blackrook.commons.Common;
+import com.blackrook.commons.Sizable;
 import com.blackrook.commons.list.List;
 import com.blackrook.io.SuperReader;
 import com.blackrook.io.SuperWriter;
@@ -27,7 +29,7 @@ import com.blackrook.io.SuperWriter;
  * flats and textures.
  * @author Matthew Tropiano
  */
-public class Animated extends List<Animated.Entry> implements BinaryObject
+public class Animated implements BinaryObject, Iterable<Animated.Entry>, Sizable
 {
 	/**
 	 * Enumeration of Animated Entry Texture types. 
@@ -150,22 +152,40 @@ public class Animated extends List<Animated.Entry> implements BinaryObject
 	@Override
 	public void readBytes(InputStream in) throws IOException
 	{
-		clear();
+		entryList.clear();
 		Entry e = null;
 		do {
 			e = new Entry();
 			e.readBytes(in);
 			if (e.type != null)
-				add(e);
+				entryList.add(e);
 		} while (e.type != null);
 	}
 
 	@Override
 	public void writeBytes(OutputStream out) throws IOException
 	{
-		for (Entry e : this) 
+		for (Entry e : entryList) 
 			e.writeBytes(out);
 		(new Entry()).writeBytes(out);
+	}
+
+	@Override
+	public Iterator<Entry> iterator()
+	{
+		return entryList.iterator();
+	}
+	
+	@Override
+	public int size() 
+	{
+		return entryList.size();
+	}
+
+	@Override
+	public boolean isEmpty() 
+	{
+		return entryList.isEmpty();
 	}
 
 	/** Flat entry for ANIMATED. */

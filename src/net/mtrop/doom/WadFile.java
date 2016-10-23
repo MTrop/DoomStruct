@@ -30,6 +30,8 @@ import com.blackrook.io.SuperWriter;
  */
 public class WadFile implements Wad, Closeable
 {
+	private static final byte[] NO_DATA = new byte[0];
+
 	/** File handle. */
 	private RandomAccessFile file;
 	
@@ -223,11 +225,12 @@ public class WadFile implements Wad, Closeable
 	@Override
 	public WadEntry addData(String entryName, byte[] data) throws IOException
 	{
-		WadEntry entry = WadEntry.create(entryName, data.length, entryListOffset);
+		WadEntry entry = WadEntry.create(entryName, entryListOffset, data.length);
 		entries.add(entry);
 		writeHeader();
 		file.seek(entryListOffset);
 		file.write(data);
+		entryListOffset += data.length;
 		writeEntryList();
 		return entry;
 	}
@@ -235,7 +238,7 @@ public class WadFile implements Wad, Closeable
 	@Override
 	public WadEntry addDataAt(int index, String entryName, byte[] data) throws IOException
 	{
-		WadEntry entry = WadEntry.create(entryName, data.length, entryListOffset);
+		WadEntry entry = WadEntry.create(entryName, entryListOffset, data.length);
 		entries.add(index, entry);
 
 		file.seek(entryListOffset);
@@ -253,7 +256,7 @@ public class WadFile implements Wad, Closeable
 		WadEntry[] out = new WadEntry[entryNames.length];
 		for (int i = 0; i < entryNames.length; i++)
 		{
-			out[i] = WadEntry.create(entryNames[i], data[i].length, curOffs);
+			out[i] = WadEntry.create(entryNames[i], curOffs, data[i].length);
 			curOffs += data[i].length;
 		}
 		
@@ -264,7 +267,7 @@ public class WadFile implements Wad, Closeable
 		
 		for (int i = 0; i < entryNames.length; i++)
 		{
-			file.write(data[i].length);
+			file.write(data[i]);
 			entryListOffset += data[i].length;
 		}
 
@@ -280,7 +283,7 @@ public class WadFile implements Wad, Closeable
 		WadEntry[] out = new WadEntry[entryNames.length];
 		for (int i = 0; i < entryNames.length; i++)
 		{
-			out[i] = WadEntry.create(entryNames[i], data[i].length, curOffs);
+			out[i] = WadEntry.create(entryNames[i], curOffs, data[i].length);
 			curOffs += data[i].length;
 		}
 		
@@ -291,7 +294,7 @@ public class WadFile implements Wad, Closeable
 		
 		for (int i = 0; i < entryNames.length; i++)
 		{
-			file.write(data[i].length);
+			file.write(data[i]);
 			entryListOffset += data[i].length;
 		}
 
@@ -303,13 +306,13 @@ public class WadFile implements Wad, Closeable
 	@Override
 	public WadEntry addMarker(String name) throws IOException
 	{
-		return addData(name, new byte[0]);
+		return addData(name, NO_DATA);
 	}
 
 	@Override
 	public WadEntry addMarkerAt(int index, String name) throws IOException
 	{
-		return addDataAt(index, name, new byte[0]);
+		return addDataAt(index, name, NO_DATA);
 	}
 
 	@Override	

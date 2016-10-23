@@ -44,7 +44,7 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 			@Override
 			protected String getMappingKey(Texture object)
 			{
-				return object.toString();
+				return object.getName();
 			}
 		};
 		
@@ -93,15 +93,6 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 	}
 	
 	/**
-	 * Adds a texture entry to this texture set.
-	 * @param texture the texture to add.
-	 */
-	public void addTexture(Texture texture)
-	{
-		textureList.add(texture);
-	}
-
-	/**
 	 * Creates a new entry for a texture, already added.
 	 * @param textureName the name of the texture to add.
 	 * @return a new, empty texture.
@@ -111,8 +102,7 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 		if (!NameUtils.isValidTextureName(textureName))
 			throw new IllegalArgumentException("Not a valid texture name.");
 		
-		Texture out = new Texture();
-		out.setName(textureName);
+		Texture out = new Texture(textureName);
 		textureList.add(out);
 		return out;
 	}
@@ -152,7 +142,7 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 	}
 	
 	/**
-	 * Removes a patch at a particular index.
+	 * Removes a texture at a particular index.
 	 */
 	public Texture removeTexture(int index)
 	{
@@ -160,7 +150,15 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 	}
 
 	/**
-	 * Returns a patch at a particular index.
+	 * Removes a texture by name.
+	 */
+	public Texture removeTextureByName(String textureName)
+	{
+		return textureList.removeUsingKey(textureName);
+	}
+
+	/**
+	 * Returns a texture at a particular index.
 	 */
 	public Texture getTexture(int index)
 	{
@@ -227,9 +225,9 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 			/** Offset Y. */
 			private int originY;
 			
-			private Patch()
+			private Patch(String name)
 			{
-				name = "";
+				this.name = name;
 				originX = 0;
 				originY = 0;
 			}
@@ -240,12 +238,6 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 				return name;
 			}
 
-			/** Sets the patch name. */
-			public void setName(String name)
-			{
-				this.name = name;
-			}
-			
 			/** Returns the patch offset X. */
 			public int getOriginX()
 			{
@@ -282,12 +274,12 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 		/** Patch entry. */
 		private List<Texture.Patch> patches;
 		
-		private Texture()
+		private Texture(String name)
 		{
-			name = null;
+			this.name = name;
 			width = 0;
 			height = 0;
-			patches = new List<Texture.Patch>();
+			patches = new List<Texture.Patch>(2);
 		}
 		
 		/** 
@@ -296,14 +288,6 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 		public String getName()
 		{
 			return name;
-		}
-		
-		/**
-		 * Sets the texture entry name.
-		 */
-		public void setName(String name)
-		{
-			this.name = name;
 		}
 		
 		/**
@@ -346,8 +330,7 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 			if (Common.isEmpty(name))
 				throw new IllegalArgumentException("patch name cannot be empty.");
 
-			Patch p = new Patch();
-			p.setName(name);
+			Patch p = new Patch(name);
 			patches.add(p);
 			return p;
 		}

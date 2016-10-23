@@ -226,14 +226,14 @@ public interface Wad extends Iterable<WadEntry>
 	/**
 	 * Returns true if this Wad contains a particular entry, false otherwise.
 	 * 
-	 * @param entry the name of the entry (automatically corrected).
+	 * @param entry the name of the entry.
 	 */
 	public boolean contains(String entry);
 
 	/**
 	 * Returns true if this Wad contains a particular entry from a starting entry index, false otherwise.
 	 * 
-	 * @param entry the name of the entry (automatically corrected).
+	 * @param entry the name of the entry.
 	 */
 	public boolean contains(String entry, int index);
 
@@ -345,7 +345,7 @@ public interface Wad extends Iterable<WadEntry>
 	/**
 	 * Retrieves a contiguous set of entries from this Wad, starting from a desired index. If the amount of entries
 	 * desired goes outside the Wad's potential set of entries, this will retrieve up to those entries (for example,
-	 * <code>mapEntries(5, 7)</code> in an 8-entry Wad will only return 3 entries).
+	 * <code>mapEntries(5, 10)</code> in an 8-entry Wad will only return 3 entries: 5, 6, and 7).
 	 * 
 	 * @param startIndex the starting index to map from (inclusive).
 	 * @param maxLength the amount of entries to retrieve from the index position.
