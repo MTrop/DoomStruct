@@ -31,7 +31,9 @@ public final class UDMFReader
 	 * This will read until the end of the stream is reached.
 	 * Does not close the InputStream at the end of the read.
 	 * @param in the InputStream to read from.
+	 * @return a UDMFTable containing the structures.
 	 * @throws UDMFParseException if a parsing error occurs.
+	 * @throws IOException if the data can't be read.
 	 */
 	public static UDMFTable readData(InputStream in) throws IOException
 	{
@@ -43,7 +45,9 @@ public final class UDMFReader
 	 * This will read until the end of the stream is reached.
 	 * Does not close the InputStream at the end of the read.
 	 * @param reader the reader to read from.
+	 * @return a UDMFTable containing the structures.
 	 * @throws UDMFParseException if a parsing error occurs.
+	 * @throws IOException if the data can't be read.
 	 */
 	public static UDMFTable readData(Reader reader) throws IOException
 	{
@@ -162,7 +166,7 @@ public final class UDMFReader
 					}
 
 					structStack.pop();
-					table.addStruct(currentStructType, object);
+					table.addObject(currentStructType, object);
 					return true;
 				}
 				else

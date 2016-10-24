@@ -28,12 +28,12 @@ public final class NameUtils
 	/** The name of the "blank" texture. */
 	public static final String EMPTY_TEXTURE_NAME = "-";
 
-	private NameUtils()
-	{
-	}
+	private NameUtils() {}
 
 	/**
 	 * Cuts a string at the first null character.
+	 * @param s the input string.
+	 * @return the resultant string, after the trim.
 	 */
 	public static String nullTrim(String s)
 	{
@@ -62,6 +62,7 @@ public final class NameUtils
 	 * <p>
 	 * A WadEntry must have a name that is up to 8 characters long, and can only contain
 	 * A-Z (uppercase only), 0-9, and [ ] - _, plus the backslash ("\"). 
+	 * @param name the input name to test.
 	 * @return true if so, false if not.
 	 */
 	public static boolean isValidEntryName(String name)
@@ -78,6 +79,7 @@ public final class NameUtils
 	 * Latin characters with diacritical marks are converted to their normalized forms.
 	 * Names are truncated to 8 characters.
 	 * The entry will also be cut at the first null character, if any.
+	 * @param name the input name to test.
 	 * @return true if so, false if not.
 	 */
 	public static String toValidEntryName(String name)
@@ -128,6 +130,7 @@ public final class NameUtils
 	 * <p>
 	 * A Texture must have an alphanumeric name that is up to 8 characters long, and can only contain
 	 * A-Z (uppercase only), 0-9, and - and _, or just "-" 
+	 * @param name the input name to test.
 	 * @return true if so, false if not.
 	 */
 	public static boolean isValidTextureName(String name)
@@ -146,6 +149,7 @@ public final class NameUtils
 	 * Latin characters with diacritical marks are converted to their normalized forms.
 	 * Names are truncated to 8 characters.
 	 * The entry will also be cut at the first null character, if any.
+	 * @param name the input name to test.
 	 * @return true if so, false if not.
 	 */
 	public static String toValidTextureName(String name)
