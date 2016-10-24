@@ -39,9 +39,9 @@ public class Palette implements BinaryObject
 		// get this color's hue.
 		private float getHue(byte[] color)
 		{
-			int r = color[0];
-			int g = color[1];
-			int b = color[2];
+			int r = color[0] & 0x0ff;
+			int g = color[1] & 0x0ff;
+			int b = color[2] & 0x0ff;
 			
 			if (r == g && g == b)
 			{
@@ -93,9 +93,9 @@ public class Palette implements BinaryObject
 		
 		private int getSaturation(byte[] color)
 		{
-			int r = color[0];
-			int g = color[1];
-			int b = color[2];
+			int r = color[0] & 0x0ff;
+			int g = color[1] & 0x0ff;
+			int b = color[2] & 0x0ff;
 			
 			if (r == g && g == b)
 				return 0;
@@ -117,7 +117,10 @@ public class Palette implements BinaryObject
 		
 		private float getLuminance(byte[] color)
 		{
-			return 0.2126f * color[0] + 0.7152f * color[1] + 0.0722f * color[2];
+			float r = (color[0] & 0x0ff) / 255f;
+			float g = (color[1] & 0x0ff) / 255f;
+			float b = (color[2] & 0x0ff) / 255f;
+			return 0.2126f * r + 0.7152f * g + 0.0722f * b;
 		}
 		
 		@Override

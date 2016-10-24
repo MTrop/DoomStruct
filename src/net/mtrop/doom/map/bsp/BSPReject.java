@@ -42,6 +42,9 @@ public class BSPReject implements BinaryObject
 	
 	/**
 	 * Checks whether a sector is visible from another.
+	 * @param sectorIndex the sector index viewing from.
+	 * @param targetSectorIndex the sector index viewing into.
+	 * @return true if so, false if not.
 	 */
 	public boolean getSectorIsVisibleTo(int sectorIndex, int targetSectorIndex)
 	{
@@ -50,6 +53,9 @@ public class BSPReject implements BinaryObject
 	
 	/**
 	 * Sets whether a sector is visible from another.
+	 * @param sectorIndex the sector index viewing from.
+	 * @param targetSectorIndex the sector index viewing into.
+	 * @param flag true if visible, false if not.
 	 */
 	public void setSectorIsVisibleTo(int sectorIndex, int targetSectorIndex, boolean flag)
 	{

@@ -157,7 +157,7 @@ public class DoomSector implements BinaryObject
 	/**
 	 * Sets the sector's floor texture.
 	 * @param floorTexture the new texture.
-	 * @throw IllegalArgumentException if the texture name is invalid. 
+	 * @throws IllegalArgumentException if the texture name is invalid. 
 	 */
 	public void setFloorTexture(String floorTexture)
 	{
@@ -177,7 +177,7 @@ public class DoomSector implements BinaryObject
 	/**
 	 * Sets the sector's ceiling texture. 
 	 * @param ceilingTexture the new texture.
-	 * @throw IllegalArgumentException if the texture name is invalid. 
+	 * @throws IllegalArgumentException if the texture name is invalid. 
 	 */
 	public void setCeilingTexture(String ceilingTexture)
 	{

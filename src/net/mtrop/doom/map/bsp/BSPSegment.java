@@ -132,71 +132,22 @@ public class BSPSegment implements BinaryObject
 	}
 	
 	/** 
+	 * @return this Seg's start vertex index reference. 
+	 */
+	public int getVertexStartIndex()
+	{
+		return vertexStartIndex;
+	}
+
+	/** 
 	 * Sets this Seg's start vertex index reference. 
+	 * @param val the new starting vertex reference. 
 	 * @throws IllegalArgumentException if the provided value is outside the range 0 to 65535.
 	 */
 	public void setVertexStartIndex(int val)
 	{
 		RangeUtils.checkShort("Vertex Start Index", vertexStartIndex);
 		vertexStartIndex = val;
-	}
-
-	/** 
-	 * Sets this Seg's end vertex index reference. 
-	 * @throws IllegalArgumentException if the provided value is outside the range 0 to 65535.
-	 */
-	public void setVertexEndIndex(int val)
-	{
-		RangeUtils.checkShort("Vertex End Index", vertexEndIndex);
-		vertexEndIndex = val;
-	}
-
-	/** 
-	 * Sets this Seg's binary angle. 
-	 * @throws IllegalArgumentException if the provided value is outside the range 0 to 65535.
-	 */
-	public void setAngle(int val)
-	{
-		RangeUtils.checkShort("Angle", angle);
-		angle = val;
-	}
-
-	/** 
-	 * Sets this Seg's linedef index. 
-	 * @throws IllegalArgumentException if the provided value is outside the range 0 to 65535.
-	 */
-	public void setLinedefIndex(int val)
-	{
-		RangeUtils.checkShort("Linedef Index", linedefIndex);
-		linedefIndex = val;
-	}
-
-	/** 
-	 * Sets this Seg's direction. 
-	 * @throws IllegalArgumentException if the provided value is neither {@link BSPSegment#DIRECTION_OPPOSITE_LINEDEF} to {@link BSPSegment#DIRECTION_SAME_AS_LINEDEF}.
-	 */
-	public void setDirection(int val)
-	{
-		RangeUtils.checkRange("Direction", DIRECTION_SAME_AS_LINEDEF, DIRECTION_OPPOSITE_LINEDEF, direction);
-		direction = val;
-	}
-
-	/** 
-	 * Sets this Seg's linedef offset (distance along line until start of seg). 
-	 * @throws IllegalArgumentException if the provided value is outside the range 0 to 65535.
-	 */
-	public void setOffset(int val)
-	{
-		RangeUtils.checkShort("Offset", offset);
-		offset = val;
-	}
-
-	/** 
-	 * @return this Seg's start vertex index reference. 
-	 */
-	public int getVertexStartIndex()
-	{
-		return vertexStartIndex;
 	}
 
 	/** 
@@ -208,11 +159,33 @@ public class BSPSegment implements BinaryObject
 	}
 
 	/** 
+	 * Sets this Seg's end vertex index reference. 
+	 * @param val the new ending vertex reference. 
+	 * @throws IllegalArgumentException if the provided value is outside the range 0 to 65535.
+	 */
+	public void setVertexEndIndex(int val)
+	{
+		RangeUtils.checkShort("Vertex End Index", vertexEndIndex);
+		vertexEndIndex = val;
+	}
+
+	/** 
 	 * @return this Seg's angle in degrees. 
 	 */
 	public int getAngle()
 	{
 		return angle;
+	}
+
+	/** 
+	 * Sets this Seg's binary angle. 
+	 * @param val the new binary angle. 
+	 * @throws IllegalArgumentException if the provided value is outside the range -32768 to 32767.
+	 */
+	public void setAngle(int val)
+	{
+		RangeUtils.checkShort("Angle", angle);
+		angle = val;
 	}
 
 	/** 
@@ -224,6 +197,17 @@ public class BSPSegment implements BinaryObject
 	}
 
 	/** 
+	 * Sets this Seg's linedef index. 
+	 * @param val the new linedef index. 
+	 * @throws IllegalArgumentException if the provided value is outside the range -32768 to 32767.
+	 */
+	public void setLinedefIndex(int val)
+	{
+		RangeUtils.checkShort("Linedef Index", linedefIndex);
+		linedefIndex = val;
+	}
+
+	/** 
 	 * @return this Seg's direction. 
 	 */
 	public int getDirection()
@@ -232,11 +216,33 @@ public class BSPSegment implements BinaryObject
 	}
 
 	/** 
+	 * Sets this Seg's directionality. 
+	 * @param val the new directionality. 
+	 * @throws IllegalArgumentException if the provided value is neither {@link BSPSegment#DIRECTION_OPPOSITE_LINEDEF} to {@link BSPSegment#DIRECTION_SAME_AS_LINEDEF}.
+	 */
+	public void setDirection(int val)
+	{
+		RangeUtils.checkRange("Direction", DIRECTION_SAME_AS_LINEDEF, DIRECTION_OPPOSITE_LINEDEF, direction);
+		direction = val;
+	}
+
+	/** 
 	 * @return this Seg's linedef offset. 
 	 */
 	public int getOffset()
 	{
 		return offset;
+	}
+
+	/** 
+	 * Sets this Seg's linedef offset (distance along line until start of seg). 
+	 * @param val the linedef offset. 
+	 * @throws IllegalArgumentException if the provided value is outside the range 0 to 65535.
+	 */
+	public void setOffset(int val)
+	{
+		RangeUtils.checkShort("Offset", offset);
+		offset = val;
 	}
 
 	@Override

@@ -157,7 +157,7 @@ public class DoomSidedef implements BinaryObject
 	/**
 	 * Sets the top texture name.
 	 * @param textureTop the new texture name.
-	 * @throw IllegalArgumentException if the texture name is invalid. 
+	 * @throws IllegalArgumentException if the texture name is invalid. 
 	 */
 	public void setTextureTop(String textureTop)
 	{
@@ -177,7 +177,7 @@ public class DoomSidedef implements BinaryObject
 	/**
 	 * Sets the bottom texture name.
 	 * @param textureBottom the new texture name.
-	 * @throw IllegalArgumentException if the texture name is invalid. 
+	 * @throws IllegalArgumentException if the texture name is invalid. 
 	 */
 	public void setTextureBottom(String textureBottom)
 	{
@@ -197,7 +197,7 @@ public class DoomSidedef implements BinaryObject
 	/**
 	 * Sets the middle texture name.
 	 * @param textureMiddle the new texture name.
-	 * @throw IllegalArgumentException if the texture name is invalid. 
+	 * @throws IllegalArgumentException if the texture name is invalid. 
 	 */
 	public void setTextureMiddle(String textureMiddle)
 	{
