@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import net.mtrop.doom.WadFile;
-import net.mtrop.doom.map.binary.StrifeThingTest;
 
 import com.blackrook.commons.Common;
 import com.blackrook.commons.logging.Logger;

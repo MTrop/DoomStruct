@@ -52,9 +52,9 @@ public class DoomPK3 extends ZipFile
 	
 	/**
 	 * Opens a DoomPK3 file for reading and caches its contents.
-	 * @param pk3File		
-	 * @throws ZipException
-	 * @throws IOException
+	 * @param pk3File the file to open.		
+	 * @throws ZipException if this is not a PK3/ZIP archive.
+	 * @throws IOException if the file cannot be read.
 	 */
 	public DoomPK3(File pk3File) throws ZipException, IOException
 	{
@@ -67,6 +67,8 @@ public class DoomPK3 extends ZipFile
 	
 	/**
 	 * Gets this file's path.
+	 * @return this file's path.
+	 * @see File#getPath()
 	 */
 	public final String getFilePath()
 	{
@@ -74,7 +76,9 @@ public class DoomPK3 extends ZipFile
 	}
 
 	/**
-	 * Gets this file's name.
+	 * Gets this file's name (and just the name).
+	 * @return this file's name (and just the name).
+	 * @see File#getName()
 	 */
 	public final String getFileName()
 	{
@@ -101,7 +105,10 @@ public class DoomPK3 extends ZipFile
 	}
 
 	/**
-	 * Returns a list of all entries that start with a type of key. 
+	 * Returns a list of all entries that start with a type of key.
+	 * This is treated case-insensitively.
+	 * @param key the start of an entry.
+	 * @return an array of entry names starting with the key string.  
 	 */
 	public String[] getEntriesStartingWith(String key)
 	{
@@ -114,7 +121,7 @@ public class DoomPK3 extends ZipFile
 	}
 	
 	/**
-	 * Returns the number of all entries in a directory key. 
+	 * @return the amount of entries in this archive. 
 	 */
 	public int getEntryCount()
 	{
@@ -125,6 +132,7 @@ public class DoomPK3 extends ZipFile
 	 * Gets the data in one entry in the PK3 by entry name (path and all).
 	 * @param entry the entry to extract and return as a byte array.
 	 * @return a byte array of the entry's data.
+	 * @throws IOException if a read error occurs. 
 	 */
 	public byte[] getData(String entry) throws IOException
 	{
@@ -135,6 +143,7 @@ public class DoomPK3 extends ZipFile
 	 * Gets the data in one entry in the PK3.
 	 * @param entry the entry to extract and return as a byte array.
 	 * @return a byte array of the entry's data.
+	 * @throws IOException if a read error occurs. 
 	 */
 	public byte[] getData(ZipEntry entry) throws IOException
 	{
@@ -150,6 +159,7 @@ public class DoomPK3 extends ZipFile
 	 * The data is extracted fully before it is returned as a stream.
 	 * @param entry the entry to extract and return as a byte array.
 	 * @return an InputStream of the entry's data.
+	 * @throws IOException if a read error occurs. 
 	 */
 	public InputStream getInputStream(ZipEntry entry) throws IOException
 	{
@@ -161,6 +171,7 @@ public class DoomPK3 extends ZipFile
 	 * The data is extracted fully before it is returned as a stream.
 	 * @param entry the entry to extract and return as a byte array.
 	 * @return an InputStream of the entry's data.
+	 * @throws IOException if a read error occurs. 
 	 */
 	public InputStream getInputStream(String entry) throws IOException
 	{
@@ -168,8 +179,9 @@ public class DoomPK3 extends ZipFile
 	}
 	
 	/**
-	 * Returns the "entry name" for a ZipEntry,
-	 * which is just the filename itself minus extension.
+	 * Gets the "entry name" for a ZipEntry, which is just the filename itself minus extension.
+	 * @param ze the ZipEntry to use.
+	 * @return the "entry name" for this ZipEntry.
 	 */
 	public static String getEntryName(ZipEntry ze)
 	{

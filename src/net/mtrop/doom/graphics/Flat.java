@@ -38,8 +38,6 @@ import com.blackrook.io.SuperWriter;
  */
 public class Flat implements BinaryObject, GraphicObject
 {
-	public static final short PIXEL_TRANSLUCENT = 0;
-	
 	/** This flat's width. */
 	private int width;
 	/** This flat's height. */
@@ -104,24 +102,20 @@ public class Flat implements BinaryObject, GraphicObject
 		return 0;
 	}
 
-	/**
-	 * Returns the width of this graphic in pixels.
-	 */
+	@Override
 	public int getWidth()
 	{
 		return width;
 	}
 	
-	/**
-	 * Returns the height of this graphic in pixels.
-	 */
+	@Override
 	public int getHeight()
 	{
 		return height;
 	}
 	
 	/**
-	 * Clears the pixel data.
+	 * Clears the pixel data to zeroes.
 	 */
 	public void clear()
 	{
@@ -157,9 +151,9 @@ public class Flat implements BinaryObject, GraphicObject
 	
 	/**
 	 * Gets the pixel data at a location in the flat.
-	 * Returns a palette index value from 0 to 255 or PIXEL_TRANSLUCENT if the pixel is not filled in.
 	 * @param x	patch x-coordinate.
 	 * @param y	patch y-coordinate.
+	 * @return a palette index value from 0 to 255.
 	 */
 	public int getPixel(int x, int y)
 	{

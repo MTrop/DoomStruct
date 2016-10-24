@@ -10,6 +10,7 @@ package net.mtrop.doom;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -53,6 +54,7 @@ public class WadBuffer implements Wad
 	
 	/**
 	 * Creates an empty WadBuffer with a specific type.
+	 * @param type the type to set.
 	 */
 	public WadBuffer(WadType type)
 	{
@@ -64,6 +66,11 @@ public class WadBuffer implements Wad
 	/**
 	 * Creates a new WadBuffer using the contents of a file, denoted by the path.
 	 * @param path the path to the file to read.
+	 * @throws IOException if the file can't be read.
+	 * @throws FileNotFoundException if the file can't be found.
+	 * @throws SecurityException if you don't have permission to access the file.
+	 * @throws WadException if the file isn't a Wad file.
+	 * @throws NullPointerException if <code>path</code> is null.
 	 */
 	public WadBuffer(String path) throws IOException
 	{
@@ -73,6 +80,11 @@ public class WadBuffer implements Wad
 	/**
 	 * Creates a new WadBuffer using the contents of a file.
 	 * @param f the file to read.
+	 * @throws IOException if the file can't be read.
+	 * @throws FileNotFoundException if the file can't be found.
+	 * @throws SecurityException if you don't have permission to access the file.
+	 * @throws WadException if the file isn't a Wad file.
+	 * @throws NullPointerException if <code>path</code> is null.
 	 */
 	public WadBuffer(File f) throws IOException
 	{
@@ -85,6 +97,9 @@ public class WadBuffer implements Wad
 	/**
 	 * Creates a new WadBuffer.
 	 * @param in the input stream.
+	 * @throws IOException if the file can't be read.
+	 * @throws WadException if the stream contents are not a Wad file.
+	 * @throws NullPointerException if <code>path</code> is null.
 	 */
 	public WadBuffer(InputStream in) throws IOException
 	{
@@ -94,7 +109,7 @@ public class WadBuffer implements Wad
 
 	/**
 	 * Reads in a wad from an InputStream.
-	 * @param in
+	 * @param in the input stream.
 	 */
 	private void readWad(InputStream in) throws IOException
 	{
@@ -145,6 +160,9 @@ public class WadBuffer implements Wad
 		return contentOffset + 12; 
 	}
 	
+	/**
+	 * Removes a WadEntry.
+	 */
 	private WadEntry removeEntry(int n)
 	{
 		return entries.removeIndex(n);
@@ -155,6 +173,7 @@ public class WadBuffer implements Wad
 	 * Does not close the stream.
 	 * @param out the output stream to write to.
 	 * @throws IOException if a problem occurs during the write.
+	 * @throws NullPointerException if <code>out</code> is null.
 	 */
 	public void writeToStream(OutputStream out) throws IOException
 	{
@@ -172,6 +191,8 @@ public class WadBuffer implements Wad
 	 * The target file will be overwritten.
 	 * @param f the file to write to.
 	 * @throws IOException if a problem occurs during the write.
+	 * @throws SecurityException if you don't have permission to write the file.
+	 * @throws NullPointerException if <code>out</code> is null.
 	 */
 	public void writeToFile(File f) throws IOException
 	{
@@ -531,6 +552,7 @@ public class WadBuffer implements Wad
 	
 	/**
 	 * Gets the type of WAD that this is.
+	 * @return the wad type.
 	 */
 	public WadType getType()
 	{

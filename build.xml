@@ -43,7 +43,7 @@
 
 	<target name="javadoc" depends="init.docs" description="Builds the documentation.">
         <javadoc access="protected" 
-        	additionalparam="-J-Xmx512m  " author="true" 
+        	additionalparam="-J-Xmx512m -Xmaxwarns 500" author="true" 
         	classpath="${project.classpath}${path.separator}${bin.dir}" 
         	doctitle="${project.javadoc.title}" 
         	sourcepath="${src.dir}" 
@@ -59,7 +59,7 @@
         	nonavbar="false" 
         	notree="false"
     		>
-            <link href="http://blackrooksoftware.com/docs/common/"/>
+        	<link href="http://blackrooksoftware.com/docs/common/"/>
             <link href="http://blackrooksoftware.com/docs/commonio/"/>
             <link href="http://blackrooksoftware.com/docs/commonlang/"/>
             <link href="http://docs.oracle.com/javase/7/docs/api/"/>

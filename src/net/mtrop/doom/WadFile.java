@@ -58,9 +58,9 @@ public class WadFile implements Wad, Closeable
 	 * @throws FileNotFoundException if the file can't be found.
 	 * @throws SecurityException if you don't have permission to access the file.
 	 * @throws WadException if the file isn't a Wad file.
-	 * @throws NullPointerException if "path" is null.
+	 * @throws NullPointerException if <code>path</code> is null.
 	 */
-	public WadFile(String path) throws IOException, WadException
+	public WadFile(String path) throws IOException
 	{
 		this(new File(path));
 	}
@@ -74,7 +74,7 @@ public class WadFile implements Wad, Closeable
 	 * @throws WadException if the file isn't a Wad file.
 	 * @throws NullPointerException if <code>f</code> is null.
 	 */
-	public WadFile(File f) throws IOException, WadException
+	public WadFile(File f) throws IOException
 	{
 		if (!f.exists())
 			throw new FileNotFoundException(f.getPath() + " does not exist!");
@@ -171,6 +171,8 @@ public class WadFile implements Wad, Closeable
 	
 	/**
 	 * Returns this Wad's file name. 
+	 * @return this file's name (and just the name).
+	 * @see File#getName()
 	 */
 	public String getFileName()
 	{
@@ -178,17 +180,21 @@ public class WadFile implements Wad, Closeable
 	}
 	
 	/**
-	 * Returns this Wad's file path. 
+	 * Gets this Wad's file path. 
+	 * @return this file's path.
+	 * @see File#getPath()
 	 */
-	public String getFilePath()
+	public final String getFilePath()
 	{
 		return filePath;
 	}
 
 	/**
 	 * Returns this Wad's file absolute path. 
+	 * @return this file's name (and just the name).
+	 * @see File#getAbsolutePath()
 	 */
-	public String getFileAbsolutePath()
+	public final String getFileAbsolutePath()
 	{
 		return fileAbsolutePath;
 	}
@@ -620,6 +626,7 @@ public class WadFile implements Wad, Closeable
 
 	/**
 	 * Gets the type of WAD that this is.
+	 * @return the WAD type.
 	 */
 	public WadType getType()
 	{
