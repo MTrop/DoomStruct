@@ -101,33 +101,13 @@ public class DoomVertex implements BinaryObject
 	
 	/**
 	 * Sets the coordinates of this vertex.
-	 * @param x the x-coordinate value.
-	 * @param y the y-coordinate value.
+	 * @param x the new x-coordinate value.
+	 * @param y the new y-coordinate value.
 	 */
 	public void set(int x, int y)
 	{
 		setX(x);
 		setY(y);
-	}
-	
-	/**
-	 * Sets the X-coordinate value of this vertex.
-	 * @throws IllegalArgumentException if x is outside of the range -32768 to 32767.
-	 */
-	public void setX(int x)
-	{
-		RangeUtils.checkShort("X-coordinate", x);
-		this.x = x;
-	}
-	
-	/**
-	 * Sets the Y-coordinate value of this vertex.
-	 * @throws IllegalArgumentException if y is outside of the range -32768 to 32767.
-	 */
-	public void setY(int y)
-	{
-		RangeUtils.checkShort("Y-coordinate", y);
-		this.y = y;
 	}
 	
 	/**
@@ -139,6 +119,17 @@ public class DoomVertex implements BinaryObject
 	}
 
 	/**
+	 * Sets the X-coordinate value of this vertex.
+	 * @param x the new x-coordinate value.
+	 * @throws IllegalArgumentException if x is outside of the range -32768 to 32767.
+	 */
+	public void setX(int x)
+	{
+		RangeUtils.checkShort("X-coordinate", x);
+		this.x = x;
+	}
+	
+	/**
 	 * @return the Y-coordinate value of this vertex.
 	 */
 	public int getY()
@@ -146,6 +137,17 @@ public class DoomVertex implements BinaryObject
 		return y;
 	}
 
+	/**
+	 * Sets the Y-coordinate value of this vertex.
+	 * @param y the new y-coordinate value.
+	 * @throws IllegalArgumentException if y is outside of the range -32768 to 32767.
+	 */
+	public void setY(int y)
+	{
+		RangeUtils.checkShort("Y-coordinate", y);
+		this.y = y;
+	}
+	
 	@Override
 	public byte[] toBytes()
 	{

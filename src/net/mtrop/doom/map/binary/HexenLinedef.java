@@ -158,10 +158,32 @@ public class HexenLinedef extends CommonLinedef implements BinaryObject
 	
 	/**
 	 * Sets if this line's special is repeatable.
+	 * @param repeatable true to set, false to clear.
 	 */
 	public void setRepeatable(boolean repeatable)
 	{
 		this.repeatable = repeatable;
+	}
+
+	/**
+	 * Gets the activation type of this line.
+	 * @return the activation type of the line's special.
+	 */
+	public int getActivationType() 
+	{
+		return activationType;
+	}
+	
+	/**
+	 * Sets the activation type of this line.
+	 * See the <code>ACTIVATION</code> constants. 
+	 * @param activationType the new activation type of the line's special.
+	 * @throws IllegalArgumentException if <code>activationType</code> is less than 0 or greater than 6.
+	 */
+	public void setActivationType(int activationType) 
+	{
+		RangeUtils.checkRange("Activation Type", ACTIVATION_PLAYER_CROSSES, ACTIVATION_PLAYER_USES_PASSTHRU, activationType);
+		this.activationType = activationType;
 	}
 	
 	/**
@@ -174,6 +196,7 @@ public class HexenLinedef extends CommonLinedef implements BinaryObject
 	
 	/**
 	 * Sets if this line's special is activated by monsters.
+	 * @param activatedByMonsters true to set, false to clear.
 	 */
 	public void setActivatedByMonsters(boolean activatedByMonsters)
 	{
@@ -190,6 +213,7 @@ public class HexenLinedef extends CommonLinedef implements BinaryObject
 	
 	/**
 	 * Sets if this line blocks everything.
+	 * @param blocksEverything true to set, false to clear.
 	 */
 	public void setBlocksEverything(boolean blocksEverything)
 	{
@@ -198,6 +222,7 @@ public class HexenLinedef extends CommonLinedef implements BinaryObject
 	
 	/**
 	 * Sets the linedef special type. 
+	 * @param special the new special number.
 	 * @throws IllegalArgumentException if special is outside the range 0 to 255.
 	 */
 	public void setSpecial(int special)
@@ -207,35 +232,48 @@ public class HexenLinedef extends CommonLinedef implements BinaryObject
 	}
 
 	/**
-	 * @return the linedef special type. 
-	 */
-	public int getSpecial()
-	{
-		return special;
-	}
-
-	/**
 	 * Sets the special arguments.
-	 * @throws IllegalArgumentException if length of arguments is greater than 5. 
+	 * @param arguments the arguments to set (5 maximum)
+	 * @throws IllegalArgumentException if length of arguments is greater than 5, or any argument is less than 0 or greater than 255. 
 	 */
 	public void setArguments(int ... arguments)
 	{
 		if (arguments.length > 5)
 			 throw new IllegalArgumentException("Length of arguments is greater than 5.");
 		
-		for (int i = 0; i < arguments.length; i++)
+		int i;
+		for (i = 0; i < arguments.length; i++)
 		{
 			RangeUtils.checkByteUnsigned("Argument " + i, arguments[i]);
 			this.arguments[i] = arguments[i];
 		}
+		for (; i < 5; i++)
+		{
+			this.arguments[i] = 0;
+		}
+		
 	}
 
 	/**
+	 * Gets the special arguments copied into a new array. 
 	 * @return gets the array of special arguments.
 	 */
 	public int[] getArguments()
 	{
-		return arguments;
+		int[] out = new int[5];
+		System.arraycopy(arguments, 0, out, 0, 5);
+		return out;
+	}
+
+	/**
+	 * Gets a special argument.
+	 * @param n the argument index (up to 4) 
+	 * @return the argument value.
+	 * @throws ArrayIndexOutOfBoundsException if <code>n</code> is less than 0 or greater than 4. 
+	 */
+	public int getArgument(int n)
+	{
+		return arguments[n];
 	}
 
 	@Override

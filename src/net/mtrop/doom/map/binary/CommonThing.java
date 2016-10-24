@@ -64,6 +64,7 @@ public abstract class CommonThing implements MapObject
 
 	/**
 	 * Sets the position X-coordinate.
+	 * @param x the new x-coordinate.
 	 * @throws IllegalArgumentException if x is outside of the range -32768 to 32767.
 	 */
 	public void setX(int x)
@@ -82,6 +83,7 @@ public abstract class CommonThing implements MapObject
 
 	/**
 	 * Sets the position Y-coordinate.
+	 * @param y the new y-coordinate.
 	 * @throws IllegalArgumentException if y is outside of the range -32768 to 32767.
 	 */
 	public void setY(int y)
@@ -100,6 +102,7 @@ public abstract class CommonThing implements MapObject
 
 	/**
 	 * Sets the angle (in degrees). 
+	 * @param angle the new angle in degrees.
 	 * @throws IllegalArgumentException if angle is outside of the range -32768 to 32767.
 	 */
 	public void setAngle(int angle)
@@ -118,6 +121,7 @@ public abstract class CommonThing implements MapObject
 
 	/**
 	 * Sets thing type (a.k.a. editor number). 
+	 * @param type the new thing type.
 	 * @throws IllegalArgumentException if type is outside of the range 0 to 65535.
 	 */
 	public void setType(int type)
@@ -136,6 +140,7 @@ public abstract class CommonThing implements MapObject
 
 	/**
 	 * Sets if this appears on skills considered "easy."
+	 * @param easy true to set, false to clear.
 	 */
 	public void setEasy(boolean easy)
 	{
@@ -152,6 +157,7 @@ public abstract class CommonThing implements MapObject
 
 	/**
 	 * Sets if this appears on skills considered "medium."
+	 * @param medium true to set, false to clear.
 	 */
 	public void setMedium(boolean medium)
 	{
@@ -168,6 +174,7 @@ public abstract class CommonThing implements MapObject
 
 	/**
 	 * Sets if this appears on skills considered "hard."
+	 * @param hard true to set, false to clear.
 	 */
 	public void setHard(boolean hard)
 	{
@@ -184,6 +191,7 @@ public abstract class CommonThing implements MapObject
 
 	/**
 	 * Sets if this ambushes players.
+	 * @param ambush true to set, false to clear.
 	 */
 	public void setAmbush(boolean ambush)
 	{
@@ -200,6 +208,7 @@ public abstract class CommonThing implements MapObject
 
 	/**
 	 * Sets if this does NOT appear on single player.
+	 * @param notSinglePlayer true to set, false to clear.
 	 */
 	public void setNotSinglePlayer(boolean notSinglePlayer)
 	{

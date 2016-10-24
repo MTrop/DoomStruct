@@ -44,6 +44,7 @@ public class HexenMap extends CommonMap
 	/**
 	 * Sets the things on this map. 
 	 * Input objects are copied to the underlying list.
+	 * @param things the new list of things.
 	 */
 	public void setThings(HexenThing ... things)
 	{
@@ -63,6 +64,7 @@ public class HexenMap extends CommonMap
 	/**
 	 * Replaces the list of linedefs in the map.
 	 * Input objects are copied to the underlying list.
+	 * @param linedefs the new list of linedefs.
 	 */
 	public void setLinedefs(HexenLinedef ... linedefs)
 	{

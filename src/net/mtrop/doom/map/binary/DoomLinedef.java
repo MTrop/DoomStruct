@@ -105,7 +105,7 @@ public class DoomLinedef extends CommonLinedef implements BinaryObject
 	
 	/**
 	 * Sets this linedef's special tag.
-	 * 
+	 * @param tag the new tag.
 	 */
 	public void setTag(int tag)
 	{
@@ -123,6 +123,7 @@ public class DoomLinedef extends CommonLinedef implements BinaryObject
 
 	/**
 	 * Sets if this line's activated special does not block the activation search.
+	 * @param passThru true to set, false to clear.
 	 */
 	public void setPassThru(boolean passThru)
 	{
@@ -231,7 +232,5 @@ public class DoomLinedef extends CommonLinedef implements BinaryObject
 		sb.append(' ').append("Tag ").append(tag);
 		return sb.toString();
 	}
-	
-	
 	
 }

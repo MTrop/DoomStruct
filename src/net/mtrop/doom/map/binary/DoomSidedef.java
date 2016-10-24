@@ -118,6 +118,7 @@ public class DoomSidedef implements BinaryObject
 	
 	/**
 	 * Sets the sidedef's texture X offset.
+	 * @param offsetX the new X offset.
 	 * @throws IllegalArgumentException if the offset is outside the range -32768 to 32767.
 	 */
 	public void setOffsetX(int offsetX)
@@ -136,6 +137,7 @@ public class DoomSidedef implements BinaryObject
 
 	/**
 	 * Sets the sidedef's texture Y offset.
+	 * @param offsetY the new Y offset.
 	 * @throws IllegalArgumentException if the offset is outside the range -32768 to 32767.
 	 */
 	public void setOffsetY(int offsetY)
@@ -154,6 +156,7 @@ public class DoomSidedef implements BinaryObject
 
 	/**
 	 * Sets the top texture name.
+	 * @param textureTop the new texture name.
 	 * @throw IllegalArgumentException if the texture name is invalid. 
 	 */
 	public void setTextureTop(String textureTop)
@@ -173,6 +176,7 @@ public class DoomSidedef implements BinaryObject
 
 	/**
 	 * Sets the bottom texture name.
+	 * @param textureBottom the new texture name.
 	 * @throw IllegalArgumentException if the texture name is invalid. 
 	 */
 	public void setTextureBottom(String textureBottom)
@@ -192,6 +196,7 @@ public class DoomSidedef implements BinaryObject
 
 	/**
 	 * Sets the middle texture name.
+	 * @param textureMiddle the new texture name.
 	 * @throw IllegalArgumentException if the texture name is invalid. 
 	 */
 	public void setTextureMiddle(String textureMiddle)
@@ -211,6 +216,7 @@ public class DoomSidedef implements BinaryObject
 
 	/**
 	 * Sets the sector reference index for this sidedef.
+	 * @param sectorIndex the sector reference index.
 	 * @throws IllegalArgumentException if the offset is outside the range 0 to 65535.
 	 */
 	public void setSectorIndex(int sectorIndex)
