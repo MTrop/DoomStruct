@@ -41,6 +41,7 @@ public class Colormap implements BinaryObject
 	
 	/**
 	 * Creates a new colormap by copying the contents of another.
+	 * @param map the source map to copy.
 	 */
 	public Colormap(Colormap map)
 	{
@@ -152,7 +153,8 @@ public class Colormap implements BinaryObject
 	/**
 	 * Returns the palette index of a specific index in the map.
 	 * @param index	the index number of the entry.
-	 * @throws ArrayIndexOutOfBoundsException if index > NUM_INDICES or < 0.
+	 * @return the corresponding palette index.
+	 * @throws ArrayIndexOutOfBoundsException if index is greater than NUM_INDICES or less than 0.
 	 */
 	public int getPaletteIndex(int index)
 	{
@@ -163,8 +165,8 @@ public class Colormap implements BinaryObject
 	 * Sets the palette index of a specific index in the map.
 	 * @param index	the index number of the entry.
 	 * @param paletteIndex the new index.
-	 * @throws ArrayIndexOutOfBoundsException if index &gt; NUM_INDICES or &lt; 0.
-	 * @throws IllegalArgumentException if paletteIndex &lt; 0 or &gt; 255.
+	 * @throws ArrayIndexOutOfBoundsException if index is greater than 255 or less than 0.
+	 * @throws IllegalArgumentException if paletteIndex is less than 0 or greater than 255.
 	 */
 	public void setPaletteIndex(int index, int paletteIndex)
 	{

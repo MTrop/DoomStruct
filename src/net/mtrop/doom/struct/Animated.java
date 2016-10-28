@@ -86,7 +86,7 @@ public class Animated implements BinaryObject, Iterable<Animated.Entry>, Sizable
 	 * @param lastName	the last name in the sequence.
 	 * @param firstName the first name in the sequence.
 	 * @param ticks the amount of ticks between each frame.
-	 * @throw {@link IllegalArgumentException} if lastName or firstName is not a valid entry name, or frame ticks is less than 1.
+	 * @throws IllegalArgumentException if lastName or firstName is not a valid entry name, or frame ticks is less than 1.
 	 */
 	public void addFlat(String lastName, String firstName, int ticks)
 	{
@@ -119,7 +119,7 @@ public class Animated implements BinaryObject, Iterable<Animated.Entry>, Sizable
 	 * @param firstName the first name in the sequence.
 	 * @param ticks the amount of ticks between each frame.
 	 * @param decals if true, allows decals to be placed on this texture, false if not.
-	 * @throw {@link IllegalArgumentException} if lastName or firstName is not a valid texture name, or frame ticks is less than 1.
+	 * @throws IllegalArgumentException if lastName or firstName is not a valid texture name, or frame ticks is less than 1.
 	 */
 	public void addTexture(String lastName, String firstName, int ticks, boolean decals)
 	{
@@ -274,7 +274,7 @@ public class Animated implements BinaryObject, Iterable<Animated.Entry>, Sizable
 		}
 
 		/**
-		 * Returns the texture type of the entry (for FLAT or TEXTURE? null if terminal entry).
+		 * @return the texture type of the entry (for FLAT or TEXTURE? null if terminal entry).
 		 */
 		public TextureType getType()
 		{
@@ -283,7 +283,7 @@ public class Animated implements BinaryObject, Iterable<Animated.Entry>, Sizable
 
 		/**
 		 * Returns if this texture allows decals on it, despite it being animated.
-		 * True if so, false if not.
+		 * @return true if so, false if not.
 		 */
 		public boolean getAllowsDecals()
 		{
@@ -291,7 +291,7 @@ public class Animated implements BinaryObject, Iterable<Animated.Entry>, Sizable
 		}
 
 		/**
-		 * Returns the last texture/flat name in the animation sequence.
+		 * @return the last texture/flat name in the animation sequence.
 		 */
 		public String getLastName()
 		{
@@ -299,7 +299,7 @@ public class Animated implements BinaryObject, Iterable<Animated.Entry>, Sizable
 		}
 
 		/**
-		 * Returns the first texture/flat name in the animation sequence.
+		 * @return the first texture/flat name in the animation sequence.
 		 */
 		public String getFirstName()
 		{
@@ -307,7 +307,7 @@ public class Animated implements BinaryObject, Iterable<Animated.Entry>, Sizable
 		}
 
 		/**
-		 * Returns the amount of ticks between each frame.
+		 * @return the amount of ticks between each frame.
 		 */
 		public int getTicks()
 		{

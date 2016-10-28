@@ -27,7 +27,7 @@ public final class DemoTest
 
 		Demo demo = Demo.read(in);
 		logger.info(demo);
-		for (Demo.Tic[] tics : demo.getTics())
+		for (Demo.Tic[] tics : demo)
 			for (Demo.Tic tic : tics)
 				logger.info(tic);
 				

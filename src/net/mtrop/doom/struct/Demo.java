@@ -12,6 +12,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Iterator;
 
 import net.mtrop.doom.BinaryObject;
 import net.mtrop.doom.util.RangeUtils;
@@ -31,7 +32,7 @@ import com.blackrook.io.SuperWriter;
  * information.
  * @author Matthew Tropiano
  */
-public class Demo implements BinaryObject
+public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 {
 	/** Demo version 1.2 byte. */
 	public static final int VERSION_12 =			0;  
@@ -315,7 +316,7 @@ public class Demo implements BinaryObject
 	}
 
 	/**
-	 * Resets this demo.
+	 * Resets the contents of this demo.
 	 */
 	public void reset()
 	{
@@ -358,6 +359,7 @@ public class Demo implements BinaryObject
 	 * See the VERSION macros for the important values.
 	 * This affects how the demo is exported if written to
 	 * an output stream of some kind.
+	 * @return the version value.
 	 */
 	public int getVersion()
 	{
@@ -369,6 +371,7 @@ public class Demo implements BinaryObject
 	 * See the VERSION macros for the important values.
 	 * <p>
 	 * This affects how the demo is exported if written to an output stream of some kind.
+	 * @param version the version value.
 	 * @throws IllegalArgumentException if version is outside the range 0 to 255.
 	 */
 	public void setVersion(int version)
@@ -380,6 +383,7 @@ public class Demo implements BinaryObject
 	/**
 	 * Gets the skill level that this demo is for.
 	 * See the SKILL macros for the important values.
+	 * @return the skill level value.
 	 */
 	public int getSkill()
 	{
@@ -389,6 +393,7 @@ public class Demo implements BinaryObject
 	/**
 	 * Sets the skill level that this demo is for.
 	 * See the SKILL macros for the important values.
+	 * @param skill the skill level value.
 	 * @throws IllegalArgumentException if skill is outside the range 0 to 4.
 	 */
 	public void setSkill(int skill)
@@ -402,6 +407,7 @@ public class Demo implements BinaryObject
 	 * <p>
 	 * Doom 2, Hexen, and Strife do not have episodes,
 	 * so this is 1 for those games.
+	 * @return the episode number.
 	 */
 	public int getEpisode()
 	{
@@ -412,6 +418,7 @@ public class Demo implements BinaryObject
 	 * Sets the episode that this demo is for.
 	 * <p>
 	 * Doom 2, Hexen, and Strife do not have episodes, so this is 1 for those games.
+	 * @param episode the episode number.
 	 * @throws IllegalArgumentException if episode is outside the range 0 to 255.
 	 */
 	public void setEpisode(int episode)
@@ -421,7 +428,7 @@ public class Demo implements BinaryObject
 	}
 
 	/**
-	 * Gets the map/mission number that this demo is for.
+	 * @return the map/mission number that this demo is for.
 	 */
 	public int getMap()
 	{
@@ -430,6 +437,7 @@ public class Demo implements BinaryObject
 
 	/**
 	 * Sets the map/mission number that this demo is for.
+	 * @param map the map number.
 	 * @throws IllegalArgumentException if map is outside the range 0 to 255.
 	 */
 	public void setMap(int map)
@@ -441,6 +449,7 @@ public class Demo implements BinaryObject
 	/**
 	 * Gets the game mode that this demo is for.
 	 * See the MODE constants.
+	 * @return the game mode value.
 	 */
 	public int getGameMode()
 	{
@@ -450,6 +459,7 @@ public class Demo implements BinaryObject
 	/**
 	 * Sets the game mode that this demo is for.
 	 * See the MODE constants.
+	 * @param mode the game mode value.
 	 */
 	public void setGameMode(int mode)
 	{
@@ -458,7 +468,7 @@ public class Demo implements BinaryObject
 
 	/**
 	 * Is monster respawning set for this demo?
-	 * True if so. False if not.
+	 * @return true if so, false if not.
 	 */
 	public boolean getMonsterRespawn()
 	{
@@ -475,7 +485,7 @@ public class Demo implements BinaryObject
 
 	/**
 	 * Is fast monsters set for this demo?
-	 * True if so. False if not.
+	 * @return true if so, false if not.
 	 */
 	public boolean getFastMonsters()
 	{
@@ -492,7 +502,7 @@ public class Demo implements BinaryObject
 
 	/**
 	 * Is "no monsters" set for this demo?
-	 * True if so. False if not.
+	 * @return true if so, false if not.
 	 */
 	public boolean getNoMonsters()
 	{
@@ -509,7 +519,7 @@ public class Demo implements BinaryObject
 
 	/**
 	 * Gets if monsters remember their last target.
-	 * True if so, false if not.
+	 * @return true if so, false if not.
 	 */
 	public boolean getMonstersRememberTarget()
 	{
@@ -518,7 +528,7 @@ public class Demo implements BinaryObject
 
 	/**
 	 * Sets if monsters remember their last target.
-	 * True if so, false if not.
+	 * @param monstersRememberTarget true if so, false if not.
 	 */
 	public void setMonstersRememberTarget(boolean monstersRememberTarget)
 	{
@@ -527,7 +537,7 @@ public class Demo implements BinaryObject
 
 	/**
 	 * Gets if the friction specials are enabled.
-	 * True if so, false if not.
+	 * @return true if so, false if not.
 	 */
 	public boolean getEnableFriction()
 	{
@@ -536,7 +546,7 @@ public class Demo implements BinaryObject
 
 	/**
 	 * Sets if the friction specials are enabled.
-	 * True if so, false if not.
+	 * @param enableFriction true if so, false if not.
 	 */
 	public void setEnableFriction(boolean enableFriction)
 	{
@@ -545,7 +555,7 @@ public class Demo implements BinaryObject
 	
 	/**
 	 * Gets if weapon recoil is enabled.
-	 * True if so, false if not.
+	 * @return true if so, false if not.
 	 */
 	public boolean getEnableWeaponRecoil()
 	{
@@ -554,7 +564,7 @@ public class Demo implements BinaryObject
 
 	/**
 	 * Sets if weapon recoil is enabled.
-	 * True if so, false if not.
+	 * @param enableWeaponRecoil true if so, false if not.
 	 */
 	public void setEnableWeaponRecoil(boolean enableWeaponRecoil)
 	{
@@ -563,7 +573,7 @@ public class Demo implements BinaryObject
 
 	/**
 	 * Gets if push/pull objects are enabled.
-	 * True if so, false if not.
+	 * @return true if so, false if not.
 	 */
 	public boolean getAllowPushers()
 	{
@@ -572,7 +582,7 @@ public class Demo implements BinaryObject
 
 	/**
 	 * Sets if push/pull objects are enabled.
-	 * True if so, false if not.
+	 * @param allowPushers true if so, false if not.
 	 */
 	public void setAllowPushers(boolean allowPushers)
 	{
@@ -581,7 +591,7 @@ public class Demo implements BinaryObject
 
 	/**
 	 * Gets if player bobbing is enabled.
-	 * True if so, false if not.
+	 * @return true if so, false if not.
 	 */
 	public boolean getEnablePlayerBobbing()
 	{
@@ -590,7 +600,7 @@ public class Demo implements BinaryObject
 
 	/**
 	 * Sets if player bobbing is enabled.
-	 * True if so, false if not.
+	 * @param enablePlayerBobbing true if so, false if not.
 	 */
 	public void setEnablePlayerBobbing(boolean enablePlayerBobbing)
 	{
@@ -651,7 +661,7 @@ public class Demo implements BinaryObject
 
 	/**
 	 * Gets if monster infighting is enabled.
-	 * True if so, false if not.
+	 * @return true if so, false if not.
 	 */
 	public boolean getMonsterInfighting()
 	{
@@ -660,7 +670,7 @@ public class Demo implements BinaryObject
 
 	/**
 	 * Sets if monster infighting is enabled.
-	 * True if so, false if not.
+	 * @param monsterInfighting true if so, false if not.
 	 */
 	public void setMonsterInfighting(boolean monsterInfighting)
 	{
@@ -669,7 +679,7 @@ public class Demo implements BinaryObject
 
 	/**
 	 * Gets if helper dogs are enabled.
-	 * True if so, false if not.
+	 * @return true if so, false if not.
 	 */
 	public boolean getEnableDogs()
 	{
@@ -678,7 +688,7 @@ public class Demo implements BinaryObject
 
 	/**
 	 * Sets if helper dogs are enabled.
-	 * True if so, false if not.
+	 * @param enableDogs true if so, false if not.
 	 */
 	public void setEnableDogs(boolean enableDogs)
 	{
@@ -687,7 +697,7 @@ public class Demo implements BinaryObject
 
 	/**
 	 * Gets if helper monkeys are enabled.
-	 * True if so, false if not.
+	 * @return true if so, false if not.
 	 */
 	public boolean getEnableMonkeys()
 	{
@@ -696,7 +706,7 @@ public class Demo implements BinaryObject
 
 	/**
 	 * Sets if helper monkeys are enabled.
-	 * True if so, false if not.
+	 * @param enableMonkeys true if so, false if not.
 	 */
 	public void setEnableMonkeys(boolean enableMonkeys)
 	{
@@ -705,7 +715,7 @@ public class Demo implements BinaryObject
 
 	/**
 	 * Gets if helper dogs jump.
-	 * True if so, false if not.
+	 * @return true if so, false if not.
 	 */
 	public boolean getDogsJump()
 	{
@@ -714,7 +724,7 @@ public class Demo implements BinaryObject
 
 	/**
 	 * Sets if helper dogs jump.
-	 * True if so, false if not.
+	 * @param dogsJump true if so, false if not.
 	 */
 	public void setDogsJump(boolean dogsJump)
 	{
@@ -723,7 +733,7 @@ public class Demo implements BinaryObject
 
 	/**
 	 * Gets if monster backing is enabled.
-	 * True if so, false if not.
+	 * @return true if so, false if not.
 	 */
 	public boolean getMonsterBacking()
 	{
@@ -732,7 +742,7 @@ public class Demo implements BinaryObject
 
 	/**
 	 * Sets if monster backing is enabled.
-	 * True if so, false if not.
+	 * @param monsterBacking true if so, false if not.
 	 */
 	public void setMonsterBacking(boolean monsterBacking)
 	{
@@ -741,7 +751,7 @@ public class Demo implements BinaryObject
 
 	/**
 	 * Gets if monsters avoid hazardous areas.
-	 * True if so, false if not.
+	 * @return true if so, false if not.
 	 */
 	public boolean getMonstersAvoidHazards()
 	{
@@ -750,7 +760,7 @@ public class Demo implements BinaryObject
 
 	/**
 	 * Sets if monsters avoid hazardous areas.
-	 * True if so, false if not.
+	 * @param monstersAvoidHazards true if so, false if not.
 	 */
 	public void setMonstersAvoidHazards(boolean monstersAvoidHazards)
 	{
@@ -759,7 +769,7 @@ public class Demo implements BinaryObject
 
 	/**
 	 * Gets if monsters are susceptible to environmental friction.
-	 * True if so, false if not.
+	 * @return true if so, false if not.
 	 */
 	public boolean getMonsterFriction()
 	{
@@ -768,7 +778,7 @@ public class Demo implements BinaryObject
 
 	/**
 	 * Sets if monsters are susceptible to environmental friction.
-	 * True if so, false if not.
+	 * @param monsterFriction true if so, false if not.
 	 */
 	public void setMonsterFriction(boolean monsterFriction)
 	{
@@ -793,7 +803,7 @@ public class Demo implements BinaryObject
 
 	/**
 	 * Gets if old BSP methods are forced.
-	 * True if so, false if not.
+	 * @return true if so, false if not.
 	 */
 	public boolean getForceOldBSP()
 	{
@@ -802,7 +812,7 @@ public class Demo implements BinaryObject
 
 	/**
 	 * Sets if old BSP methods are forced.
-	 * True if so, false if not.
+	 * @param forceOldBSP true if so, false if not.
 	 */
 	public void setForceOldBSP(boolean forceOldBSP)
 	{
@@ -887,16 +897,7 @@ public class Demo implements BinaryObject
 	}
 	
 	/**
-	 * Returns the list of game tic data in this demo.
-	 * Each entry in the list is an array of each player's game tic.
-	 */
-	public List<Tic[]> getTics()
-	{
-		return gameTics;
-	}
-	
-	/**
-	 * Returns how many game tics were recorded in this demo.
+	 * @return how many game tics were recorded in this demo.
 	 */
 	public int getTicCount()
 	{
@@ -904,7 +905,7 @@ public class Demo implements BinaryObject
 	}
 	
 	/**
-	 * Returns how many seconds this demo lasts.
+	 * @return how many seconds this demo lasts.
 	 */
 	public double getLength()
 	{
@@ -925,7 +926,8 @@ public class Demo implements BinaryObject
 	}
 	
 	/**
-	 * Returns a Tic at a particular gametic, first player only.
+	 * Gets a demo Tic at a particular gametic, first player only.
+	 * @return the corresponding Tic or null if out of range.
 	 * @see #getTic(int, int)
 	 */
 	public Tic getTic(int tic)
@@ -948,6 +950,12 @@ public class Demo implements BinaryObject
 		Tic[] t = new Tic[tics.length];
 		System.arraycopy(tics, 0, t, 0, tics.length);
 		gameTics.add(t);
+	}
+
+	@Override
+	public Iterator<Tic[]> iterator()
+	{
+		return gameTics.iterator();
 	}
 
 	@Override
@@ -1401,6 +1409,9 @@ public class Demo implements BinaryObject
 		
 		/**
 		 * Returns the action byte for action buttons.
+		 * @param fire true if set, false if not.
+		 * @param use true if set, false if not.
+		 * @return the action byte value.
 		 */
 		public static byte actionButton(boolean fire, boolean use)
 		{
@@ -1409,6 +1420,11 @@ public class Demo implements BinaryObject
 		
 		/**
 		 * Returns the action byte for action buttons.
+		 * @param fire true if set, false if not.
+		 * @param use true if set, false if not.
+		 * @param changeWeapon true if set, false if not.
+		 * @param weapon the weapon number.
+		 * @return the action byte value.
 		 */
 		public static byte actionButton(boolean fire, boolean use, boolean changeWeapon, int weapon)
 		{
@@ -1423,6 +1439,7 @@ public class Demo implements BinaryObject
 		/**
 		 * Returns the action byte for saving a game.
 		 * @param slot the save slot to save the game to.
+		 * @return the action byte value.
 		 */
 		public static byte actionSave(int slot)
 		{
@@ -1436,6 +1453,7 @@ public class Demo implements BinaryObject
 		/**
 		 * Returns the action byte for loading a game.
 		 * @param slot the load slot to load the game from.
+		 * @return the action byte value.
 		 */
 		public static byte actionLoad(int slot)
 		{
@@ -1447,7 +1465,7 @@ public class Demo implements BinaryObject
 		}
 		
 		/**
-		 * Returns the action byte for pressing pause.
+		 * @return the action byte for pressing pause.
 		 */
 		public static byte actionPause()
 		{
@@ -1458,7 +1476,7 @@ public class Demo implements BinaryObject
 		}
 		
 		/**
-		 * Returns the action byte for restarting the map.
+		 * @return the action byte for restarting the map.
 		 */
 		public static byte actionRestart()
 		{
@@ -1471,6 +1489,7 @@ public class Demo implements BinaryObject
 		/**
 		 * Returns forward movement units.
 		 * Negative values are backwards.
+		 * @return the unit value.
 		 */
 		public int getForwardMovement()
 		{
@@ -1480,6 +1499,7 @@ public class Demo implements BinaryObject
 		/**
 		 * Returns right strafe units.
 		 * Negative values are left strafes.
+		 * @return the unit value.
 		 */
 		public int getRightStrafe()
 		{
@@ -1489,6 +1509,7 @@ public class Demo implements BinaryObject
 		/**
 		 * Returns left turn units.
 		 * Negative values are right turns.
+		 * @return the unit value.
 		 */
 		public int getTurnLeft()
 		{
@@ -1496,7 +1517,7 @@ public class Demo implements BinaryObject
 		}
 
 		/**
-		 * Returns action bits.
+		 * @return the action bits on this tic.
 		 */
 		public byte getAction()
 		{
@@ -1558,7 +1579,8 @@ public class Demo implements BinaryObject
 				turnLeft < 0 ? "Right" : "Left",
 				Math.abs(turnLeft),
 				actstr
-				);
+			);
+			
 		}
 		
 	}
