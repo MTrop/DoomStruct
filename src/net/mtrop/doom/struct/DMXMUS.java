@@ -12,10 +12,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Iterator;
 
 import net.mtrop.doom.BinaryObject;
 
-import com.blackrook.commons.AbstractVector;
 import com.blackrook.commons.Common;
 import com.blackrook.commons.list.List;
 import com.blackrook.commons.list.SortedList;
@@ -26,7 +26,7 @@ import com.blackrook.io.SuperWriter;
  * Abstraction of MUS formatted music sequence data.
  * @author Matthew Tropiano
  */
-public class DMXMUS implements BinaryObject
+public class DMXMUS implements BinaryObject, Iterable<DMXMUS.Event>
 {
 	public static final byte[] MUS_ID = {0x4d, 0x55, 0x53, 0x1a}; 
 	
@@ -266,7 +266,7 @@ public class DMXMUS implements BinaryObject
 	private List<Event> eventList;
 
 	/**
-	 * Creates a blank MUSData lump with no events.
+	 * Creates a blank DMXMUS lump with no events.
 	 */
 	public DMXMUS()
 	{
@@ -302,12 +302,10 @@ public class DMXMUS implements BinaryObject
 		return out;
 	}
 
-	/**
-	 * Returns the reference to the event list.
-	 */
-	public AbstractVector<Event> getEventList()
+	@Override
+	public Iterator<Event> iterator() 
 	{
-		return eventList;
+		return eventList.iterator();
 	}
 
 	@Override
@@ -441,17 +439,17 @@ public class DMXMUS implements BinaryObject
 		SortedList<Integer> channels = new SortedList<Integer>(4);
 		SortedList<Integer> instruments = new SortedList<Integer>(4);
 		
-		for (Event e : eventList)
+		for (Event event : eventList)
 		{
-			int channel = e.channel;
+			int channel = event.channel;
 			if (!channels.contains(channel))
 				channels.add(channel);
 
-			switch (e.getType())
+			switch (event.getType())
 			{
 				case Event.TYPE_PLAY:
 				{
-					NotePlayEvent c = (NotePlayEvent)e;
+					NotePlayEvent c = (NotePlayEvent)event;
 					if (c.getChannel() == CHANNEL_DRUM)	// drum channel
 					{
 						byte n = c.getNote();
@@ -463,11 +461,11 @@ public class DMXMUS implements BinaryObject
 						}
 					}
 				}
-					break;
+				break;
 
 				case Event.TYPE_RELEASE:
 				{
-					NoteReleaseEvent c = (NoteReleaseEvent)e;
+					NoteReleaseEvent c = (NoteReleaseEvent)event;
 					if (c.getChannel() == CHANNEL_DRUM)	// drum channel
 					{
 						byte n = c.getNote();
@@ -479,11 +477,11 @@ public class DMXMUS implements BinaryObject
 						}
 					}
 				}
-					break;
+				break;
 					
 				case Event.TYPE_CHANGE_CONTROLLER:
 				{
-					ControllerChangeEvent c = (ControllerChangeEvent)e;
+					ControllerChangeEvent c = (ControllerChangeEvent)event;
 					if (c.getChannel() != CHANNEL_DRUM && c.getController() == ControllerChangeEvent.CONTROLLER_INSTRUMENT)
 					{
 						int inst = c.getValue();
@@ -491,10 +489,10 @@ public class DMXMUS implements BinaryObject
 							instruments.add(inst);
 					}
 				}
-					break;
+				break;
 			}
 			
-			esw.writeBytes(e.toBytes());
+			esw.writeBytes(event.toBytes());
 		}
 		
 		byte[] data = ebos.toByteArray();
@@ -571,7 +569,7 @@ public class DMXMUS implements BinaryObject
 		}
 
 		/**
-		 * Gets this Event's type.
+		 * @return this Event's type.
 		 */
 		public byte getType()
 		{
@@ -579,7 +577,7 @@ public class DMXMUS implements BinaryObject
 		}
 
 		/**
-		 * Gets this Event's channel.
+		 * @return this Event's channel.
 		 */
 		public byte getChannel()
 		{
@@ -588,6 +586,7 @@ public class DMXMUS implements BinaryObject
 
 		/**
 		 * Sets this Event's channel.
+		 * @param channel the channel number.
 		 */
 		public void setChannel(byte channel)
 		{
@@ -595,7 +594,8 @@ public class DMXMUS implements BinaryObject
 		}
 
 		/**
-		 * Is this the last event in a group, before a rest needs to be taken?
+		 * Checks if this is the last event in a group, before a rest needs to be taken?
+		 * @return true if so, false if not.
 		 */
 		public boolean isLast()
 		{
@@ -604,6 +604,7 @@ public class DMXMUS implements BinaryObject
 
 		/**
 		 * Sets if this the last event in a group, before a rest needs to be taken.
+		 * @param last true if so, false if not.
 		 */
 		public void setLast(boolean last)
 		{
@@ -612,7 +613,8 @@ public class DMXMUS implements BinaryObject
 
 		/**
 		 * Gets the amount of tics in the rest period.
-		 * Only valid if isLast() is true.
+		 * Only valid if {@link #isLast()} is true.
+		 * @return the amount of rest tics.
 		 */
 		public int getRestTics()
 		{
@@ -621,7 +623,8 @@ public class DMXMUS implements BinaryObject
 
 		/**
 		 * Sets the amount of tics in the rest period.
-		 * Only valid if isLast() is true.
+		 * Only valid if {@link #isLast()} is true.
+		 * @param restTics the new amount of rest tics.
 		 */
 		public void setRestTics(int restTics)
 		{
@@ -629,7 +632,7 @@ public class DMXMUS implements BinaryObject
 		}
 		
 		/**
-		 * Converts this event to a byte form.
+		 * @return this event to a serialized byte form.
 		 */
 		public abstract byte[] toBytes();
 		
@@ -647,6 +650,7 @@ public class DMXMUS implements BinaryObject
 		 * Creates a "release note" event.
 		 * @param channel	Event channel.
 		 * @param note		The note, from 0 to 127. 60 is Middle C. Each integer either way is one semitone.
+		 * @throws IllegalArgumentException if <code>note</code> is not between 0 and 127.
 		 */
 		public NoteReleaseEvent(byte channel, byte note)
 		{
@@ -659,6 +663,7 @@ public class DMXMUS implements BinaryObject
 		 * @param note		The note, from 0 to 127. 60 is Middle C. Each integer either way is one semitone.
 		 * @param last		Is this the "last" event before another?
 		 * @param restTics	The amount of tics before the next event gets processed.
+		 * @throws IllegalArgumentException if <code>note</code> is not between 0 and 127.
 		 */
 		public NoteReleaseEvent(byte channel, byte note, boolean last, int restTics)
 		{
@@ -667,7 +672,7 @@ public class DMXMUS implements BinaryObject
 		}
 		
 		/**
-		 * Gets this event's note.
+		 * @return this event's note.
 		 */
 		public byte getNote()
 		{
@@ -676,6 +681,7 @@ public class DMXMUS implements BinaryObject
 
 		/**
 		 * Sets this event's note.
+		 * @param note the new note.
 		 */
 		public void setNote(byte note)
 		{

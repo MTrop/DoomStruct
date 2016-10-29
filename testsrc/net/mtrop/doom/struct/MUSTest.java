@@ -24,7 +24,7 @@ public final class MUSTest
 		WadFile wad = new WadFile(args[0]);
 		DMXMUS mus = DMXMUS.create(wad.getData("D_RUNNIN"));
 		
-		for (DMXMUS.Event event : mus.getEventList())
+		for (DMXMUS.Event event : mus)
 			logger.info(event);
 		
 		Common.close(wad);

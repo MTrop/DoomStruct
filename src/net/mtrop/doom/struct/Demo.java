@@ -494,6 +494,7 @@ public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 
 	/**
 	 * Sets if fast monsters are set for this demo.
+	 * @param fast true if so, false if not.
 	 */
 	public void setFastMonsters(boolean fast)
 	{
@@ -511,6 +512,7 @@ public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 
 	/**
 	 * Sets the "no monsters" flag for this demo.
+	 * @param nomonsters true if so, false if not.
 	 */
 	public void setNoMonsters(boolean nomonsters)
 	{
@@ -610,6 +612,7 @@ public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 	/**
 	 * Gets what kind of "demo insurance" this is set for.
 	 * See the DEMO_INSURANCE constants.
+	 * @return the demo insurance value.
 	 */
 	public int getDemoInsurance()
 	{
@@ -620,6 +623,7 @@ public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 	 * Sets what kind of "demo insurance" this is set for.
 	 * See the DEMO_INSURANCE constants.
 	 * Clamps value from 0 to {@link Demo#DEMO_INSURANCE_SETTINGS} - 1.
+	 * @param demoInsurance the new demo insurance value.
 	 */
 	public void setDemoInsurance(int demoInsurance)
 	{
@@ -628,6 +632,7 @@ public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 
 	/**
 	 * Gets the random seeding number that this demo uses.
+	 * @return the seed number.
 	 */
 	public int getRandomSeed()
 	{
@@ -636,6 +641,7 @@ public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 
 	/**
 	 * Sets the random seeding number that this demo uses.
+	 * @param randomSeed the new seed value.
 	 */
 	public void setRandomSeed(int randomSeed)
 	{
@@ -644,6 +650,7 @@ public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 
 	/**
 	 * Gets the follow distance of allied CPU friends.
+	 * @return the follow distance that was set.
 	 */
 	public int getFriendFollowDistance()
 	{
@@ -652,11 +659,13 @@ public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 
 	/**
 	 * Sets the follow distance of allied CPU friends.
-	 * Clamps input value from 0 to 999.
+	 * @param the new follow distance.
+	 * @throws IllegalArgumentException if the distance is outside the range 0 to 999.
 	 */
 	public void setFriendFollowDistance(int friendFollowDistance)
 	{
-		this.friendFollowDistance = RMath.clampValue(friendFollowDistance, 0, 999);
+		RangeUtils.checkRange("Friend follow distance", 0, 999, friendFollowDistance);
+		this.friendFollowDistance = friendFollowDistance;
 	}
 
 	/**
@@ -786,7 +795,7 @@ public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 	}
 
 	/**
-	 * Gets how many helpers are spawned.
+	 * @return how many helpers are spawned.
 	 */
 	public int getHelperCount()
 	{
@@ -795,6 +804,7 @@ public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 
 	/**
 	 * Sets how many helpers are spawned.
+	 * @param the amount of helpers.
 	 */
 	public void setHelperCount(int helperCount)
 	{
@@ -822,6 +832,7 @@ public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 	/**
 	 * Gets the player viewpoint index that this demo is being played back from.
 	 * Zero is player 1.
+	 * @return the corresponding viewpoint index.
 	 */
 	public int getViewpoint()
 	{
@@ -831,6 +842,7 @@ public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 	/**
 	 * Sets the player viewpoint index that this demo is being played back from.
 	 * Zero is player 1.
+	 * @param viewpoint the new viewpoint index.
 	 * @throws IllegalArgumentException if episode is outside the range 0 to 255.
 	 */
 	public void setViewpoint(int viewpoint)
@@ -840,7 +852,7 @@ public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 	}
 
 	/**
-	 * Returns the amount of players in this demo.
+	 * @return the amount of players in this demo.
 	 */
 	public int getPlayers()
 	{
@@ -849,6 +861,8 @@ public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 
 	/**
 	 * Sets the amount of players.
+	 * Be very careful with this - the amount of player control info per tic added must be equal to this amount! 
+	 * @param players the amount of players.
 	 * @throws IllegalArgumentException if episode is outside the range 0 to 255.
 	 */
 	public void setPlayers(int players)
@@ -860,6 +874,8 @@ public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 	/**
 	 * Gets the demo's stored compatibility level.
 	 * Only useful if this is a Boom-format Demo.
+	 * See the COMPLEVEL constants for more info.
+	 * @return the current compatibility level.
 	 */
 	public int getCompatibilityLevel()
 	{
@@ -870,6 +886,8 @@ public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 	 * Sets the demo's stored compatibility level.
 	 * This affects how the demo is exported if written to
 	 * an output stream of some kind.
+	 * See the COMPLEVEL constants for more info.
+	 * @param compatibilityLevel the new level.
 	 */
 	public void setCompatibilityLevel(int compatibilityLevel)
 	{
@@ -878,7 +896,9 @@ public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 
 	/**
 	 * Gets a compatibility flag setting.
-	 * True if set, false if not.
+	 * @param the flag index (see COMPATFLAG constants).
+	 * @return true if set, false if not.
+	 * @throws ArrayIndexOutOfBoundsException if <code>flag</code> is less than 0 or greater than or equal to {@value #COMPFLAG_LENGTH}.
 	 */
 	public boolean getCompatibilityFlag(int flag)
 	{
@@ -887,9 +907,10 @@ public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 	
 	/**
 	 * Sets a compatibility flag setting.
-	 * True to set, false to unset.
-	 * This affects how the demo is exported if written to
-	 * an output stream of some kind.
+	 * This affects how the demo is exported if written to an output stream of some kind.
+	 * @param flag the flag to set (see COMPATFLAG constants).
+	 * @param value true to set, false to unset.
+	 * @throws ArrayIndexOutOfBoundsException if <code>flag</code> is less than 0 or greater than or equal to {@value #COMPFLAG_LENGTH}.
 	 */
 	public void setCompatibilityFlag(int flag, boolean value)
 	{
@@ -905,7 +926,7 @@ public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 	}
 	
 	/**
-	 * @return how many seconds this demo lasts.
+	 * @return how many seconds this demo lasts (approximate).
 	 */
 	public double getLength()
 	{
