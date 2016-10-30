@@ -131,19 +131,26 @@ public class DoomPK3 extends ZipFile
 	/**
 	 * Gets the data in one entry in the PK3 by entry name (path and all).
 	 * @param entry the entry to extract and return as a byte array.
-	 * @return a byte array of the entry's data.
-	 * @throws IOException if a read error occurs. 
+	 * @return a byte array of the entry's data, or null if no corresponding entry.
+	 * @throws IOException if a read error occurs.
+	 * @throws ZipException if a ZIP format error has occurred
+	 * @throws IllegalStateException if the zip file has been closed 
 	 */
 	public byte[] getData(String entry) throws IOException
 	{
-		return getData(getEntry(entry));
+		ZipEntry zentry = getEntry(entry);
+		if (zentry == null)
+			return null;
+		return getData(zentry);
 	}
 
 	/**
 	 * Gets the data in one entry in the PK3.
 	 * @param entry the entry to extract and return as a byte array.
 	 * @return a byte array of the entry's data.
-	 * @throws IOException if a read error occurs. 
+	 * @throws IOException if a read error occurs.
+	 * @throws ZipException if a ZIP format error has occurred
+	 * @throws IllegalStateException if the zip file has been closed 
 	 */
 	public byte[] getData(ZipEntry entry) throws IOException
 	{
@@ -155,18 +162,6 @@ public class DoomPK3 extends ZipFile
 	}
 
 	/**
-	 * Gets the data in one entry in the PK3 as an input stream.
-	 * The data is extracted fully before it is returned as a stream.
-	 * @param entry the entry to extract and return as a byte array.
-	 * @return an InputStream of the entry's data.
-	 * @throws IOException if a read error occurs. 
-	 */
-	public InputStream getInputStream(ZipEntry entry) throws IOException
-	{
-		return new ByteArrayInputStream(getData(entry));
-	}
-	
-	/**
 	 * Gets the data in one entry in the PK3 as an input stream by entry name (path and all).
 	 * The data is extracted fully before it is returned as a stream.
 	 * @param entry the entry to extract and return as a byte array.
@@ -175,7 +170,10 @@ public class DoomPK3 extends ZipFile
 	 */
 	public InputStream getInputStream(String entry) throws IOException
 	{
-		return new ByteArrayInputStream(getData(entry));
+		ZipEntry zentry = getEntry(entry);
+		if (zentry == null)
+			return null;
+		return new ByteArrayInputStream(getData(zentry));
 	}
 	
 	/**
