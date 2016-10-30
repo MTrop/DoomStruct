@@ -1,6 +1,6 @@
-Doom Library (C) 2015 Matt Tropiano et al.
+Doom Struct (C) 2015-2016 Matt Tropiano et al.
 
-Slated for 1.0
---------------
+Changed in 1.0.0
+----------------
 
 - First release.
