@@ -44,6 +44,7 @@ public abstract class CommonMap
 	/**
 	 * Replaces the list of sectors in the map.
 	 * Input objects are copied to the underlying list.
+	 * @param sectors the new list of sectors.
 	 */
 	public void setSectors(DoomSector ... sectors)
 	{
@@ -63,6 +64,7 @@ public abstract class CommonMap
 	/**
 	 * Replaces the list of vertices in the map.
 	 * Input objects are copied to the underlying list.
+	 * @param vertices the new list of vertices.
 	 */
 	public void setVertices(DoomVertex ... vertices)
 	{
@@ -82,6 +84,7 @@ public abstract class CommonMap
 	/**
 	 * Replaces the list of sidedefs in the map.
 	 * Input objects are copied to the underlying list.
+	 * @param sidedefs the new list of sidedefs.
 	 */
 	public void setSidedefs(DoomSidedef ... sidedefs)
 	{

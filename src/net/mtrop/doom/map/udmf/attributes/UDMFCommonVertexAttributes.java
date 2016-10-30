@@ -5,17 +5,17 @@
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
  ******************************************************************************/
-package net.mtrop.doom.map.udmf;
+package net.mtrop.doom.map.udmf.attributes;
 
 /**
- * Contains vertex attributes for ZDoom namespaces.
+ * Contains common vertex attributes on some UDMF structures.
  * @author Matthew Tropiano
  */
-public interface UDMFZDoomVertexAttributes extends UDMFCommonVertexAttributes
+public interface UDMFCommonVertexAttributes extends UDMFCommonAttributes
 {
-	/** Vertex Z position (floor height). */
-	public static final String ATTRIB_POSITION_Z_FLOOR = "zfloor";
-	/** Vertex Z position (ceiling height). */
-	public static final String ATTRIB_POSITION_Z_CEILING = "zceiling";
-	
+	/** Vertex position: x-coordinate. */
+	public static final String ATTRIB_POSITION_X = "x";
+	/** Vertex position: y-coordinate. */
+	public static final String ATTRIB_POSITION_Y = "y";
+
 }

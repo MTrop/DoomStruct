@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
  ******************************************************************************/
-package net.mtrop.doom.struct;
+package net.mtrop.doom.sound;
 
 import java.io.*;
 
@@ -92,7 +92,7 @@ public class DMXSound implements BinaryObject
 	}
 
 	/**
-	 * Gets the sampling rate of this sound clip in samples per second.
+	 * @return the sampling rate of this sound clip in samples per second.
 	 */
 	public int getSampleRate()
 	{
@@ -135,7 +135,7 @@ public class DMXSound implements BinaryObject
 	}
 	
 	/**
-	 * Returns the waveform that holds all of the samples in this sound clip.
+	 * @return the waveform that holds all of the samples in this sound clip.
 	 * @see CustomWaveForm
 	 */
 	public CustomWaveForm getWaveForm()

@@ -30,6 +30,8 @@ import com.blackrook.io.SuperWriter;
  */
 public class WadFile implements Wad, Closeable
 {
+	private static final byte[] NO_DATA = new byte[0];
+
 	/** File handle. */
 	private RandomAccessFile file;
 	
@@ -56,9 +58,9 @@ public class WadFile implements Wad, Closeable
 	 * @throws FileNotFoundException if the file can't be found.
 	 * @throws SecurityException if you don't have permission to access the file.
 	 * @throws WadException if the file isn't a Wad file.
-	 * @throws NullPointerException if "path" is null.
+	 * @throws NullPointerException if <code>path</code> is null.
 	 */
-	public WadFile(String path) throws IOException, WadException
+	public WadFile(String path) throws IOException
 	{
 		this(new File(path));
 	}
@@ -72,7 +74,7 @@ public class WadFile implements Wad, Closeable
 	 * @throws WadException if the file isn't a Wad file.
 	 * @throws NullPointerException if <code>f</code> is null.
 	 */
-	public WadFile(File f) throws IOException, WadException
+	public WadFile(File f) throws IOException
 	{
 		if (!f.exists())
 			throw new FileNotFoundException(f.getPath() + " does not exist!");
@@ -169,6 +171,8 @@ public class WadFile implements Wad, Closeable
 	
 	/**
 	 * Returns this Wad's file name. 
+	 * @return this file's name (and just the name).
+	 * @see File#getName()
 	 */
 	public String getFileName()
 	{
@@ -176,17 +180,21 @@ public class WadFile implements Wad, Closeable
 	}
 	
 	/**
-	 * Returns this Wad's file path. 
+	 * Gets this Wad's file path. 
+	 * @return this file's path.
+	 * @see File#getPath()
 	 */
-	public String getFilePath()
+	public final String getFilePath()
 	{
 		return filePath;
 	}
 
 	/**
 	 * Returns this Wad's file absolute path. 
+	 * @return this file's name (and just the name).
+	 * @see File#getAbsolutePath()
 	 */
-	public String getFileAbsolutePath()
+	public final String getFileAbsolutePath()
 	{
 		return fileAbsolutePath;
 	}
@@ -223,11 +231,12 @@ public class WadFile implements Wad, Closeable
 	@Override
 	public WadEntry addData(String entryName, byte[] data) throws IOException
 	{
-		WadEntry entry = WadEntry.create(entryName, data.length, entryListOffset);
+		WadEntry entry = WadEntry.create(entryName, entryListOffset, data.length);
 		entries.add(entry);
 		writeHeader();
 		file.seek(entryListOffset);
 		file.write(data);
+		entryListOffset += data.length;
 		writeEntryList();
 		return entry;
 	}
@@ -235,7 +244,7 @@ public class WadFile implements Wad, Closeable
 	@Override
 	public WadEntry addDataAt(int index, String entryName, byte[] data) throws IOException
 	{
-		WadEntry entry = WadEntry.create(entryName, data.length, entryListOffset);
+		WadEntry entry = WadEntry.create(entryName, entryListOffset, data.length);
 		entries.add(index, entry);
 
 		file.seek(entryListOffset);
@@ -253,7 +262,7 @@ public class WadFile implements Wad, Closeable
 		WadEntry[] out = new WadEntry[entryNames.length];
 		for (int i = 0; i < entryNames.length; i++)
 		{
-			out[i] = WadEntry.create(entryNames[i], data[i].length, curOffs);
+			out[i] = WadEntry.create(entryNames[i], curOffs, data[i].length);
 			curOffs += data[i].length;
 		}
 		
@@ -264,7 +273,7 @@ public class WadFile implements Wad, Closeable
 		
 		for (int i = 0; i < entryNames.length; i++)
 		{
-			file.write(data[i].length);
+			file.write(data[i]);
 			entryListOffset += data[i].length;
 		}
 
@@ -280,7 +289,7 @@ public class WadFile implements Wad, Closeable
 		WadEntry[] out = new WadEntry[entryNames.length];
 		for (int i = 0; i < entryNames.length; i++)
 		{
-			out[i] = WadEntry.create(entryNames[i], data[i].length, curOffs);
+			out[i] = WadEntry.create(entryNames[i], curOffs, data[i].length);
 			curOffs += data[i].length;
 		}
 		
@@ -291,7 +300,7 @@ public class WadFile implements Wad, Closeable
 		
 		for (int i = 0; i < entryNames.length; i++)
 		{
-			file.write(data[i].length);
+			file.write(data[i]);
 			entryListOffset += data[i].length;
 		}
 
@@ -303,13 +312,13 @@ public class WadFile implements Wad, Closeable
 	@Override
 	public WadEntry addMarker(String name) throws IOException
 	{
-		return addData(name, new byte[0]);
+		return addData(name, NO_DATA);
 	}
 
 	@Override
 	public WadEntry addMarkerAt(int index, String name) throws IOException
 	{
-		return addDataAt(index, name, new byte[0]);
+		return addDataAt(index, name, NO_DATA);
 	}
 
 	@Override	
@@ -615,6 +624,7 @@ public class WadFile implements Wad, Closeable
 
 	/**
 	 * Gets the type of WAD that this is.
+	 * @return the WAD type.
 	 */
 	public WadType getType()
 	{

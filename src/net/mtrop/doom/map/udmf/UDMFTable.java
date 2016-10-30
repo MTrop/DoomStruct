@@ -37,7 +37,7 @@ public class UDMFTable
 	}
 
 	/**
-	 * Returns the root fields structure.
+	 * @return the root global fields structure.
 	 */
 	public UDMFObject getGlobalFields()
 	{
@@ -48,7 +48,7 @@ public class UDMFTable
 	 * Returns all objects of a specific type into an array.
 	 * The names are case-insensitive.
 	 * @param name	the name of the structures to retrieve.
-	 * @return	the queue of structures with the matching name in the order that
+	 * @return the queue of structures with the matching name in the order that
 	 * they were added to the structure. If there are none, an empty array
 	 * is returned.
 	 */
@@ -65,28 +65,29 @@ public class UDMFTable
 	/**
 	 * Adds an object of a particular type to this table.
 	 * Keep in mind that the order in which these are added is important.
-	 * @param name	the name of this type of structure.
-	 * @return	a reference to the new structure created.
+	 * @param name the name of this type of structure.
+	 * @return a reference to the new structure created.
 	 */
 	public UDMFObject addObject(String name)
 	{
-		return addStruct(name, new UDMFObject());
+		return addObject(name, new UDMFObject());
 	}
 
 	/**
 	 * Adds an object of a particular type name to this table.
 	 * Keep in mind that the order in which these are added is important.
-	 * @param name	the name of this type of structure.
-	 * @return	a reference to the added structure.
+	 * @param name the name of this type of structure.
+	 * @param object the object to add. 
+	 * @return a reference to the added structure.
 	 */
-	public UDMFObject addStruct(String name, UDMFObject struct)
+	public UDMFObject addObject(String name, UDMFObject object)
 	{
-		innerTable.enqueue(name, struct);
-		return struct;
+		innerTable.enqueue(name, object);
+		return object;
 	}
 	
 	/**
-	 * Returns a list of all of the object type names in the table.
+	 * @return a list of all of the object type names in the table.
 	 */
 	public String[] getAllObjectNames()
 	{

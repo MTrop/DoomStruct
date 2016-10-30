@@ -17,7 +17,7 @@ Releases will be found [here]. (link not working, yet - no releases).
 
 ### Required Libraries
 
-Black Rook Commons 2.21.0+  
+Black Rook Commons 2.30.4+  
 [https://github.com/BlackRookSoftware/Common](https://github.com/BlackRookSoftware/Common)
 
 Black Rook Common I/O 2.3.0+  
@@ -28,8 +28,8 @@ Black Rook Common Lang 2.6.0+
 
 ### Source
 
-The MASTER branch contains stable code. The DEVELOP branch's contents may always
-shift. Until a release, the API of this library will be in flux!
+The MASTER branch contains stable code (I hope). The DEVELOP branch's contents may always
+shift. Until a release, the API of this library will be in flux, and there may be a lot of problems!
 
 ### Introduction
 

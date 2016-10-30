@@ -10,10 +10,10 @@ package net.mtrop.doom.struct;
 import java.io.IOException;
 
 import net.mtrop.doom.WadFile;
-import net.mtrop.doom.texture.DoomTexture;
 import net.mtrop.doom.texture.DoomTextureList;
 import net.mtrop.doom.texture.PatchNames;
 import net.mtrop.doom.texture.TextureSet;
+import net.mtrop.doom.texture.TextureSet.Patch;
 import net.mtrop.doom.texture.TextureSet.Texture;
 
 import com.blackrook.commons.Common;
@@ -48,7 +48,7 @@ public final class TextureTest
 		for (Texture tex : set)
 		{
 			logger.infof("%-8s %dx%d %d patches", tex.getName(), tex.getWidth(), tex.getHeight(), tex.getPatchCount());
-			for (Texture.Patch patch : tex)
+			for (Patch patch : tex)
 				logger.infof("\t%-8s (%d, %d)", patch.getName(), patch.getOriginX(), patch.getOriginY());
 		}
 		

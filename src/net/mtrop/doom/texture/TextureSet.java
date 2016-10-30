@@ -10,16 +10,15 @@ package net.mtrop.doom.texture;
 import java.util.Comparator;
 import java.util.Iterator;
 
-import net.mtrop.doom.exception.TextureException;
-import net.mtrop.doom.texture.TextureSet.Texture.Patch;
-import net.mtrop.doom.util.NameUtils;
-
 import com.blackrook.commons.AbstractVector;
 import com.blackrook.commons.Common;
 import com.blackrook.commons.Sizable;
 import com.blackrook.commons.linkedlist.Queue;
 import com.blackrook.commons.list.List;
 import com.blackrook.commons.map.AbstractMappedVector;
+
+import net.mtrop.doom.exception.TextureException;
+import net.mtrop.doom.util.NameUtils;
 
 /**
  * A helper class for the TEXTUREx and PNAMES setup that Doom Texture definitions use.
@@ -44,7 +43,7 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 			@Override
 			protected String getMappingKey(Texture object)
 			{
-				return object.toString();
+				return object.getName();
 			}
 		};
 		
@@ -52,18 +51,16 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 		{
 			for (int i = 0; i < lump.size(); i++)
 			{
-				CommonTexture<?> t = lump.getByIndex(i);
+				CommonTexture<?> t = lump.getTextureByIndex(i);
 				
 				Texture newtex = createTexture(t.getName());
 				newtex.setWidth(t.getWidth());
 				newtex.setHeight(t.getHeight());
 				
-				textureList.add(newtex);
-
 				for (int j = 0; j < t.getPatchCount(); j++)
 				{
 					CommonPatch p = t.getPatch(j);
-					String patchName = pnames.getByIndex(p.getPatchIndex());
+					String patchName = pnames.getEntry(p.getPatchIndex());
 					if (patchName == null)
 						throw new TextureException("Index "+j+" in PNAMES does not exist!");
 					Patch newpatch = newtex.createPatch(patchName);
@@ -87,7 +84,7 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 	/**
 	 * Returns an entry for a texture by name.
 	 * @param textureName the texture name to search for.
-	 * @return a texture with the composite information, or null if the texture could not be found.
+	 * @return a texture with the composite information, or <code>null</code> if the texture could not be found.
 	 */
 	public Texture getTextureByName(String textureName)
 	{
@@ -95,26 +92,18 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 	}
 	
 	/**
-	 * Adds a texture entry to this texture set.
-	 * @param texture the texture to add.
-	 */
-	public void addTexture(Texture texture)
-	{
-		textureList.add(texture);
-	}
-
-	/**
 	 * Creates a new entry for a texture, already added.
 	 * @param textureName the name of the texture to add.
 	 * @return a new, empty texture.
+	 * @throws IllegalArgumentException if the texture name is empty or not a valid texture name.
 	 */
 	public Texture createTexture(String textureName)
 	{
 		if (!NameUtils.isValidTextureName(textureName))
 			throw new IllegalArgumentException("Not a valid texture name.");
 		
-		Texture out = new Texture();
-		out.setName(textureName);
+		Texture out = new Texture(textureName);
+		textureList.add(out);
 		return out;
 	}
 
@@ -153,7 +142,9 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 	}
 	
 	/**
-	 * Removes a patch at a particular index.
+	 * Removes a texture at a particular index.
+	 * @param index the index of the texture to remove.
+	 * @return the corresponding removed texture, or <code>null</code> if not removed.
 	 */
 	public Texture removeTexture(int index)
 	{
@@ -161,7 +152,19 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 	}
 
 	/**
-	 * Returns a patch at a particular index.
+	 * Removes a texture by name.
+	 * @param textureName the name of the texture to remove.
+	 * @return the corresponding removed texture, or <code>null</code> if not removed.
+	 */
+	public Texture removeTextureByName(String textureName)
+	{
+		return textureList.removeUsingKey(textureName);
+	}
+
+	/**
+	 * Returns a texture at a particular index.
+	 * @param index the index of the texture to get.
+	 * @return the corresponding removed texture, or <code>null</code> if not removed.
 	 */
 	public Texture getTexture(int index)
 	{
@@ -170,6 +173,8 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 
 	/**
 	 * Shifts the ordering of a texture.
+	 * @param index the old index.
+	 * @param newIndex the new index.
 	 * @see AbstractMappedVector#shift(int, int)
 	 */
 	public void shiftTexture(int index, int newIndex)
@@ -187,6 +192,7 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 
 	/**
 	 * Sorts the texture lumps in this set using a comparator.
+	 * @param comparator the comparator to use.
 	 */
 	public void sort(Comparator<Texture> comparator)
 	{
@@ -214,65 +220,8 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 	/**
 	 * A class that represents a single composite Texture entry.
 	 */
-	public static class Texture implements Iterable<Patch>, Sizable
+	public static class Texture implements Iterable<TextureSet.Patch>, Sizable
 	{
-		/**
-		 * Texture patch.
-		 */
-		public static class Patch
-		{
-			/** Patch name. */
-			private String name;
-			/** Offset X. */
-			private int originX;
-			/** Offset Y. */
-			private int originY;
-			
-			private Patch()
-			{
-				name = "";
-				originX = 0;
-				originY = 0;
-			}
-			
-			/** Returns the patch name. */
-			public String getName()
-			{
-				return name;
-			}
-
-			/** Sets the patch name. */
-			public void setName(String name)
-			{
-				this.name = name;
-			}
-			
-			/** Returns the patch offset X. */
-			public int getOriginX()
-			{
-				return originX;
-			}
-			
-			/** Sets the patch offset X. */
-			public void setOriginX(int originX)
-			{
-				this.originX = originX;
-			}
-			
-			/** Returns the patch offset Y. */
-			public int getOriginY()
-			{
-				return originY;
-			}
-			
-			/** Sets the patch offset Y. */
-			public void setOriginY(int originY)
-			{
-				this.originY = originY;
-			}
-			
-		}
-		
 		/** Texture name. */
 		private String name;
 		/** Texture width. */
@@ -281,18 +230,18 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 		private int height;
 		
 		/** Patch entry. */
-		private List<Texture.Patch> patches;
+		private List<TextureSet.Patch> patches;
 		
-		private Texture()
+		private Texture(String name)
 		{
-			name = null;
+			this.name = name;
 			width = 0;
 			height = 0;
-			patches = new List<Texture.Patch>();
+			patches = new List<TextureSet.Patch>(2);
 		}
 		
 		/** 
-		 * Returns the texture entry name. 
+		 * @return the texture entry name. 
 		 */
 		public String getName()
 		{
@@ -300,15 +249,7 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 		}
 		
 		/**
-		 * Sets the texture entry name.
-		 */
-		public void setName(String name)
-		{
-			this.name = name;
-		}
-		
-		/**
-		 * Returns the width of the texture in pixels.
+		 * @return the width of the texture in pixels.
 		 */
 		public int getWidth()
 		{
@@ -317,6 +258,7 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 		
 		/**
 		 * Sets the width of the texture in pixels.
+		 * @param width the new width. 
 		 */
 		public void setWidth(int width)
 		{
@@ -324,7 +266,7 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 		}
 		
 		/**
-		 * Returns the height of the texture in pixels.
+		 * @return the height of the texture in pixels.
 		 */
 		public int getHeight()
 		{
@@ -333,6 +275,7 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 		
 		/**
 		 * Sets the height of the texture in pixels.
+		 * @param height the new height. 
 		 */
 		public void setHeight(int height)
 		{
@@ -341,20 +284,28 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 		
 		/**
 		 * Adds a patch to this entry.
+		 * @param name the name of the patch. Must be valid.
+		 * @return the created patch.
+		 * @see NameUtils#isValidEntryName(String)
+		 * @throws IllegalArgumentException if the patch name is empty or not a valid entry name.
 		 */
 		public Patch createPatch(String name)
 		{
 			if (Common.isEmpty(name))
 				throw new IllegalArgumentException("patch name cannot be empty.");
 
-			Patch p = new Patch();
-			p.setName(name);
+			if (!NameUtils.isValidEntryName(name))
+				throw new IllegalArgumentException("patch name must be a valid entry name.");
+			
+			Patch p = new Patch(name);
 			patches.add(p);
 			return p;
 		}
 		
 		/**
 		 * Removes a patch at a particular index.
+		 * @param index the new index. 
+		 * @return the corresponding removed patch, or <code>null</code> if no such patch at that index. 
 		 */
 		public Patch removePatch(int index)
 		{
@@ -363,6 +314,8 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 
 		/**
 		 * Returns a patch at a particular index.
+		 * @param index the index to use.
+		 * @return the corresponding patch, or <code>null</code> if no such patch at that index. 
 		 */
 		public Patch getPatch(int index)
 		{
@@ -371,6 +324,8 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 		
 		/**
 		 * Shifts the ordering of a patch.
+		 * @param index the index to shift.
+		 * @param newIndex the new index for the patch.
 		 * @see AbstractVector#shift(int, int)
 		 */
 		public void shiftPatch(int index, int newIndex)
@@ -379,7 +334,7 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 		}
 		
 		/**
-		 * Returns how many patches are on this texture entry.
+		 * @return how many patches are on this texture entry.
 		 */
 		public int getPatchCount()
 		{
@@ -404,5 +359,62 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 			return size() == 0;
 		}
 
+	}
+
+	/**
+	 * Texture patch.
+	 */
+	public static class Patch
+	{
+		/** Patch name. */
+		private String name;
+		/** Offset X. */
+		private int originX;
+		/** Offset Y. */
+		private int originY;
+		
+		private Patch(String name)
+		{
+			this.name = name;
+			originX = 0;
+			originY = 0;
+		}
+		
+		/** @return the patch name. */
+		public String getName()
+		{
+			return name;
+		}
+	
+		/** @return the patch offset X. */
+		public int getOriginX()
+		{
+			return originX;
+		}
+		
+		/** 
+		 * Sets the patch offset X. 
+		 * @param originX the new origin, x-coordinate. 
+		 */
+		public void setOriginX(int originX)
+		{
+			this.originX = originX;
+		}
+		
+		/** @return the patch offset Y. */
+		public int getOriginY()
+		{
+			return originY;
+		}
+		
+		/** 
+		 * Sets the patch offset Y.
+		 * @param originY the new origin, y-coordinate. 
+		 */
+		public void setOriginY(int originY)
+		{
+			this.originY = originY;
+		}
+		
 	}
 }

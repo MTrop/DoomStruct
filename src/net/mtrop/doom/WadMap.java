@@ -9,6 +9,7 @@ package net.mtrop.doom;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
@@ -52,6 +53,11 @@ public class WadMap implements Wad
 	/**
 	 * Creates a new WadMap using the contents of a file, denoted by the path.
 	 * @param path the path to the file to read.
+	 * @throws IOException if the file can't be read.
+	 * @throws FileNotFoundException if the file can't be found.
+	 * @throws SecurityException if you don't have permission to access the file.
+	 * @throws WadException if the file isn't a Wad file.
+	 * @throws NullPointerException if <code>path</code> is null.
 	 */
 	public WadMap(String path) throws IOException
 	{
@@ -61,6 +67,11 @@ public class WadMap implements Wad
 	/**
 	 * Creates a new WadMap using the contents of a file.
 	 * @param f the file to read.
+	 * @throws IOException if the file can't be read.
+	 * @throws FileNotFoundException if the file can't be found.
+	 * @throws SecurityException if you don't have permission to access the file.
+	 * @throws WadException if the file isn't a Wad file.
+	 * @throws NullPointerException if <code>f</code> is null.
 	 */
 	public WadMap(File f) throws IOException
 	{
@@ -73,6 +84,9 @@ public class WadMap implements Wad
 	/**
 	 * Creates a new WadMap.
 	 * @param in the input stream.
+	 * @throws IOException if the file can't be read.
+	 * @throws WadException if the file isn't a Wad file.
+	 * @throws NullPointerException if <code>in</code> is null.
 	 */
 	public WadMap(InputStream in) throws IOException
 	{

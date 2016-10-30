@@ -25,6 +25,7 @@ public final class UDMFWriter
 	/**
 	 * Writes UDMF-formatted data into an {@link OutputStream}.
 	 * Does not close the OutputStream at the end of the write.
+	 * @param table the table to write.
 	 * @param out the OutputStream to write to.
 	 * @throws IOException if the output stream cannot be written to.
 	 */
@@ -36,6 +37,7 @@ public final class UDMFWriter
 	/**
 	 * Writes UDMF-formatted data into a {@link Writer}.
 	 * Does not close the OutputStream at the end of the write.
+	 * @param table the table to write.
 	 * @param writer the Writer to write to.
 	 * @throws IOException if the output stream cannot be written to.
 	 */

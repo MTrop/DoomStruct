@@ -32,10 +32,12 @@
 		net.mtrop.doom.map.binary,
 		net.mtrop.doom.map.bsp,
 		net.mtrop.doom.map.udmf,
+		net.mtrop.doom.map.udmf.attributes,
+		net.mtrop.doom.sound,
 		net.mtrop.doom.struct,
 		net.mtrop.doom.texture,
 		net.mtrop.doom.util,
-		net.mtrop.doom.util.resource
+		net.mtrop.doom.util.resource,
 		"
 	/>
 
@@ -43,13 +45,13 @@
 
 	<target name="javadoc" depends="init.docs" description="Builds the documentation.">
         <javadoc access="protected" 
-        	additionalparam="-J-Xmx512m  " author="true" 
+        	additionalparam="-J-Xmx512m -Xmaxwarns 500" author="true" 
         	classpath="${project.classpath}${path.separator}${bin.dir}" 
         	doctitle="${project.javadoc.title}" 
         	sourcepath="${src.dir}" 
         	packagenames="${project.javadoc.packages}"
         	destdir="${docs.dir}" 
-    		source="1.7" 
+    		source="1.8" 
         	splitindex="true" 
         	use="true" 
         	version="true" 
@@ -59,7 +61,7 @@
         	nonavbar="false" 
         	notree="false"
     		>
-            <link href="http://blackrooksoftware.com/docs/common/"/>
+        	<link href="http://blackrooksoftware.com/docs/common/"/>
             <link href="http://blackrooksoftware.com/docs/commonio/"/>
             <link href="http://blackrooksoftware.com/docs/commonlang/"/>
             <link href="http://docs.oracle.com/javase/7/docs/api/"/>

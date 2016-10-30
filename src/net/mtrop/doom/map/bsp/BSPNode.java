@@ -127,8 +127,15 @@ public class BSPNode implements BinaryObject
 		return out;
 	}
 	
+	/** @return this node's partition line's X-coordinate. */
+	public int getPartitionLineX()
+	{
+		return partitionLineX;
+	}
+
 	/** 
 	 * Sets this node's partition line's X-coordinate. 
+	 * @param val the new partition line x-coordinate.
 	 * @throws IllegalArgumentException if the value is outside the range -32768 to 32767. 
 	 */
 	public void setPartitionLineX(int val)
@@ -137,8 +144,15 @@ public class BSPNode implements BinaryObject
 		partitionLineX = val;
 	}
 
+	/** @return this node's partition line's Y-coordinate. */
+	public int getPartitionLineY()
+	{
+		return partitionLineY;
+	}
+
 	/** 
 	 * Sets this node's partition line's Y-coordinate. 
+	 * @param val the new partition line y-coordinate.
 	 * @throws IllegalArgumentException if the value is outside the range -32768 to 32767. 
 	 */
 	public void setPartitionLineY(int val)
@@ -147,8 +161,15 @@ public class BSPNode implements BinaryObject
 		partitionLineY = val;
 	}
 
+	/** @return this node's partition line's change in X to the end of the line. */
+	public int getPartitionDeltaX()
+	{
+		return partitionDeltaX;
+	}
+
 	/** 
 	 * Sets this node's partition line's change in X to the end of the line. 
+	 * @param val the new partition line delta X.
 	 * @throws IllegalArgumentException if the value is outside the range -32768 to 32767. 
 	 */
 	public void setPartitionDeltaX(int val)
@@ -157,8 +178,15 @@ public class BSPNode implements BinaryObject
 		partitionDeltaX = val;
 	}
 
+	/** @return this node's partition line's change in Y to the end of the line. */
+	public int getPartitionDeltaY()
+	{
+		return partitionDeltaY;
+	}
+
 	/** 
 	 * Sets this node's partition line's change in Y to the end of the line. 
+	 * @param val the new partition line delta Y.
 	 * @throws IllegalArgumentException if the value is outside the range -32768 to 32767. 
 	 */
 	public void setPartitionDeltaY(int val)
@@ -168,7 +196,19 @@ public class BSPNode implements BinaryObject
 	}
 
 	/**
+	 * @return this node's right bounding box coordinates (top, bottom, left, right).
+	 */
+	public int[] getRightRect()
+	{
+		return rightRect;
+	}
+
+	/**
 	 * Sets this node's right bounding box coordinates (top, bottom, left, right).
+	 * @param top the top of the box.
+	 * @param bottom the bottom of the box.
+	 * @param left the left side of the box.
+	 * @param right the right side of the box.
 	 * @throws IllegalArgumentException if any of the values are outside the range -32768 to 32767. 
 	 */
 	public void setRightRect(int top, int bottom, int left, int right)
@@ -184,7 +224,19 @@ public class BSPNode implements BinaryObject
 	}
 
 	/**
+	 * @return this node's left bounding box coordinates (top, bottom, left, right).
+	 */
+	public int[] getLeftRect()
+	{
+		return leftRect;
+	}
+
+	/**
 	 * Sets this node's left bounding box coordinates (top, bottom, left, right).
+	 * @param top the top of the box.
+	 * @param bottom the bottom of the box.
+	 * @param left the left side of the box.
+	 * @param right the right side of the box.
 	 * @throws IllegalArgumentException if any of the values are outside the range -32768 to 32767. 
 	 */
 	public void setLeftRect(int top, int bottom, int left, int right)
@@ -197,76 +249,6 @@ public class BSPNode implements BinaryObject
 		leftRect[1] = bottom;
 		leftRect[2] = left;
 		leftRect[3] = right;
-	}
-
-	/** 
-	 * Sets this node's right subsector index. 
-	 * @throws IllegalArgumentException if the value is outside the range 0 to 32767, or isn't {@link BSPNode#LEAF_NODE_INDEX}. 
-	 */
-	public void setRightSubsectorIndex(int val)
-	{
-		if (val == LEAF_NODE_INDEX)
-			rightSubsectorIndex = val;
-		else
-		{
-			RangeUtils.checkRange("Right Subsector Index", 0, 32767, rightSubsectorIndex);
-			rightSubsectorIndex = val;
-		}
-	}
-
-	/** 
-	 * Sets this node's left subsector index. 
-	 * @throws IllegalArgumentException if the value is outside the range 0 to 32767, or isn't {@link BSPNode#LEAF_NODE_INDEX}. 
-	 */
-	public void setLeftSubsectorIndex(int val)
-	{
-		if (val == LEAF_NODE_INDEX)
-			leftSubsectorIndex = val;
-		else
-		{
-			RangeUtils.checkRange("Left Subsector Index", 0, 32767, leftSubsectorIndex);
-			leftSubsectorIndex = val;
-		}
-	}
-
-	/** @return this node's partition line's X-coordinate. */
-	public int getPartitionLineX()
-	{
-		return partitionLineX;
-	}
-
-	/** @return this node's partition line's Y-coordinate. */
-	public int getPartitionLineY()
-	{
-		return partitionLineY;
-	}
-
-	/** @return this node's partition line's change in X to the end of the line. */
-	public int getPartitionDeltaX()
-	{
-		return partitionDeltaX;
-	}
-
-	/** @return this node's partition line's change in Y to the end of the line. */
-	public int getPartitionDeltaY()
-	{
-		return partitionDeltaY;
-	}
-
-	/**
-	 * @return this node's right bounding box coordinates (top, bottom, left, right).
-	 */
-	public int[] getRightRect()
-	{
-		return rightRect;
-	}
-
-	/**
-	 * @return this node's left bounding box coordinates (top, bottom, left, right).
-	 */
-	public int[] getLeftRect()
-	{
-		return leftRect;
 	}
 
 	/** 
@@ -286,11 +268,19 @@ public class BSPNode implements BinaryObject
 	}
 
 	/** 
-	 * @return true, if this node's left node is a leaf, false if not.  
+	 * Sets this node's right subsector index. 
+	 * @param val the new right subsector index.
+	 * @throws IllegalArgumentException if the value is outside the range 0 to 32767, or isn't {@link BSPNode#LEAF_NODE_INDEX}. 
 	 */
-	public boolean getLeftChildIsLeaf()
+	public void setRightSubsectorIndex(int val)
 	{
-		return leftSubsectorIndex == LEAF_NODE_INDEX;
+		if (val == LEAF_NODE_INDEX)
+			rightSubsectorIndex = val;
+		else
+		{
+			RangeUtils.checkRange("Right Subsector Index", 0, 32767, rightSubsectorIndex);
+			rightSubsectorIndex = val;
+		}
 	}
 
 	/** 
@@ -299,6 +289,30 @@ public class BSPNode implements BinaryObject
 	public int getLeftSubsectorIndex()
 	{
 		return leftSubsectorIndex;
+	}
+
+	/** 
+	 * @return true, if this node's left node is a leaf, false if not.  
+	 */
+	public boolean getLeftChildIsLeaf()
+	{
+		return leftSubsectorIndex == LEAF_NODE_INDEX;
+	}
+
+	/** 
+	 * Sets this node's left subsector index. 
+	 * @param val the new left subsector index.
+	 * @throws IllegalArgumentException if the value is outside the range 0 to 32767, or isn't {@link BSPNode#LEAF_NODE_INDEX}. 
+	 */
+	public void setLeftSubsectorIndex(int val)
+	{
+		if (val == LEAF_NODE_INDEX)
+			leftSubsectorIndex = val;
+		else
+		{
+			RangeUtils.checkRange("Left Subsector Index", 0, 32767, leftSubsectorIndex);
+			leftSubsectorIndex = val;
+		}
 	}
 
 	@Override

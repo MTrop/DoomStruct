@@ -116,6 +116,7 @@ public class BSPSubsector implements BinaryObject
 
 	/**
 	 * Sets the amount of BSPSegments pointed to by this subsector.
+	 * @param segCount the amount of segments.
 	 * @throws IllegalArgumentException if the provided value is outside the range 0 to 65535.
 	 */
 	public void setSegCount(int segCount)
@@ -134,6 +135,7 @@ public class BSPSubsector implements BinaryObject
 
 	/**
 	 * Sets the starting offset index of this subsector's BSPSegments in the Segs lump.
+	 * @param segStartIndex the starting index.
 	 * @throws IllegalArgumentException if the provided value is outside the range 0 to 65535.
 	 */
 	public void setSegStartIndex(int segStartIndex)

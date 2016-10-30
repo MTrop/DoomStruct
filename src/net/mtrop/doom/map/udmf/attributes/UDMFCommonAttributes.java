@@ -5,13 +5,14 @@
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
  ******************************************************************************/
-package net.mtrop.doom;
+package net.mtrop.doom.map.udmf.attributes;
 
 /**
- * An entry index for {@link Wad} implementations.
+ * Contains common linedef attributes on some UDMF structures.
  * @author Matthew Tropiano
  */
-public class WadIndex
+public interface UDMFCommonAttributes
 {
-
+	/** Object comment. */
+	public static final String ATTRIB_COMMENT = "comment";
 }

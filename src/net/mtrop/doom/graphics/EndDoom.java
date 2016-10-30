@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
  ******************************************************************************/
-package net.mtrop.doom.struct;
+package net.mtrop.doom.graphics;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -27,7 +27,7 @@ import com.blackrook.io.SuperWriter;
  * An example of this would be the screen that is dumped to DOS after the player quits
  * or the loading screen for Heretic.
  * <p>
- * All characters are converted 
+ * All characters are converted using the CP437 charset, aka the MS-DOS encoding for extended ASCII.
  * @author Matthew Tropiano
  */
 public class EndDoom implements BinaryObject
@@ -122,6 +122,7 @@ public class EndDoom implements BinaryObject
 	 * the higher one. Should be exported in little-endian order to retain VGA spec ordering. 
 	 * @param row the desired row (0 to 24).
 	 * @param col the desired column (0 to 79).
+	 * @return the VGA short value.
 	 */
 	public short getVGAShort(int row, int col)
 	{
@@ -137,28 +138,10 @@ public class EndDoom implements BinaryObject
 	}
 
 	/**
-	 * Sets the VGA-formatted screen data for a particular ENDOOM screen coordinate using
-	 * a little-endian short int containing the VGA screen code.
-	 * <p>
-	 * The short contains the font character in the lower byte and the color info in
-	 * the higher one. Should be exported in little-endian order to retain VGA spec ordering. 
-	 * @param row the desired row (0 to 24).
-	 * @param col the desired column (0 to 79).
-	 * @param s the short.
-	 */
-	public void setVGAShort(int row, int col, short s)
-	{
-		int index = getIndex(row, col);
-		characterData[index] = (byte)(s & 0x0ff);
-		fgColor[index] = (byte)((s >>> 8) & 0x0f);
-		bgColor[index] = (byte)((s >>> 12) & 0x07);
-		blinking[index] = (s & 0x8000) != 0;
-	}
-
-	/**
 	 * Returns the Unicode character at the desired position. 
 	 * @param row the desired row (0 to 24).
 	 * @param col the desired column (0 to 79).
+	 * @return the corresponding character.
 	 */
 	public char getCharAt(int row, int col)
 	{
@@ -171,6 +154,7 @@ public class EndDoom implements BinaryObject
 	 * charset will not encode properly.
 	 * @param row the desired row (0 to 24).
 	 * @param col the desired column (0 to 79).
+	 * @param c the character to set.
 	 */
 	public void setCharAt(int row, int col, char c)
 	{
@@ -181,6 +165,7 @@ public class EndDoom implements BinaryObject
 	 * Gets the ANSI color to use for the foreground color for the desired position.
 	 * @param row the desired row (0 to 24).
 	 * @param col the desired column (0 to 79).
+	 * @return the corresponding ANSI color.
 	 */
 	public int getForegroundColor(int row, int col)
 	{
@@ -204,6 +189,7 @@ public class EndDoom implements BinaryObject
 	 * Gets the ANSI color to use for the background color for the desired position.
 	 * @param row the desired row (0 to 24).
 	 * @param col the desired column (0 to 79).
+	 * @return the corresponding ANSI color.
 	 */
 	public int getBackgroundColor(int row, int col)
 	{
@@ -227,6 +213,7 @@ public class EndDoom implements BinaryObject
 	 * Gets if the foreground character is blinking for the desired position.
 	 * @param row the desired row (0 to 24).
 	 * @param col the desired column (0 to 79).
+	 * @return true if so, false if not.
 	 */
 	public boolean getBlinking(int row, int col)
 	{
@@ -245,7 +232,27 @@ public class EndDoom implements BinaryObject
 	}
 	
 	/**
-	 * Converts a VGA (or IBM) byte to Unicode.
+	 * Sets the VGA-formatted screen data for a particular ENDOOM screen coordinate using
+	 * a little-endian short int containing the VGA screen code.
+	 * <p>
+	 * The short contains the font character in the lower byte and the color info in
+	 * the higher one. Should be exported in little-endian order to retain VGA spec ordering. 
+	 * @param row the desired row (0 to 24).
+	 * @param col the desired column (0 to 79).
+	 * @param s the short.
+	 */
+	protected void setVGAShort(int row, int col, short s)
+	{
+		int index = getIndex(row, col);
+		characterData[index] = (byte)(s & 0x0ff);
+		fgColor[index] = (byte)((s >>> 8) & 0x0f);
+		bgColor[index] = (byte)((s >>> 12) & 0x07);
+		blinking[index] = (s & 0x8000) != 0;
+	}
+
+	/**
+	 * @param vgaByte the input VGA byte.
+	 * @return a converted VGA (or IBM) byte to Unicode.
 	 */
 	protected char byteToUnicode(byte vgaByte)
 	{
@@ -255,7 +262,8 @@ public class EndDoom implements BinaryObject
 	}
 	
 	/**
-	 * Converts a Unicode character to VGA byte.
+	 * @param c the input unicode character.
+	 * @return a converted Unicode character to VGA byte.
 	 */
 	protected byte unicodeToByte(char c)
 	{
@@ -268,6 +276,7 @@ public class EndDoom implements BinaryObject
 	 * Returns the correct array index for a specific row/column.
 	 * @param row the desired row (0 to 24).
 	 * @param col the desired column (0 to 79).
+	 * @return the correct array index for a specific row/column.
 	 */
 	protected int getIndex(int row, int col)
 	{

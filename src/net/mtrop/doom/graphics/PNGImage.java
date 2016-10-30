@@ -97,9 +97,7 @@ public class PNGImage extends BufferedImage implements BinaryObject, GraphicObje
 		return out;
 	}
 
-	/**
-	 * Gets the offset from the center, horizontally, in pixels.
-	 */
+	@Override
 	public int getOffsetX()
 	{
 		return offsetX;
@@ -107,15 +105,14 @@ public class PNGImage extends BufferedImage implements BinaryObject, GraphicObje
 
 	/**
 	 * Sets the offset from the center, horizontally, in pixels.
+	 * @param offsetX the new X offset.
 	 */
 	public void setOffsetX(int offsetX)
 	{
 		this.offsetX = offsetX;
 	}
 
-	/**
-	 * Gets the offset from the center, vertically, in pixels.
-	 */
+	@Override
 	public int getOffsetY()
 	{
 		return offsetY;
@@ -123,6 +120,7 @@ public class PNGImage extends BufferedImage implements BinaryObject, GraphicObje
 
 	/**
 	 * Sets the offset from the center, vertically, in pixels.
+	 * @param offsetY the new Y offset.
 	 */
 	public void setOffsetY(int offsetY)
 	{

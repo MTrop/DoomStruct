@@ -24,7 +24,7 @@ import com.blackrook.io.SuperReader;
 import com.blackrook.io.SuperWriter;
 
 /**
- * Doom graphic data stored as column-major indices. 
+ * Doom graphic data stored as column-major indices (patches and most graphics with baked-in offsets). 
  * Useful for editing/displaying graphics.
  * @author Matthew Tropiano
  */
@@ -40,7 +40,7 @@ public class Picture implements BinaryObject, GraphicObject
 	private int offsetY; 
 
 	/**
-	 * Creates a new patch with dimensions (1, 1).
+	 * Creates a new picture with dimensions (1, 1).
 	 */
 	public Picture()
 	{
@@ -106,9 +106,7 @@ public class Picture implements BinaryObject, GraphicObject
 				pixels[i][j] = PIXEL_TRANSLUCENT;
 	}
 	
-	/**
-	 * Gets the offset from the center, horizontally, in pixels.
-	 */
+	@Override
 	public int getOffsetX()
 	{
 		return offsetX;
@@ -116,6 +114,7 @@ public class Picture implements BinaryObject, GraphicObject
 
 	/**
 	 * Sets the offset from the center, horizontally, in pixels.
+	 * @param offsetX the new X offset.
 	 * @throws IllegalArgumentException if the offset is outside the range -32768 to 32767.
 	 */
 	public void setOffsetX(int offsetX)
@@ -124,9 +123,7 @@ public class Picture implements BinaryObject, GraphicObject
 		this.offsetX = offsetX;
 	}
 
-	/**
-	 * Gets the offset from the center, vertically, in pixels.
-	 */
+	@Override
 	public int getOffsetY()
 	{
 		return offsetY;
@@ -134,6 +131,7 @@ public class Picture implements BinaryObject, GraphicObject
 
 	/**
 	 * Sets the offset from the center, vertically, in pixels.
+	 * @param offsetY the new Y offset.
 	 * @throws IllegalArgumentException if the offset is outside the range -32768 to 32767.
 	 */
 	public void setOffsetY(int offsetY)
@@ -322,10 +320,8 @@ public class Picture implements BinaryObject, GraphicObject
 		sw.writeBytes(dataBytes.toByteArray());
 	}
 
-	/**
-	 * Reads a patch column from the reader.
-	 */
-	protected byte[] columnRead(SuperReader sr) throws IOException
+	// Reads a column of pixels.
+	private byte[] columnRead(SuperReader sr) throws IOException
 	{
 		ByteArrayOutputStream out = new ByteArrayOutputStream(); 
 	

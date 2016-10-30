@@ -114,6 +114,7 @@ public class DoomThing extends CommonThing implements BinaryObject
 
 	/**
 	 * Sets if this does NOT appear on cooperative.
+	 * @param notCooperative true to set, false to clear.
 	 */
 	public void setNotCooperative(boolean notCooperative)
 	{
@@ -130,6 +131,7 @@ public class DoomThing extends CommonThing implements BinaryObject
 
 	/**
 	 * Sets if this does NOT appear on deathmatch.
+	 * @param notDeathmatch true to set, false to clear.
 	 */
 	public void setNotDeathmatch(boolean notDeathmatch)
 	{
@@ -146,6 +148,7 @@ public class DoomThing extends CommonThing implements BinaryObject
 
 	/**
 	 * Sets if this is flagged as friendly.
+	 * @param friendly true to set, false to clear.
 	 */
 	public void setFriendly(boolean friendly)
 	{

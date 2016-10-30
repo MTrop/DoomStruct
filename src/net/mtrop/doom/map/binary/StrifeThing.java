@@ -116,6 +116,7 @@ public class StrifeThing extends CommonThing implements BinaryObject
 
 	/**
 	 * Sets if this is flagged as an ally.
+	 * @param ally true to set, false to clear.
 	 */
 	public void setAlly(boolean ally)
 	{
@@ -132,6 +133,7 @@ public class StrifeThing extends CommonThing implements BinaryObject
 	
 	/**
 	 * Sets if this is flagged as 25% translucent.
+	 * @param translucent25 true to set, false to clear.
 	 */
 	public void setTranslucent25(boolean translucent25)
 	{
@@ -148,6 +150,7 @@ public class StrifeThing extends CommonThing implements BinaryObject
 
 	/**
 	 * Sets if this is flagged as 75% translucent.
+	 * @param translucent75 true to set, false to clear.
 	 */
 	public void setTranslucent75(boolean translucent75)
 	{

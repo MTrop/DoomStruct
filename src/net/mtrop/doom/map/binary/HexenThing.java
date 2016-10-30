@@ -129,9 +129,12 @@ public class HexenThing extends DoomThing implements BinaryObject
 
 	/**
 	 * Sets the Z position relative to sector plane.
+	 * @param z the new Z position.
+	 * @throws IllegalArgumentException if <code>z</code> is not between -32768 and 32767.
 	 */
 	public void setZ(int z)
 	{
+		RangeUtils.checkShort("Position Z", z);
 		this.z = z;
 	}
 
@@ -145,9 +148,12 @@ public class HexenThing extends DoomThing implements BinaryObject
 
 	/**
 	 * Sets the thing's id. 
+	 * @param id the new id.
+	 * @throws IllegalArgumentException if <code>id</code> is not between 0 and 65535.
 	 */
 	public void setId(int id)
 	{
+		RangeUtils.checkShortUnsigned("Thing ID", id);
 		this.id = id;
 	}
 
@@ -161,6 +167,7 @@ public class HexenThing extends DoomThing implements BinaryObject
 
 	/**
 	 * Sets if this is dormant.
+	 * @param dormant true to set, false to clear.
 	 */
 	public void setDormant(boolean dormant)
 	{
@@ -177,6 +184,7 @@ public class HexenThing extends DoomThing implements BinaryObject
 
 	/**
 	 * Sets if this appears on single player.
+	 * @param singlePlayer true to set, false to clear.
 	 */
 	public void setSinglePlayer(boolean singlePlayer)
 	{
@@ -193,6 +201,7 @@ public class HexenThing extends DoomThing implements BinaryObject
 
 	/**
 	 * Sets if this appears on cooperative.
+	 * @param cooperative true to set, false to clear.
 	 */
 	public void setCooperative(boolean cooperative)
 	{
@@ -209,6 +218,7 @@ public class HexenThing extends DoomThing implements BinaryObject
 
 	/**
 	 * Sets if this appears on deathmatch.
+	 * @param deathmatch true to set, false to clear.
 	 */
 	public void setDeathmatch(boolean deathmatch)
 	{
@@ -225,6 +235,7 @@ public class HexenThing extends DoomThing implements BinaryObject
 	
 	/**
 	 * Sets if this appears for Fighters.
+	 * @param fighter true to set, false to clear.
 	 */
 	public void setFighter(boolean fighter)
 	{
@@ -241,6 +252,7 @@ public class HexenThing extends DoomThing implements BinaryObject
 	
 	/**
 	 * Sets if this appears for Cleric.
+	 * @param cleric true to set, false to clear.
 	 */
 	public void setCleric(boolean cleric)
 	{
@@ -257,6 +269,7 @@ public class HexenThing extends DoomThing implements BinaryObject
 	
 	/**
 	 * Sets if this appears for Mages.
+	 * @param mage true to set, false to clear.
 	 */
 	public void setMage(boolean mage)
 	{
@@ -273,6 +286,7 @@ public class HexenThing extends DoomThing implements BinaryObject
 
 	/**
 	 * Sets the special action for this thing.
+	 * @param special the thing special to call on activation.
 	 * @throws IllegalArgumentException if special is outside the range 0 to 255.
 	 */
 	public void setSpecial(int special)
@@ -282,27 +296,48 @@ public class HexenThing extends DoomThing implements BinaryObject
 	}
 	
 	/**
+	 * Gets the special arguments copied into a new array. 
 	 * @return gets the array of special arguments.
 	 */
 	public int[] getArguments()
 	{
-		return arguments;
+		int[] out = new int[5];
+		System.arraycopy(arguments, 0, out, 0, 5);
+		return out;
 	}
-	
+
+	/**
+	 * Gets a special argument.
+	 * @param n the argument index (up to 4) 
+	 * @return the argument value.
+	 * @throws ArrayIndexOutOfBoundsException if <code>n</code> is less than 0 or greater than 4. 
+	 */
+	public int getArgument(int n)
+	{
+		return arguments[n];
+	}
+
 	/**
 	 * Sets the special arguments.
-	 * @throws IllegalArgumentException if length of arguments is greater than 5. 
+	 * @param arguments the argument values to set.
+	 * @throws IllegalArgumentException if length of arguments is greater than 5, or any argument is less than 0 or greater than 255. 
 	 */
 	public void setArguments(int ... arguments)
 	{
 		if (arguments.length > 5)
 			 throw new IllegalArgumentException("Length of arguments is greater than 5.");
 
-		for (int i = 0; i < arguments.length; i++)
+		int i;
+		for (i = 0; i < arguments.length; i++)
 		{
 			RangeUtils.checkByteUnsigned("Argument " + i, arguments[i]);
 			this.arguments[i] = arguments[i];
 		}
+		for (; i < 5; i++)
+		{
+			this.arguments[i] = 0;
+		}
+		
 	}
 	
 	@Override

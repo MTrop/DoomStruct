@@ -5,17 +5,17 @@
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
  ******************************************************************************/
-package net.mtrop.doom.struct;
+package net.mtrop.doom.sound;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Iterator;
 
 import net.mtrop.doom.BinaryObject;
 
-import com.blackrook.commons.AbstractVector;
 import com.blackrook.commons.Common;
 import com.blackrook.commons.list.List;
 import com.blackrook.commons.list.SortedList;
@@ -26,7 +26,7 @@ import com.blackrook.io.SuperWriter;
  * Abstraction of MUS formatted music sequence data.
  * @author Matthew Tropiano
  */
-public class DMXMUS implements BinaryObject
+public class DMXMUS implements BinaryObject, Iterable<DMXMUS.Event>
 {
 	public static final byte[] MUS_ID = {0x4d, 0x55, 0x53, 0x1a}; 
 	
@@ -266,7 +266,7 @@ public class DMXMUS implements BinaryObject
 	private List<Event> eventList;
 
 	/**
-	 * Creates a blank MUSData lump with no events.
+	 * Creates a blank DMXMUS lump with no events.
 	 */
 	public DMXMUS()
 	{
@@ -302,12 +302,10 @@ public class DMXMUS implements BinaryObject
 		return out;
 	}
 
-	/**
-	 * Returns the reference to the event list.
-	 */
-	public AbstractVector<Event> getEventList()
+	@Override
+	public Iterator<Event> iterator() 
 	{
-		return eventList;
+		return eventList.iterator();
 	}
 
 	@Override
@@ -368,7 +366,7 @@ public class DMXMUS implements BinaryObject
 					int tics = 0;
 					if (last)
 						tics = sr.readVariableLengthInt();
-					eventList.add(new NoteReleaseEvent(channel, b, last, tics));
+					eventList.add(new NoteReleaseEvent(channel, b, tics));
 				}
 					break;
 					
@@ -382,7 +380,7 @@ public class DMXMUS implements BinaryObject
 					int tics = 0;
 					if (last)
 						tics = sr.readVariableLengthInt();
-					eventList.add(new NotePlayEvent(channel, note, volume, last, tics));
+					eventList.add(new NotePlayEvent(channel, note, volume, tics));
 				}
 					break;
 
@@ -392,7 +390,7 @@ public class DMXMUS implements BinaryObject
 					int tics = 0;
 					if (last)
 						tics = sr.readVariableLengthInt();
-					eventList.add(new PitchEvent(channel, b, last, tics));
+					eventList.add(new PitchEvent(channel, b, tics));
 				}
 					break;
 					
@@ -402,7 +400,7 @@ public class DMXMUS implements BinaryObject
 					int tics = 0;
 					if (last)
 						tics = sr.readVariableLengthInt();
-					eventList.add(new SystemEvent(channel, b, last, tics));
+					eventList.add(new SystemEvent(channel, b, tics));
 				}
 					break;
 				
@@ -413,7 +411,7 @@ public class DMXMUS implements BinaryObject
 					int tics = 0;
 					if (last)
 						tics = sr.readVariableLengthInt();
-					eventList.add(new ControllerChangeEvent(channel, b, b2, last, tics));
+					eventList.add(new ControllerChangeEvent(channel, b, b2, tics));
 				}
 					break;
 
@@ -422,7 +420,7 @@ public class DMXMUS implements BinaryObject
 					int tics = 0;
 					if (last)
 						tics = sr.readVariableLengthInt();
-					eventList.add(new ScoreEndEvent(channel, last, tics));
+					eventList.add(new ScoreEndEvent(channel, tics));
 					foundEnd = true;
 				}
 					break;
@@ -441,17 +439,17 @@ public class DMXMUS implements BinaryObject
 		SortedList<Integer> channels = new SortedList<Integer>(4);
 		SortedList<Integer> instruments = new SortedList<Integer>(4);
 		
-		for (Event e : eventList)
+		for (Event event : eventList)
 		{
-			int channel = e.channel;
+			int channel = event.channel;
 			if (!channels.contains(channel))
 				channels.add(channel);
 
-			switch (e.getType())
+			switch (event.getType())
 			{
 				case Event.TYPE_PLAY:
 				{
-					NotePlayEvent c = (NotePlayEvent)e;
+					NotePlayEvent c = (NotePlayEvent)event;
 					if (c.getChannel() == CHANNEL_DRUM)	// drum channel
 					{
 						byte n = c.getNote();
@@ -463,11 +461,11 @@ public class DMXMUS implements BinaryObject
 						}
 					}
 				}
-					break;
+				break;
 
 				case Event.TYPE_RELEASE:
 				{
-					NoteReleaseEvent c = (NoteReleaseEvent)e;
+					NoteReleaseEvent c = (NoteReleaseEvent)event;
 					if (c.getChannel() == CHANNEL_DRUM)	// drum channel
 					{
 						byte n = c.getNote();
@@ -479,11 +477,11 @@ public class DMXMUS implements BinaryObject
 						}
 					}
 				}
-					break;
+				break;
 					
 				case Event.TYPE_CHANGE_CONTROLLER:
 				{
-					ControllerChangeEvent c = (ControllerChangeEvent)e;
+					ControllerChangeEvent c = (ControllerChangeEvent)event;
 					if (c.getChannel() != CHANNEL_DRUM && c.getController() == ControllerChangeEvent.CONTROLLER_INSTRUMENT)
 					{
 						int inst = c.getValue();
@@ -491,10 +489,10 @@ public class DMXMUS implements BinaryObject
 							instruments.add(inst);
 					}
 				}
-					break;
+				break;
 			}
 			
-			esw.writeBytes(e.toBytes());
+			esw.writeBytes(event.toBytes());
 		}
 		
 		byte[] data = ebos.toByteArray();
@@ -533,45 +531,28 @@ public class DMXMUS implements BinaryObject
 		protected byte type;
 		/** Event channel. */
 		protected byte channel;
-		/** Event is last in group. */
-		protected boolean last;
 		/** Time to rest in tics. */
 		protected int restTics;
 		
 		/**
 		 * Creates a new MUS event.
-		 * Sets "isLast" to false.
-		 * @param type		Event type. Must be valid TYPE.
-		 * @param channel	Event channel.
-		 */
-		protected Event(byte type, byte channel)
-		{
-			this(type, channel, false, 0);
-		}
-
-		/**
-		 * Creates a new MUS event.
 		 * @param type		Event type. Must be valid EVENT_TYPE.
 		 * @param channel	Event channel.
-		 * @param last		Is this the "last" event before another?
 		 * @param restTics	The amount of tics before the next event gets processed.
+		 * @throws IllegalArgumentException if <code>type</code> is 5 or not between 0 and 6, or <code>channel</code> is not between 0 and 15.
 		 */
-		protected Event(byte type, byte channel, boolean last, int restTics)
+		protected Event(byte type, byte channel, int restTics)
 		{
 			if (type < 0 || type > 6 || type == 5)
 				throw new IllegalArgumentException("Type must be from 0 to 6, inclusively, but not 5.");
 
-			if (channel < 0 || channel > 15)
-				throw new IllegalArgumentException("Channel must be from 0 to 15, inclusively.");
-			
 			this.type = type;
-			this.channel = channel;
-			this.last = last;
-			this.restTics = Math.max(0, restTics);
+			setChannel(channel);
+			setRestTics(Math.max(0, restTics));
 		}
 
 		/**
-		 * Gets this Event's type.
+		 * @return this Event's type.
 		 */
 		public byte getType()
 		{
@@ -579,7 +560,7 @@ public class DMXMUS implements BinaryObject
 		}
 
 		/**
-		 * Gets this Event's channel.
+		 * @return this Event's channel.
 		 */
 		public byte getChannel()
 		{
@@ -588,31 +569,29 @@ public class DMXMUS implements BinaryObject
 
 		/**
 		 * Sets this Event's channel.
+		 * @param channel the channel number.
+		 * @throws IllegalArgumentException if <code>channel</code> is not between 0 and 15.
 		 */
 		public void setChannel(byte channel)
 		{
+			if (channel < 0 || channel > 15)
+				throw new IllegalArgumentException("Channel must be from 0 to 15, inclusively.");
 			this.channel = channel;
 		}
 
 		/**
-		 * Is this the last event in a group, before a rest needs to be taken?
+		 * Checks if this is the last event in a group, before a rest needs to be taken?
+		 * @return true if so, false if not.
 		 */
 		public boolean isLast()
 		{
-			return last;
-		}
-
-		/**
-		 * Sets if this the last event in a group, before a rest needs to be taken.
-		 */
-		public void setLast(boolean last)
-		{
-			this.last = last;
+			return restTics != 0;
 		}
 
 		/**
 		 * Gets the amount of tics in the rest period.
-		 * Only valid if isLast() is true.
+		 * Only valid if {@link #isLast()} is true.
+		 * @return the amount of rest tics.
 		 */
 		public int getRestTics()
 		{
@@ -621,7 +600,8 @@ public class DMXMUS implements BinaryObject
 
 		/**
 		 * Sets the amount of tics in the rest period.
-		 * Only valid if isLast() is true.
+		 * Only valid if {@link #isLast()} is true.
+		 * @param restTics the new amount of rest tics.
 		 */
 		public void setRestTics(int restTics)
 		{
@@ -629,45 +609,38 @@ public class DMXMUS implements BinaryObject
 		}
 		
 		/**
-		 * Converts this event to a byte form.
+		 * @return this event to a serialized byte form.
 		 */
 		public abstract byte[] toBytes();
 		
 	}
 	
 	/**
-	 * Note release event.
+	 * An event that deals with notes.
 	 */
-	public static class NoteReleaseEvent extends Event
+	public static abstract class NoteEvent extends Event
 	{
-		/** The note that will be released. */
+		/** The event's note. */
 		protected byte note;
 		
 		/**
-		 * Creates a "release note" event.
+		 * Creates a new MUS note event.
+		 * @param type		Event type. Must be valid EVENT_TYPE.
 		 * @param channel	Event channel.
-		 * @param note		The note, from 0 to 127. 60 is Middle C. Each integer either way is one semitone.
-		 */
-		public NoteReleaseEvent(byte channel, byte note)
-		{
-			this(channel, note, false, 0);
-		}
-		
-		/**
-		 * Creates a "release note" event.
-		 * @param channel	Event channel.
-		 * @param note		The note, from 0 to 127. 60 is Middle C. Each integer either way is one semitone.
-		 * @param last		Is this the "last" event before another?
+		 * @param note		The note on this event.
 		 * @param restTics	The amount of tics before the next event gets processed.
+		 * @throws IllegalArgumentException if <code>type</code> is 5 or not between 0 and 6, 
+		 * or <code>channel</code> is not between 0 and 15, 
+		 * or <code>note</code> is not between 0 and 127.
 		 */
-		public NoteReleaseEvent(byte channel, byte note, boolean last, int restTics)
+		protected NoteEvent(byte type, byte channel, byte note, int restTics)
 		{
-			super(TYPE_RELEASE, channel, last, restTics);
+			super(type, channel, restTics);
 			setNote(note);
 		}
 		
 		/**
-		 * Gets this event's note.
+		 * @return this event's note.
 		 */
 		public byte getNote()
 		{
@@ -676,6 +649,8 @@ public class DMXMUS implements BinaryObject
 
 		/**
 		 * Sets this event's note.
+		 * @param note the new note.
+		 * @throws IllegalArgumentException if <code>note</code> is not between 0 and 127.
 		 */
 		public void setNote(byte note)
 		{
@@ -684,15 +659,48 @@ public class DMXMUS implements BinaryObject
 			this.note = note;
 		}
 
+	}
+	
+	/**
+	 * Note release event.
+	 */
+	public static class NoteReleaseEvent extends NoteEvent
+	{
+		/**
+		 * Creates a "release note" event.
+		 * @param channel	Event channel.
+		 * @param note		The note, from 0 to 127. 60 is Middle C. Each integer either way is one semitone.
+		 * @throws IllegalArgumentException if <code>channel</code> is not between 0 and 15, 
+		 * or <code>note</code> is not between 0 and 127.
+		 */
+		public NoteReleaseEvent(byte channel, byte note)
+		{
+			this(channel, note, 0);
+		}
+		
+		/**
+		 * Creates a "release note" event.
+		 * @param channel	Event channel.
+		 * @param note		The note, from 0 to 127. 60 is Middle C. Each integer either way is one semitone.
+		 * @param restTics	The amount of tics before the next event gets processed.
+		 * @throws IllegalArgumentException if <code>channel</code> is not between 0 and 15, 
+		 * or <code>note</code> is not between 0 and 127.
+		 */
+		public NoteReleaseEvent(byte channel, byte note, int restTics)
+		{
+			super(TYPE_RELEASE, channel, note, restTics);
+		}
+		
 		@Override
 		public byte[] toBytes()
 		{
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();
 			try {
 				SuperWriter sw = new SuperWriter(bos, SuperWriter.LITTLE_ENDIAN);
-				sw.writeByte((byte)((last ? 0x80 : 0x00) | (type << 4) | channel));
+				sw.writeByte((byte)((isLast() ? 0x80 : 0x00) | (type << 4) | channel));
 				sw.writeByte(note);
-				sw.writeVariableLengthInt(restTics);
+				if (isLast())
+					sw.writeVariableLengthInt(restTics);
 				return bos.toByteArray();
 			} catch (IOException ioe) {
 				return null;
@@ -724,7 +732,7 @@ public class DMXMUS implements BinaryObject
 	/**
 	 * Note play event.
 	 */
-	public static class NotePlayEvent extends Event
+	public static class NotePlayEvent extends NoteEvent
 	{
 		public static final byte VOLUME_NO_CHANGE = -1;
 		
@@ -738,10 +746,13 @@ public class DMXMUS implements BinaryObject
 		 * @param channel	Event channel.
 		 * @param note		The note, from 0 to 127. 60 is Middle C. Each integer either way is one semitone.
 		 * @param volume	The channel volume change from 0 to 127, or VOLUME_NO_CHANGE for same as last note.
+		 * @throws IllegalArgumentException if <code>channel</code> is not between 0 and 15, 
+		 * or <code>note</code> is not between 0 and 127,
+		 * or <code>volume</code> is not between 0 to 127, or VOLUME_NO_CHANGE.
 		 */
 		public NotePlayEvent(byte channel, byte note, byte volume)
 		{
-			this(channel, note, volume, false, 0);
+			this(channel, note, volume, 0);
 		}
 		
 		/**
@@ -749,36 +760,19 @@ public class DMXMUS implements BinaryObject
 		 * @param channel	Event channel.
 		 * @param note		The note, from 0 to 127. 60 is Middle C. Each integer either way is one semitone.
 		 * @param volume	The channel volume change from 0 to 127, or VOLUME_NO_CHANGE for same as last note.
-		 * @param last		Is this the "last" event before another?
 		 * @param restTics	The amount of tics before the next event gets processed.
+		 * @throws IllegalArgumentException if <code>channel</code> is not between 0 and 15, 
+		 * or <code>note</code> is not between 0 and 127,
+		 * or <code>volume</code> is not between 0 to 127, or VOLUME_NO_CHANGE.
 		 */
-		public NotePlayEvent(byte channel, byte note, byte volume, boolean last, int restTics)
+		public NotePlayEvent(byte channel, byte note, byte volume, int restTics)
 		{
-			super(TYPE_PLAY, channel, last, restTics);
-			setNote(note);
+			super(TYPE_PLAY, channel, note, restTics);
 			setVolume(volume);
 		}
 		
 		/**
-		 * Gets this event's note.
-		 */
-		public byte getNote()
-		{
-			return note;
-		}
-	
-		/**
-		 * Sets this event's note.
-		 */
-		public void setNote(byte note)
-		{
-			if (note < 0)
-				throw new IllegalArgumentException("Note must be between 0 and 127.");
-			this.note = note;
-		}
-	
-		/**
-		 * Gets this event's volume.
+		 * @return this event's volume.
 		 */
 		public byte getVolume()
 		{
@@ -787,6 +781,8 @@ public class DMXMUS implements BinaryObject
 	
 		/**
 		 * Sets this event's volume, or no change.
+		 * @param volume the new volume value.
+		 * @throws IllegalArgumentException if <code>volume</code> is not between 0 and 127 nor VOLUME_NO_CHANGE.
 		 */
 		public void setVolume(byte volume)
 		{
@@ -801,11 +797,12 @@ public class DMXMUS implements BinaryObject
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();
 			try {
 				SuperWriter sw = new SuperWriter(bos, SuperWriter.LITTLE_ENDIAN);
-				sw.writeByte((byte)((last ? 0x80 : 0x00) | (type << 4) | channel));
+				sw.writeByte((byte)((isLast() ? 0x80 : 0x00) | (type << 4) | channel));
 				sw.writeByte((byte)(note | (volume != VOLUME_NO_CHANGE ? 0x80 : 0x00)));
 				if (volume != VOLUME_NO_CHANGE)
 					sw.writeByte((byte)(volume & 0x7f));
-				sw.writeVariableLengthInt(restTics);
+				if (isLast())
+					sw.writeVariableLengthInt(restTics);
 				return bos.toByteArray();
 			} catch (IOException ioe) {
 				return null;
@@ -845,17 +842,20 @@ public class DMXMUS implements BinaryObject
 	public static class PitchEvent extends Event
 	{
 		/** The pitch wheel adjustment. */
-		protected short pitch;
+		protected int pitch;
 		
 		/**
 		 * Creates a "pitch wheel" event.
 		 * @param channel	Event channel.
 		 * @param pitch		The pitch, from 0 to 255. 128 is no adjustment. 
 		 * 					0 is one full semitone down. 255 is one full semitone up.
+		 * @throws IllegalArgumentException if <code>channel</code> is not between 0 and 15, 
+		 * or <code>note</code> is not between 0 and 127,
+		 * or <code>pitch</code> is not between 0 to 255.
 		 */
-		public PitchEvent(byte channel, short pitch)
+		public PitchEvent(byte channel, int pitch)
 		{
-			this(channel, pitch, false, 0);
+			this(channel, pitch, 0);
 		}
 		
 		/**
@@ -863,27 +863,31 @@ public class DMXMUS implements BinaryObject
 		 * @param channel	Event channel.
 		 * @param pitch		The pitch, from 0 to 255. 128 is no adjustment. 
 		 * 					0 is one full semitone down. 255 is one full semitone up.
-		 * @param last		Is this the "last" event before another?
 		 * @param restTics	The amount of tics before the next event gets processed.
+		 * @throws IllegalArgumentException if <code>channel</code> is not between 0 and 15, 
+		 * or <code>note</code> is not between 0 and 127,
+		 * or <code>pitch</code> is not between 0 to 255.
 		 */
-		public PitchEvent(byte channel, short pitch, boolean last, int restTics)
+		public PitchEvent(byte channel, int pitch, int restTics)
 		{
-			super(TYPE_PITCH, channel, last, restTics);
+			super(TYPE_PITCH, channel, restTics);
 			setPitch(pitch);
 		}
 		
 		/**
-		 * Gets this event's pitch.
+		 * @return this event's pitch value.
 		 */
-		public short getPitch()
+		public int getPitch()
 		{
 			return pitch;
 		}
 
 		/**
 		 * Sets this event's pitch.
+		 * @param pitch the pitch value.
+		 * @throws IllegalArgumentException if <code>pitch</code> is not between 0 and 255.
 		 */
-		public void setPitch(short pitch)
+		public void setPitch(int pitch)
 		{
 			if (pitch < 0 || pitch > 255)
 				throw new IllegalArgumentException("Pitch must be between 0 and 255.");
@@ -896,9 +900,10 @@ public class DMXMUS implements BinaryObject
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();
 			try {
 				SuperWriter sw = new SuperWriter(bos, SuperWriter.LITTLE_ENDIAN);
-				sw.writeByte((byte)((last ? 0x80 : 0x00) | (type << 4) | channel));
+				sw.writeByte((byte)((isLast() ? 0x80 : 0x00) | (type << 4) | channel));
 				sw.writeByte((byte)(pitch & 0x00ff));
-				sw.writeVariableLengthInt(restTics);
+				if (isLast())
+					sw.writeVariableLengthInt(restTics);
 				return bos.toByteArray();
 			} catch (IOException ioe) {
 				return null;
@@ -943,37 +948,42 @@ public class DMXMUS implements BinaryObject
 		
 		/**
 		 * Creates a "system" event.
-		 * @param channel	Event channel.
-		 * @param sysType	The system type.
+		 * @param channel Event channel.
+		 * @param sysType The system type.
+		 * @throws IllegalArgumentException if <code>channel</code> is not between 0 and 15, 
+		 * or <code>sysType</code> is not between 10 and 14.
 		 */
 		public SystemEvent(byte channel, byte sysType)
 		{
-			this(channel, sysType, false, 0);
+			this(channel, sysType, 0);
 		}
 		
 		/**
 		 * Creates a "system" event.
 		 * @param channel	Event channel.
 		 * @param sysType	The system type.
-		 * @param last		Is this the "last" event before another?
 		 * @param restTics	The amount of tics before the next event gets processed.
+		 * @throws IllegalArgumentException if <code>channel</code> is not between 0 and 15, 
+		 * or <code>sysType</code> is not between 10 and 14.
 		 */
-		public SystemEvent(byte channel, byte sysType, boolean last, int restTics)
+		public SystemEvent(byte channel, byte sysType, int restTics)
 		{
-			super(TYPE_SYSTEM, channel, last, restTics);
+			super(TYPE_SYSTEM, channel, restTics);
 			setSystemType(sysType);
 		}
 		
 		/**
-		 * Gets this event's sysType.
+		 * @return this event's sysType.
 		 */
-		public short getSystemType()
+		public byte getSystemType()
 		{
 			return sysType;
 		}
 	
 		/**
 		 * Sets this event's sysType.
+		 * @param sysType the new system type.
+		 * @throws IllegalArgumentException if <code>sysType</code> is not between 10 and 14.
 		 */
 		public void setSystemType(byte sysType)
 		{
@@ -988,9 +998,10 @@ public class DMXMUS implements BinaryObject
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();
 			try {
 				SuperWriter sw = new SuperWriter(bos, SuperWriter.LITTLE_ENDIAN);
-				sw.writeByte((byte)((last ? 0x80 : 0x00) | (type << 4) | channel));
+				sw.writeByte((byte)((isLast() ? 0x80 : 0x00) | (type << 4) | channel));
 				sw.writeByte(sysType);
-				sw.writeVariableLengthInt(restTics);
+				if (isLast())
+					sw.writeVariableLengthInt(restTics);
 				return bos.toByteArray();
 			} catch (IOException ioe) {
 				return null;
@@ -1045,10 +1056,13 @@ public class DMXMUS implements BinaryObject
 		 * @param channel	Event channel.
 		 * @param controllerNumber	The number of the controller (0 to 9).
 		 * @param controllerValue	The controller value (0 to 127).
+		 * @throws IllegalArgumentException if <code>channel</code> is not between 0 and 15, 
+		 * or <code>controllerNumber</code> is not between 0 and 9,
+		 * or <code>controllerValue</code> is not between 0 and 127.
 		 */
 		public ControllerChangeEvent(byte channel, byte controllerNumber, byte controllerValue)
 		{
-			this(channel, controllerNumber, controllerValue, false, 0);
+			this(channel, controllerNumber, controllerValue, 0);
 		}
 		
 		/**
@@ -1056,18 +1070,20 @@ public class DMXMUS implements BinaryObject
 		 * @param channel			Event channel.
 		 * @param controllerNumber	The number of the controller (0 to 9).
 		 * @param controllerValue	The controller value (0 to 127).
-		 * @param last				Is this the "last" event before another?
 		 * @param restTics			The amount of tics before the next event gets processed.
+		 * @throws IllegalArgumentException if <code>channel</code> is not between 0 and 15, 
+		 * or <code>controllerNumber</code> is not between 0 and 9,
+		 * or <code>controllerValue</code> is not between 0 and 127.
 		 */
-		public ControllerChangeEvent(byte channel, byte controllerNumber, byte controllerValue, boolean last, int restTics)
+		public ControllerChangeEvent(byte channel, byte controllerNumber, byte controllerValue, int restTics)
 		{
-			super(TYPE_CHANGE_CONTROLLER, channel, last, restTics);
+			super(TYPE_CHANGE_CONTROLLER, channel, restTics);
 			setController(controllerNumber);
-			setValue(controllerValue);
+			setControllerValue(controllerValue);
 		}
 		
 		/**
-		 * Gets this event's target controller.
+		 * @return this event's target controller.
 		 */
 		public byte getController()
 		{
@@ -1076,6 +1092,8 @@ public class DMXMUS implements BinaryObject
 
 		/**
 		 * Sets this event's target controller.
+		 * @param controllerNumber the controller number.
+		 * @throws IllegalArgumentException if <code>controllerNumber</code> is not between 0 and 9.
 		 */
 		public void setController(byte controllerNumber)
 		{
@@ -1085,7 +1103,7 @@ public class DMXMUS implements BinaryObject
 		}
 
 		/**
-		 * Gets this event's controller value.
+		 * @return this event's controller value.
 		 */
 		public byte getValue()
 		{
@@ -1094,8 +1112,10 @@ public class DMXMUS implements BinaryObject
 
 		/**
 		 * Sets this event's controller value.
+		 * @param controllerValue the new controller value.
+		 * @throws IllegalArgumentException if <code>controllerValue</code> is not between 0 and 127.
 		 */
-		public void setValue(byte controllerValue)
+		public void setControllerValue(byte controllerValue)
 		{
 			if (controllerValue < 0 || controllerValue > 127)
 				throw new IllegalArgumentException("Value must be between 0 and 127.");
@@ -1108,10 +1128,11 @@ public class DMXMUS implements BinaryObject
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();
 			try {
 				SuperWriter sw = new SuperWriter(bos, SuperWriter.LITTLE_ENDIAN);
-				sw.writeByte((byte)((last ? 0x80 : 0x00) | (type << 4) | channel));
+				sw.writeByte((byte)((isLast() ? 0x80 : 0x00) | (type << 4) | channel));
 				sw.writeByte(controllerNumber);
 				sw.writeByte(controllerValue);
-				sw.writeVariableLengthInt(restTics);
+				if (isLast())
+					sw.writeVariableLengthInt(restTics);
 				return bos.toByteArray();
 			} catch (IOException ioe) {
 				return null;
@@ -1157,18 +1178,17 @@ public class DMXMUS implements BinaryObject
 		 */
 		public ScoreEndEvent(byte channel)
 		{
-			this(channel, false, 0);
+			this(channel, 0);
 		}
 		
 		/**
 		 * Creates a "score ending" event.
 		 * @param channel	Event channel.
-		 * @param last		Is this the "last" event before another?
 		 * @param restTics	The amount of tics before the next event gets processed.
 		 */
-		public ScoreEndEvent(byte channel, boolean last, int restTics)
+		public ScoreEndEvent(byte channel, int restTics)
 		{
-			super(TYPE_SCORE_END, channel, last, restTics);
+			super(TYPE_SCORE_END, channel, restTics);
 		}
 		
 		@Override
@@ -1177,8 +1197,9 @@ public class DMXMUS implements BinaryObject
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();
 			try {
 				SuperWriter sw = new SuperWriter(bos, SuperWriter.LITTLE_ENDIAN);
-				sw.writeByte((byte)((last ? 0x80 : 0x00) | (type << 4) | channel));
-				sw.writeVariableLengthInt(restTics);
+				sw.writeByte((byte)((isLast() ? 0x80 : 0x00) | (type << 4) | channel));
+				if (isLast())
+					sw.writeVariableLengthInt(restTics);
 				return bos.toByteArray();
 			} catch (IOException ioe) {
 				return null;
@@ -1203,4 +1224,5 @@ public class DMXMUS implements BinaryObject
 		}
 
 	}
+	
 }

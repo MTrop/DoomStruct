@@ -10,6 +10,7 @@ package net.mtrop.doom.struct;
 import java.io.IOException;
 
 import net.mtrop.doom.WadFile;
+import net.mtrop.doom.sound.DMXMUS;
 
 import com.blackrook.commons.Common;
 import com.blackrook.commons.logging.Logger;
@@ -24,7 +25,7 @@ public final class MUSTest
 		WadFile wad = new WadFile(args[0]);
 		DMXMUS mus = DMXMUS.create(wad.getData("D_RUNNIN"));
 		
-		for (DMXMUS.Event event : mus.getEventList())
+		for (DMXMUS.Event event : mus)
 			logger.info(event);
 		
 		Common.close(wad);

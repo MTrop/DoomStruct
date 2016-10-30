@@ -118,6 +118,7 @@ public class DoomSector implements BinaryObject
 	
 	/**
 	 * Sets this sector's floor height. 
+	 * @param floorHeight the new height.
 	 * @throws IllegalArgumentException if floorHeight is outside of the range -32768 to 32767.
 	 */
 	public void setFloorHeight(int floorHeight)
@@ -136,6 +137,7 @@ public class DoomSector implements BinaryObject
 
 	/**
 	 * Sets the sector's ceiling height. 
+	 * @param ceilingHeight the new height.
 	 * @throws IllegalArgumentException if floorHeight is outside of the range -32768 to 32767.
 	 */
 	public void setCeilingHeight(int ceilingHeight)
@@ -154,7 +156,8 @@ public class DoomSector implements BinaryObject
 
 	/**
 	 * Sets the sector's floor texture.
-	 * @throw IllegalArgumentException if the texture name is invalid. 
+	 * @param floorTexture the new texture.
+	 * @throws IllegalArgumentException if the texture name is invalid. 
 	 */
 	public void setFloorTexture(String floorTexture)
 	{
@@ -173,7 +176,8 @@ public class DoomSector implements BinaryObject
 
 	/**
 	 * Sets the sector's ceiling texture. 
-	 * @throw IllegalArgumentException if the texture name is invalid. 
+	 * @param ceilingTexture the new texture.
+	 * @throws IllegalArgumentException if the texture name is invalid. 
 	 */
 	public void setCeilingTexture(String ceilingTexture)
 	{
@@ -192,6 +196,7 @@ public class DoomSector implements BinaryObject
 
 	/**
 	 * Sets the sector's light level. 
+	 * @param lightLevel the new light level.
 	 * @throws IllegalArgumentException if lightLevel is outside the range 0 to 255.
 	 */
 	public void setLightLevel(int lightLevel)
@@ -210,6 +215,7 @@ public class DoomSector implements BinaryObject
 
 	/**
 	 * Sets the sector's special. 
+	 * @param special the new special number.
 	 * @throws IllegalArgumentException if special is outside the range 0 to 65535.
 	 */
 	public void setSpecial(int special)
@@ -228,6 +234,7 @@ public class DoomSector implements BinaryObject
 
 	/**
 	 * Sets the sector's tag. 
+	 * @param tag the new tag.
 	 * @throws IllegalArgumentException if tag is outside the range 0 to 65535.
 	 */
 	public void setTag(int tag)

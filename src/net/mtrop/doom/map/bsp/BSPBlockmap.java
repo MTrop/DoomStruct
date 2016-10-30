@@ -12,7 +12,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Iterator;
 
 import net.mtrop.doom.BinaryObject;
 import net.mtrop.doom.util.RangeUtils;
@@ -33,6 +32,8 @@ import com.blackrook.io.SuperWriter;
  */
 public class BSPBlockmap implements BinaryObject
 {
+	private static final Queue<Integer> EMPTY_QUEUE = new Queue<>();
+	
 	/** Grid origin X-coordinate. */
 	private int startX;
 	/** Grid origin Y-coordinate. */
@@ -99,7 +100,7 @@ public class BSPBlockmap implements BinaryObject
 	 * @param x	the grid row.
 	 * @param y	the grid column.
 	 * @param linedefIndex	the linedef index to add.
-	 * @throw {@link IllegalArgumentException} if <code>x</code> or <code>y</code> is outside the range 0 to 512 
+	 * @throws IllegalArgumentException if <code>x</code> or <code>y</code> is outside the range 0 to 512 
 	 * 		or <code>linedefIndex</code> is outside the range 0 to 65535.
 	 */
 	public void addIndex(int x, int y, int linedefIndex)
@@ -115,7 +116,8 @@ public class BSPBlockmap implements BinaryObject
 	 * @param x	the grid column.
 	 * @param y	the grid row.
 	 * @param linedefIndex	the linedef index to remove.
-	 * @throw {@link IllegalArgumentException} if <code>x</code> or <code>y</code> is outside the range 0 to 512 
+	 * @return true if removed, false if not.
+	 * @throws IllegalArgumentException if <code>x</code> or <code>y</code> is outside the range 0 to 512 
 	 * 		or <code>linedefIndex</code> is outside the range 0 to 65535.
 	 */
 	public boolean removeIndex(int x, int y, int linedefIndex)
@@ -123,22 +125,12 @@ public class BSPBlockmap implements BinaryObject
 		RangeUtils.checkRange("Block X", 0, 512, x);
 		RangeUtils.checkRange("Block Y", 0, 512, y);
 		RangeUtils.checkShortUnsigned("Linedef Index", linedefIndex);
-		return innerMap.get(x, y).remove(linedefIndex);
-	}
-
-	/**
-	 * Returns the list of linedef indices in a particular block.
-	 * @param x	the grid column.
-	 * @param y	the grid row.
-	 */
-	public Iterator<Integer> getIndexList(int x, int y)
-	{
 		Queue<Integer> queue = innerMap.get(x, y);
-		return queue != null ? queue.iterator() : null;
+		return queue != null ? queue.remove(linedefIndex) : false;
 	}
 
 	/**
-	 * Returns the map position start, X coordinate.
+	 * @return the map position start, X coordinate.
 	 */
 	public float getStartX()
 	{
@@ -146,7 +138,7 @@ public class BSPBlockmap implements BinaryObject
 	}
 
 	/**
-	 * Returns the map position start, Y coordinate.
+	 * @return the map position start, Y coordinate.
 	 */
 	public float getStartY()
 	{
@@ -156,34 +148,49 @@ public class BSPBlockmap implements BinaryObject
 	/**
 	 * Returns the column index used by a particular map position,
 	 * according to this grid's startX value.
-	 * If posX is < startX, this returns -1.
+	 * If posX is less than startX, this returns -1.
+	 * @param posX the map position x-coordinate.
+	 * @return the corresponding block column or if <code>posX</code> is less than {@link #getStartX()}, this returns -1.
 	 */
-	public int getColumnByMapPosition(float posX)
+	public int getColumnByMapPosition(int posX)
 	{
 		if (posX < startX)
 			return -1;
-		return (int)((posX - startX) / 128);
+		return (posX - startX) / 128;
 	}
 	
 	/**
 	 * Returns the row index used by a particular map position,
 	 * according to this grid's startY value.
-	 * If posY is < startY, this returns -1.
+	 * @param posY the map position y-coordinate.
+	 * @return the corresponding block row or if <code>posY</code> is less than {@link #getStartY()}, this returns -1.
 	 */
-	public int getRowByMapPosition(float posY)
+	public int getRowByMapPosition(int posY)
 	{
 		if (posY < startY)
 			return -1;
-		return (int)((posY - startY) / 128);
+		return (posY - startY) / 128;
 	}
 
 	/**
-	 * Returns an iterator of linedef indices in a particular block using map position.
-	 * May return null if the point lies completely outside the grid.
+	 * Returns an iterable structure for linedef indices for a certain block.
+	 * @param x	the grid column.
+	 * @param y	the grid row.
+	 * @return an iterable structure for a particular block.
+	 */
+	public Iterable<Integer> getIndexList(int x, int y)
+	{
+		Queue<Integer> queue = innerMap.get(x, y);
+		return queue != null ? queue : EMPTY_QUEUE;
+	}
+
+	/**
+	 * Returns an iterable structure for linedef indices for a certain block using a map position.
 	 * @param posX the map position, X-coordinate.
 	 * @param posY the map position, Y-coordinate.
+	 * @return an iterable structure for a particular block that corresponds to the map position.
 	 */
-	public Iterator<Integer> getIteratorForPosition(float posX, float posY)
+	public Iterable<Integer> getIndexListForPosition(int posX, int posY)
 	{
 		int x = getColumnByMapPosition(posX);
 		int y = getRowByMapPosition(posY);
@@ -213,11 +220,11 @@ public class BSPBlockmap implements BinaryObject
 		innerMap.clear();
 		startX = sr.readShort();
 		startY = sr.readShort();
-		int max_x = sr.readUnsignedShort();
-		int max_y = sr.readUnsignedShort();
+		int maxX = sr.readUnsignedShort();
+		int maxY = sr.readUnsignedShort();
 
 		// read offset table
-		short[] indices = sr.readShorts(max_x*max_y);
+		short[] indices = sr.readShorts(maxX*maxY);
 		
 		// data must be treated as a stream: find highest short offset so that the reading can stop.
 		int offMax = -1;
@@ -229,7 +236,7 @@ public class BSPBlockmap implements BinaryObject
 		
 		// precache linedef lists at each particular offset: blockmap may be compressed.
 		HashedQueueMap<Integer, Integer> indexList = new HashedQueueMap<Integer, Integer>();
-		int index = 4 + (max_x*max_y);
+		int index = 4 + (maxX*maxY);
 		while (index <= offMax)
 		{
 			int nindex = index;
@@ -252,15 +259,15 @@ public class BSPBlockmap implements BinaryObject
 		}
 
 		// read into internal blockmap table.
-		for (int i = 0; i < max_x; i++)
-			for (int j = 0; j < max_y; j++)
+		for (int i = 0; i < maxX; i++)
+			for (int j = 0; j < maxY; j++)
 			{
 				// "touch" entry. this is so the maximum column/row
 				// still gets written on call to getDoomBytes()
 				innerMap.set(i, j, new Queue<Integer>());			
 				
 				// add index list to map.
-				int ind = indices[(i*max_y)+j];
+				int ind = indices[(i*maxY)+j];
 				Queue<Integer> list = indexList.get(ind);
 				if (list != null) for (Integer line : list)
 					addIndex(i, j, line);
@@ -273,26 +280,26 @@ public class BSPBlockmap implements BinaryObject
 		SuperWriter sw = new SuperWriter(out, SuperWriter.LITTLE_ENDIAN);
 		sw.writeShort((short)startX);
 		sw.writeShort((short)startY);
-		int max_x = 0;
-		int max_y = 0;
+		int maxX = 0;
+		int maxY = 0;
 
 		for (ObjectPair<Pair, Queue<Integer>> hp : innerMap)
 		{
 			Pair p = hp.getKey();
-			max_x = Math.max(max_x, p.x);
-			max_y = Math.max(max_y, p.y);
+			maxX = Math.max(maxX, p.x);
+			maxY = Math.max(maxY, p.y);
 		}
-		max_x++;
-		max_y++;
+		maxX++;
+		maxY++;
 
-		sw.writeUnsignedShort(max_x);
-		sw.writeUnsignedShort(max_y);
+		sw.writeUnsignedShort(maxX);
+		sw.writeUnsignedShort(maxY);
 		
 		// convert linedef indices for offset calculation
-		short[][][] shorts = new short[max_x][max_y][];
+		short[][][] shorts = new short[maxX][maxY][];
 		
-		for (int x = 0; x < max_x; x++)
-			for (int y = 0; y < max_y; y++)
+		for (int x = 0; x < maxX; x++)
+			for (int y = 0; y < maxY; y++)
 			{
 				Queue<Integer> list = innerMap.get(x,y);
 				if (list != null)
@@ -307,19 +314,19 @@ public class BSPBlockmap implements BinaryObject
 			}
 		
 		// set starting offset
-		short offset = (short)(4 + (max_x*max_y));
+		short offset = (short)(4 + (maxX*maxY));
 
 		// write offset table
-		for (int x = 0; x < max_x; x++)
-			for (int y = 0; y < max_y; y++)
+		for (int x = 0; x < maxX; x++)
+			for (int y = 0; y < maxY; y++)
 			{
 				sw.writeShort(offset);
 				offset += 2 + shorts[x][y].length;
 			}
 		
 		// write index lists
-		for (int x = 0; x < max_x; x++)
-			for (int y = 0; y < max_y; y++)
+		for (int x = 0; x < maxX; x++)
+			for (int y = 0; y < maxY; y++)
 			{
 				sw.writeShort((short)0);
 				for (int n = 0; n < shorts[x][y].length; n++)
