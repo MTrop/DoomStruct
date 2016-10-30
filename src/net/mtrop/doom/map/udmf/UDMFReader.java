@@ -269,11 +269,23 @@ public final class UDMFReader
 				{
 					String lexeme = currentToken().getLexeme();
 					if (lexeme.startsWith("0X") || lexeme.startsWith("0x"))
+					{
 						currentValue = Integer.parseInt(lexeme.substring(2), 16);
+						nextToken();
+						return true;
+					}
 					else if (lexeme.contains("."))
+					{
 						currentValue = Float.parseFloat(lexeme);
+						nextToken();
+						return true;
+					}
 					else
+					{
 						currentValue = Integer.parseInt(lexeme);
+						nextToken();
+						return true;
+					}
 				}
 			}
 			else if (matchType(ULexerKernel.TYPE_PLUS))
@@ -282,22 +294,46 @@ public final class UDMFReader
 				{
 					String lexeme = currentToken().getLexeme();
 					if (lexeme.startsWith("0X") || lexeme.startsWith("0x"))
+					{
 						currentValue = Integer.parseInt(lexeme.substring(2), 16);
+						nextToken();
+						return true;
+					}
 					else if (lexeme.contains("."))
+					{
 						currentValue = Float.parseFloat(lexeme);
+						nextToken();
+						return true;
+					}
 					else
+					{
 						currentValue = Integer.parseInt(lexeme);
+						nextToken();
+						return true;
+					}
 				}
 			}
 			else if (currentType(ULexerKernel.TYPE_NUMBER))
 			{
 				String lexeme = currentToken().getLexeme();
 				if (lexeme.startsWith("0X") || lexeme.startsWith("0x"))
+				{
 					currentValue = Integer.parseInt(lexeme.substring(2), 16);
+					nextToken();
+					return true;
+				}
 				else if (lexeme.contains("."))
+				{
 					currentValue = Float.parseFloat(lexeme);
+					nextToken();
+					return true;
+				}
 				else
+				{
 					currentValue = Integer.parseInt(lexeme);
+					nextToken();
+					return true;
+				}
 			}
 			
 			return false;

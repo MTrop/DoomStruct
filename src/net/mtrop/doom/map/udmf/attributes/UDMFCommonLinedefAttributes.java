@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
  ******************************************************************************/
-package net.mtrop.doom.map.udmf;
+package net.mtrop.doom.map.udmf.attributes;
 
 /**
  * Contains common linedef attributes on some UDMF structures.

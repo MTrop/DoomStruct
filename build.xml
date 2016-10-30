@@ -32,11 +32,12 @@
 		net.mtrop.doom.map.binary,
 		net.mtrop.doom.map.bsp,
 		net.mtrop.doom.map.udmf,
+		net.mtrop.doom.map.udmf.attributes,
 		net.mtrop.doom.sound,
 		net.mtrop.doom.struct,
 		net.mtrop.doom.texture,
 		net.mtrop.doom.util,
-		net.mtrop.doom.util.resource
+		net.mtrop.doom.util.resource,
 		"
 	/>
 
