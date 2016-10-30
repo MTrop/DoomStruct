@@ -11,10 +11,6 @@ All deprecated classes from the origin project will not be in this one.
 All end users are encouraged to switch to this one, as this project will be 
 actively maintained.
 
-### Releases
-
-Releases will be found [here]. (link not working, yet - no releases).
-
 ### Required Libraries
 
 Black Rook Commons 2.31.0+  
@@ -29,7 +25,7 @@ Black Rook Common Lang 2.9.0+
 ### Source
 
 The MASTER branch contains stable code (I hope). The DEVELOP branch's contents may always
-shift. Until a release, the API of this library will be in flux, and there may be a lot of problems!
+shift.
 
 ### Introduction
 
