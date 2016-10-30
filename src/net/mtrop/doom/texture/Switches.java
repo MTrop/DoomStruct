@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
  ******************************************************************************/
-package net.mtrop.doom.struct;
+package net.mtrop.doom.texture;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -83,19 +83,12 @@ public class Switches implements BinaryObject, Iterable<Switches.Entry>, Sizable
 	}
 	
 	/**
-	 * Returns a reference to the list of switch entries.
-	 */
-	public AbstractVector<Entry> getSwitchList()
-	{
-		return entryList;
-	}
-
-	/**
 	 * Returns a switch entry at a specific index.
 	 * @param i the index of the entry to return.
-	 * @throws IndexOutOfBoundsException  if the index is out of range (< 0 or >= getFlatCount()).
+	 * @return the corresponding entry, or <code>null</code> if no corresponding entry for that index.
+	 * @throws IndexOutOfBoundsException  if the index is out of range (less than 0 or greater than or equal to getFlatCount()).
 	 */
-	public Entry getSwitchEntry(int i)
+	public Entry getEntry(int i)
 	{
 		return entryList.getByIndex(i);
 	}
@@ -103,17 +96,18 @@ public class Switches implements BinaryObject, Iterable<Switches.Entry>, Sizable
 	/**
 	 * Removes a switch entry at a specific index.
 	 * @param i the index of the entry to remove.
-	 * @throws IndexOutOfBoundsException  if the index is out of range (< 0 or >= getSwitchCount()).
+	 * @return the corresponding removed entry, or <code>null</code> if no corresponding entry for that index.
+	 * @throws IndexOutOfBoundsException  if the index is out of range (less than 0 or greater than or equal to getSwitchCount()).
 	 */
-	public Entry removeSwitchEntry(int i)
+	public Entry removeEntry(int i)
 	{
-		return entryList.getByIndex(i);
+		return entryList.removeIndex(i);
 	}
 	
 	/**
-	 * Returns the amount of switch entries in this lump.
+	 * @return the amount of switch entries in this lump.
 	 */
-	public int getSwitchCount()
+	public int getEntryCount()
 	{
 		return entryList.size();
 	}
@@ -121,11 +115,11 @@ public class Switches implements BinaryObject, Iterable<Switches.Entry>, Sizable
 	/**
 	 * Adds a switch entry to this lump.
 	 * The names must be 8 characters or less.
-	 * @param offName	the last name in the sequence.
-	 * @param onName the first name in the sequence.
+	 * @param offName the "off" name for the switch.
+	 * @param onName the "on" name for the switch.
 	 * @param game the game type that this switch works with.
 	 */
-	public void addSwitch(String offName, String onName, Game game)
+	public void addEntry(String offName, String onName, Game game)
 	{
 		entryList.add(new Entry(offName, onName, game));
 	}
@@ -226,7 +220,7 @@ public class Switches implements BinaryObject, Iterable<Switches.Entry>, Sizable
 		}
 
 		/**
-		 * Returns the switch "off" position texture.  
+		 * @return the switch "off" position texture.  
 		 */
 		public String getOffName()
 		{
@@ -234,7 +228,7 @@ public class Switches implements BinaryObject, Iterable<Switches.Entry>, Sizable
 		}
 
 		/**
-		 * Returns the switch "on" position texture.  
+		 * @return the switch "on" position texture.  
 		 */
 		public String getOnName()
 		{
@@ -242,7 +236,7 @@ public class Switches implements BinaryObject, Iterable<Switches.Entry>, Sizable
 		}
 
 		/**
-		 * Returns the active game type of the switch.  
+		 * @return the active game type of the switch.  
 		 */
 		public Game getGame()
 		{

@@ -36,7 +36,7 @@ public abstract class CommonPatch implements BinaryObject
 	}
 	
 	/** 
-	 * Gets the horizontal offset of the patch. 
+	 * @return the horizontal offset of the patch in pixels. 
 	 */
 	public int getOriginX()
 	{
@@ -44,7 +44,9 @@ public abstract class CommonPatch implements BinaryObject
 	}
 
 	/** 
-	 * Sets the horizontal offset of the patch. 
+	 * Sets the horizontal offset of the patch in pixels. 
+	 * @param originX the patch origin, x-coordinate.
+	 * @throws IllegalArgumentException if <code>originX</code> is less than -32768 or more than 32767.
 	 */
 	public void setOriginX(int originX)
 	{
@@ -53,7 +55,7 @@ public abstract class CommonPatch implements BinaryObject
 	}
 
 	/** 
-	 * Gets the vertical offset of the patch. 
+	 * @return the vertical offset of the patch in pixels. 
 	 */
 	public int getOriginY()
 	{
@@ -61,7 +63,9 @@ public abstract class CommonPatch implements BinaryObject
 	}
 
 	/** 
-	 * Sets the vertical offset of the patch. 
+	 * Sets the vertical offset of the patch in pixels. 
+	 * @param originY the patch origin, y-coordinate.
+	 * @throws IllegalArgumentException if <code>originY</code> is less than -32768 or more than 32767.
 	 */
 	public void setOriginY(int originY)
 	{
@@ -70,7 +74,7 @@ public abstract class CommonPatch implements BinaryObject
 	}
 
 	/** 
-	 * Gets the patch's index into the patch name lump. 
+	 * @return the patch's index into the patch name lump. 
 	 */
 	public int getPatchIndex()
 	{
@@ -78,7 +82,9 @@ public abstract class CommonPatch implements BinaryObject
 	}
 
 	/** 
-	 * Sets the patch's index into the patch name lump. 
+	 * Sets the patch's index into the patch name lump.
+	 * @param patchIndex the patch index. 
+	 * @throws IllegalArgumentException if <code>patchIndex</code> is less than 0 or more than 65535.
 	 */
 	public void setPatchIndex(int patchIndex)
 	{

@@ -269,6 +269,7 @@ public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 
 	/**
 	 * Creates a new, blank demo with default values.
+	 * One player.
 	 */
 	public Demo()
 	{
@@ -278,6 +279,7 @@ public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 	/**
 	 * Creates a new, blank demo with default values
 	 * and a set amount of players.
+	 * @param players the amount of players that this tracks.
 	 */
 	public Demo(int players)
 	{
@@ -354,6 +356,14 @@ public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 		setForceOldBSP(false);
 	}
 	
+	/**
+	 * @return the amount of players in this demo.
+	 */
+	public int getPlayers()
+	{
+		return players;
+	}
+
 	/**
 	 * Gets the version of Doom that with which this demo was made.
 	 * See the VERSION macros for the important values.
@@ -477,6 +487,7 @@ public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 
 	/**
 	 * Sets if monster respawning is set for this demo.
+	 * @param respawn true if so, false if not.
 	 */
 	public void setMonsterRespawn(boolean respawn)
 	{
@@ -659,7 +670,7 @@ public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 
 	/**
 	 * Sets the follow distance of allied CPU friends.
-	 * @param the new follow distance.
+	 * @param friendFollowDistance the new follow distance.
 	 * @throws IllegalArgumentException if the distance is outside the range 0 to 999.
 	 */
 	public void setFriendFollowDistance(int friendFollowDistance)
@@ -804,7 +815,7 @@ public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 
 	/**
 	 * Sets how many helpers are spawned.
-	 * @param the amount of helpers.
+	 * @param helperCount the amount of helpers.
 	 */
 	public void setHelperCount(int helperCount)
 	{
@@ -852,26 +863,6 @@ public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 	}
 
 	/**
-	 * @return the amount of players in this demo.
-	 */
-	public int getPlayers()
-	{
-		return players;
-	}
-
-	/**
-	 * Sets the amount of players.
-	 * Be very careful with this - the amount of player control info per tic added must be equal to this amount! 
-	 * @param players the amount of players.
-	 * @throws IllegalArgumentException if episode is outside the range 0 to 255.
-	 */
-	public void setPlayers(int players)
-	{
-		RangeUtils.checkByteUnsigned("Players", players);
-		this.players = players;
-	}
-	
-	/**
 	 * Gets the demo's stored compatibility level.
 	 * Only useful if this is a Boom-format Demo.
 	 * See the COMPLEVEL constants for more info.
@@ -896,7 +887,7 @@ public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 
 	/**
 	 * Gets a compatibility flag setting.
-	 * @param the flag index (see COMPATFLAG constants).
+	 * @param flag the flag index (see COMPATFLAG constants).
 	 * @return true if set, false if not.
 	 * @throws ArrayIndexOutOfBoundsException if <code>flag</code> is less than 0 or greater than or equal to {@value #COMPFLAG_LENGTH}.
 	 */
@@ -938,7 +929,7 @@ public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 	 * @param tic the tic index.
 	 * @param player the player index.
 	 * @return the corresponding Tic or null if out of range.
-	 * @throws ArrayIndexOutOfBoundsException if player is out of range. 
+	 * @throws ArrayIndexOutOfBoundsException if <code>player</code> is out of range. 
 	 */
 	public Tic getTic(int tic, int player)
 	{
@@ -948,7 +939,8 @@ public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 	
 	/**
 	 * Gets a demo Tic at a particular gametic, first player only.
-	 * @return the corresponding Tic or null if out of range.
+	 * @param tic the tic index.
+	 * @return the corresponding Tic or <code>null</code> if out of range.
 	 * @see #getTic(int, int)
 	 */
 	public Tic getTic(int tic)
@@ -960,8 +952,7 @@ public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 	 * Adds a single tic for a set of players.
 	 * If the amount of tics to add does not equal the number of players, 
 	 * @param tics the set of tic data to add for one player.
-	 * @throws IllegalArgumentException if the amount of 
-	 * 		tics to add is not equal to the number of players.
+	 * @throws IllegalArgumentException if the amount of tics to add is not equal to the number of players.
 	 */
 	public void addTic(Tic ... tics)
 	{

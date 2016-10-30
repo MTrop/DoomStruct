@@ -34,13 +34,26 @@ public abstract class CommonTexture<P extends CommonPatch> implements BinaryObje
 	protected int height;
 	/** List of patches. */
 	protected List<P> patches;
+
+	/**
+	 * Creates a new blank texture.
+	 */
+	protected CommonTexture()
+	{
+		this("UNNAMED");
+	}
 	
 	/**
 	 * Creates a new texture.
+	 * @param name the new texture name.
+	 * @throws IllegalArgumentException if the texture name is invalid.
 	 */
-	public CommonTexture()
+	public CommonTexture(String name)
 	{
-		name = "UNNAMED";
+		if (!NameUtils.isValidTextureName(name))
+			throw new IllegalArgumentException("Invalid texture name.");
+		
+		this.name = name;
 		width = 0;
 		height = 0;
 		patches = new List<P>(2);
@@ -55,17 +68,6 @@ public abstract class CommonTexture<P extends CommonPatch> implements BinaryObje
 	}
 	
 	/**
-	 * Sets the name of this texture.
-	 * @throws IllegalArgumentException if the texture name is invalid.
-	 */
-	public void setName(String name)
-	{
-		if (!NameUtils.isValidTextureName(name))
-			throw new IllegalArgumentException("Invalid texture name.");
-		this.name = name;
-	}
-	
-	/**
 	 * @return the width of this texture in pixels.
 	 */
 	public int getWidth()
@@ -75,6 +77,7 @@ public abstract class CommonTexture<P extends CommonPatch> implements BinaryObje
 	
 	/**
 	 * Sets the width of this texture in pixels.
+	 * @param width the new texture width.
 	 * @throws IllegalArgumentException if the width is outside the range 0 to 65535.
 	 */
 	public void setWidth(int width)
@@ -93,6 +96,7 @@ public abstract class CommonTexture<P extends CommonPatch> implements BinaryObje
 	
 	/**
 	 * Sets the height of this texture in pixels.
+	 * @param height the new texture height.
 	 * @throws IllegalArgumentException if the height is outside the range 0 to 65535.
 	 */
 	public void setHeight(int height)
@@ -124,6 +128,7 @@ public abstract class CommonTexture<P extends CommonPatch> implements BinaryObje
 	 * Removes a patch entry from this texture by index.
 	 * The ordering of the patches in this texture will change depending on the index provided.
 	 * @param i	the index of the patch to remove.
+	 * @return the patch removed, or null if no patch at that index.
 	 */
 	public P removePatch(int i)
 	{
@@ -132,7 +137,8 @@ public abstract class CommonTexture<P extends CommonPatch> implements BinaryObje
 	
 	/**
 	 * Gets a patch from this texture.
-	 * @param i		the index of the patch.
+	 * @param i	the index of the patch.
+	 * @return the corresponding patch, or null if no patch at that index.
 	 */
 	public P getPatch(int i)
 	{
@@ -140,7 +146,7 @@ public abstract class CommonTexture<P extends CommonPatch> implements BinaryObje
 	}
 	
 	/**
-	 * Returns the amount of patches on this texture.
+	 * @return the amount of patches on this texture.
 	 */
 	public int getPatchCount()
 	{

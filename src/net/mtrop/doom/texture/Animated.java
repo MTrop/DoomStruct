@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
  ******************************************************************************/
-package net.mtrop.doom.struct;
+package net.mtrop.doom.texture;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -40,7 +40,7 @@ public class Animated implements BinaryObject, Iterable<Animated.Entry>, Sizable
 		TEXTURE;
 	}
 	
-	/** List of flats. */
+	/** List of entries. */
 	protected List<Entry> entryList;
 	
 	/**
@@ -79,60 +79,49 @@ public class Animated implements BinaryObject, Iterable<Animated.Entry>, Sizable
 		out.readBytes(in);
 		return out;
 	}
-	
-	/**
-	 * Adds a flat entry to this lump.
-	 * The names must include a number and be 8 characters or less.
-	 * @param lastName	the last name in the sequence.
-	 * @param firstName the first name in the sequence.
-	 * @param ticks the amount of ticks between each frame.
-	 * @throws IllegalArgumentException if lastName or firstName is not a valid entry name, or frame ticks is less than 1.
-	 */
-	public void addFlat(String lastName, String firstName, int ticks)
-	{
-		if (!NameUtils.isValidEntryName(lastName))
-			throw new IllegalArgumentException("Last texture name is invalid.");
-		else if (!NameUtils.isValidEntryName(firstName))
-			throw new IllegalArgumentException("First texture name is invalid.");
-		else if (ticks < 1 || ticks > Integer.MAX_VALUE)
-			throw new IllegalArgumentException("Frame ticks must be between 1 and 2^31 - 1.");
 
-		entryList.add(new Entry(false, lastName, firstName, ticks));
+	/**
+	 * Adds an entry to this Animated lump.
+	 * @param entry the entry to add.
+	 * @see #flat(String, String, int)
+	 * @see #texture(String, String, int)
+	 * @see #texture(String, String, int, boolean)
+	 */
+	public void addEntry(Entry entry)
+	{
+		entryList.add(entry);
 	}
 	
 	/**
-	 * Adds a texture entry to this lump.
-	 * The names must be 8 characters or less.
-	 * @param lastName	the last name in the sequence.
-	 * @param firstName the first name in the sequence.
-	 * @param ticks the amount of ticks between each frame.
+	 * Returns an Animated entry at a specific index.
+	 * @param i the index of the entry to return.
+	 * @return the corresponding entry, or <code>null</code> if no corresponding entry for that index.
+	 * @throws IndexOutOfBoundsException if the index is out of range (less than 0 or greater than or equal to getFlatCount()).
 	 */
-	public void addTexture(String lastName, String firstName, int ticks)
+	public Entry getEntry(int i)
 	{
-		addTexture(lastName, firstName, ticks, false);
+		return entryList.getByIndex(i);
 	}
-	
+
 	/**
-	 * Adds a texture entry to this lump.
-	 * The names must be 8 characters or less.
-	 * @param lastName	the last name in the sequence.
-	 * @param firstName the first name in the sequence.
-	 * @param ticks the amount of ticks between each frame.
-	 * @param decals if true, allows decals to be placed on this texture, false if not.
-	 * @throws IllegalArgumentException if lastName or firstName is not a valid texture name, or frame ticks is less than 1.
+	 * Removes an Animated entry at a specific index.
+	 * @param i the index of the entry to remove.
+	 * @return the corresponding removed entry, or <code>null</code> if no corresponding entry for that index.
+	 * @throws IndexOutOfBoundsException if the index is out of range (less than 0 or greater than or equal to getSwitchCount()).
 	 */
-	public void addTexture(String lastName, String firstName, int ticks, boolean decals)
+	public Entry removeEntry(int i)
 	{
-		if (!NameUtils.isValidTextureName(lastName))
-			throw new IllegalArgumentException("Last texture name is invalid.");
-		else if (!NameUtils.isValidTextureName(firstName))
-			throw new IllegalArgumentException("First texture name is invalid.");
-		else if (ticks < 1 || ticks > Integer.MAX_VALUE)
-			throw new IllegalArgumentException("Frame ticks must be between 1 and 2^31 - 1.");
-		
-		entryList.add(new Entry(true, decals, lastName, firstName, ticks));
+		return entryList.removeIndex(i);
 	}
-	
+
+	/**
+	 * @return the amount of switch entries in this lump.
+	 */
+	public int getEntryCount()
+	{
+		return entryList.size();
+	}
+
 	@Override
 	public byte[] toBytes()
 	{
@@ -188,6 +177,60 @@ public class Animated implements BinaryObject, Iterable<Animated.Entry>, Sizable
 		return entryList.isEmpty();
 	}
 
+	/**
+	 * Creates a flat entry.
+	 * @param lastName	the last name in the sequence.
+	 * @param firstName the first name in the sequence.
+	 * @param ticks the amount of ticks between each frame.
+	 * @return a new entry detailing an animated texture.
+	 * @throws IllegalArgumentException if <code>lastName</code> or <code>firstName</code> is not a valid texture name, or frame ticks is less than 1.
+	 */
+	public static Entry flat(String lastName, String firstName, int ticks)
+	{
+		if (!NameUtils.isValidTextureName(lastName))
+			throw new IllegalArgumentException("Last texture name is invalid.");
+		else if (!NameUtils.isValidTextureName(firstName))
+			throw new IllegalArgumentException("First texture name is invalid.");
+		else if (ticks < 1 || ticks > Integer.MAX_VALUE)
+			throw new IllegalArgumentException("Frame ticks must be between 1 and 2^31 - 1.");
+		
+		return new Entry(false, lastName, firstName, ticks);
+	}
+
+	/**
+	 * Creates a texture entry.
+	 * @param lastName	the last name in the sequence.
+	 * @param firstName the first name in the sequence.
+	 * @param ticks the amount of ticks between each frame.
+	 * @return a new entry detailing an animated texture.
+	 * @throws IllegalArgumentException if <code>lastName</code> or <code>firstName</code> is not a valid texture name, or frame ticks is less than 1.
+	 */
+	public static Entry texture(String lastName, String firstName, int ticks)
+	{
+		return new Entry(true, false, lastName, firstName, ticks);
+	}
+	
+	/**
+	 * Creates a texture entry.
+	 * @param lastName	the last name in the sequence.
+	 * @param firstName the first name in the sequence.
+	 * @param ticks the amount of ticks between each frame.
+	 * @param decals if true, allows decals to be placed on this texture, false if not.
+	 * @return a new entry detailing an animated texture.
+	 * @throws IllegalArgumentException if <code>lastName</code> or <code>firstName</code> is not a valid texture name, or frame ticks is less than 1.
+	 */
+	public static Entry texture(String lastName, String firstName, int ticks, boolean decals)
+	{
+		if (!NameUtils.isValidTextureName(lastName))
+			throw new IllegalArgumentException("Last texture name is invalid.");
+		else if (!NameUtils.isValidTextureName(firstName))
+			throw new IllegalArgumentException("First texture name is invalid.");
+		else if (ticks < 1 || ticks > Integer.MAX_VALUE)
+			throw new IllegalArgumentException("Frame ticks must be between 1 and 2^31 - 1.");
+		
+		return new Entry(true, decals, lastName, firstName, ticks);
+	}
+	
 	/** Flat entry for ANIMATED. */
 	public static class Entry implements BinaryObject
 	{
@@ -205,7 +248,7 @@ public class Animated implements BinaryObject, Iterable<Animated.Entry>, Sizable
 		/**
 		 * Creates a new Entry (terminal type).
 		 */
-		Entry()
+		private Entry()
 		{
 			this(null, "\0\0\0\0\0\0\0\0", "\0\0\0\0\0\0\0\0", 1);
 		}
@@ -217,7 +260,7 @@ public class Animated implements BinaryObject, Iterable<Animated.Entry>, Sizable
 		 * @param firstName the first name in the sequence.
 		 * @param ticks the amount of ticks between each frame.
 		 */
-		Entry(boolean texture, String lastName, String firstName, int ticks)
+		private Entry(boolean texture, String lastName, String firstName, int ticks)
 		{
 			this(texture ? TextureType.TEXTURE : TextureType.FLAT, false, lastName, firstName, ticks);
 		}
@@ -230,7 +273,7 @@ public class Animated implements BinaryObject, Iterable<Animated.Entry>, Sizable
 		 * @param firstName the first name in the sequence.
 		 * @param ticks the amount of ticks between each frame.
 		 */
-		Entry(boolean texture, boolean allowsDecals, String lastName, String firstName, int ticks)
+		private Entry(boolean texture, boolean allowsDecals, String lastName, String firstName, int ticks)
 		{
 			this(texture ? TextureType.TEXTURE : TextureType.FLAT, lastName, firstName, ticks);
 		}

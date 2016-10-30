@@ -30,7 +30,7 @@ public final class WadUtils
 	 * <p>
 	 * The returned entries are valid only to the provided WAD. Using entry information with unassociated WADs
 	 * could create undesired results.
-	 * @param prefix the namespace prefix to use (e.g. "f" or "ff" for flats, "p" or "pp" for textures, etc.).
+	 * @param prefix the namespace prefix to use (e.g. "F" or "FF" for flats, "P" or "PP" for patches, etc.).
 	 * @param wad the WAD file to scan.
 	 * @return an array of all entries in the namespace, or an empty array if none are found.
 	 */

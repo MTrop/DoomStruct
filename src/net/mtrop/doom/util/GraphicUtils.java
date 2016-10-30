@@ -18,16 +18,16 @@ import com.blackrook.commons.AbstractSet;
 import net.mtrop.doom.WadFile;
 import net.mtrop.doom.exception.TextureException;
 import net.mtrop.doom.exception.WadException;
+import net.mtrop.doom.graphics.Colormap;
+import net.mtrop.doom.graphics.EndDoom;
 import net.mtrop.doom.graphics.Flat;
+import net.mtrop.doom.graphics.Palette;
 import net.mtrop.doom.graphics.Picture;
-import net.mtrop.doom.struct.Colormap;
-import net.mtrop.doom.struct.EndDoom;
-import net.mtrop.doom.struct.Palette;
+import net.mtrop.doom.texture.CommonPatch;
+import net.mtrop.doom.texture.CommonTexture;
 import net.mtrop.doom.texture.CommonTextureList;
-import net.mtrop.doom.texture.DoomTexture;
 import net.mtrop.doom.texture.DoomTextureList;
 import net.mtrop.doom.texture.PatchNames;
-import net.mtrop.doom.texture.StrifeTexture;
 import net.mtrop.doom.texture.StrifeTextureList;
 import net.mtrop.doom.texture.TextureSet;
 import net.mtrop.doom.texture.TextureSet.Texture;
@@ -312,19 +312,28 @@ public final class GraphicUtils
 	 * This looks up patch indices as it exports - if a patch name does not exist in <code>pnames</code>,
 	 * it is added.
 	 * <p>
-	 * In the end, <code>pnames</code> and <code>textures</code> will be the objects whose contents will change.
+	 * In the end, <code>pnames</code> and <code>texture1</code>/<code>texture2</code> will be the objects whose contents will change.
+	 * @param <P> the inferred patch type of the provided TextureLists.
+	 * @param <T> the inferred texture type of the provided TextureLists.
 	 * @param textureSet the set of textures to export.
 	 * @param pnames the patch names lump.
 	 * @param texture1 the first texture list to write to.
 	 * @param texture2 the second texture list to write to. Can be null.
 	 * @param texure1NameSet the set of texture names that will be written to the first texture list. Can be null (exports all names to <code>texture1</code>).
 	 */
-	public static void exportTextureSet(TextureSet textureSet, PatchNames pnames, DoomTextureList texture1, DoomTextureList texture2, AbstractSet<String> texure1NameSet)
+	public static <P extends CommonPatch, T extends CommonTexture<P>> void exportTextureSet(TextureSet textureSet, PatchNames pnames, CommonTextureList<T> texture1, CommonTextureList<T> texture2, AbstractSet<String> texure1NameSet)
 	{
 		for (Texture texture : textureSet)
 		{
-			DoomTexture ndt = new DoomTexture();
-			ndt.setName(texture.getName());
+			CommonTexture<P> ndt;
+			
+			String tname = texture.getName();
+			
+			if (texure1NameSet == null || texure1NameSet.contains(tname))
+				ndt = texture1.createTexture(tname);
+			else
+				ndt = texture2.createTexture(tname);
+
 			ndt.setWidth(texture.getWidth());
 			ndt.setHeight(texture.getHeight());
 			
@@ -335,73 +344,20 @@ public final class GraphicUtils
 				
 				String pname = patch.getName();
 				
-				index = pnames.getIndexOf(pname);
+				index = pnames.getIndexOfEntry(pname);
 				if (index == -1)
 				{
-					pnames.add(pname);
-					index = pnames.getIndexOf(pname);
+					pnames.addEntry(pname);
+					index = pnames.getIndexOfEntry(pname);
 				}	
 				
-				DoomTexture.Patch ndtp = ndt.createPatch();
+				P ndtp = ndt.createPatch();
 				ndtp.setOriginX(patch.getOriginX());
 				ndtp.setOriginY(patch.getOriginY());
 				ndtp.setPatchIndex(index);
 			}
 
-			if (texure1NameSet == null || !texure1NameSet.contains(texture.getName()) || texure1NameSet.contains(texture.getName()))
-				texture1.add(ndt);
-			else
-				texture2.add(ndt);
 		}
 	}
-	
-	/**
-	 * Exports a {@link TextureSet}'s contents into a PNAMES and TEXTUREx lump.
-	 * This looks up patch indices as it exports - if a patch name does not exist in <code>pnames</code>,
-	 * it is added.  
-	 * <p>
-	 * In the end, <code>pnames</code> and <code>textures</code> will be the objects whose contents will change.
-	 * @param textureSet the set of textures to export.
-	 * @param pnames the patch names lump.
-	 * @param texture1 the first texture list to write to.
-	 * @param texture2 the first texture list to write to. Can be null.
-	 * @param texure1NameSet the set of texture names that will be written to the first texture list. Can be null (exports all names to <code>texture1</code>).
-	 */
-	public static void exportTextureSet(TextureSet textureSet, PatchNames pnames, StrifeTextureList texture1, StrifeTextureList texture2, AbstractSet<String> texure1NameSet)
-	{
-		for (Texture texture : textureSet)
-		{
-			StrifeTexture ndt = new StrifeTexture();
-			ndt.setName(texture.getName());
-			ndt.setWidth(texture.getWidth());
-			ndt.setHeight(texture.getHeight());
-			
-			int index = -1;
-			for (int i = 0; i < texture.getPatchCount(); i++)
-			{
-				Patch patch = texture.getPatch(i);
-				
-				String pname = patch.getName();
-				
-				index = pnames.getIndexOf(pname);
-				if (index == -1)
-				{
-					pnames.add(pname);
-					index = pnames.getIndexOf(pname);
-				}	
-				
-				StrifeTexture.Patch ndtp = ndt.createPatch();
-				ndtp.setOriginX(patch.getOriginX());
-				ndtp.setOriginY(patch.getOriginY());
-				ndtp.setPatchIndex(index);
-			}
-			
-			if (texure1NameSet == null || !texure1NameSet.contains(texture.getName()) || texure1NameSet.contains(texture.getName()))
-				texture1.add(ndt);
-			else
-				texture2.add(ndt);
-		}
-	}
-
-	
+		
 }

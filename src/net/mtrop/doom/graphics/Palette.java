@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
  ******************************************************************************/
-package net.mtrop.doom.struct;
+package net.mtrop.doom.graphics;
 
 import java.awt.Color;
 import java.io.ByteArrayInputStream;
@@ -231,7 +231,7 @@ public class Palette implements BinaryObject
 	/**
 	 * Returns the Color of a specific index in the palette.
 	 * @param index	the index number of the color.
-	 * @throws ArrayIndexOutOfBoundsException if index > NUM_COLORS or < 0.
+	 * @throws ArrayIndexOutOfBoundsException if index is greater than or equal to NUM_COLORS or less than 0.
 	 * @return the color as a java.awt.Color.
 	 */
 	public Color getColor(int index)
@@ -244,7 +244,7 @@ public class Palette implements BinaryObject
 	 * Returns the Color of a specific index in the palette as a 32-bit ARGB integer.
 	 * Alpha is always 255 (opaque).
 	 * @param index	the index number of the color.
-	 * @throws ArrayIndexOutOfBoundsException if index > NUM_COLORS or < 0.
+	 * @throws ArrayIndexOutOfBoundsException if index is greater than or equal to NUM_COLORS or less than 0.
 	 * @return the color as an ARGB integer.
 	 */
 	public int getColorARGB(int index)
@@ -257,7 +257,7 @@ public class Palette implements BinaryObject
 	 * Sets the color of a specific index in the Palette.
 	 * @param index	the index number of the color.
 	 * @param color the new Color.
-	 * @throws ArrayIndexOutOfBoundsException if index > NUM_COLORS or < 0.
+	 * @throws ArrayIndexOutOfBoundsException if index is greater than or equal to NUM_COLORS or less than 0.
 	 */
 	public void setColor(int index, Color color)
 	{
@@ -271,7 +271,7 @@ public class Palette implements BinaryObject
 	 * @param red the red component amount (0 to 255).
 	 * @param green the green component amount (0 to 255).
 	 * @param blue the blue component amount (0 to 255).
-	 * @throws ArrayIndexOutOfBoundsException if index > NUM_COLORS or < 0.
+	 * @throws ArrayIndexOutOfBoundsException if index is greater than or equal to NUM_COLORS or less than 0.
 	 */
 	public void setColor(int index, int red, int green, int blue)
 	{
@@ -283,6 +283,7 @@ public class Palette implements BinaryObject
 	 * Returns the index of the color nearest to a color in the palette,
 	 * or -1 if no color is appropriately matchable.
 	 * @param color the color to match.
+	 * @return the closest index.
 	 */
 	public int getNearestColorIndex(Color color)
 	{
@@ -297,6 +298,7 @@ public class Palette implements BinaryObject
 	 * @param red the red component amount (0 to 255).
 	 * @param green the green component amount (0 to 255).
 	 * @param blue the blue component amount (0 to 255).
+	 * @return the closest index.
 	 */
 	public int getNearestColorIndex(int red, int green, int blue)
 	{
@@ -348,8 +350,12 @@ public class Palette implements BinaryObject
 	}
 	
 	/**
-	 * Sets the color of a specific index in the Palette and
-	 * doesn't trigger a re-sort.
+	 * Sets the color of a specific index in the Palette and doesn't trigger a re-sort.
+	 * @param index	the index number of the color.
+	 * @param red the red component amount (0 to 255).
+	 * @param green the green component amount (0 to 255).
+	 * @param blue the blue component amount (0 to 255).
+	 * @throws ArrayIndexOutOfBoundsException if index is greater than or equal to NUM_COLORS or less than 0.
 	 */
 	protected void setColorNoSort(int index, int red, int green, int blue)
 	{

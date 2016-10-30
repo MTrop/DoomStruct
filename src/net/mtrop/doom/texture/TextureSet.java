@@ -51,7 +51,7 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 		{
 			for (int i = 0; i < lump.size(); i++)
 			{
-				CommonTexture<?> t = lump.getByIndex(i);
+				CommonTexture<?> t = lump.getTextureByIndex(i);
 				
 				Texture newtex = createTexture(t.getName());
 				newtex.setWidth(t.getWidth());
@@ -60,7 +60,7 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 				for (int j = 0; j < t.getPatchCount(); j++)
 				{
 					CommonPatch p = t.getPatch(j);
-					String patchName = pnames.getByIndex(p.getPatchIndex());
+					String patchName = pnames.getEntry(p.getPatchIndex());
 					if (patchName == null)
 						throw new TextureException("Index "+j+" in PNAMES does not exist!");
 					Patch newpatch = newtex.createPatch(patchName);
@@ -84,7 +84,7 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 	/**
 	 * Returns an entry for a texture by name.
 	 * @param textureName the texture name to search for.
-	 * @return a texture with the composite information, or null if the texture could not be found.
+	 * @return a texture with the composite information, or <code>null</code> if the texture could not be found.
 	 */
 	public Texture getTextureByName(String textureName)
 	{
@@ -95,6 +95,7 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 	 * Creates a new entry for a texture, already added.
 	 * @param textureName the name of the texture to add.
 	 * @return a new, empty texture.
+	 * @throws IllegalArgumentException if the texture name is empty or not a valid texture name.
 	 */
 	public Texture createTexture(String textureName)
 	{
@@ -142,6 +143,8 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 	
 	/**
 	 * Removes a texture at a particular index.
+	 * @param index the index of the texture to remove.
+	 * @return the corresponding removed texture, or <code>null</code> if not removed.
 	 */
 	public Texture removeTexture(int index)
 	{
@@ -150,6 +153,8 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 
 	/**
 	 * Removes a texture by name.
+	 * @param textureName the name of the texture to remove.
+	 * @return the corresponding removed texture, or <code>null</code> if not removed.
 	 */
 	public Texture removeTextureByName(String textureName)
 	{
@@ -158,6 +163,8 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 
 	/**
 	 * Returns a texture at a particular index.
+	 * @param index the index of the texture to get.
+	 * @return the corresponding removed texture, or <code>null</code> if not removed.
 	 */
 	public Texture getTexture(int index)
 	{
@@ -166,6 +173,8 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 
 	/**
 	 * Shifts the ordering of a texture.
+	 * @param index the old index.
+	 * @param newIndex the new index.
 	 * @see AbstractMappedVector#shift(int, int)
 	 */
 	public void shiftTexture(int index, int newIndex)
@@ -183,6 +192,7 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 
 	/**
 	 * Sorts the texture lumps in this set using a comparator.
+	 * @param comparator the comparator to use.
 	 */
 	public void sort(Comparator<Texture> comparator)
 	{
@@ -231,7 +241,7 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 		}
 		
 		/** 
-		 * Returns the texture entry name. 
+		 * @return the texture entry name. 
 		 */
 		public String getName()
 		{
@@ -239,7 +249,7 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 		}
 		
 		/**
-		 * Returns the width of the texture in pixels.
+		 * @return the width of the texture in pixels.
 		 */
 		public int getWidth()
 		{
@@ -248,6 +258,7 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 		
 		/**
 		 * Sets the width of the texture in pixels.
+		 * @param width the new width. 
 		 */
 		public void setWidth(int width)
 		{
@@ -255,7 +266,7 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 		}
 		
 		/**
-		 * Returns the height of the texture in pixels.
+		 * @return the height of the texture in pixels.
 		 */
 		public int getHeight()
 		{
@@ -264,6 +275,7 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 		
 		/**
 		 * Sets the height of the texture in pixels.
+		 * @param height the new height. 
 		 */
 		public void setHeight(int height)
 		{
@@ -272,12 +284,19 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 		
 		/**
 		 * Adds a patch to this entry.
+		 * @param name the name of the patch. Must be valid.
+		 * @return the created patch.
+		 * @see NameUtils#isValidEntryName(String)
+		 * @throws IllegalArgumentException if the patch name is empty or not a valid entry name.
 		 */
 		public Patch createPatch(String name)
 		{
 			if (Common.isEmpty(name))
 				throw new IllegalArgumentException("patch name cannot be empty.");
 
+			if (!NameUtils.isValidEntryName(name))
+				throw new IllegalArgumentException("patch name must be a valid entry name.");
+			
 			Patch p = new Patch(name);
 			patches.add(p);
 			return p;
@@ -285,6 +304,8 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 		
 		/**
 		 * Removes a patch at a particular index.
+		 * @param index the new index. 
+		 * @return the corresponding removed patch, or <code>null</code> if no such patch at that index. 
 		 */
 		public Patch removePatch(int index)
 		{
@@ -293,6 +314,8 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 
 		/**
 		 * Returns a patch at a particular index.
+		 * @param index the index to use.
+		 * @return the corresponding patch, or <code>null</code> if no such patch at that index. 
 		 */
 		public Patch getPatch(int index)
 		{
@@ -301,6 +324,8 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 		
 		/**
 		 * Shifts the ordering of a patch.
+		 * @param index the index to shift.
+		 * @param newIndex the new index for the patch.
 		 * @see AbstractVector#shift(int, int)
 		 */
 		public void shiftPatch(int index, int newIndex)
@@ -309,7 +334,7 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 		}
 		
 		/**
-		 * Returns how many patches are on this texture entry.
+		 * @return how many patches are on this texture entry.
 		 */
 		public int getPatchCount()
 		{
@@ -355,31 +380,37 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 			originY = 0;
 		}
 		
-		/** Returns the patch name. */
+		/** @return the patch name. */
 		public String getName()
 		{
 			return name;
 		}
 	
-		/** Returns the patch offset X. */
+		/** @return the patch offset X. */
 		public int getOriginX()
 		{
 			return originX;
 		}
 		
-		/** Sets the patch offset X. */
+		/** 
+		 * Sets the patch offset X. 
+		 * @param originX the new origin, x-coordinate. 
+		 */
 		public void setOriginX(int originX)
 		{
 			this.originX = originX;
 		}
 		
-		/** Returns the patch offset Y. */
+		/** @return the patch offset Y. */
 		public int getOriginY()
 		{
 			return originY;
 		}
 		
-		/** Sets the patch offset Y. */
+		/** 
+		 * Sets the patch offset Y.
+		 * @param originY the new origin, y-coordinate. 
+		 */
 		public void setOriginY(int originY)
 		{
 			this.originY = originY;

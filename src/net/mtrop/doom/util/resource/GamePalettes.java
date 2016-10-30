@@ -7,7 +7,7 @@
  ******************************************************************************/
 package net.mtrop.doom.util.resource;
 
-import net.mtrop.doom.struct.Palette;
+import net.mtrop.doom.graphics.Palette;
 
 /**
  * Interface that contains known Doom Engine game palettes.

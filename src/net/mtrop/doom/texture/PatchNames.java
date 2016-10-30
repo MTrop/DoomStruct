@@ -14,7 +14,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import com.blackrook.commons.Common;
-import com.blackrook.commons.map.CaseInsensitiveMappedVector;
+import com.blackrook.commons.ResettableIterable;
+import com.blackrook.commons.ResettableIterator;
+import com.blackrook.commons.Sizable;
+import com.blackrook.commons.map.AbstractMappedVector;
 import com.blackrook.io.SuperReader;
 import com.blackrook.io.SuperWriter;
 
@@ -25,23 +28,24 @@ import net.mtrop.doom.util.NameUtils;
  * A list of names of available patch entries for texture composition.
  * @author Matthew Tropiano
  */
-public class PatchNames extends CaseInsensitiveMappedVector<String> implements BinaryObject
+public class PatchNames implements BinaryObject, ResettableIterable<String>, Sizable
 {
+	/** List of names. */
+	protected AbstractMappedVector<String, String> nameList;
 
 	/**
 	 * Creates a new PatchNames with a default starting capacity.
 	 */
 	public PatchNames()
 	{
-		super();
-	}
-
-	/**
-	 * Creates a new PatchNames with a specific starting capacity.
-	 */
-	public PatchNames(int capacity)
-	{
-		super(capacity);
+		this.nameList = new AbstractMappedVector<String, String>(32)
+		{
+			@Override
+			protected String getMappingKey(String object) 
+			{
+				return object;
+			}
+		};
 	}
 
 	/**
@@ -74,13 +78,74 @@ public class PatchNames extends CaseInsensitiveMappedVector<String> implements B
 	}
 	
 	/**
-	 * Gets the index of a patch name in this lump by its name.
-	 * @param name the name of the patch.
-	 * @return a valid index of found, or -1 if not.
+	 * Clears this list of patches.
 	 */
-	public int getIndex(String name)
+	public void clear()
 	{
-		return getIndexUsingKey(name);
+		nameList.clear();
+	}
+
+	/**
+	 * Adds a patch entry.
+	 * @param name the entry name.
+	 * @return the index of the added entry, or an existing index if it was already in the list.
+	 * @throws IllegalArgumentException if the provided name is not a valid entry name.
+	 * @see NameUtils#isValidEntryName(String) 
+	 */
+	public int addEntry(String name)
+	{
+		if (!NameUtils.isValidEntryName(name))
+			throw new IllegalArgumentException("name is not a valid entry name.");
+		
+		if (nameList.contains(name))
+			return nameList.getIndexOf(name);
+		
+		int out = nameList.size();
+		nameList.add(name);
+		return out;
+	}
+	
+	/**
+	 * Gets the patch entry at a specific index.
+	 * @param index the index to look up.
+	 * @return the corresponding index or <code>null</code> if no corresponding entry. 
+	 */
+	public String getEntry(int index)
+	{
+		return nameList.getByIndex(index);
+	}
+	
+	/**
+	 * Gets the index of a patch name in this lump by its name.
+	 * Search is sequential.
+	 * @param name the name of the patch.
+	 * @return a valid index if found, or -1 if not.
+	 */
+	public int getIndexOfEntry(String name)
+	{
+		return nameList.getIndexOf(name);
+	}
+
+	/**
+	 * Attempts to remove an entry by its name.
+	 * Note that this will shift the indices of the other entries. 
+	 * @param name the name of the entry.
+	 * @return true if removed, false if not.
+	 */
+	public boolean removeEntry(String name)
+	{
+		return nameList.remove(name);
+	}
+	
+	/**
+	 * Removes an entry at an index.
+	 * Note that this will shift the indices of the other entries. 
+	 * @param index the index to use. 
+	 * @return the entry removed, or <code>null</code> if no entry at that index.
+	 */
+	public String removeEntryByIndex(int index)
+	{
+		return nameList.removeIndex(index);
 	}
 	
 	@Override
@@ -106,7 +171,7 @@ public class PatchNames extends CaseInsensitiveMappedVector<String> implements B
 		SuperReader sr = new SuperReader(in, SuperReader.LITTLE_ENDIAN);
 		int n = sr.readInt();
 		while (n-- > 0)
-			add(NameUtils.toValidEntryName(NameUtils.nullTrim(sr.readASCIIString(8))));
+			addEntry(NameUtils.toValidEntryName(NameUtils.nullTrim(sr.readASCIIString(8))));
 	}
 
 	@Override
@@ -119,9 +184,21 @@ public class PatchNames extends CaseInsensitiveMappedVector<String> implements B
 	}
 
 	@Override
-	protected String getMappingKey(String object)
+	public ResettableIterator<String> iterator()
 	{
-		return object;
+		return nameList.iterator();
+	}
+
+	@Override
+	public int size() 
+	{
+		return nameList.size();
+	}
+
+	@Override
+	public boolean isEmpty() 
+	{
+		return nameList.isEmpty();
 	}
 
 }

@@ -88,7 +88,7 @@ public final class NameUtils
 			return name;
 		
 		if (Common.isEmpty(name))
-			return "";
+			return "-";
 			
 		// remove diacritics
 		name = Normalizer.normalize(name, Form.NFC);
@@ -135,7 +135,7 @@ public final class NameUtils
 	 */
 	public static boolean isValidTextureName(String name)
 	{
-		return name != null && TEXTURE_NAME.matcher(name).matches();
+		return !Common.isEmpty(name) && TEXTURE_NAME.matcher(name).matches();
 	}
 
 	/**
