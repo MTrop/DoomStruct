@@ -1,5 +1,11 @@
 Doom Struct (C) 2015-2016 Matt Tropiano et al.
 
+Changed in 1.0.1
+----------------
+
+- WadBuffer data-adding methods created entries with swapped offset and sizes.
+
+
 Changed in 1.0.0
 ----------------
 
