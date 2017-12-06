@@ -42,6 +42,29 @@
 	/>
 
 	<import file="build-import.xml" />
+	<import file="build-dependencies.xml" />
+
+	<target name="dependency.common">
+		<git-export repository="https://github.com/BlackRookSoftware/Common" dest="${dependencies.dir}/Common" />
+		<ant antfile="${dependencies.dir}/Common/build.xml" useNativeBasedir="true" inheritAll="false" target="compile" />
+	</target>
+
+	<target name="dependency.commonio">
+		<git-export repository="https://github.com/BlackRookSoftware/CommonIO" dest="${dependencies.dir}/CommonIO" />
+		<ant antfile="${dependencies.dir}/CommonIO/build.xml" useNativeBasedir="true" inheritAll="false" target="compile" />
+	</target>
+
+	<target name="dependency.commonlang">
+		<git-export repository="https://github.com/BlackRookSoftware/CommonLang" dest="${dependencies.dir}/CommonLang" />
+		<ant antfile="${dependencies.dir}/CommonLang/build.xml" useNativeBasedir="true" inheritAll="false" target="compile" />
+	</target>
+	<target name="dependency.properties">
+		<echo message="Writing to build.properties...." />
+		<echo message="dev.base=${dependencies.dir}&#10;" file="build.properties" append="true" />
+	</target>
+
+	<target name="dependencies" depends="init.dependencies, dependency.common, dependency.commonio, dependency.commonlang, dependency.properties" description="Downloads and compiles the dependencies.">
+	</target>
 
 	<target name="javadoc" depends="init.docs" description="Builds the documentation.">
         <javadoc access="protected" 
@@ -61,10 +84,10 @@
         	nonavbar="false" 
         	notree="false"
     		>
-        	<link href="http://blackrooksoftware.com/docs/common/"/>
-            <link href="http://blackrooksoftware.com/docs/commonio/"/>
-            <link href="http://blackrooksoftware.com/docs/commonlang/"/>
-            <link href="http://docs.oracle.com/javase/7/docs/api/"/>
+        	<link href="https://blackrooksoftware.com/docs/common/"/>
+            <link href="https://blackrooksoftware.com/docs/commonio/"/>
+            <link href="https://blackrooksoftware.com/docs/commonlang/"/>
+            <link href="https://docs.oracle.com/javase/8/docs/api/"/>
         </javadoc>
     </target>	
 

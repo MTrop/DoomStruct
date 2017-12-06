@@ -51,6 +51,24 @@ Contained in this release is a series of libraries that allow reading, writing,
 and extracting data in Doom Engine structures, found in the **net.mtrop.doom** 
 packages. 
 
+### Compiling with Ant
+
+To download the dependencies for this project (if you didn't set that up yourself already), type:
+
+	ant dependencies
+
+A *build.properties* file will be created/appended to with the *dev.base* property set.
+	
+To compile this library with Apache Ant, type:
+
+	ant compile
+
+To make a JAR of this library, type:
+
+	ant jar
+
+And it will be placed in the *build/jar* directory.
+
 ### Other
 
 This program/library and the accompanying materials

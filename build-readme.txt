@@ -12,6 +12,9 @@ The build script (build.xml) contains multiple targets of note, including:
 
 clean 
 	Cleans the build directory contents.
+dependencies
+	Pulls dependencies into the dependency folders and adds them to 
+	build.properties for "dev.base".
 compile
 	Compiles the Java source to classes.
 javadoc

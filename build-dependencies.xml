@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Copyright (c) 2015-2017 Matt Tropiano
+    All rights reserved. This program and the accompanying materials
+    are made available under the terms of the GNU Lesser Public License v2.1
+    which accompanies this distribution, and is available at
+    http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
+   
+    Contributors:
+        Matt Tropiano - initial API and implementation
+ -->
+<!DOCTYPE project>
+<project name="dependencies" default="compile">
+
+	<!-- Folders and File Names -->
+
+	<property name="dependencies.dir" value="deps" />
+
+	<!-- Git Macros -->
+	
+	<macrodef name="git">
+		<attribute name="command" />
+		<attribute name="dir" default="" />
+		<element name="args" optional="true" />
+		<sequential>
+			<echo message="git @{command}" />
+			<exec executable="git" dir="@{dir}">
+				<arg value="@{command}" />
+				<args/>
+			</exec>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="git-clone">
+		<attribute name="repository" />
+		<attribute name="dest" />
+		<sequential>
+			<git command="clone">
+				<args>
+					<arg value="@{repository}" />
+					<arg value="@{dest}" />
+				</args>
+			</git>
+		</sequential>
+	</macrodef>
+	
+	<macrodef name="git-pull">
+		<attribute name="dest" />
+		<sequential>
+			<git command="pull" dir="@{dest}" />
+		</sequential>
+	</macrodef>
+
+	<macrodef name="git-export">
+		<attribute name="repository" />
+		<attribute name="dest" />
+		<sequential>
+			<git-clone repository="@{repository}" dest="@{dest}" />
+			<delete dir="@{dest}/.git" includeemptydirs="true" casesensitive="false" /> 
+		</sequential>
+	</macrodef>
+
+	<macrodef name="git-clone-pull">
+		<attribute name="repository" />
+		<attribute name="dest" />
+		<sequential>
+			<git-clone repository="@{repository}" dest="@{dest}" />
+			<git-pull dest="@{dest}" />
+		</sequential>
+	</macrodef>
+
+	<!-- Targets -->
+
+	<target name="clean.dependencies" description="Cleans up the dependencies.">
+		<delete quiet="true" includeemptydirs="true">
+			<fileset dir="${dependencies.dir}" includes="**/*" defaultexcludes="false" />
+		</delete>
+	</target>
+	
+	<target name="init.dependencies" depends="clean.dependencies" description="Initializes the dependencies folders.">
+		<mkdir dir="${dependencies.dir}" />
+	</target>
+
+</project>
