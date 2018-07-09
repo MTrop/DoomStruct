@@ -1,4 +1,10 @@
-Doom Struct (C) 2015-2016 Matt Tropiano et al.
+Doom Struct (C) 2015-2018 Matt Tropiano et al.
+
+Changed in 1.0.2
+----------------
+
+- Fixed: WadFile.addData(...) wrote an entry out of order.
+
 
 Changed in 1.0.1
 ----------------
