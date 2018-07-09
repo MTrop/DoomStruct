@@ -233,10 +233,11 @@ public class WadFile implements Wad, Closeable
 	{
 		WadEntry entry = WadEntry.create(entryName, entryListOffset, data.length);
 		entries.add(entry);
-		writeHeader();
+
 		file.seek(entryListOffset);
 		file.write(data);
 		entryListOffset += data.length;
+		writeHeader();
 		writeEntryList();
 		return entry;
 	}
