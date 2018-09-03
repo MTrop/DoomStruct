@@ -28,7 +28,7 @@ import com.blackrook.io.SuperWriter;
  * which being dictated by the length of the entry list (as the list grows, so does the time it takes to write/change it).
  * @author Matthew Tropiano
  */
-public class WadFile implements Wad, Closeable
+public class WadFile implements Wad, AutoCloseable
 {
 	private static final byte[] NO_DATA = new byte[0];
 
@@ -197,17 +197,6 @@ public class WadFile implements Wad, Closeable
 	public final String getFileAbsolutePath()
 	{
 		return fileAbsolutePath;
-	}
-
-	/**
-	 * Closes the file once it is cleaned up by gc().
-	 */
-	public void finalize() throws Throwable
-	{
-		try{
-		close();
-		super.finalize();
-		} catch (IOException e){}
 	}
 
 	@Override

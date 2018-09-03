@@ -1,5 +1,11 @@
 Doom Struct (C) 2015-2018 Matt Tropiano et al.
 
+Slated for 1.0.3
+----------------
+
+- Made WadFile AutoCloseable and fixed finalize() deprecation.
+
+
 Changed in 1.0.2
 ----------------
 
