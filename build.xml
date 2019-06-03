@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE project>
 <!-- ====================================================================== 
-     Doom Struct Build File   
+     Black Rook Base Build File    
      Matt Tropiano                                                                
      ====================================================================== -->
 <project name="build" default="compile">
 
-	<description>Doom Struct</description>
+	<description>Black Rook Base</description>
 
 	<property file="build.properties" />
 
@@ -15,66 +15,30 @@
 	<property name="S" value="${path.separator}" />
 
 	<!-- Project Libs -->
-	<property name="common.lib" value="${dev.base}/Common/bin" />
-	<property name="common.io.lib" value="${dev.base}/CommonIO/bin"/>
-	<property name="common.lang.lib" value="${dev.base}/CommonLang/bin"/>
-
+	
 	<!-- Project Info -->
-	<property name="project.archive" value="mtrop-doom" />
-	<property name="project.javadoc.title" value="Doom Struct" />
-	<property name="project.classpath" value="${common.lib}${S}${common.io.lib}${S}${common.lang.lib}" />
+	<property name="project.archive" value="blackrook-base" />
+	<property name="project.javadoc.title" value="Black Rook Base" />
+	<property name="project.classpath" value=""/>
+	<property name="project.testclass" value="com.blackrook.base.TestTest"/>
+	<property name="project.testclass.main" value="com.blackrook.base.util.TestUtils"/>
 	<property name="project.javadoc.packages" value="
-		net.mtrop.doom,
-		net.mtrop.doom.enums,
-		net.mtrop.doom.exception,
-		net.mtrop.doom.graphics,
-		net.mtrop.doom.map,
-		net.mtrop.doom.map.binary,
-		net.mtrop.doom.map.bsp,
-		net.mtrop.doom.map.udmf,
-		net.mtrop.doom.map.udmf.attributes,
-		net.mtrop.doom.sound,
-		net.mtrop.doom.struct,
-		net.mtrop.doom.texture,
-		net.mtrop.doom.util,
-		net.mtrop.doom.util.resource,
+		com.blackrook.base,
+		com.blackrook.base.trie,
+		com.blackrook.base.util
 		"
 	/>
-
+	
 	<import file="build-import.xml" />
-	<import file="build-dependencies.xml" />
-
-	<target name="dependency.common">
-		<git-export repository="https://github.com/BlackRookSoftware/Common" dest="${dependencies.dir}/Common" />
-		<ant antfile="${dependencies.dir}/Common/build.xml" useNativeBasedir="true" inheritAll="false" target="compile" />
-	</target>
-
-	<target name="dependency.commonio">
-		<git-export repository="https://github.com/BlackRookSoftware/CommonIO" dest="${dependencies.dir}/CommonIO" />
-		<ant antfile="${dependencies.dir}/CommonIO/build.xml" useNativeBasedir="true" inheritAll="false" target="compile" />
-	</target>
-
-	<target name="dependency.commonlang">
-		<git-export repository="https://github.com/BlackRookSoftware/CommonLang" dest="${dependencies.dir}/CommonLang" />
-		<ant antfile="${dependencies.dir}/CommonLang/build.xml" useNativeBasedir="true" inheritAll="false" target="compile" />
-	</target>
-	<target name="dependency.properties">
-		<echo message="Writing to build.properties...." />
-		<echo message="dev.base=${dependencies.dir}&#10;" file="build.properties" append="true" />
-	</target>
-
-	<target name="dependencies" depends="init.dependencies, dependency.common, dependency.commonio, dependency.commonlang, dependency.properties" description="Downloads and compiles the dependencies.">
-	</target>
 
 	<target name="javadoc" depends="init.docs" description="Builds the documentation.">
         <javadoc access="protected" 
-        	additionalparam="-J-Xmx512m -Xmaxwarns 500" author="true" 
-        	classpath="${project.classpath}${path.separator}${bin.dir}" 
+        	additionalparam="-J-Xmx512m  " author="true" 
+        	classpath="${bin.dir}" 
         	doctitle="${project.javadoc.title}" 
         	sourcepath="${src.dir}" 
         	packagenames="${project.javadoc.packages}"
         	destdir="${docs.dir}" 
-    		source="1.8" 
         	splitindex="true" 
         	use="true" 
         	version="true" 
@@ -84,10 +48,7 @@
         	nonavbar="false" 
         	notree="false"
     		>
-        	<link href="https://blackrooksoftware.com/docs/common/"/>
-            <link href="https://blackrooksoftware.com/docs/commonio/"/>
-            <link href="https://blackrooksoftware.com/docs/commonlang/"/>
-            <link href="https://docs.oracle.com/javase/8/docs/api/"/>
+            <link href="https://docs.oracle.com/en/java/javase/11/docs/api/"/>
         </javadoc>
     </target>	
 
