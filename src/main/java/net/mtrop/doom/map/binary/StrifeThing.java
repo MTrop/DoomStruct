@@ -13,11 +13,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import com.blackrook.commons.Common;
-import com.blackrook.io.SuperReader;
-import com.blackrook.io.SuperWriter;
-
-import net.mtrop.doom.BinaryObject;
+import net.mtrop.doom.util.SerialReader;
+import net.mtrop.doom.util.SerialWriter;
+import net.mtrop.doom.util.Utils;
 
 /**
  * Doom/Boom 10-byte format implementation of Thing that uses
@@ -25,7 +23,7 @@ import net.mtrop.doom.BinaryObject;
  * except interpreted differently.
  * @author Matthew Tropiano
  */
-public class StrifeThing extends CommonThing implements BinaryObject
+public class StrifeThing extends CommonThing
 {
 	/** Byte length of this object. */
 	public static final int LENGTH = 10;
@@ -170,41 +168,41 @@ public class StrifeThing extends CommonThing implements BinaryObject
 	{
 		ByteArrayInputStream bin = new ByteArrayInputStream(data);
 		readBytes(bin);
-		Common.close(bin);
+		Utils.close(bin);
 	}
 
 	@Override
 	public void readBytes(InputStream in) throws IOException
 	{
-		SuperReader sr = new SuperReader(in, SuperReader.LITTLE_ENDIAN);
-		x = sr.readShort();
-		y = sr.readShort();
-		angle = sr.readUnsignedShort();
-		type = sr.readUnsignedShort();
+		SerialReader sr = new SerialReader(SerialReader.LITTLE_ENDIAN);
+		x = sr.readShort(in);
+		y = sr.readShort(in);
+		angle = sr.readUnsignedShort(in);
+		type = sr.readUnsignedShort(in);
 		
 		// bitflags
-		int flags = sr.readUnsignedShort();
-		easy = Common.bitIsSet(flags, (1 << 0));
-		medium = Common.bitIsSet(flags, (1 << 1));
-		hard = Common.bitIsSet(flags, (1 << 2));
-		ambush = Common.bitIsSet(flags, (1 << 3));
-		notSinglePlayer = Common.bitIsSet(flags, (1 << 4));
-		ambush = Common.bitIsSet(flags, (1 << 5));
-		ally = Common.bitIsSet(flags, (1 << 7));
-		translucent25 = Common.bitIsSet(flags, (1 << 8));
-		translucent75 = Common.bitIsSet(flags, (1 << 9));
+		int flags = sr.readUnsignedShort(in);
+		easy = Utils.bitIsSet(flags, (1 << 0));
+		medium = Utils.bitIsSet(flags, (1 << 1));
+		hard = Utils.bitIsSet(flags, (1 << 2));
+		ambush = Utils.bitIsSet(flags, (1 << 3));
+		notSinglePlayer = Utils.bitIsSet(flags, (1 << 4));
+		ambush = Utils.bitIsSet(flags, (1 << 5));
+		ally = Utils.bitIsSet(flags, (1 << 7));
+		translucent25 = Utils.bitIsSet(flags, (1 << 8));
+		translucent75 = Utils.bitIsSet(flags, (1 << 9));
 	}
 
 	@Override
 	public void writeBytes(OutputStream out) throws IOException
 	{
-		SuperWriter sw = new SuperWriter(out, SuperWriter.LITTLE_ENDIAN);
-		sw.writeShort((short)x);
-		sw.writeShort((short)y);
-		sw.writeShort((short)angle);
-		sw.writeShort((short)type);
+		SerialWriter sw = new SerialWriter(SerialWriter.LITTLE_ENDIAN);
+		sw.writeShort(out, (short)x);
+		sw.writeShort(out, (short)y);
+		sw.writeShort(out, (short)angle);
+		sw.writeShort(out, (short)type);
 		
-		sw.writeUnsignedShort(Common.booleansToInt(
+		sw.writeUnsignedShort(out, Utils.booleansToInt(
 			easy,
 			medium,
 			hard,

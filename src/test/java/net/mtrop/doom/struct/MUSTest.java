@@ -12,9 +12,9 @@ import java.io.IOException;
 import net.mtrop.doom.WadFile;
 import net.mtrop.doom.sound.DMXMUS;
 
-import com.blackrook.commons.Common;
-import com.blackrook.commons.logging.Logger;
-import com.blackrook.commons.logging.LoggingFactory;
+import net.mtrop.doom.LoggingFactory;
+import net.mtrop.doom.LoggingFactory.Logger;
+import net.mtrop.doom.util.Utils;
 
 public final class MUSTest
 {
@@ -28,6 +28,6 @@ public final class MUSTest
 		for (DMXMUS.Event event : mus)
 			logger.info(event);
 		
-		Common.close(wad);
+		Utils.close(wad);
 	}
 }

@@ -7,10 +7,11 @@
  ******************************************************************************/
 package net.mtrop.doom.map;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.mtrop.doom.map.binary.HexenLinedef;
 import net.mtrop.doom.map.binary.HexenThing;
-
-import com.blackrook.commons.list.List;
 
 /**
  * Doom map in Doom Format.
@@ -29,8 +30,8 @@ public class HexenMap extends CommonMap
 	public HexenMap()
 	{
 		super();
-		things = new List<HexenThing>(100);
-		linedefs = new List<HexenLinedef>(100);
+		things = new ArrayList<HexenThing>(100);
+		linedefs = new ArrayList<HexenLinedef>(100);
 	}
 	
 	/**

@@ -7,14 +7,14 @@
  ******************************************************************************/
 package net.mtrop.doom.map.binary;
 
-import net.mtrop.doom.map.MapObject;
+import net.mtrop.doom.BinaryObject;
 import net.mtrop.doom.util.RangeUtils;
 
 /**
  * Contains common elements of all binary things.
  * @author Matthew Tropiano
  */
-public abstract class CommonThing implements MapObject
+public abstract class CommonThing implements BinaryObject
 {
 	/** Thing X position. */
 	protected int x;

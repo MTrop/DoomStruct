@@ -16,9 +16,9 @@ import net.mtrop.doom.texture.TextureSet;
 import net.mtrop.doom.texture.TextureSet.Patch;
 import net.mtrop.doom.texture.TextureSet.Texture;
 
-import com.blackrook.commons.Common;
-import com.blackrook.commons.logging.Logger;
-import com.blackrook.commons.logging.LoggingFactory;
+import net.mtrop.doom.LoggingFactory;
+import net.mtrop.doom.LoggingFactory.Logger;
+import net.mtrop.doom.util.Utils;
 
 public final class TextureTest
 {
@@ -32,7 +32,7 @@ public final class TextureTest
 		//DoomTextureList texture2 = DoomTextureList.create(wad.getData("TEXTURE2"));
 		PatchNames pnames = PatchNames.create(wad.getData("PNAMES"));
 
-		Common.close(wad);
+		Utils.close(wad);
 
 		/*
 		for (DoomTexture tex : texture1)

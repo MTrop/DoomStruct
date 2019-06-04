@@ -7,21 +7,18 @@
  ******************************************************************************/
 package net.mtrop.doom.graphics;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.HashMap;
 
 import net.mtrop.doom.BinaryObject;
 import net.mtrop.doom.GraphicObject;
 import net.mtrop.doom.util.RangeUtils;
-
-import com.blackrook.commons.Common;
-import com.blackrook.commons.hash.HashMap;
-import com.blackrook.commons.math.RMath;
-import com.blackrook.io.SuperReader;
-import com.blackrook.io.SuperWriter;
+import net.mtrop.doom.util.SerialReader;
+import net.mtrop.doom.util.SerialWriter;
+import net.mtrop.doom.util.Utils;
 
 /**
  * Doom graphic data stored as column-major indices (patches and most graphics with baked-in offsets). 
@@ -61,35 +58,6 @@ public class Picture implements BinaryObject, GraphicObject
 		offsetX = 0;
 		offsetY = 0;
 		setDimensions(width, height);
-	}
-
-	/**
-	 * Reads and creates a new Picture object from an array of bytes.
-	 * This reads until it reaches the end of the picture data.
-	 * @param bytes the byte array to read.
-	 * @return a new Picture from the data.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static Picture create(byte[] bytes) throws IOException
-	{
-		Picture out = new Picture();
-		out.fromBytes(bytes);
-		return out;
-	}
-
-	/**
-	 * Reads and creates a new Picture from an {@link InputStream} implementation.
-	 * This reads from the stream until enough bytes for the full {@link Picture} are read.
-	 * The stream is NOT closed at the end.
-	 * @param in the open {@link InputStream} to read from.
-	 * @return a new Picture from the data.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static Picture read(InputStream in) throws IOException
-	{
-		Picture out = new Picture();
-		out.readBytes(in);
-		return out;
 	}
 
 	/**
@@ -170,7 +138,7 @@ public class Picture implements BinaryObject, GraphicObject
 	public void setPixel(int x, int y, int value)
 	{
 		RangeUtils.checkRange("Pixel ("+x+", "+y+")", -1, 255, value);
-		pixels[x][y] = (short)RMath.clampValue(value, -1, 255);
+		pixels[x][y] = (short)Utils.clampValue(value, -1, 255);
 	}
 	
 	/**
@@ -185,31 +153,15 @@ public class Picture implements BinaryObject, GraphicObject
 	}
 	
 	@Override
-	public byte[] toBytes()
-	{
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		try { writeBytes(bos); } catch (IOException e) { /* Shouldn't happen. */ }
-		return bos.toByteArray();
-	}
-
-	@Override
-	public void fromBytes(byte[] data) throws IOException
-	{
-		ByteArrayInputStream bin = new ByteArrayInputStream(data);
-		readBytes(bin);
-		Common.close(bin);
-	}
-
-	@Override
 	public void readBytes(InputStream in) throws IOException
 	{
-		SuperReader sr = new SuperReader(in,SuperReader.LITTLE_ENDIAN);
-		setDimensions(sr.readUnsignedShort(), sr.readUnsignedShort());
-		offsetX = sr.readShort();
-		offsetY = sr.readShort();
+		SerialReader sr = new SerialReader(SerialReader.LITTLE_ENDIAN);
+		setDimensions(sr.readUnsignedShort(in), sr.readUnsignedShort(in));
+		offsetX = sr.readShort(in);
+		offsetY = sr.readShort(in);
 
 		// load offset table.
-		int[] columnOffsets = sr.readInts(getWidth());
+		int[] columnOffsets = sr.readInts(in, getWidth());
 		
 		// data must be treated as a stream: find highest short offset so that the reading can stop.
 		int offMax = -1;
@@ -222,7 +174,7 @@ public class Picture implements BinaryObject, GraphicObject
 		HashMap<Integer, byte[]> columnData = new HashMap<Integer, byte[]>();
 
 		for (int i = 0; i < columnOffsets.length; i++)
-			columnData.put(columnOffsets[i],columnRead(sr));
+			columnData.put(columnOffsets[i],columnRead(sr, in));
 			
 		for (int x = 0; x < columnOffsets.length; x++)
 		{
@@ -243,11 +195,11 @@ public class Picture implements BinaryObject, GraphicObject
 	@Override
 	public void writeBytes(OutputStream out) throws IOException
 	{
-		SuperWriter sw = new SuperWriter(out, SuperWriter.LITTLE_ENDIAN);
-		sw.writeUnsignedShort(pixels.length);
-		sw.writeUnsignedShort(pixels[0].length);
-		sw.writeShort((short)offsetX);
-		sw.writeShort((short)offsetY);
+		SerialWriter sw = new SerialWriter(SerialWriter.LITTLE_ENDIAN);
+		sw.writeUnsignedShort(out, pixels.length);
+		sw.writeUnsignedShort(out, pixels[0].length);
+		sw.writeShort(out, (short)offsetX);
+		sw.writeShort(out, (short)offsetY);
 		
 		int[] columnOffsets = new int[getWidth()];
 
@@ -315,31 +267,31 @@ public class Picture implements BinaryObject, GraphicObject
 		}
 		
 		for (int n : columnOffsets)
-			sw.writeInt(n);
+			sw.writeInt(out, n);
 		
-		sw.writeBytes(dataBytes.toByteArray());
+		sw.writeBytes(out, dataBytes.toByteArray());
 	}
 
 	// Reads a column of pixels.
-	private byte[] columnRead(SuperReader sr) throws IOException
+	private byte[] columnRead(SerialReader sr, InputStream in) throws IOException
 	{
 		ByteArrayOutputStream out = new ByteArrayOutputStream(); 
 	
 		int offs = 0;
 		int span = 0;
 	
-		offs = (sr.readByte() & 0x0ff);
+		offs = (sr.readByte(in) & 0x0ff);
 		while (offs != 255)
 		{
-			span = (sr.readByte() & 0x0ff);
-			sr.readByte();
+			span = (sr.readByte(in) & 0x0ff);
+			sr.readByte(in);
 			
 			out.write(offs);
 			out.write(span);
-			out.write(sr.readBytes(span));
-			sr.readByte();
+			out.write(sr.readBytes(in, span));
+			sr.readByte(in);
 			
-			offs = (sr.readByte() & 0x0ff);
+			offs = (sr.readByte(in) & 0x0ff);
 		}
 		
 		return out.toByteArray();

@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.Deque;
 import java.util.LinkedList;
 
 import net.mtrop.doom.struct.Lexer;
@@ -64,38 +63,43 @@ public final class UDMFReader
 	 */
 	private static class UParser extends Parser
 	{
-		/** Struct stack. */
-		private Deque<UDMFObject> structStack;
-
-		private String currentStructType;
-		private String currentId;
-		
-		private Object currentValue;
-		
+		/** Struct table. */
 		private UDMFTable table;
-		
+		/** List of errors. */
+		private LinkedList<String> errors;
+
 		/**
 		 * Creates a new instance of a UDMF Reader.
 		 */
 		public UParser(ULexer lexer)
 		{
 			super(lexer);
+			this.table = null;
+			this.errors = new LinkedList<>();
+		}
+		
+		private void addErrorMessage(String message)
+		{
+			errors.add(getTokenInfoLine(message));
+		}
+		
+		private String[] getErrorMessages()
+		{
+			String[] out = new String[errors.size()];
+			errors.toArray(out);
+			return out;
 		}
 		
 		/**
 		 * Reads in UDMF text and returns a UDMFTable representing the structure.
-		 * @throws ParserException if a parsing error occurs.
+		 * @throws UDMFParseException if a parsing error occurs.
 		 */
 		public void read()
 		{
-			table = new UDMFTable();
-			structStack = new LinkedList<>();
-
-			structStack.push(table.getGlobalFields());
-			
+			UDMFTable udmfTable = new UDMFTable();
 			nextToken();
 			
-			while (currentToken() != null && StructureList());
+			while (currentToken() != null && StructureList(udmfTable));
 
 			String[] errors = getErrorMessages();
 			if (errors.length > 0)
@@ -110,6 +114,7 @@ public final class UDMFReader
 				throw new UDMFParseException(sb.toString());
 			}
 			
+			table = udmfTable;
 		}
 
 		public UDMFTable getTable()
@@ -117,18 +122,19 @@ public final class UDMFReader
 			return table;
 		}
 
-		private boolean StructureList()
+		private boolean StructureList(UDMFTable table)
 		{
 			if (currentType(ULexerKernel.TYPE_IDENTIFIER))
 			{
-				currentId = currentToken().getLexeme();
+				Object currentValue;
+				String currentId = currentToken().getLexeme();
 				nextToken();
 				
 				if (currentType(ULexerKernel.TYPE_EQUALS))
 				{
 					nextToken();
 					
-					if (!Value())
+					if ((currentValue = Value()) == null)
 					{
 						currentId = null;
 						return false;
@@ -140,7 +146,7 @@ public final class UDMFReader
 						return false;
 					}
 					
-					structStack.peek().set(currentId, currentValue);
+					table.getGlobalFields().set(currentId, currentValue);
 					currentId = null;
 					currentValue = null;
 					
@@ -148,16 +154,12 @@ public final class UDMFReader
 				}
 				else if (currentType(ULexerKernel.TYPE_LBRACE))
 				{
-					currentStructType = currentId;
+					UDMFObject udmfObject = new UDMFObject();
+					String currentStructType = currentId;
 					nextToken();
 					
-					UDMFObject object = new UDMFObject();
-					structStack.push(object);
-					if (!FieldExpressionList())
-					{
-						structStack.pop();
+					if (!FieldExpressionList(udmfObject))
 						return false;
-					}
 
 					if (!matchType(ULexerKernel.TYPE_RBRACE))
 					{
@@ -165,8 +167,7 @@ public final class UDMFReader
 						return false;
 					}
 
-					structStack.pop();
-					table.addObject(currentStructType, object);
+					table.addObject(currentStructType, udmfObject);
 					return true;
 				}
 				else
@@ -183,9 +184,10 @@ public final class UDMFReader
 			
 		}
 		
-		private boolean doField()
+		private boolean doField(UDMFObject udmfObject)
 		{
-			currentId = currentToken().getLexeme();
+			Object currentValue;
+			String currentId = currentToken().getLexeme();
 			nextToken();
 			
 			if (!matchType(ULexerKernel.TYPE_EQUALS))
@@ -194,7 +196,7 @@ public final class UDMFReader
 				return false;
 			}
 			
-			if (!Value())
+			if ((currentValue = Value()) == null)
 			{
 				currentId = null;
 				return false;
@@ -206,7 +208,7 @@ public final class UDMFReader
 				return false;
 			}
 			
-			structStack.peek().put(currentId, currentValue);
+			udmfObject.set(currentId, currentValue);
 			currentId = null;
 			currentValue = null;
 			
@@ -216,13 +218,12 @@ public final class UDMFReader
 		/*
 		 * FieldExpressionList := IDENTIFIER = Value ; FieldExpressionList | [e]
 		 */
-		private boolean FieldExpressionList()
+		private boolean FieldExpressionList(UDMFObject udmfObject)
 		{
-			if (currentType(ULexerKernel.TYPE_IDENTIFIER))
+			while (currentType(ULexerKernel.TYPE_IDENTIFIER))
 			{
-				if (!doField())
+				if (!doField(udmfObject))
 					return false;
-				return FieldExpressionList();
 			}
 			
 			return true; 
@@ -231,38 +232,40 @@ public final class UDMFReader
 		/*
 		 * Number := STRING | TRUE | FALSE | IntegerValue | FloatValue
 		 */
-		private boolean Value()
+		private Object Value()
 		{
+			Object currentValue;
 			if (currentType(ULexerKernel.TYPE_STRING))
 			{
 				currentValue = currentToken().getLexeme();
 				nextToken();
-				return true;
+				return currentValue;
 			}
 			else if (currentType(ULexerKernel.TYPE_TRUE))
 			{
 				currentValue = true;
 				nextToken();
-				return true;
+				return currentValue;
 			}
 			else if (currentType(ULexerKernel.TYPE_FALSE))
 			{
 				currentValue = false;
 				nextToken();
-				return true;
+				return currentValue;
 			}
-			else if (NumericValue())
-				return true;
+			else if ((currentValue = NumericValue()) != null)
+				return currentValue;
 
 			addErrorMessage("Expected valid value.");
-			return false; 
+			return null; 
 		}
 		
 		/*
 		 * NumericValue := PLUS NUMBER | MINUS NUMBER | NUMBER 
 		 */
-		private boolean NumericValue()
+		private Object NumericValue()
 		{
+			Object currentValue;
 			if (matchType(ULexerKernel.TYPE_MINUS))
 			{
 				if (currentType(ULexerKernel.TYPE_NUMBER))
@@ -272,19 +275,19 @@ public final class UDMFReader
 					{
 						currentValue = Integer.parseInt(lexeme.substring(2), 16);
 						nextToken();
-						return true;
+						return currentValue;
 					}
 					else if (lexeme.contains("."))
 					{
 						currentValue = Float.parseFloat(lexeme);
 						nextToken();
-						return true;
+						return currentValue;
 					}
 					else
 					{
 						currentValue = Integer.parseInt(lexeme);
 						nextToken();
-						return true;
+						return currentValue;
 					}
 				}
 			}
@@ -297,19 +300,19 @@ public final class UDMFReader
 					{
 						currentValue = Integer.parseInt(lexeme.substring(2), 16);
 						nextToken();
-						return true;
+						return currentValue;
 					}
 					else if (lexeme.contains("."))
 					{
 						currentValue = Float.parseFloat(lexeme);
 						nextToken();
-						return true;
+						return currentValue;
 					}
 					else
 					{
 						currentValue = Integer.parseInt(lexeme);
 						nextToken();
-						return true;
+						return currentValue;
 					}
 				}
 			}
@@ -320,23 +323,23 @@ public final class UDMFReader
 				{
 					currentValue = Integer.parseInt(lexeme.substring(2), 16);
 					nextToken();
-					return true;
+					return currentValue;
 				}
 				else if (lexeme.contains("."))
 				{
 					currentValue = Float.parseFloat(lexeme);
 					nextToken();
-					return true;
+					return currentValue;
 				}
 				else
 				{
 					currentValue = Integer.parseInt(lexeme);
 					nextToken();
-					return true;
+					return currentValue;
 				}
 			}
 			
-			return false;
+			return null;
 		}
 		
 	}

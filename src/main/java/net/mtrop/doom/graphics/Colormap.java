@@ -10,10 +10,7 @@ package net.mtrop.doom.graphics;
 import java.io.*;
 
 import net.mtrop.doom.BinaryObject;
-
-import com.blackrook.commons.Common;
-import com.blackrook.commons.math.RMath;
-import com.blackrook.io.SuperReader;
+import net.mtrop.doom.util.Utils;
 
 /**
  * This is a single entry that indexes the palette indices for color lookup.
@@ -48,68 +45,6 @@ public class Colormap implements BinaryObject
 		System.arraycopy(map.indices, 0, indices, 0, NUM_INDICES);
 	}
 	
-	/**
-	 * Reads and creates a new Colormap object from an array of bytes.
-	 * This reads the first 256 bytes from the array.
-	 * @param bytes the byte array to read.
-	 * @return a new Colormap object.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static Colormap create(byte[] bytes) throws IOException
-	{
-		Colormap out = new Colormap();
-		out.fromBytes(bytes);
-		return out;
-	}
-	
-	/**
-	 * Reads and creates a new Colormap from an {@link InputStream} implementation.
-	 * This reads from the stream until enough bytes for a {@link Colormap} are read (256 bytes).
-	 * The stream is NOT closed at the end.
-	 * @param in the open {@link InputStream} to read from.
-	 * @return a new Colormap with its fields set.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static Colormap read(InputStream in) throws IOException
-	{
-		Colormap out = new Colormap();
-		out.readBytes(in);
-		return out;
-	}
-	
-	/**
-	 * Reads and creates new Colormap from an array of bytes.
-	 * This reads from the first 256 * <code>count</code> bytes of the array.
-	 * @param bytes the byte array to read.
-	 * @param count the amount of objects to read.
-	 * @return an array of Colormap objects with its fields set.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static Colormap[] create(byte[] bytes, int count) throws IOException
-	{
-		return read(new ByteArrayInputStream(bytes), count);
-	}
-
-	/**
-	 * Reads and creates a new Colormap from an {@link InputStream} implementation.
-	 * This reads from the stream until enough bytes for <code>count</code> {@link Colormap}s are read.
-	 * The stream is NOT closed at the end.
-	 * @param in the open {@link InputStream} to read from.
-	 * @param count the amount of objects to read.
-	 * @return an array of Colormap objects with its fields set.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static Colormap[] read(InputStream in, int count) throws IOException
-	{
-		Colormap[] out = new Colormap[count];
-		for (int i = 0; i < count; i++)
-		{
-			out[i] = new Colormap();
-			out[i].readBytes(in);
-		}
-		return out;
-	}
-
 	/**
 	 * Creates a color map where each color is mapped to its own index
 	 * (index 0 is palette color 0 ... index 255 is palette color 255).
@@ -147,7 +82,7 @@ public class Colormap implements BinaryObject
 		float len = Math.abs(startValue - endValue) + 1f;
 		
 		for (int i = min; i <= max; i++)
-			indices[i] = (int)RMath.linearInterpolate((i - min) / len, startValue, endValue);
+			indices[i] = (int)Utils.linearInterpolate((i - min) / len, startValue, endValue);
 	}
 	
 	/**
@@ -177,27 +112,15 @@ public class Colormap implements BinaryObject
 	}
 	
 	@Override
-	public byte[] toBytes()
-	{
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		try { writeBytes(bos); } catch (IOException e) { /* Shouldn't happen. */ }
-		return bos.toByteArray();
-	}
-
-	@Override
-	public void fromBytes(byte[] data) throws IOException
-	{
-		ByteArrayInputStream bin = new ByteArrayInputStream(data);
-		readBytes(bin);
-		Common.close(bin);
-	}
-
-	@Override
 	public void readBytes(InputStream in) throws IOException
 	{
-		SuperReader sr = new SuperReader(in, SuperReader.LITTLE_ENDIAN); 
 		for (int i = 0; i < NUM_INDICES; i++)
-			indices[i] = sr.readByte() & 0x0ff;
+		{
+			int b = in.read();
+			if (b == -1)
+				throw new IOException("end of stream reached after index "+i);
+			indices[i] = b & 0x0ff;
+		}
 	}
 
 	@Override

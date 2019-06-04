@@ -11,10 +11,9 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import net.mtrop.doom.WadFile;
-
-import com.blackrook.commons.Common;
-import com.blackrook.commons.logging.Logger;
-import com.blackrook.commons.logging.LoggingFactory;
+import net.mtrop.doom.LoggingFactory;
+import net.mtrop.doom.LoggingFactory.Logger;
+import net.mtrop.doom.util.Utils;
 
 public class DoomSectorTest
 {
@@ -33,7 +32,7 @@ public class DoomSectorTest
 			logger.info((i++) + " " + object);
 		}
 		
-		Common.close(in);
-		Common.close(wad);
+		Utils.close(in);
+		Utils.close(wad);
 	}
 }

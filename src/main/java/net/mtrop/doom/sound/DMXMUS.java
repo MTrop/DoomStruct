@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.mtrop.doom.BinaryObject;
+import net.mtrop.doom.struct.SortedList;
 import net.mtrop.doom.util.SerialReader;
 import net.mtrop.doom.util.SerialWriter;
 import net.mtrop.doom.util.Utils;

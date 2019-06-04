@@ -7,10 +7,11 @@
  ******************************************************************************/
 package net.mtrop.doom.map;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.mtrop.doom.map.binary.DoomLinedef;
 import net.mtrop.doom.map.binary.StrifeThing;
-
-import com.blackrook.commons.list.List;
 
 /**
  * Doom map in Doom Format, but using Strife-flagged things.
@@ -29,8 +30,8 @@ public class StrifeMap extends CommonMap
 	public StrifeMap()
 	{
 		super();
-		things = new List<StrifeThing>(100);
-		linedefs = new List<DoomLinedef>(100);
+		things = new ArrayList<StrifeThing>(100);
+		linedefs = new ArrayList<DoomLinedef>(100);
 	}
 	
 	/**

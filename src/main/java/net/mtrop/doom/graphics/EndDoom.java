@@ -7,8 +7,6 @@
  ******************************************************************************/
 package net.mtrop.doom.graphics;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -17,17 +15,15 @@ import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 
 import net.mtrop.doom.BinaryObject;
-
-import com.blackrook.commons.Common;
-import com.blackrook.io.SuperReader;
-import com.blackrook.io.SuperWriter;
+import net.mtrop.doom.util.SerialReader;
+import net.mtrop.doom.util.SerialWriter;
 
 /**
- * Abstraction of the ENDDOOM and other similarly-formatted lumps for the Doom Engine.
+ * Abstraction of the ENDOOM and other similarly-formatted lumps for the Doom Engine.
  * An example of this would be the screen that is dumped to DOS after the player quits
  * or the loading screen for Heretic.
  * <p>
- * All characters are converted using the CP437 charset, aka the MS-DOS encoding for extended ASCII.
+ * All characters are converted using the CP437 charset (<code>Charset.forName("CP437")</code>), a.k.a. the MS-DOS encoding for extended ASCII.
  * @author Matthew Tropiano
  */
 public class EndDoom implements BinaryObject
@@ -86,35 +82,6 @@ public class EndDoom implements BinaryObject
 		tempByteBuffer = ByteBuffer.allocate(1);
 	}
 	
-	/**
-	 * Reads and creates a new EndDoom object from an array of bytes.
-	 * This reads from the array until 4000 bytes are read.
-	 * @param bytes the byte array to read.
-	 * @return a new EndDoom object.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static EndDoom create(byte[] bytes) throws IOException
-	{
-		EndDoom out = new EndDoom();
-		out.fromBytes(bytes);
-		return out;
-	}
-
-	/**
-	 * Reads and creates a new EndDoom from an {@link InputStream} implementation.
-	 * This reads from the stream until 4000 bytes are read.
-	 * The stream is NOT closed at the end.
-	 * @param in the open {@link InputStream} to read from.
-	 * @return a new EndDoom with its fields set.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static EndDoom read(InputStream in) throws IOException
-	{
-		EndDoom out = new EndDoom();
-		out.readBytes(in);
-		return out;
-	}
-
 	/**
 	 * Returns the VGA-formatted screen data for a particular ENDOOM screen coordinate.
 	 * <p>
@@ -284,37 +251,21 @@ public class EndDoom implements BinaryObject
 	}
 	
 	@Override
-	public byte[] toBytes()
-	{
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		try { writeBytes(bos); } catch (IOException e) { /* Shouldn't happen. */ }
-		return bos.toByteArray();
-	}
-
-	@Override
-	public void fromBytes(byte[] data) throws IOException
-	{
-		ByteArrayInputStream bin = new ByteArrayInputStream(data);
-		readBytes(bin);
-		Common.close(bin);
-	}
-
-	@Override
 	public void readBytes(InputStream in) throws IOException
 	{
-		SuperReader sr = new SuperReader(in, SuperWriter.LITTLE_ENDIAN);
+		SerialReader sr = new SerialReader(SerialReader.LITTLE_ENDIAN);
 		for (int r = 0; r < 25; r++)
 			for (int c = 0; c < 80; c++)
-				setVGAShort(r, c, sr.readShort());
+				setVGAShort(r, c, sr.readShort(in));
 	}
 
 	@Override
 	public void writeBytes(OutputStream out) throws IOException
 	{
-		SuperWriter sw = new SuperWriter(out, SuperWriter.LITTLE_ENDIAN);
+		SerialWriter sw = new SerialWriter(SerialWriter.LITTLE_ENDIAN);
 		for (int r = 0; r < 25; r++)
 			for (int c = 0; c < 80; c++)
-				sw.writeShort(getVGAShort(r, c));
+				sw.writeShort(out, getVGAShort(r, c));
 	}
 
 	@Override

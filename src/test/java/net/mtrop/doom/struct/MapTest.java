@@ -14,10 +14,9 @@ import net.mtrop.doom.enums.MapFormat;
 import net.mtrop.doom.exception.MapException;
 import net.mtrop.doom.util.MapUtils;
 
-import com.blackrook.commons.Common;
-import com.blackrook.commons.logging.Logger;
-import com.blackrook.commons.logging.LoggingFactory;
-import com.blackrook.lang.json.JSONWriter;
+import net.mtrop.doom.LoggingFactory;
+import net.mtrop.doom.LoggingFactory.Logger;
+import net.mtrop.doom.util.Utils;
 
 public final class MapTest
 {
@@ -34,17 +33,17 @@ public final class MapTest
 			switch (format)
 			{
 				case DOOM:
-					logger.info(JSONWriter.writeJSONString(MapUtils.createDoomMap(wad, i)));
+					logger.info(MapUtils.createDoomMap(wad, i));
 					break;
 				case STRIFE:
-					logger.info(JSONWriter.writeJSONString(MapUtils.createStrifeMap(wad, i)));
+					logger.info(MapUtils.createStrifeMap(wad, i));
 					break;
 				case HEXEN:
-					logger.info(JSONWriter.writeJSONString(MapUtils.createHexenMap(wad, i)));
+					logger.info(MapUtils.createHexenMap(wad, i));
 					break;
 			}
 			
 		}
-		Common.close(wad);
+		Utils.close(wad);
 	}
 }

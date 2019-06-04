@@ -7,17 +7,14 @@
  ******************************************************************************/
 package net.mtrop.doom.map.bsp;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
 import net.mtrop.doom.BinaryObject;
-
-import com.blackrook.commons.Common;
-import com.blackrook.io.SuperReader;
-import com.blackrook.io.SuperWriter;
+import net.mtrop.doom.util.SerialReader;
+import net.mtrop.doom.util.SerialWriter;
+import net.mtrop.doom.util.Utils;
 
 /**
  * Represents the Reject lump.
@@ -63,39 +60,47 @@ public class BSPReject implements BinaryObject
 	}
 	
 	@Override
-	public byte[] toBytes()
-	{
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		try { writeBytes(bos); } catch (IOException e) { /* Shouldn't happen. */ }
-		return bos.toByteArray();
-	}
-
-	@Override
-	public void fromBytes(byte[] data) throws IOException
-	{
-		ByteArrayInputStream bin = new ByteArrayInputStream(data);
-		readBytes(bin);
-		Common.close(bin);
-	}
-
-	@Override
 	public void readBytes(InputStream in) throws IOException
 	{
-		SuperReader sr = new SuperReader(in,SuperReader.LITTLE_ENDIAN);
+		SerialReader sr = new SerialReader(SerialReader.LITTLE_ENDIAN);
+
+		byte curByte = 0;
+		int bit = 0;
+		
 		for (int i = 0; i < grid.length; i++)
 			for (int j = 0; j < grid[i].length && in.available() > 0; j++)
-				grid[i][j] = sr.readBit();
-		sr.byteAlign();
+			{
+				if (bit == 8)
+				{
+					curByte = sr.readByte(in);
+					bit = 0;
+				}
+				grid[i][j] = (curByte & Utils.BITMASK[bit]) != 0;
+				bit++;
+			}
 	}
 
 	@Override
 	public void writeBytes(OutputStream out) throws IOException
 	{
-		SuperWriter sw = new SuperWriter(out, SuperWriter.LITTLE_ENDIAN);
+		SerialWriter sw = new SerialWriter(SerialWriter.LITTLE_ENDIAN);
+		byte curByte = 0;
+		int bit = 0;
+		
 		for (int i = 0; i < grid.length; i++)
 			for (int j = 0; j < grid[i].length; j++)
-				sw.writeBit(grid[i][j]);
-		sw.flushBits();
+			{
+				if (grid[i][j])
+					curByte &= (byte)(0x01 << bit);
+				bit++;
+				if (bit == 8)
+				{
+					sw.writeByte(out, curByte);
+					bit = 0;
+				}
+			}
+		if (bit != 0)
+			sw.writeByte(out, curByte);
 	}
 
 }

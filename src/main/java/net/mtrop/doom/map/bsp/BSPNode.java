@@ -7,18 +7,14 @@
  ******************************************************************************/
 package net.mtrop.doom.map.bsp;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
 import net.mtrop.doom.BinaryObject;
 import net.mtrop.doom.util.RangeUtils;
-
-import com.blackrook.commons.Common;
-import com.blackrook.io.SuperReader;
-import com.blackrook.io.SuperWriter;
+import net.mtrop.doom.util.SerialReader;
+import net.mtrop.doom.util.SerialWriter;
 
 /**
  * This contains the BSP tree information for a single 28-byte node in the tree.
@@ -65,68 +61,6 @@ public class BSPNode implements BinaryObject
 		leftSubsectorIndex = 0;
 	}
 
-	/**
-	 * Reads and creates a new BSPNode from an array of bytes.
-	 * This reads from the first 28 bytes of the array.
-	 * @param bytes the byte array to read.
-	 * @return a new BSPNode with its fields set.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static BSPNode create(byte[] bytes) throws IOException
-	{
-		BSPNode out = new BSPNode();
-		out.fromBytes(bytes);
-		return out;
-	}
-	
-	/**
-	 * Reads and creates a new BSPNode from an {@link InputStream} implementation.
-	 * This reads from the stream until enough bytes for a {@link BSPNode} are read.
-	 * The stream is NOT closed at the end.
-	 * @param in the open {@link InputStream} to read from.
-	 * @return a new BSPNode with its fields set.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static BSPNode read(InputStream in) throws IOException
-	{
-		BSPNode out = new BSPNode();
-		out.readBytes(in);
-		return out;
-	}
-	
-	/**
-	 * Reads and creates new BSPNodes from an array of bytes.
-	 * This reads from the first 28 * <code>count</code> bytes of the array.
-	 * @param bytes the byte array to read.
-	 * @param count the amount of objects to read.
-	 * @return an array of BSPNode objects with its fields set.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static BSPNode[] create(byte[] bytes, int count) throws IOException
-	{
-		return read(new ByteArrayInputStream(bytes), count);
-	}
-	
-	/**
-	 * Reads and creates new BSPNodes from an {@link InputStream} implementation.
-	 * This reads from the stream until enough bytes for <code>count</code> {@link BSPNode}s are read.
-	 * The stream is NOT closed at the end.
-	 * @param in the open {@link InputStream} to read from.
-	 * @param count the amount of objects to read.
-	 * @return an array of BSPNode objects with its fields set.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static BSPNode[] read(InputStream in, int count) throws IOException
-	{
-		BSPNode[] out = new BSPNode[count];
-		for (int i = 0; i < count; i++)
-		{
-			out[i] = new BSPNode();
-			out[i].readBytes(in);
-		}
-		return out;
-	}
-	
 	/** @return this node's partition line's X-coordinate. */
 	public int getPartitionLineX()
 	{
@@ -316,51 +250,35 @@ public class BSPNode implements BinaryObject
 	}
 
 	@Override
-	public byte[] toBytes()
-	{
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		try { writeBytes(bos); } catch (IOException e) { /* Shouldn't happen. */ }
-		return bos.toByteArray();
-	}
-
-	@Override
-	public void fromBytes(byte[] data) throws IOException
-	{
-		ByteArrayInputStream bin = new ByteArrayInputStream(data);
-		readBytes(bin);
-		Common.close(bin);
-	}
-
-	@Override
 	public void readBytes(InputStream in) throws IOException
 	{
-		SuperReader sr = new SuperReader(in, SuperReader.LITTLE_ENDIAN);
-		partitionLineX = sr.readShort();
-		partitionLineY = sr.readShort();
-		partitionDeltaX = sr.readShort();
-		partitionDeltaY = sr.readShort();
+		SerialReader sr = new SerialReader(SerialReader.LITTLE_ENDIAN);
+		partitionLineX = sr.readShort(in);
+		partitionLineY = sr.readShort(in);
+		partitionDeltaX = sr.readShort(in);
+		partitionDeltaY = sr.readShort(in);
 		for (int i = 0; i < 4; i++)
-			rightRect[i] = sr.readShort();
+			rightRect[i] = sr.readShort(in);
 		for (int i = 0; i < 4; i++)
-			leftRect[i] = sr.readShort();
-		rightSubsectorIndex = sr.readShort();
-		leftSubsectorIndex = sr.readShort();
+			leftRect[i] = sr.readShort(in);
+		rightSubsectorIndex = sr.readShort(in);
+		leftSubsectorIndex = sr.readShort(in);
 	}
 
 	@Override
 	public void writeBytes(OutputStream out) throws IOException
 	{
-		SuperWriter sw = new SuperWriter(out, SuperWriter.LITTLE_ENDIAN);
-		sw.writeShort((short)partitionLineX);
-		sw.writeShort((short)partitionLineY);
-		sw.writeShort((short)partitionDeltaX);
-		sw.writeShort((short)partitionDeltaY);
+		SerialWriter sw = new SerialWriter(SerialWriter.LITTLE_ENDIAN);
+		sw.writeShort(out, (short)partitionLineX);
+		sw.writeShort(out, (short)partitionLineY);
+		sw.writeShort(out, (short)partitionDeltaX);
+		sw.writeShort(out, (short)partitionDeltaY);
 		for (int i = 0; i < 4; i++)
-			sw.writeShort((short)rightRect[i]);
+			sw.writeShort(out, (short)rightRect[i]);
 		for (int i = 0; i < 4; i++)
-			sw.writeShort((short)leftRect[i]);
-		sw.writeShort((short)rightSubsectorIndex);
-		sw.writeShort((short)leftSubsectorIndex);
+			sw.writeShort(out, (short)leftRect[i]);
+		sw.writeShort(out, (short)rightSubsectorIndex);
+		sw.writeShort(out, (short)leftSubsectorIndex);
 	}
 
 }

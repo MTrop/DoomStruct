@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import net.mtrop.doom.BinaryObject;
 import net.mtrop.doom.Wad;
 import net.mtrop.doom.WadEntry;
 import net.mtrop.doom.enums.MapFormat;
@@ -136,35 +137,35 @@ public final class MapUtils
 				case LUMP_THINGS:
 				{
 					byte[] b = wad.getData(entry);
-					map.setThings(DoomThing.create(b, b.length / DoomThing.LENGTH));
+					map.setThings(BinaryObject.create(DoomThing.class, b, b.length / DoomThing.LENGTH));
 				}
 				break;
 
 				case LUMP_SECTORS:
 				{
 					byte[] b = wad.getData(entry);
-					map.setSectors(DoomSector.create(b, b.length / DoomSector.LENGTH));
+					map.setSectors(BinaryObject.create(DoomSector.class, b, b.length / DoomSector.LENGTH));
 				}
 				break;
 
 				case LUMP_VERTICES:
 				{
 					byte[] b = wad.getData(entry);
-					map.setVertices(DoomVertex.create(b, b.length / DoomVertex.LENGTH));
+					map.setVertices(BinaryObject.create(DoomVertex.class, b, b.length / DoomVertex.LENGTH));
 				}
 				break;
 
 				case LUMP_SIDEDEFS:
 				{
 					byte[] b = wad.getData(entry);
-					map.setSidedefs(DoomSidedef.create(b, b.length / DoomSidedef.LENGTH));
+					map.setSidedefs(BinaryObject.create(DoomSidedef.class, b, b.length / DoomSidedef.LENGTH));
 				}
 				break;
 
 				case LUMP_LINEDEFS:
 				{
 					byte[] b = wad.getData(entry);
-					map.setLinedefs(DoomLinedef.create(b, b.length / DoomLinedef.LENGTH));
+					map.setLinedefs(BinaryObject.create(DoomLinedef.class, b, b.length / DoomLinedef.LENGTH));
 				}
 				break;
 			}
@@ -228,35 +229,35 @@ public final class MapUtils
 				case LUMP_THINGS:
 				{
 					byte[] b = wad.getData(entry);
-					map.setThings(StrifeThing.create(b, b.length / StrifeThing.LENGTH));
+					map.setThings(BinaryObject.create(StrifeThing.class, b, b.length / StrifeThing.LENGTH));
 				}
 				break;
 
 				case LUMP_SECTORS:
 				{
 					byte[] b = wad.getData(entry);
-					map.setSectors(DoomSector.create(b, b.length / DoomSector.LENGTH));
+					map.setSectors(BinaryObject.create(DoomSector.class, b, b.length / DoomSector.LENGTH));
 				}
 				break;
 
 				case LUMP_VERTICES:
 				{
 					byte[] b = wad.getData(entry);
-					map.setVertices(DoomVertex.create(b, b.length / DoomVertex.LENGTH));
+					map.setVertices(BinaryObject.create(DoomVertex.class, b, b.length / DoomVertex.LENGTH));
 				}
 				break;
 
 				case LUMP_SIDEDEFS:
 				{
 					byte[] b = wad.getData(entry);
-					map.setSidedefs(DoomSidedef.create(b, b.length / DoomSidedef.LENGTH));
+					map.setSidedefs(BinaryObject.create(DoomSidedef.class, b, b.length / DoomSidedef.LENGTH));
 				}
 				break;
 
 				case LUMP_LINEDEFS:
 				{
 					byte[] b = wad.getData(entry);
-					map.setLinedefs(DoomLinedef.create(b, b.length / DoomLinedef.LENGTH));
+					map.setLinedefs(BinaryObject.create(DoomLinedef.class, b, b.length / DoomLinedef.LENGTH));
 				}
 				break;
 			}
@@ -324,35 +325,35 @@ public final class MapUtils
 				case LUMP_THINGS:
 				{
 					byte[] b = wad.getData(entry);
-					map.setThings(HexenThing.create(b, b.length / HexenThing.LENGTH));
+					map.setThings(BinaryObject.create(HexenThing.class, b, b.length / HexenThing.LENGTH));
 				}
 				break;
 	
 				case LUMP_SECTORS:
 				{
 					byte[] b = wad.getData(entry);
-					map.setSectors(DoomSector.create(b, b.length / DoomSector.LENGTH));
+					map.setSectors(BinaryObject.create(DoomSector.class, b, b.length / DoomSector.LENGTH));
 				}
 				break;
 	
 				case LUMP_VERTICES:
 				{
 					byte[] b = wad.getData(entry);
-					map.setVertices(DoomVertex.create(b, b.length / DoomVertex.LENGTH));
+					map.setVertices(BinaryObject.create(DoomVertex.class, b, b.length / DoomVertex.LENGTH));
 				}
 				break;
 	
 				case LUMP_SIDEDEFS:
 				{
 					byte[] b = wad.getData(entry);
-					map.setSidedefs(DoomSidedef.create(b, b.length / DoomSidedef.LENGTH));
+					map.setSidedefs(BinaryObject.create(DoomSidedef.class, b, b.length / DoomSidedef.LENGTH));
 				}
 				break;
 	
 				case LUMP_LINEDEFS:
 				{
 					byte[] b = wad.getData(entry);
-					map.setLinedefs(HexenLinedef.create(b, b.length / HexenLinedef.LENGTH));
+					map.setLinedefs(BinaryObject.create(HexenLinedef.class, b, b.length / HexenLinedef.LENGTH));
 				}
 				break;
 			}
@@ -425,11 +426,11 @@ public final class MapUtils
 		byte[] data = null;
 
 		data = wad.getData(segs);
-		out.setSegs(BSPSegment.create(data, data.length / BSPSegment.LENGTH));
+		out.setSegs(BinaryObject.create(BSPSegment.class, data, data.length / BSPSegment.LENGTH));
 		data = wad.getData(ssectors);
-		out.setSubsectors(BSPSubsector.create(data, data.length / BSPSubsector.LENGTH));
+		out.setSubsectors(BinaryObject.create(BSPSubsector.class, data, data.length / BSPSubsector.LENGTH));
 		data = wad.getData(nodes);
-		out.setNodes(BSPNode.create(data, data.length / BSPNode.LENGTH));
+		out.setNodes(BinaryObject.create(BSPNode.class, data, data.length / BSPNode.LENGTH));
 		
 		return out;
 	}

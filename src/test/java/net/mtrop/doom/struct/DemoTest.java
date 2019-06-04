@@ -13,9 +13,9 @@ import java.io.InputStream;
 import net.mtrop.doom.WadFile;
 import net.mtrop.doom.demo.Demo;
 
-import com.blackrook.commons.Common;
-import com.blackrook.commons.logging.Logger;
-import com.blackrook.commons.logging.LoggingFactory;
+import net.mtrop.doom.LoggingFactory;
+import net.mtrop.doom.LoggingFactory.Logger;
+import net.mtrop.doom.util.Utils;
 
 public final class DemoTest
 {
@@ -33,7 +33,7 @@ public final class DemoTest
 				logger.info(tic);
 				
 		
-		Common.close(in);
-		Common.close(wad);
+		Utils.close(in);
+		Utils.close(wad);
 	}
 }

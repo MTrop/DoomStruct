@@ -7,18 +7,14 @@
  ******************************************************************************/
 package net.mtrop.doom.map.bsp;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
 import net.mtrop.doom.BinaryObject;
 import net.mtrop.doom.util.RangeUtils;
-
-import com.blackrook.commons.Common;
-import com.blackrook.io.SuperReader;
-import com.blackrook.io.SuperWriter;
+import net.mtrop.doom.util.SerialReader;
+import net.mtrop.doom.util.SerialWriter;
 
 /**
  * 12-byte BSP Segment information for a BSP tree in Doom.
@@ -69,68 +65,6 @@ public class BSPSegment implements BinaryObject
 		offset = 0;
 	}
 
-	/**
-	 * Reads and creates a new BSPSegment from an array of bytes.
-	 * This reads from the first 12 bytes of the array.
-	 * @param bytes the byte array to read.
-	 * @return a new BSPSegment with its fields set.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static BSPSegment create(byte[] bytes) throws IOException
-	{
-		BSPSegment out = new BSPSegment();
-		out.fromBytes(bytes);
-		return out;
-	}
-	
-	/**
-	 * Reads and creates a new BSPSegment from an {@link InputStream} implementation.
-	 * This reads from the stream until enough bytes for a {@link BSPSegment} are read.
-	 * The stream is NOT closed at the end.
-	 * @param in the open {@link InputStream} to read from.
-	 * @return a new BSPSegment with its fields set.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static BSPSegment read(InputStream in) throws IOException
-	{
-		BSPSegment out = new BSPSegment();
-		out.readBytes(in);
-		return out;
-	}
-	
-	/**
-	 * Reads and creates new BSPSegments from an array of bytes.
-	 * This reads from the first 12 * <code>count</code> bytes of the array.
-	 * @param bytes the byte array to read.
-	 * @param count the amount of objects to read.
-	 * @return an array of BSPSegment objects with its fields set.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static BSPSegment[] create(byte[] bytes, int count) throws IOException
-	{
-		return read(new ByteArrayInputStream(bytes), count);
-	}
-	
-	/**
-	 * Reads and creates new BSPSegments from an {@link InputStream} implementation.
-	 * This reads from the stream until enough bytes for <code>count</code> {@link BSPSegment}s are read.
-	 * The stream is NOT closed at the end.
-	 * @param in the open {@link InputStream} to read from.
-	 * @param count the amount of objects to read.
-	 * @return an array of BSPSegment objects with its fields set.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static BSPSegment[] read(InputStream in, int count) throws IOException
-	{
-		BSPSegment[] out = new BSPSegment[count];
-		for (int i = 0; i < count; i++)
-		{
-			out[i] = new BSPSegment();
-			out[i].readBytes(in);
-		}
-		return out;
-	}
-	
 	/** 
 	 * @return this Seg's start vertex index reference. 
 	 */
@@ -246,43 +180,27 @@ public class BSPSegment implements BinaryObject
 	}
 
 	@Override
-	public byte[] toBytes()
-	{
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		try { writeBytes(bos); } catch (IOException e) { /* Shouldn't happen. */ }
-		return bos.toByteArray();
-	}
-
-	@Override
-	public void fromBytes(byte[] data) throws IOException
-	{
-		ByteArrayInputStream bin = new ByteArrayInputStream(data);
-		readBytes(bin);
-		Common.close(bin);
-	}
-
-	@Override
 	public void readBytes(InputStream in) throws IOException
 	{
-		SuperReader sr = new SuperReader(in, SuperReader.LITTLE_ENDIAN);
-		vertexStartIndex = sr.readUnsignedShort();
-		vertexEndIndex = sr.readUnsignedShort();
-		angle = sr.readUnsignedShort();
-		linedefIndex = sr.readUnsignedShort();
-		direction = sr.readUnsignedShort();
-		offset = sr.readUnsignedShort();
+		SerialReader sr = new SerialReader(SerialReader.LITTLE_ENDIAN);
+		vertexStartIndex = sr.readUnsignedShort(in);
+		vertexEndIndex = sr.readUnsignedShort(in);
+		angle = sr.readUnsignedShort(in);
+		linedefIndex = sr.readUnsignedShort(in);
+		direction = sr.readUnsignedShort(in);
+		offset = sr.readUnsignedShort(in);
 	}
 
 	@Override
 	public void writeBytes(OutputStream out) throws IOException
 	{
-		SuperWriter sw = new SuperWriter(out, SuperWriter.LITTLE_ENDIAN);
-		sw.writeUnsignedShort(vertexStartIndex);
-		sw.writeUnsignedShort(vertexEndIndex);
-		sw.writeUnsignedShort(angle);
-		sw.writeUnsignedShort(linedefIndex);
-		sw.writeUnsignedShort(direction);
-		sw.writeUnsignedShort(offset);
+		SerialWriter sw = new SerialWriter(SerialWriter.LITTLE_ENDIAN);
+		sw.writeUnsignedShort(out, vertexStartIndex);
+		sw.writeUnsignedShort(out, vertexEndIndex);
+		sw.writeUnsignedShort(out, angle);
+		sw.writeUnsignedShort(out, linedefIndex);
+		sw.writeUnsignedShort(out, direction);
+		sw.writeUnsignedShort(out, offset);
 	}
 
 }

@@ -7,10 +7,11 @@
  ******************************************************************************/
 package net.mtrop.doom.map;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.mtrop.doom.map.binary.DoomLinedef;
 import net.mtrop.doom.map.binary.DoomThing;
-
-import com.blackrook.commons.list.List;
 
 /**
  * Doom map in Doom Format.
@@ -29,8 +30,8 @@ public class DoomMap extends CommonMap
 	public DoomMap()
 	{
 		super();
-		things = new List<DoomThing>(100);
-		linedefs = new List<DoomLinedef>(100);
+		things = new ArrayList<DoomThing>(100);
+		linedefs = new ArrayList<DoomLinedef>(100);
 	}
 	
 	/**

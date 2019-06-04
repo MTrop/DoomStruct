@@ -7,14 +7,15 @@
  ******************************************************************************/
 package net.mtrop.doom.map.binary;
 
-import net.mtrop.doom.map.MapObject;
+import net.mtrop.doom.BinaryObject;
+import net.mtrop.doom.map.MapObjectConstants;
 import net.mtrop.doom.util.RangeUtils;
 
 /**
  * Contains common elements of all binary linedef.
  * @author Matthew Tropiano
  */
-public abstract class CommonLinedef implements MapObject
+public abstract class CommonLinedef implements BinaryObject
 {
 	/** Vertex start. */
 	protected int vertexStartIndex;
@@ -50,10 +51,10 @@ public abstract class CommonLinedef implements MapObject
 
 	protected CommonLinedef()
 	{
-		vertexStartIndex = NULL_REFERENCE;
-		vertexEndIndex = NULL_REFERENCE;
-		sidedefFrontIndex = NULL_REFERENCE;
-		sidedefBackIndex = NULL_REFERENCE;
+		vertexStartIndex = MapObjectConstants.NULL_REFERENCE;
+		vertexEndIndex = MapObjectConstants.NULL_REFERENCE;
+		sidedefFrontIndex = MapObjectConstants.NULL_REFERENCE;
+		sidedefBackIndex = MapObjectConstants.NULL_REFERENCE;
 	}
 	
 	/**

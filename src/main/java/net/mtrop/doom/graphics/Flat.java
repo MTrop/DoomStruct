@@ -7,8 +7,6 @@
  ******************************************************************************/
 package net.mtrop.doom.graphics;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -16,10 +14,6 @@ import java.io.OutputStream;
 import net.mtrop.doom.BinaryObject;
 import net.mtrop.doom.GraphicObject;
 import net.mtrop.doom.util.RangeUtils;
-
-import com.blackrook.commons.Common;
-import com.blackrook.io.SuperReader;
-import com.blackrook.io.SuperWriter;
 
 /**
  * <p>
@@ -145,7 +139,7 @@ public class Flat implements BinaryObject, GraphicObject
 	 */
 	public void setPixel(int x, int y, int value)
 	{
-		RangeUtils.checkByte("Pixel ("+x+", "+y+")", value);
+		RangeUtils.checkByteUnsigned("Pixel ("+x+", "+y+")", value);
 		pixels[y*width + x] = (byte)value;
 	}
 	
@@ -161,35 +155,23 @@ public class Flat implements BinaryObject, GraphicObject
 	}
 	
 	@Override
-	public byte[] toBytes()
-	{
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		try { writeBytes(bos); } catch (IOException e) { /* Shouldn't happen. */ }
-		return bos.toByteArray();
-	}
-
-	@Override
-	public void fromBytes(byte[] data) throws IOException
-	{
-		ByteArrayInputStream bin = new ByteArrayInputStream(data);
-		readBytes(bin);
-		Common.close(bin);
-	}
-
-	@Override
 	public void readBytes(InputStream in) throws IOException
 	{
-		SuperReader sr = new SuperReader(in, SuperReader.LITTLE_ENDIAN);
-		for (int i = 0; i < width*height; i++)
-			pixels[i] = sr.readByte();
+		int len = width * height;
+		for (int i = 0; i < len; i++)
+		{
+			int b = in.read();
+			if (b == -1)
+				throw new IOException("end of stream reached after index "+i);
+			pixels[i] = (byte)(b & 0x0ff);
+		}
 	}
 
 	@Override
 	public void writeBytes(OutputStream out) throws IOException
 	{
-		SuperWriter sw = new SuperWriter(out, SuperWriter.LITTLE_ENDIAN);
 		for (byte pixel : pixels)
-			sw.writeByte(pixel);
+			out.write(pixel & 0x0ff);
 	}
 
 }

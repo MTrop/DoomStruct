@@ -7,19 +7,16 @@
  ******************************************************************************/
 package net.mtrop.doom.map.binary;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import com.blackrook.commons.Common;
-import com.blackrook.io.SuperReader;
-import com.blackrook.io.SuperWriter;
-
 import net.mtrop.doom.BinaryObject;
+import net.mtrop.doom.map.MapObjectConstants;
 import net.mtrop.doom.util.NameUtils;
 import net.mtrop.doom.util.RangeUtils;
+import net.mtrop.doom.util.SerialReader;
+import net.mtrop.doom.util.SerialWriter;
 
 /**
  * Doom/Boom 26-byte format implementation of Sector.
@@ -50,70 +47,8 @@ public class DoomSector implements BinaryObject
 	 */
 	public DoomSector()
 	{
-		floorTexture = TEXTURE_BLANK;
-		ceilingTexture = TEXTURE_BLANK;
-	}
-	
-	/**
-	 * Reads and creates a new DoomSector from an array of bytes.
-	 * This reads from the first 26 bytes of the array.
-	 * @param bytes the byte array to read.
-	 * @return a new DoomSector with its fields set.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static DoomSector create(byte[] bytes) throws IOException
-	{
-		DoomSector out = new DoomSector();
-		out.fromBytes(bytes);
-		return out;
-	}
-	
-	/**
-	 * Reads and creates a new DoomSector from an {@link InputStream} implementation.
-	 * This reads from the stream until enough bytes for a {@link DoomSector} are read.
-	 * The stream is NOT closed at the end.
-	 * @param in the open {@link InputStream} to read from.
-	 * @return a new DoomSector with its fields set.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static DoomSector read(InputStream in) throws IOException
-	{
-		DoomSector out = new DoomSector();
-		out.readBytes(in);
-		return out;
-	}
-	
-	/**
-	 * Reads and creates new DoomSectors from an array of bytes.
-	 * This reads from the first 26 * <code>count</code> bytes of the array.
-	 * @param bytes the byte array to read.
-	 * @param count the amount of objects to read.
-	 * @return an array of DoomSector objects with its fields set.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static DoomSector[] create(byte[] bytes, int count) throws IOException
-	{
-		return read(new ByteArrayInputStream(bytes), count);
-	}
-	
-	/**
-	 * Reads and creates new DoomSectors from an {@link InputStream} implementation.
-	 * This reads from the stream until enough bytes for <code>count</code> {@link DoomSector}s are read.
-	 * The stream is NOT closed at the end.
-	 * @param in the open {@link InputStream} to read from.
-	 * @param count the amount of objects to read.
-	 * @return an array of DoomSector objects with its fields set.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static DoomSector[] read(InputStream in, int count) throws IOException
-	{
-		DoomSector[] out = new DoomSector[count];
-		for (int i = 0; i < count; i++)
-		{
-			out[i] = new DoomSector();
-			out[i].readBytes(in);
-		}
-		return out;
+		floorTexture = MapObjectConstants.TEXTURE_BLANK;
+		ceilingTexture = MapObjectConstants.TEXTURE_BLANK;
 	}
 	
 	/**
@@ -252,45 +187,29 @@ public class DoomSector implements BinaryObject
 	}
 
 	@Override
-	public byte[] toBytes()
-	{
-		ByteArrayOutputStream bos = new ByteArrayOutputStream(LENGTH);
-		try { writeBytes(bos); } catch (IOException e) { /* Shouldn't happen. */ }
-		return bos.toByteArray();
-	}
-
-	@Override
-	public void fromBytes(byte[] data) throws IOException
-	{
-		ByteArrayInputStream bin = new ByteArrayInputStream(data);
-		readBytes(bin);
-		Common.close(bin);
-	}
-
-	@Override
 	public void readBytes(InputStream in) throws IOException
 	{
-		SuperReader sr = new SuperReader(in, SuperReader.LITTLE_ENDIAN);
-		floorHeight = sr.readShort();
-		ceilingHeight = sr.readShort();
-		floorTexture = NameUtils.nullTrim(sr.readASCIIString(8)).toUpperCase();
-		ceilingTexture = NameUtils.nullTrim(sr.readASCIIString(8)).toUpperCase();
-		lightLevel = sr.readShort();
-		special = sr.readShort();
-		tag = sr.readShort();
+		SerialReader sr = new SerialReader(SerialReader.LITTLE_ENDIAN);
+		floorHeight = sr.readShort(in);
+		ceilingHeight = sr.readShort(in);
+		floorTexture = NameUtils.nullTrim(sr.readString(in, 8, "ASCII"));
+		ceilingTexture = NameUtils.nullTrim(sr.readString(in, 8, "ASCII"));
+		lightLevel = sr.readShort(in);
+		special = sr.readShort(in);
+		tag = sr.readShort(in);
 	}
 
 	@Override
 	public void writeBytes(OutputStream out) throws IOException
 	{
-		SuperWriter sw = new SuperWriter(out, SuperWriter.LITTLE_ENDIAN);
-		sw.writeShort((short)floorHeight);
-		sw.writeShort((short)ceilingHeight);
-		sw.writeBytes(NameUtils.toASCIIBytes(floorTexture, 8));
-		sw.writeBytes(NameUtils.toASCIIBytes(ceilingTexture, 8));
-		sw.writeShort((short)lightLevel);
-		sw.writeShort((short)special);
-		sw.writeShort((short)tag);
+		SerialWriter sw = new SerialWriter(SerialWriter.LITTLE_ENDIAN);
+		sw.writeShort(out, (short)floorHeight);
+		sw.writeShort(out, (short)ceilingHeight);
+		sw.writeBytes(out, NameUtils.toASCIIBytes(floorTexture, 8));
+		sw.writeBytes(out, NameUtils.toASCIIBytes(ceilingTexture, 8));
+		sw.writeShort(out, (short)lightLevel);
+		sw.writeShort(out, (short)special);
+		sw.writeShort(out, (short)tag);
 	}
 
 	@Override

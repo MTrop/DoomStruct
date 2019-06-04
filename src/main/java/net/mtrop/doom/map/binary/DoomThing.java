@@ -7,17 +7,14 @@
  ******************************************************************************/
 package net.mtrop.doom.map.binary;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import com.blackrook.commons.Common;
-import com.blackrook.io.SuperReader;
-import com.blackrook.io.SuperWriter;
-
 import net.mtrop.doom.BinaryObject;
+import net.mtrop.doom.util.SerialReader;
+import net.mtrop.doom.util.SerialWriter;
+import net.mtrop.doom.util.Utils;
 
 /**
  * Doom/Boom 10-byte format implementation of Thing.
@@ -42,68 +39,6 @@ public class DoomThing extends CommonThing implements BinaryObject
 	{
 	}
 
-	/**
-	 * Reads and creates a new DoomThing from an array of bytes.
-	 * This reads from the first 10 bytes of the array.
-	 * @param bytes the byte array to read.
-	 * @return a new DoomThing with its fields set.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static DoomThing create(byte[] bytes) throws IOException
-	{
-		DoomThing out = new DoomThing();
-		out.fromBytes(bytes);
-		return out;
-	}
-	
-	/**
-	 * Reads and creates a new DoomThing from an {@link InputStream} implementation.
-	 * This reads from the stream until enough bytes for a {@link DoomThing} are read.
-	 * The stream is NOT closed at the end.
-	 * @param in the open {@link InputStream} to read from.
-	 * @return a new DoomThing with its fields set.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static DoomThing read(InputStream in) throws IOException
-	{
-		DoomThing out = new DoomThing();
-		out.readBytes(in);
-		return out;
-	}
-	
-	/**
-	 * Reads and creates new DoomThings from an array of bytes.
-	 * This reads from the first 10 * <code>count</code> bytes of the array.
-	 * @param bytes the byte array to read.
-	 * @param count the amount of objects to read.
-	 * @return an array of DoomThing objects with its fields set.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static DoomThing[] create(byte[] bytes, int count) throws IOException
-	{
-		return read(new ByteArrayInputStream(bytes), count);
-	}
-	
-	/**
-	 * Reads and creates new DoomThings from an {@link InputStream} implementation.
-	 * This reads from the stream until enough bytes for <code>count</code> {@link DoomThing}s are read.
-	 * The stream is NOT closed at the end.
-	 * @param in the open {@link InputStream} to read from.
-	 * @param count the amount of objects to read.
-	 * @return an array of DoomThing objects with its fields set.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static DoomThing[] read(InputStream in, int count) throws IOException
-	{
-		DoomThing[] out = new DoomThing[count];
-		for (int i = 0; i < count; i++)
-		{
-			out[i] = new DoomThing();
-			out[i].readBytes(in);
-		}
-		return out;
-	}
-	
 	/**
 	 * @return true if this does NOT appear on cooperative, false if not.
 	 */
@@ -156,52 +91,36 @@ public class DoomThing extends CommonThing implements BinaryObject
 	}
 
 	@Override
-	public byte[] toBytes()
-	{
-		ByteArrayOutputStream bos = new ByteArrayOutputStream(LENGTH);
-		try { writeBytes(bos); } catch (IOException e) { /* Shouldn't happen. */ }
-		return bos.toByteArray();
-	}
-
-	@Override
-	public void fromBytes(byte[] data) throws IOException
-	{
-		ByteArrayInputStream bin = new ByteArrayInputStream(data);
-		readBytes(bin);
-		Common.close(bin);
-	}
-
-	@Override
 	public void readBytes(InputStream in) throws IOException
 	{
-		SuperReader sr = new SuperReader(in, SuperReader.LITTLE_ENDIAN);
-		x = sr.readShort();
-		y = sr.readShort();
-		angle = sr.readUnsignedShort();
-		type = sr.readUnsignedShort();
+		SerialReader sr = new SerialReader(SerialReader.LITTLE_ENDIAN);
+		x = sr.readShort(in);
+		y = sr.readShort(in);
+		angle = sr.readUnsignedShort(in);
+		type = sr.readUnsignedShort(in);
 		
 		// bitflags
-		int flags = sr.readUnsignedShort();
-		easy = Common.bitIsSet(flags, (1 << 0));
-		medium = Common.bitIsSet(flags, (1 << 1));
-		hard = Common.bitIsSet(flags, (1 << 2));
-		ambush = Common.bitIsSet(flags, (1 << 3));
-		notSinglePlayer = Common.bitIsSet(flags, (1 << 4));
-		notDeathmatch = Common.bitIsSet(flags, (1 << 5));
-		notCooperative = Common.bitIsSet(flags, (1 << 6));
-		friendly = Common.bitIsSet(flags, (1 << 7));
+		int flags = sr.readUnsignedShort(in);
+		easy = Utils.bitIsSet(flags, (1 << 0));
+		medium = Utils.bitIsSet(flags, (1 << 1));
+		hard = Utils.bitIsSet(flags, (1 << 2));
+		ambush = Utils.bitIsSet(flags, (1 << 3));
+		notSinglePlayer = Utils.bitIsSet(flags, (1 << 4));
+		notDeathmatch = Utils.bitIsSet(flags, (1 << 5));
+		notCooperative = Utils.bitIsSet(flags, (1 << 6));
+		friendly = Utils.bitIsSet(flags, (1 << 7));
 	}
 
 	@Override
 	public void writeBytes(OutputStream out) throws IOException
 	{
-		SuperWriter sw = new SuperWriter(out, SuperWriter.LITTLE_ENDIAN);
-		sw.writeShort((short)x);
-		sw.writeShort((short)y);
-		sw.writeShort((short)angle);
-		sw.writeShort((short)type);
+		SerialWriter sw = new SerialWriter(SerialWriter.LITTLE_ENDIAN);
+		sw.writeShort(out, (short)x);
+		sw.writeShort(out, (short)y);
+		sw.writeShort(out, (short)angle);
+		sw.writeShort(out, (short)type);
 		
-		sw.writeUnsignedShort(Common.booleansToInt(
+		sw.writeUnsignedShort(out, Utils.booleansToInt(
 			easy,
 			medium,
 			hard,

@@ -13,9 +13,7 @@ import net.mtrop.doom.WadFile;
 import net.mtrop.doom.map.binary.DoomSector;
 import net.mtrop.doom.map.bsp.BSPReject;
 
-import com.blackrook.commons.Common;
-import com.blackrook.commons.logging.Logger;
-import com.blackrook.commons.logging.LoggingFactory;
+import net.mtrop.doom.util.Utils;
 
 public final class RejectTest
 {
@@ -29,6 +27,6 @@ public final class RejectTest
 		BSPReject reject = new BSPReject(sectors.length);
 		reject.fromBytes(data2);
 		
-		Common.close(wad);
+		Utils.close(wad);
 	}
 }

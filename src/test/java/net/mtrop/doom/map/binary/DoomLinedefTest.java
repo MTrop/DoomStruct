@@ -11,10 +11,10 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import net.mtrop.doom.WadFile;
-
-import com.blackrook.commons.Common;
-import com.blackrook.commons.logging.Logger;
-import com.blackrook.commons.logging.LoggingFactory;
+import net.mtrop.doom.BinaryObject;
+import net.mtrop.doom.LoggingFactory;
+import net.mtrop.doom.LoggingFactory.Logger;
+import net.mtrop.doom.util.Utils;
 
 public class DoomLinedefTest
 {
@@ -29,11 +29,11 @@ public class DoomLinedefTest
 		byte[] b = new byte[14];
 		while (in.read(b) > 0)
 		{
-			DoomLinedef object = DoomLinedef.create(b);
+			DoomLinedef object = BinaryObject.create(DoomLinedef.class, b);
 			logger.info((i++) + " " + object);
 		}
 		
-		Common.close(in);
-		Common.close(wad);
+		Utils.close(in);
+		Utils.close(wad);
 	}
 }

@@ -12,7 +12,7 @@ package net.mtrop.doom.map;
  * This provides a general interface for getting map object data.
  * @author Matthew Tropiano
  */
-public interface MapObject
+public interface MapObjectConstants
 {
 	/** Value used for null references to other map objects. */
 	public static final int NULL_REFERENCE = -1;

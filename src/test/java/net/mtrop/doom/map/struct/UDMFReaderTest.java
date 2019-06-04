@@ -16,9 +16,9 @@ import net.mtrop.doom.map.udmf.UDMFReader;
 import net.mtrop.doom.map.udmf.UDMFTable;
 import net.mtrop.doom.map.udmf.UDMFWriter;
 
-import com.blackrook.commons.Common;
-import com.blackrook.commons.logging.Logger;
-import com.blackrook.commons.logging.LoggingFactory;
+import net.mtrop.doom.LoggingFactory;
+import net.mtrop.doom.LoggingFactory.Logger;
+import net.mtrop.doom.util.Utils;
 
 public class UDMFReaderTest
 {
@@ -34,7 +34,7 @@ public class UDMFReaderTest
 		UDMFWriter.writeData(udmftable, writer);
 		logger.info("\n"+writer.toString());
 		
-		Common.close(in);
-		Common.close(wad);
+		Utils.close(in);
+		Utils.close(wad);
 	}
 }

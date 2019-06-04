@@ -7,9 +7,8 @@
  ******************************************************************************/
 package net.mtrop.doom;
 
-import com.blackrook.commons.Common;
-import com.blackrook.commons.logging.Logger;
-import com.blackrook.commons.logging.LoggingFactory;
+import net.mtrop.doom.LoggingFactory.Logger;
+import net.mtrop.doom.util.Utils;
 
 public final class WadFileTest
 {
@@ -26,7 +25,7 @@ public final class WadFileTest
 		wad = new WadFile(args[0]);
 		for (WadEntry e : wad)
 			out.info(e.toString());
-		Common.close((WadFile)wad);
+		Utils.close((WadFile)wad);
 		out.info("*************************************************************");
 		wad = new WadMap(args[0]);
 		for (WadEntry e : wad)

@@ -7,7 +7,8 @@
  ******************************************************************************/
 package net.mtrop.doom.map.bsp;
 
-import com.blackrook.commons.list.List;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * BSP Tree Abstraction.
@@ -24,9 +25,9 @@ public class BSPTree
 	
 	public BSPTree()
 	{
-		segs = new List<BSPSegment>(100);
-		subsectors = new List<BSPSubsector>(100);
-		nodes = new List<BSPNode>(100);
+		segs = new ArrayList<BSPSegment>(100);
+		subsectors = new ArrayList<BSPSubsector>(100);
+		nodes = new ArrayList<BSPNode>(100);
 	}
 
 	public List<BSPSegment> getSegs()

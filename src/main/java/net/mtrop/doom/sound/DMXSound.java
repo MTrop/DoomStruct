@@ -10,14 +10,12 @@ package net.mtrop.doom.sound;
 import java.io.*;
 
 import net.mtrop.doom.BinaryObject;
+import net.mtrop.doom.struct.CustomWaveForm;
+import net.mtrop.doom.struct.CustomWaveForm.InterpolationType;
 import net.mtrop.doom.util.RangeUtils;
-
-import com.blackrook.commons.Common;
-import com.blackrook.commons.math.RMath;
-import com.blackrook.commons.math.wave.CustomWaveForm;
-import com.blackrook.commons.math.wave.CustomWaveForm.InterpolationType;
-import com.blackrook.io.SuperReader;
-import com.blackrook.io.SuperWriter;
+import net.mtrop.doom.util.SerialReader;
+import net.mtrop.doom.util.SerialWriter;
+import net.mtrop.doom.util.Utils;
 
 /**
  * This class holds digital sound information.
@@ -156,30 +154,30 @@ public class DMXSound implements BinaryObject
 	{
 		ByteArrayInputStream bin = new ByteArrayInputStream(data);
 		readBytes(bin);
-		Common.close(bin);
+		Utils.close(bin);
 	}
 
 	@Override
 	public void readBytes(InputStream in) throws IOException
 	{
-		SuperReader sr = new SuperReader(in, SuperReader.LITTLE_ENDIAN);
-		int type = sr.readUnsignedShort();
+		SerialReader sr = new SerialReader(SerialReader.LITTLE_ENDIAN);
+		int type = sr.readUnsignedShort(in);
 		if (type != 3)
 			throw new IOException("Not a sound clip.");
 		
-		sampleRate = sr.readUnsignedShort();
-		int sampleCount = (int)sr.readUnsignedInt();
+		sampleRate = sr.readUnsignedShort(in);
+		int sampleCount = (int)sr.readUnsignedInt(in);
 		
 		waveForm = new CustomWaveForm(sampleCount - 32);
 		waveForm.setAmplitude(1.0);
 		
-		sr.readBytes(16); // padding
+		sr.readBytes(in, 16); // padding
 		
-		byte[] b = sr.readBytes(sampleCount - 32);
+		byte[] b = sr.readBytes(in, sampleCount - 32);
 		for (int i = 0; i < b.length; i++)
-			waveForm.setSampleValue(i, (RMath.getInterpolationFactor((b[i] & 0x0ff), 0, 255) * 2.0) - 1.0);
+			waveForm.setSampleValue(i, (Utils.getInterpolationFactor((b[i] & 0x0ff), 0, 255) * 2.0) - 1.0);
 		
-		sr.readBytes(16); // padding
+		sr.readBytes(in, 16); // padding
 	}
 
 	@Override
@@ -191,14 +189,14 @@ public class DMXSound implements BinaryObject
 				0x7F, 0x7F, 0x7F, 0x7F,
 				0x7F, 0x7F, 0x7F, 0x7F
 			};
-		SuperWriter sw = new SuperWriter(out, SuperWriter.LITTLE_ENDIAN);
-		sw.writeUnsignedShort(3); // format type
-		sw.writeUnsignedShort(sampleRate);
-		sw.writeUnsignedInteger(waveForm.getSampleCount() + 32);
-		sw.writeBytes(PADDING);
+		SerialWriter sw = new SerialWriter(SerialWriter.LITTLE_ENDIAN);
+		sw.writeUnsignedShort(out, 3); // format type
+		sw.writeUnsignedShort(out, sampleRate);
+		sw.writeUnsignedInteger(out, waveForm.getSampleCount() + 32);
+		sw.writeBytes(out, PADDING);
 		for (int i = 0; i < waveForm.getSampleCount(); i++)
-			sw.writeUnsignedByte((int)(((waveForm.getSampleValue(i) + 1.0) / 2.0) * 255.0));
-		sw.writeBytes(PADDING);
+			sw.writeUnsignedByte(out, (int)(((waveForm.getSampleValue(i) + 1.0) / 2.0) * 255.0));
+		sw.writeBytes(out, PADDING);
 	}
 
 	@Override

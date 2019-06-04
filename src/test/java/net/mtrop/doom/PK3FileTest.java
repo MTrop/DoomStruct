@@ -7,9 +7,8 @@
  ******************************************************************************/
 package net.mtrop.doom;
 
-import com.blackrook.commons.Common;
-import com.blackrook.commons.logging.Logger;
-import com.blackrook.commons.logging.LoggingFactory;
+import net.mtrop.doom.LoggingFactory.Logger;
+import net.mtrop.doom.util.Utils;
 
 public final class PK3FileTest
 {
@@ -21,7 +20,7 @@ public final class PK3FileTest
 		for (String path : pk3.getEntriesStartingWith("sprites/"))
 			out.info(path);
 		
-		Common.close(pk3);
+		Utils.close(pk3);
 	}
 
 }

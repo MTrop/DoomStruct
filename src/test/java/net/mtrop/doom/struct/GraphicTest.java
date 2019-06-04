@@ -19,8 +19,7 @@ import net.mtrop.doom.graphics.Flat;
 import net.mtrop.doom.graphics.Palette;
 import net.mtrop.doom.graphics.Picture;
 import net.mtrop.doom.util.GraphicUtils;
-
-import com.blackrook.commons.Common;
+import net.mtrop.doom.util.Utils;
 
 public final class GraphicTest
 {
@@ -33,7 +32,7 @@ public final class GraphicTest
 		Picture p = Picture.create(wad.getData("TROOA1"));
 		EndDoom endoom = EndDoom.create(wad.getData("ENDOOM"));
 
-		Common.close(wad);
+		Utils.close(wad);
 
 		BufferedImage fi = GraphicUtils.createImage(f, pal);
 		BufferedImage pi = GraphicUtils.createImage(p, pal);

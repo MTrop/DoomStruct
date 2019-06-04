@@ -12,18 +12,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import net.mtrop.doom.BinaryObject;
 import net.mtrop.doom.util.RangeUtils;
-
-import com.blackrook.commons.Common;
-import com.blackrook.commons.ObjectPair;
-import com.blackrook.commons.hash.HashedQueueMap;
-import com.blackrook.commons.index.SparseQueueGridIndex;
-import com.blackrook.commons.linkedlist.Queue;
-import com.blackrook.commons.math.Pair;
-import com.blackrook.io.SuperReader;
-import com.blackrook.io.SuperWriter;
 
 /**
  * Representation of the Blockmap lump for a map.
@@ -32,7 +25,7 @@ import com.blackrook.io.SuperWriter;
  */
 public class BSPBlockmap implements BinaryObject
 {
-	private static final Queue<Integer> EMPTY_QUEUE = new Queue<>();
+	private static final Queue<Integer> EMPTY_QUEUE = new LinkedList<>();
 	
 	/** Grid origin X-coordinate. */
 	private int startX;
@@ -63,7 +56,7 @@ public class BSPBlockmap implements BinaryObject
 		this.startX = startX;
 		this.startY = startY;
 		
-		innerMap = new SparseQueueGridIndex<Integer>();
+		this.innerMap = new SparseQueueGridIndex<Integer>();
 	}
 	
 	/**
@@ -195,22 +188,6 @@ public class BSPBlockmap implements BinaryObject
 		int x = getColumnByMapPosition(posX);
 		int y = getRowByMapPosition(posY);
 		return getIndexList(x, y);
-	}
-
-	@Override
-	public byte[] toBytes()
-	{
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		try { writeBytes(bos); } catch (IOException e) { /* Shouldn't happen. */ }
-		return bos.toByteArray();
-	}
-
-	@Override
-	public void fromBytes(byte[] data) throws IOException
-	{
-		ByteArrayInputStream bin = new ByteArrayInputStream(data);
-		readBytes(bin);
-		Common.close(bin);
 	}
 
 	@Override

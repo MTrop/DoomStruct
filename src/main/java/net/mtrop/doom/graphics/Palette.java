@@ -8,8 +8,6 @@
 package net.mtrop.doom.graphics;
 
 import java.awt.Color;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -17,9 +15,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 import net.mtrop.doom.BinaryObject;
-
-import com.blackrook.commons.Common;
-import com.blackrook.io.SuperReader;
 
 /**
  * The palette that makes up the Doom Engine's color palette.
@@ -167,68 +162,6 @@ public class Palette implements BinaryObject
 	}
 	
 	/**
-	 * Reads and creates a new Palette object from an array of bytes.
-	 * This reads from the array until 768 bytes are read (256 8-bit RGB-format colors).
-	 * @param bytes the byte array to read.
-	 * @return a new Palette object.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static Palette create(byte[] bytes) throws IOException
-	{
-		Palette out = new Palette();
-		out.fromBytes(bytes);
-		return out;
-	}
-
-	/**
-	 * Reads and creates a new Palette from an {@link InputStream} implementation.
-	 * This reads from the stream until 768 bytes are read (256 8-bit RGB-format colors).
-	 * The stream is NOT closed at the end.
-	 * @param in the open {@link InputStream} to read from.
-	 * @return a new Palette with its fields set.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static Palette read(InputStream in) throws IOException
-	{
-		Palette out = new Palette();
-		out.readBytes(in);
-		return out;
-	}
-
-	/**
-	 * Reads and creates new Palette from an array of bytes.
-	 * This reads from the first 768 * <code>count</code> bytes of the array.
-	 * @param bytes the byte array to read.
-	 * @param count the amount of objects to read.
-	 * @return an array of Palette objects with its fields set.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static Palette[] create(byte[] bytes, int count) throws IOException
-	{
-		return read(new ByteArrayInputStream(bytes), count);
-	}
-	
-	/**
-	 * Reads and creates a new Palette from an {@link InputStream} implementation.
-	 * This reads from the stream until enough bytes for <code>count</code> {@link Palette}s are read.
-	 * The stream is NOT closed at the end.
-	 * @param in the open {@link InputStream} to read from.
-	 * @param count the amount of objects to read.
-	 * @return an array of Palette objects with its fields set.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static Palette[] read(InputStream in, int count) throws IOException
-	{
-		Palette[] out = new Palette[count];
-		for (int i = 0; i < count; i++)
-		{
-			out[i] = new Palette();
-			out[i].readBytes(in);
-		}
-		return out;
-	}
-	
-	/**
 	 * Returns the Color of a specific index in the palette.
 	 * @param index	the index number of the color.
 	 * @throws ArrayIndexOutOfBoundsException if index is greater than or equal to NUM_COLORS or less than 0.
@@ -256,18 +189,6 @@ public class Palette implements BinaryObject
 	/**
 	 * Sets the color of a specific index in the Palette.
 	 * @param index	the index number of the color.
-	 * @param color the new Color.
-	 * @throws ArrayIndexOutOfBoundsException if index is greater than or equal to NUM_COLORS or less than 0.
-	 */
-	public void setColor(int index, Color color)
-	{
-		setColorNoSort(index, color.getRed(), color.getGreen(), color.getBlue());
-		sortIndices();
-	}
-
-	/**
-	 * Sets the color of a specific index in the Palette.
-	 * @param index	the index number of the color.
 	 * @param red the red component amount (0 to 255).
 	 * @param green the green component amount (0 to 255).
 	 * @param blue the blue component amount (0 to 255).
@@ -279,19 +200,6 @@ public class Palette implements BinaryObject
 		sortIndices();
 	}
 
-	/**
-	 * Returns the index of the color nearest to a color in the palette,
-	 * or -1 if no color is appropriately matchable.
-	 * @param color the color to match.
-	 * @return the closest index.
-	 */
-	public int getNearestColorIndex(Color color)
-	{
-		if (color.getAlpha() < 255)
-			return -1;
-		return getNearestColorIndex(color.getRed(), color.getGreen(), color.getBlue());
-	}
-	
 	/**
 	 * Returns the index of the color nearest to a color in the palette,
 	 * or -1 if no color is appropriately matchable.
@@ -373,31 +281,21 @@ public class Palette implements BinaryObject
 	}
 
 	@Override
-	public byte[] toBytes()
-	{
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		try { writeBytes(bos); } catch (IOException e) { /* Shouldn't happen. */ }
-		return bos.toByteArray();
-	}
-
-	@Override
-	public void fromBytes(byte[] data) throws IOException
-	{
-		ByteArrayInputStream bin = new ByteArrayInputStream(data);
-		readBytes(bin);
-		Common.close(bin);
-	}
-
-	@Override
 	public void readBytes(InputStream in) throws IOException
 	{
-		SuperReader sr = new SuperReader(in, SuperReader.LITTLE_ENDIAN);
 		for (int i = 0; i < NUM_COLORS; i++)
+		{
+			int r = in.read();
+			int g = in.read();
+			int b = in.read();
+			if (r == -1 || g == -1 || b == -1)
+				throw new IOException("end of stream reached in color index "+i);
 			setColorNoSort(i,
-				sr.readByte() & 0x0ff,
-				sr.readByte() & 0x0ff,
-				sr.readByte() & 0x0ff
+				r & 0x0ff,
+				g & 0x0ff,
+				b & 0x0ff
 			);
+		}
 		sortIndices();
 	}
 

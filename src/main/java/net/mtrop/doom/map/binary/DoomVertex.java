@@ -7,18 +7,14 @@
  ******************************************************************************/
 package net.mtrop.doom.map.binary;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import com.blackrook.commons.Common;
-import com.blackrook.io.SuperReader;
-import com.blackrook.io.SuperWriter;
-
 import net.mtrop.doom.BinaryObject;
 import net.mtrop.doom.util.RangeUtils;
+import net.mtrop.doom.util.SerialReader;
+import net.mtrop.doom.util.SerialWriter;
 
 public class DoomVertex implements BinaryObject
 {
@@ -37,68 +33,6 @@ public class DoomVertex implements BinaryObject
 	{
 	}
 
-	/**
-	 * Reads and creates a new DoomVertex from an array of bytes.
-	 * This reads from the first 4 bytes of the array.
-	 * @param bytes the byte array to read.
-	 * @return a new DoomVertex with its fields set.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static DoomVertex create(byte[] bytes) throws IOException
-	{
-		DoomVertex out = new DoomVertex();
-		out.fromBytes(bytes);
-		return out;
-	}
-	
-	/**
-	 * Reads and creates a new DoomVertex from an {@link InputStream} implementation.
-	 * This reads from the stream until enough bytes for a {@link DoomVertex} are read.
-	 * The stream is NOT closed at the end.
-	 * @param in the open {@link InputStream} to read from.
-	 * @return a new DoomVertex with its fields set.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static DoomVertex read(InputStream in) throws IOException
-	{
-		DoomVertex out = new DoomVertex();
-		out.readBytes(in);
-		return out;
-	}
-	
-	/**
-	 * Reads and creates new DoomVertexes from an array of bytes.
-	 * This reads from the first 4 * <code>count</code> bytes of the array.
-	 * @param bytes the byte array to read.
-	 * @param count the amount of objects to read.
-	 * @return an array of DoomVertex objects with its fields set.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static DoomVertex[] create(byte[] bytes, int count) throws IOException
-	{
-		return read(new ByteArrayInputStream(bytes), count);
-	}
-	
-	/**
-	 * Reads and creates new DoomVertexes from an {@link InputStream} implementation.
-	 * This reads from the stream until enough bytes for <code>count</code> {@link DoomVertex}s are read.
-	 * The stream is NOT closed at the end.
-	 * @param in the open {@link InputStream} to read from.
-	 * @param count the amount of objects to read.
-	 * @return an array of DoomVertex objects with its fields set.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static DoomVertex[] read(InputStream in, int count) throws IOException
-	{
-		DoomVertex[] out = new DoomVertex[count];
-		for (int i = 0; i < count; i++)
-		{
-			out[i] = new DoomVertex();
-			out[i].readBytes(in);
-		}
-		return out;
-	}
-	
 	/**
 	 * Sets the coordinates of this vertex.
 	 * @param x the new x-coordinate value.
@@ -149,27 +83,11 @@ public class DoomVertex implements BinaryObject
 	}
 	
 	@Override
-	public byte[] toBytes()
-	{
-		ByteArrayOutputStream bos = new ByteArrayOutputStream(LENGTH);
-		try { writeBytes(bos); } catch (IOException e) { /* Shouldn't happen. */ }
-		return bos.toByteArray();
-	}
-
-	@Override
-	public void fromBytes(byte[] data) throws IOException
-	{
-		ByteArrayInputStream bin = new ByteArrayInputStream(data);
-		readBytes(bin);
-		Common.close(bin);
-	}
-
-	@Override
 	public void readBytes(InputStream in) throws IOException
 	{
-		SuperReader sr = new SuperReader(in, SuperReader.LITTLE_ENDIAN);
-		x = sr.readShort();
-		y = sr.readShort();
+		SerialReader sr = new SerialReader(SerialReader.LITTLE_ENDIAN);
+		x = sr.readShort(in);
+		y = sr.readShort(in);
 	}
 
 	@Override
@@ -178,9 +96,9 @@ public class DoomVertex implements BinaryObject
 		RangeUtils.checkShort("X-coordinate", x);
 		RangeUtils.checkShort("Y-coordinate", y);
 
-		SuperWriter sw = new SuperWriter(out, SuperWriter.LITTLE_ENDIAN);
-		sw.writeShort((short)x);
-		sw.writeShort((short)y);
+		SerialWriter sw = new SerialWriter(SerialWriter.LITTLE_ENDIAN);
+		sw.writeShort(out, (short)x);
+		sw.writeShort(out, (short)y);
 	}
 
 	@Override

@@ -326,11 +326,25 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 		 * Shifts the ordering of a patch.
 		 * @param index the index to shift.
 		 * @param newIndex the new index for the patch.
-		 * @see AbstractVector#shift(int, int)
 		 */
 		public void shiftPatch(int index, int newIndex)
 		{
-			patches.shift(index, newIndex);
+			// move earlier
+			if (newIndex < index)
+			{
+				Patch p = patches.get(index);
+				for (int i = index; i > newIndex; i--)
+					patches.set(i, patches.get(i - 1));
+				patches.set(newIndex, p);
+			}
+			// move later
+			else if (newIndex > index)
+			{
+				Patch p = patches.get(index);
+				for (int i = index; i < newIndex; i++)
+					patches.set(i, patches.get(i + 1));
+				patches.set(newIndex, p);
+			}
 		}
 		
 		/**

@@ -1182,23 +1182,23 @@ public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 		
 		if (!VERSION0)
 		{
-			sw.writeUnsignedByte((short)getVersion());
+			sw.writeUnsignedByte(out, (short)getVersion());
 		}
 		
 		if (!VERSION2)
 		{
-			sw.writeUnsignedByte((short)getSkill());
-			sw.writeUnsignedByte((short)getEpisode());
-			sw.writeUnsignedByte((short)getMap());
+			sw.writeUnsignedByte(out, (short)getSkill());
+			sw.writeUnsignedByte(out, (short)getEpisode());
+			sw.writeUnsignedByte(out, (short)getMap());
 		}
 		
 		if (VERSION1)
 		{
-			sw.writeUnsignedByte((short)getGameMode());
-			sw.writeBoolean(getMonsterRespawn());
-			sw.writeBoolean(getFastMonsters());
-			sw.writeBoolean(getNoMonsters());
-			sw.writeUnsignedByte((short)getViewpoint());
+			sw.writeUnsignedByte(out, (short)getGameMode());
+			sw.writeBoolean(out, getMonsterRespawn());
+			sw.writeBoolean(out, getFastMonsters());
+			sw.writeBoolean(out, getNoMonsters());
+			sw.writeUnsignedByte(out, (short)getViewpoint());
 		}
 		else if (VERSION2)
 		{
@@ -1206,104 +1206,104 @@ public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 			{
 				case VERSION_BOOM:
 				case VERSION_BOOM201:
-					sw.writeBytes(BOOM_SIGNATURE);
-					sw.writeBoolean(getCompatibilityLevel() == COMPLEVEL_BOOM ? true : false);
+					sw.writeBytes(out, BOOM_SIGNATURE);
+					sw.writeBoolean(out, getCompatibilityLevel() == COMPLEVEL_BOOM ? true : false);
 					break;
 				case VERSION_BOOM202:
-					sw.writeBytes(BOOM_SIGNATURE);
-					sw.writeBoolean(getCompatibilityLevel() == COMPLEVEL_BOOM ? true : false);
+					sw.writeBytes(out, BOOM_SIGNATURE);
+					sw.writeBoolean(out, getCompatibilityLevel() == COMPLEVEL_BOOM ? true : false);
 					break;
 				case VERSION_LXDOOM:
 					if (getCompatibilityLevel() == COMPLEVEL_LXDOOM)
-						sw.writeBytes(BOOM_SIGNATURE);
+						sw.writeBytes(out, BOOM_SIGNATURE);
 					else
 					{
-						sw.writeBytes(MBF_SIGNATURE);
-						sw.writeBoolean(false);
+						sw.writeBytes(out, MBF_SIGNATURE);
+						sw.writeBoolean(out, false);
 					}
 					break;
 				case VERSION_MBF:
-					sw.writeBytes(MBF_SIGNATURE);
-					sw.writeBoolean(false);
+					sw.writeBytes(out, MBF_SIGNATURE);
+					sw.writeBoolean(out, false);
 					break;
 				case VERSION_PRBOOM210:
 				case VERSION_PRBOOM220:
 				case VERSION_PRBOOM230:
 				case VERSION_PRBOOM240:
 				case VERSION_PRBOOM250:
-					sw.writeBytes(BOOM_SIGNATURE);
-					sw.writeBoolean(false);
+					sw.writeBytes(out, BOOM_SIGNATURE);
+					sw.writeBoolean(out, false);
 					break;
 			}
 			
-			sw.writeUnsignedByte((short)getGameMode());
-			sw.writeBoolean(getMonsterRespawn());
-			sw.writeBoolean(getFastMonsters());
-			sw.writeBoolean(getNoMonsters());
-			sw.writeUnsignedByte((short)getViewpoint());
+			sw.writeUnsignedByte(out, (short)getGameMode());
+			sw.writeBoolean(out, getMonsterRespawn());
+			sw.writeBoolean(out, getFastMonsters());
+			sw.writeBoolean(out, getNoMonsters());
+			sw.writeUnsignedByte(out, (short)getViewpoint());
 			
 			// start option block
 			ByteArrayOutputStream optout = new ByteArrayOutputStream();
 			SerialWriter optwr = new SerialWriter(SerialWriter.LITTLE_ENDIAN);
 			
-			optwr.writeBoolean(getMonstersRememberTarget());
-			optwr.writeBoolean(getEnableFriction());
-			optwr.writeBoolean(getEnableWeaponRecoil());
-			optwr.writeBoolean(getAllowPushers());
+			optwr.writeBoolean(out, getMonstersRememberTarget());
+			optwr.writeBoolean(out, getEnableFriction());
+			optwr.writeBoolean(out, getEnableWeaponRecoil());
+			optwr.writeBoolean(out, getAllowPushers());
 			
-			optwr.writeBoolean(false); // pad
+			optwr.writeBoolean(out, false); // pad
 
-			optwr.writeBoolean(getEnablePlayerBobbing());
-			optwr.writeBoolean(getMonsterRespawn());
-			optwr.writeBoolean(getFastMonsters());
-			optwr.writeBoolean(getNoMonsters());
+			optwr.writeBoolean(out, getEnablePlayerBobbing());
+			optwr.writeBoolean(out, getMonsterRespawn());
+			optwr.writeBoolean(out, getFastMonsters());
+			optwr.writeBoolean(out, getNoMonsters());
 
-			optwr.writeUnsignedByte((short)getDemoInsurance());
+			optwr.writeUnsignedByte(out, (short)getDemoInsurance());
 			
 			int r = getRandomSeed();
-			optwr.writeUnsignedByte((short)(r & 0x0ff)); r >>>= 8;
-			optwr.writeUnsignedByte((short)(r & 0x0ff)); r >>>= 8;
-			optwr.writeUnsignedByte((short)(r & 0x0ff)); r >>>= 8;
-			optwr.writeUnsignedByte((short)(r & 0x0ff));
+			optwr.writeUnsignedByte(out, (short)(r & 0x0ff)); r >>>= 8;
+			optwr.writeUnsignedByte(out, (short)(r & 0x0ff)); r >>>= 8;
+			optwr.writeUnsignedByte(out, (short)(r & 0x0ff)); r >>>= 8;
+			optwr.writeUnsignedByte(out, (short)(r & 0x0ff));
 			
 			if (compatibilityLevel >= COMPLEVEL_MBF)
 			{
-				optwr.writeBoolean(getMonsterInfighting());
-				optwr.writeBoolean(getEnableDogs());
+				optwr.writeBoolean(out, getMonsterInfighting());
+				optwr.writeBoolean(out, getEnableDogs());
 				
-				optwr.writeShort((short)0); // skip 2 bytes
+				optwr.writeShort(out, (short)0); // skip 2 bytes
 				
 				int f = getFriendFollowDistance();
-				optwr.writeUnsignedByte((short)(f & 0x0ff)); f >>>= 8;
-				optwr.writeUnsignedByte((short)(f & 0x0ff));
+				optwr.writeUnsignedByte(out, (short)(f & 0x0ff)); f >>>= 8;
+				optwr.writeUnsignedByte(out, (short)(f & 0x0ff));
 
-				optwr.writeBoolean(getMonsterBacking());
-				optwr.writeBoolean(getMonstersAvoidHazards());
-				optwr.writeBoolean(getMonsterFriction());
-				optwr.writeUnsignedByte((short)getHelperCount());
-				optwr.writeBoolean(getDogsJump());
-				optwr.writeBoolean(getEnableMonkeys());
+				optwr.writeBoolean(out, getMonsterBacking());
+				optwr.writeBoolean(out, getMonstersAvoidHazards());
+				optwr.writeBoolean(out, getMonsterFriction());
+				optwr.writeUnsignedByte(out, (short)getHelperCount());
+				optwr.writeBoolean(out, getDogsJump());
+				optwr.writeBoolean(out, getEnableMonkeys());
 
 				for (int i = 0; i < COMPFLAG_LENGTH; i++)
-					optwr.writeBoolean(compatibilityFlags[i]);
+					optwr.writeBoolean(out, compatibilityFlags[i]);
 
-				optwr.writeBoolean(getForceOldBSP());
+				optwr.writeBoolean(out, getForceOldBSP());
 			}
 			else if (version == VERSION_BOOM)
 			{
-				sw.writeBytes(new byte[256 - OPTION_FLAGS_LENGTH]);
+				sw.writeBytes(out, new byte[256 - OPTION_FLAGS_LENGTH]);
 			}
 
-			sw.writeBytes(optout.toByteArray());
+			sw.writeBytes(out, optout.toByteArray());
 			// end option block.
 		}
 
 		int p = getPlayers();
 		for (int i = 0; i < MAX_PLAYERS; i++)
-			sw.writeBoolean((p--) > 0);
+			sw.writeBoolean(out, (p--) > 0);
 		if (version >= VERSION_BOOM)
 			for (int i = 0; i < BOOM_MIN_MAXPLAYERS - MAX_PLAYERS; i++)
-				sw.writeBoolean((p--) > 0);
+				sw.writeBoolean(out, (p--) > 0);
 
 		for (Tic[] tic : gameTics)
 		{
@@ -1311,22 +1311,22 @@ public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 			{
 				if (LONGTICS)
 				{
-					sw.writeByte(t.forwardMovement);
-					sw.writeByte(t.rightStrafe);
-					sw.writeShort(t.turnLeft);
-					sw.writeByte(t.action);
+					sw.writeByte(out, t.forwardMovement);
+					sw.writeByte(out, t.rightStrafe);
+					sw.writeShort(out, t.turnLeft);
+					sw.writeByte(out, t.action);
 				}
 				else
 				{
-					sw.writeByte(t.forwardMovement);
-					sw.writeByte(t.rightStrafe);
-					sw.writeByte((byte)(Utils.clampValue(t.turnLeft, -127, 127)));
-					sw.writeByte(t.action);
+					sw.writeByte(out, t.forwardMovement);
+					sw.writeByte(out, t.rightStrafe);
+					sw.writeByte(out, (byte)(Utils.clampValue(t.turnLeft, -127, 127)));
+					sw.writeByte(out, t.action);
 				}
 			}
 		}
 		
-		sw.writeByte(DEMO_END);
+		sw.writeByte(out, DEMO_END);
 	}
 
 	@Override

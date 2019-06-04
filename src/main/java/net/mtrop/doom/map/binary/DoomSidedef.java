@@ -7,19 +7,16 @@
  ******************************************************************************/
 package net.mtrop.doom.map.binary;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import com.blackrook.commons.Common;
-import com.blackrook.io.SuperReader;
-import com.blackrook.io.SuperWriter;
-
 import net.mtrop.doom.BinaryObject;
+import net.mtrop.doom.map.MapObjectConstants;
 import net.mtrop.doom.util.NameUtils;
 import net.mtrop.doom.util.RangeUtils;
+import net.mtrop.doom.util.SerialReader;
+import net.mtrop.doom.util.SerialWriter;
 
 /**
  * Doom/Boom 30-byte format implementation of a Sidedef.
@@ -48,72 +45,10 @@ public class DoomSidedef implements BinaryObject
 	 */
 	public DoomSidedef()
 	{
-		textureTop = TEXTURE_BLANK;
-		textureBottom = TEXTURE_BLANK;
-		textureMiddle = TEXTURE_BLANK;
-		sectorIndex = NULL_REFERENCE;
-	}
-	
-	/**
-	 * Reads and creates a new DoomSidedef from an array of bytes.
-	 * This reads from the first 30 bytes of the array.
-	 * @param bytes the byte array to read.
-	 * @return a new DoomSidedef with its fields set.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static DoomSidedef create(byte[] bytes) throws IOException
-	{
-		DoomSidedef out = new DoomSidedef();
-		out.fromBytes(bytes);
-		return out;
-	}
-	
-	/**
-	 * Reads and creates a new DoomSidedef from an {@link InputStream} implementation.
-	 * This reads from the stream until enough bytes for a {@link DoomSidedef} are read.
-	 * The stream is NOT closed at the end.
-	 * @param in the open {@link InputStream} to read from.
-	 * @return a new DoomSidedef with its fields set.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static DoomSidedef read(InputStream in) throws IOException
-	{
-		DoomSidedef out = new DoomSidedef();
-		out.readBytes(in);
-		return out;
-	}
-	
-	/**
-	 * Reads and creates new DoomSidedefs from an array of bytes.
-	 * This reads from the first 30 * <code>count</code> bytes of the array.
-	 * @param bytes the byte array to read.
-	 * @param count the amount of objects to read.
-	 * @return an array of DoomSidedef objects with its fields set.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static DoomSidedef[] create(byte[] bytes, int count) throws IOException
-	{
-		return read(new ByteArrayInputStream(bytes), count);
-	}
-	
-	/**
-	 * Reads and creates new DoomSidedefs from an {@link InputStream} implementation.
-	 * This reads from the stream until enough bytes for <code>count</code> {@link DoomSidedef}s are read.
-	 * The stream is NOT closed at the end.
-	 * @param in the open {@link InputStream} to read from.
-	 * @param count the amount of objects to read.
-	 * @return an array of DoomSidedef objects with its fields set.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static DoomSidedef[] read(InputStream in, int count) throws IOException
-	{
-		DoomSidedef[] out = new DoomSidedef[count];
-		for (int i = 0; i < count; i++)
-		{
-			out[i] = new DoomSidedef();
-			out[i].readBytes(in);
-		}
-		return out;
+		textureTop = MapObjectConstants.TEXTURE_BLANK;
+		textureBottom = MapObjectConstants.TEXTURE_BLANK;
+		textureMiddle = MapObjectConstants.TEXTURE_BLANK;
+		sectorIndex = MapObjectConstants.NULL_REFERENCE;
 	}
 	
 	/**
@@ -234,43 +169,27 @@ public class DoomSidedef implements BinaryObject
 	}
 
 	@Override
-	public byte[] toBytes()
-	{
-		ByteArrayOutputStream bos = new ByteArrayOutputStream(LENGTH);
-		try { writeBytes(bos); } catch (IOException e) { /* Shouldn't happen. */ }
-		return bos.toByteArray();
-	}
-
-	@Override
-	public void fromBytes(byte[] data) throws IOException
-	{
-		ByteArrayInputStream bin = new ByteArrayInputStream(data);
-		readBytes(bin);
-		Common.close(bin);
-	}
-
-	@Override
 	public void readBytes(InputStream in) throws IOException
 	{
-		SuperReader sr = new SuperReader(in, SuperReader.LITTLE_ENDIAN);
-		offsetX = sr.readShort();
-		offsetY = sr.readShort();
-		textureTop = NameUtils.nullTrim(sr.readASCIIString(8)).toUpperCase();
-		textureBottom = NameUtils.nullTrim(sr.readASCIIString(8)).toUpperCase();
-		textureMiddle = NameUtils.nullTrim(sr.readASCIIString(8)).toUpperCase();
-		sectorIndex = sr.readShort();
+		SerialReader sr = new SerialReader(SerialReader.LITTLE_ENDIAN);
+		offsetX = sr.readShort(in);
+		offsetY = sr.readShort(in);
+		textureTop = NameUtils.nullTrim(sr.readString(in, 8, "ASCII")).toUpperCase();
+		textureBottom = NameUtils.nullTrim(sr.readString(in, 8, "ASCII")).toUpperCase();
+		textureMiddle = NameUtils.nullTrim(sr.readString(in, 8, "ASCII")).toUpperCase();
+		sectorIndex = sr.readShort(in);
 	}
 
 	@Override
 	public void writeBytes(OutputStream out) throws IOException
 	{
-		SuperWriter sw = new SuperWriter(out, SuperWriter.LITTLE_ENDIAN);
-		sw.writeShort((short)offsetX);
-		sw.writeShort((short)offsetY);
-		sw.writeBytes(NameUtils.toASCIIBytes(textureTop, 8));
-		sw.writeBytes(NameUtils.toASCIIBytes(textureBottom, 8));
-		sw.writeBytes(NameUtils.toASCIIBytes(textureMiddle, 8));
-		sw.writeShort((short)sectorIndex);
+		SerialWriter sw = new SerialWriter(SerialWriter.LITTLE_ENDIAN);
+		sw.writeShort(out, (short)offsetX);
+		sw.writeShort(out, (short)offsetY);
+		sw.writeBytes(out, NameUtils.toASCIIBytes(textureTop, 8));
+		sw.writeBytes(out, NameUtils.toASCIIBytes(textureBottom, 8));
+		sw.writeBytes(out, NameUtils.toASCIIBytes(textureMiddle, 8));
+		sw.writeShort(out, (short)sectorIndex);
 	}
 
 	@Override

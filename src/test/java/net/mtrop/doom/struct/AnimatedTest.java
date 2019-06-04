@@ -13,9 +13,9 @@ import java.io.InputStream;
 import net.mtrop.doom.WadFile;
 import net.mtrop.doom.texture.Animated;
 
-import com.blackrook.commons.Common;
-import com.blackrook.commons.logging.Logger;
-import com.blackrook.commons.logging.LoggingFactory;
+import net.mtrop.doom.LoggingFactory;
+import net.mtrop.doom.LoggingFactory.Logger;
+import net.mtrop.doom.util.Utils;
 
 public final class AnimatedTest
 {
@@ -30,7 +30,7 @@ public final class AnimatedTest
 		for (Animated.Entry entry : animated)
 			logger.info(entry);
 		
-		Common.close(in);
-		Common.close(wad);
+		Utils.close(in);
+		Utils.close(wad);
 	}
 }

@@ -114,12 +114,27 @@ public abstract class CommonTexture<P extends CommonPatch> implements BinaryObje
 	/**
 	 * Shifts the ordering of a patch on this texture.
 	 * The ordering of the patches in this texture will change depending on the indexes provided.
-	 * @param oldIndex the index to shift.
+	 * @param index the index to shift.
 	 * @param newIndex the destination index.
 	 */
-	public void shiftPatch(int oldIndex, int newIndex)
+	public void shiftPatch(int index, int newIndex)
 	{
-		patches.shift(oldIndex, newIndex);
+		// move earlier
+		if (newIndex < index)
+		{
+			P p = patches.get(index);
+			for (int i = index; i > newIndex; i--)
+				patches.set(i, patches.get(i - 1));
+			patches.set(newIndex, p);
+		}
+		// move later
+		else if (newIndex > index)
+		{
+			P p = patches.get(index);
+			for (int i = index; i < newIndex; i++)
+				patches.set(i, patches.get(i + 1));
+			patches.set(newIndex, p);
+		}
 	}
 	
 	/**

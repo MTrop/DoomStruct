@@ -7,25 +7,21 @@
  ******************************************************************************/
 package net.mtrop.doom.map.binary;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
 
-import com.blackrook.commons.Common;
-import com.blackrook.io.SuperReader;
-import com.blackrook.io.SuperWriter;
-
-import net.mtrop.doom.BinaryObject;
 import net.mtrop.doom.util.RangeUtils;
+import net.mtrop.doom.util.SerialReader;
+import net.mtrop.doom.util.SerialWriter;
+import net.mtrop.doom.util.Utils;
 
 /**
  * Hexen/ZDoom 16-byte format implementation of Linedef.
  * @author Matthew Tropiano
  */
-public class HexenLinedef extends CommonLinedef implements BinaryObject 
+public class HexenLinedef extends CommonLinedef 
 {
 	/** Byte length of this object. */
 	public static final int LENGTH = 16;
@@ -86,68 +82,6 @@ public class HexenLinedef extends CommonLinedef implements BinaryObject
 		arguments = new int[5];
 	}
 
-	/**
-	 * Reads and creates a new HexenLinedef from an array of bytes.
-	 * This reads from the first 14 bytes of the array.
-	 * @param bytes the byte array to read.
-	 * @return a new HexenLinedef with its fields set.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static HexenLinedef create(byte[] bytes) throws IOException
-	{
-		HexenLinedef out = new HexenLinedef();
-		out.fromBytes(bytes);
-		return out;
-	}
-	
-	/**
-	 * Reads and creates a new HexenLinedef from an {@link InputStream} implementation.
-	 * This reads from the stream until enough bytes for a {@link HexenLinedef} are read.
-	 * The stream is NOT closed at the end.
-	 * @param in the open {@link InputStream} to read from.
-	 * @return a new HexenLinedef with its fields set.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static HexenLinedef read(InputStream in) throws IOException
-	{
-		HexenLinedef out = new HexenLinedef();
-		out.readBytes(in);
-		return out;
-	}
-	
-	/**
-	 * Reads and creates new HexenLinedefs from an array of bytes.
-	 * This reads from the first 14 * <code>count</code> bytes of the array.
-	 * @param bytes the byte array to read.
-	 * @param count the amount of objects to read.
-	 * @return an array of HexenLinedef objects with its fields set.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static HexenLinedef[] create(byte[] bytes, int count) throws IOException
-	{
-		return read(new ByteArrayInputStream(bytes), count);
-	}
-	
-	/**
-	 * Reads and creates new HexenLinedefs from an {@link InputStream} implementation.
-	 * This reads from the stream until enough bytes for <code>count</code> {@link HexenLinedef}s are read.
-	 * The stream is NOT closed at the end.
-	 * @param in the open {@link InputStream} to read from.
-	 * @param count the amount of objects to read.
-	 * @return an array of HexenLinedef objects with its fields set.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static HexenLinedef[] read(InputStream in, int count) throws IOException
-	{
-		HexenLinedef[] out = new HexenLinedef[count];
-		for (int i = 0; i < count; i++)
-		{
-			out[i] = new HexenLinedef();
-			out[i].readBytes(in);
-		}
-		return out;
-	}
-	
 	/**
 	 * @return true if this line's special is repeatable, false if not.
 	 */
@@ -277,65 +211,49 @@ public class HexenLinedef extends CommonLinedef implements BinaryObject
 	}
 
 	@Override
-	public byte[] toBytes()
-	{
-		ByteArrayOutputStream bos = new ByteArrayOutputStream(LENGTH);
-		try { writeBytes(bos); } catch (IOException e) { /* Shouldn't happen. */ }
-		return bos.toByteArray();
-	}
-
-	@Override
-	public void fromBytes(byte[] data) throws IOException
-	{
-		ByteArrayInputStream bin = new ByteArrayInputStream(data);
-		readBytes(bin);
-		Common.close(bin);
-	}
-
-	@Override
 	public void readBytes(InputStream in) throws IOException
 	{
-		SuperReader sr = new SuperReader(in, SuperReader.LITTLE_ENDIAN);
+		SerialReader sr = new SerialReader(SerialReader.LITTLE_ENDIAN);
 		
-		vertexStartIndex = sr.readUnsignedShort();
-		vertexEndIndex = sr.readUnsignedShort();
+		vertexStartIndex = sr.readUnsignedShort(in);
+		vertexEndIndex = sr.readUnsignedShort(in);
 		
 		// bitflags
-		int flags = sr.readUnsignedShort();
-		impassable = Common.bitIsSet(flags, (1 << 0));
-		monsterBlocking = Common.bitIsSet(flags, (1 << 1));
-		twoSided = Common.bitIsSet(flags, (1 << 2));
-		upperUnpegged = Common.bitIsSet(flags, (1 << 3));
-		lowerUnpegged = Common.bitIsSet(flags, (1 << 4));
-		secret = Common.bitIsSet(flags, (1 << 5));
-		soundBlocking = Common.bitIsSet(flags, (1 << 6));
-		notDrawn = Common.bitIsSet(flags, (1 << 7));
-		mapped = Common.bitIsSet(flags, (1 << 8));
-		repeatable = Common.bitIsSet(flags, (1 << 9));
-		activatedByMonsters = Common.bitIsSet(flags, (1 << 13));
-		blocksEverything = Common.bitIsSet(flags, (1 << 15));
+		int flags = sr.readUnsignedShort(in);
+		impassable = Utils.bitIsSet(flags, (1 << 0));
+		monsterBlocking = Utils.bitIsSet(flags, (1 << 1));
+		twoSided = Utils.bitIsSet(flags, (1 << 2));
+		upperUnpegged = Utils.bitIsSet(flags, (1 << 3));
+		lowerUnpegged = Utils.bitIsSet(flags, (1 << 4));
+		secret = Utils.bitIsSet(flags, (1 << 5));
+		soundBlocking = Utils.bitIsSet(flags, (1 << 6));
+		notDrawn = Utils.bitIsSet(flags, (1 << 7));
+		mapped = Utils.bitIsSet(flags, (1 << 8));
+		repeatable = Utils.bitIsSet(flags, (1 << 9));
+		activatedByMonsters = Utils.bitIsSet(flags, (1 << 13));
+		blocksEverything = Utils.bitIsSet(flags, (1 << 15));
 		
 		activationType = (0x01C00 & flags) >> 10;
 		
-		special = sr.readUnsignedByte();
-		arguments[0] = sr.readUnsignedByte();
-		arguments[1] = sr.readUnsignedByte();
-		arguments[2] = sr.readUnsignedByte();
-		arguments[3] = sr.readUnsignedByte();
-		arguments[4] = sr.readUnsignedByte();
+		special = sr.readUnsignedByte(in);
+		arguments[0] = sr.readUnsignedByte(in);
+		arguments[1] = sr.readUnsignedByte(in);
+		arguments[2] = sr.readUnsignedByte(in);
+		arguments[3] = sr.readUnsignedByte(in);
+		arguments[4] = sr.readUnsignedByte(in);
 
-		sidedefFrontIndex = sr.readShort();
-		sidedefBackIndex = sr.readShort();
+		sidedefFrontIndex = sr.readShort(in);
+		sidedefBackIndex = sr.readShort(in);
 	}
 
 	@Override
 	public void writeBytes(OutputStream out) throws IOException 
 	{
-		SuperWriter sw = new SuperWriter(out, SuperWriter.LITTLE_ENDIAN);
-		sw.writeUnsignedShort(vertexStartIndex);
-		sw.writeUnsignedShort(vertexEndIndex);
+		SerialWriter sw = new SerialWriter(SerialWriter.LITTLE_ENDIAN);
+		sw.writeUnsignedShort(out, vertexStartIndex);
+		sw.writeUnsignedShort(out, vertexEndIndex);
 		
-		int flags = Common.booleansToInt(
+		int flags = Utils.booleansToInt(
 			impassable,
 			monsterBlocking,
 			twoSided,
@@ -356,17 +274,17 @@ public class HexenLinedef extends CommonLinedef implements BinaryObject
 		
 		flags |= ACTIVATION_FLAGS[activationType];
 		
-		sw.writeUnsignedShort(flags);
+		sw.writeUnsignedShort(out, flags);
 		
-		sw.writeByte((byte)special);
-		sw.writeByte((byte)arguments[0]);
-		sw.writeByte((byte)arguments[1]);
-		sw.writeByte((byte)arguments[2]);
-		sw.writeByte((byte)arguments[3]);
-		sw.writeByte((byte)arguments[4]);
+		sw.writeByte(out, (byte)special);
+		sw.writeByte(out, (byte)arguments[0]);
+		sw.writeByte(out, (byte)arguments[1]);
+		sw.writeByte(out, (byte)arguments[2]);
+		sw.writeByte(out, (byte)arguments[3]);
+		sw.writeByte(out, (byte)arguments[4]);
 
-		sw.writeShort((short)sidedefFrontIndex);
-		sw.writeShort((short)sidedefBackIndex);
+		sw.writeShort(out, (short)sidedefFrontIndex);
+		sw.writeShort(out, (short)sidedefBackIndex);
 	}
 	
 	@Override
