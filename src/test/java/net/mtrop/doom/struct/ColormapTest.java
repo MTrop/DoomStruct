@@ -12,7 +12,7 @@ import java.io.InputStream;
 
 import net.mtrop.doom.WadFile;
 import net.mtrop.doom.graphics.Colormap;
-
+import net.mtrop.doom.BinaryObject;
 import net.mtrop.doom.LoggingFactory;
 import net.mtrop.doom.LoggingFactory.Logger;
 import net.mtrop.doom.util.Utils;
@@ -26,7 +26,7 @@ public final class ColormapTest
 		WadFile wad = new WadFile(args[0]);
 		InputStream in = wad.getInputStream("COLORMAP");
 
-		Colormap colormap = Colormap.read(in);
+		Colormap colormap = BinaryObject.read(Colormap.class, in);
 		
 		Utils.close(in);
 		Utils.close(wad);

@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import net.mtrop.doom.WadFile;
+import net.mtrop.doom.BinaryObject;
 import net.mtrop.doom.LoggingFactory;
 import net.mtrop.doom.LoggingFactory.Logger;
 import net.mtrop.doom.util.Utils;
@@ -28,7 +29,7 @@ public class DoomSidedefTest
 		byte[] b = new byte[30];
 		while (in.read(b) > 0)
 		{
-			DoomSidedef object = DoomSidedef.create(b);
+			DoomSidedef object = BinaryObject.create(DoomSidedef.class, b);
 			logger.info((i++) + " " + object);
 		}
 		

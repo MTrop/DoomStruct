@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import net.mtrop.doom.WadFile;
+import net.mtrop.doom.BinaryObject;
 import net.mtrop.doom.LoggingFactory;
 import net.mtrop.doom.LoggingFactory.Logger;
 import net.mtrop.doom.util.Utils;
@@ -27,7 +28,7 @@ public class DoomVertexTest
 		int i = 0;
 		byte[] b = new byte[4];
 		while (in.read(b) > 0)
-			logger.info((i++) + " " + DoomVertex.create(b));
+			logger.info((i++) + " " + BinaryObject.create(DoomVertex.class, b));
 		
 		Utils.close(in);
 		Utils.close(wad);

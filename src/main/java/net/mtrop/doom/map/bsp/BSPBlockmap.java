@@ -60,35 +60,6 @@ public class BSPBlockmap implements BinaryObject
 	}
 	
 	/**
-	 * Reads and creates a new BSPBlockmap object from an array of bytes.
-	 * This reads until it reaches the end of the BSPBlockmap.
-	 * @param bytes the byte array to read.
-	 * @return a new BSPBlockmap object.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static BSPBlockmap create(byte[] bytes) throws IOException
-	{
-		BSPBlockmap out = new BSPBlockmap();
-		out.fromBytes(bytes);
-		return out;
-	}
-	
-	/**
-	 * Reads and creates a new BSPBlockmap from an {@link InputStream} implementation.
-	 * This reads from the stream until enough bytes for a {@link BSPBlockmap} are read.
-	 * The stream is NOT closed at the end.
-	 * @param in the open {@link InputStream} to read from.
-	 * @return a new BSPBlockmap object.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static BSPBlockmap read(InputStream in) throws IOException
-	{
-		BSPBlockmap out = new BSPBlockmap();
-		out.readBytes(in);
-		return out;
-	}
-	
-	/**
 	 * Adds a linedef index to this blockmap.
 	 * @param x	the grid row.
 	 * @param y	the grid column.

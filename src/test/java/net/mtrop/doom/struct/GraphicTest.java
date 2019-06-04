@@ -13,6 +13,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import net.mtrop.doom.BinaryObject;
 import net.mtrop.doom.WadFile;
 import net.mtrop.doom.graphics.EndDoom;
 import net.mtrop.doom.graphics.Flat;
@@ -27,10 +28,10 @@ public final class GraphicTest
 	{
 		WadFile wad = new WadFile(args[0]);
 
-		Palette pal = Palette.create(wad.getData("PLAYPAL"));
+		Palette pal = BinaryObject.create(Palette.class, wad.getData("PLAYPAL"));
 		Flat f = Flat.create(64, 64, wad.getData("FWATER1"));
-		Picture p = Picture.create(wad.getData("TROOA1"));
-		EndDoom endoom = EndDoom.create(wad.getData("ENDOOM"));
+		Picture p = BinaryObject.create(Picture.class, wad.getData("TROOA1"));
+		EndDoom endoom = BinaryObject.create(EndDoom.class, wad.getData("ENDOOM"));
 
 		Utils.close(wad);
 

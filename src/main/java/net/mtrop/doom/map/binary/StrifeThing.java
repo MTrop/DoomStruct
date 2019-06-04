@@ -7,8 +7,6 @@
  ******************************************************************************/
 package net.mtrop.doom.map.binary;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -42,68 +40,6 @@ public class StrifeThing extends CommonThing
 	{
 	}
 
-	/**
-	 * Reads and creates a new StrifeThing from an array of bytes.
-	 * This reads from the first 10 bytes of the array.
-	 * @param bytes the byte array to read.
-	 * @return a new DoomThing with its fields set.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static StrifeThing create(byte[] bytes) throws IOException
-	{
-		StrifeThing out = new StrifeThing();
-		out.fromBytes(bytes);
-		return out;
-	}
-	
-	/**
-	 * Reads and creates a new StrifeThing from an {@link InputStream} implementation.
-	 * This reads from the stream until enough bytes for a {@link StrifeThing} are read.
-	 * The stream is NOT closed at the end.
-	 * @param in the open {@link InputStream} to read from.
-	 * @return a new StrifeThing with its fields set.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static StrifeThing read(InputStream in) throws IOException
-	{
-		StrifeThing out = new StrifeThing();
-		out.readBytes(in);
-		return out;
-	}
-	
-	/**
-	 * Reads and creates new StrifeThings from an array of bytes.
-	 * This reads from the first 20 * <code>count</code> bytes of the array.
-	 * @param bytes the byte array to read.
-	 * @param count the amount of objects to read.
-	 * @return an array of StrifeThing objects with its fields set.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static StrifeThing[] create(byte[] bytes, int count) throws IOException
-	{
-		return read(new ByteArrayInputStream(bytes), count);
-	}
-	
-	/**
-	 * Reads and creates new StrifeThings from an {@link InputStream} implementation.
-	 * This reads from the stream until enough bytes for <code>count</code> {@link StrifeThing}s are read.
-	 * The stream is NOT closed at the end.
-	 * @param in the open {@link InputStream} to read from.
-	 * @param count the amount of objects to read.
-	 * @return an array of StrifeThing objects with its fields set.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static StrifeThing[] read(InputStream in, int count) throws IOException
-	{
-		StrifeThing[] out = new StrifeThing[count];
-		for (int i = 0; i < count; i++)
-		{
-			out[i] = new StrifeThing();
-			out[i].readBytes(in);
-		}
-		return out;
-	}
-	
 	/**
 	 * @return true if this is flagged as an ally, false if not.
 	 */
@@ -153,22 +89,6 @@ public class StrifeThing extends CommonThing
 	public void setTranslucent75(boolean translucent75)
 	{
 		this.translucent75 = translucent75;
-	}
-
-	@Override
-	public byte[] toBytes()
-	{
-		ByteArrayOutputStream bos = new ByteArrayOutputStream(LENGTH);
-		try { writeBytes(bos); } catch (IOException e) { /* Shouldn't happen. */ }
-		return bos.toByteArray();
-	}
-
-	@Override
-	public void fromBytes(byte[] data) throws IOException
-	{
-		ByteArrayInputStream bin = new ByteArrayInputStream(data);
-		readBytes(bin);
-		Utils.close(bin);
 	}
 
 	@Override
