@@ -115,7 +115,7 @@ public class WadFile implements Wad, AutoCloseable
 		for (int i = 0; i < size; i++)
 		{
 			file.read(entrybytes);
-			WadEntry entry = WadEntry.create(entrybytes);
+			WadEntry entry = BinaryObject.create(WadEntry.class, entrybytes);
 			if (entry.getName().length() > 0 || entry.getSize() > 0)
 				entries.add(entry);
 		}

@@ -162,6 +162,12 @@ public class BSPBlockmap implements BinaryObject
 	}
 
 	@Override
+	public int getByteLength()
+	{
+		return LENGTH_INDETERMINATE;
+	}
+	
+	@Override
 	public void readBytes(InputStream in) throws IOException
 	{
 		SuperReader sr = new SuperReader(in,SuperReader.LITTLE_ENDIAN);

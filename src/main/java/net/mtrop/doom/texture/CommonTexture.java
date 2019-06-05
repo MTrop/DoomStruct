@@ -7,9 +7,6 @@
  ******************************************************************************/
 package net.mtrop.doom.texture;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -17,7 +14,6 @@ import java.util.List;
 import net.mtrop.doom.BinaryObject;
 import net.mtrop.doom.util.NameUtils;
 import net.mtrop.doom.util.RangeUtils;
-import net.mtrop.doom.util.Utils;
 
 /**
  * Common contents of texture definitions.
@@ -178,22 +174,4 @@ public abstract class CommonTexture<P extends CommonPatch> implements BinaryObje
 		return name.compareTo(o.name);
 	}
 
-	@Override
-	public byte[] toBytes()
-	{
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		try { writeBytes(bos); } catch (IOException e) { /* Shouldn't happen. */ }
-		return bos.toByteArray();
-	}
-	
-	@Override
-	public void fromBytes(byte[] data) throws IOException
-	{
-		ByteArrayInputStream bin = new ByteArrayInputStream(data);
-		readBytes(bin);
-		Utils.close(bin);
-	}
-	
-	
-	
 }

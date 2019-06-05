@@ -7,7 +7,6 @@
  ******************************************************************************/
 package net.mtrop.doom;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,7 +15,6 @@ import java.io.OutputStream;
 import net.mtrop.doom.util.NameUtils;
 import net.mtrop.doom.util.SerialReader;
 import net.mtrop.doom.util.SerialWriter;
-import net.mtrop.doom.util.Utils;
 
 /**
  * Abstraction of a single entry from a WAD.
@@ -67,69 +65,6 @@ public class WadEntry implements BinaryObject
 		return new WadEntry(name, offset, size); 
 	}
 	
-	/**
-	 * Creates a WadEntry from a piece of raw entry data from a WAD.
-	 * Reads the first 16 bytes.
-	 * @param data the byte representation of the entry.
-	 * @return the constructed WadEntry.
-	 * @throws IOException if the data cannot be read for some reason.
-	 */
-	public static WadEntry create(byte[] data) throws IOException
-	{
-		WadEntry entry = new WadEntry();
-		entry.fromBytes(data);
-		return entry; 
-	}
-	
-	/**
-	 * Reads and creates a new WadEntry from an {@link InputStream} implementation.
-	 * This reads from the stream until enough bytes for a {@link WadEntry} are read.
-	 * The stream is NOT closed at the end.
-	 * @param in the open {@link InputStream} to read from.
-	 * @return a new WadEntry with its fields set.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static WadEntry read(InputStream in) throws IOException
-	{
-		WadEntry out = new WadEntry();
-		out.readBytes(in);
-		return out;
-	}
-	
-	/**
-	 * Reads and creates new WadEntries from an array of bytes.
-	 * This reads from the first 16 * <code>count</code> bytes of the array.
-	 * @param bytes the byte array to read.
-	 * @param count the amount of objects to read.
-	 * @return an array of WadEntry objects with their fields set.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static WadEntry[] create(byte[] bytes, int count) throws IOException
-	{
-		return read(new ByteArrayInputStream(bytes), count);
-	}
-	
-	/**
-	 * Reads and creates new WadEntries from an {@link InputStream} implementation.
-	 * This reads from the stream until enough bytes for <code>count</code> {@link WadEntry}s are read.
-	 * The stream is NOT closed at the end.
-	 * @param in the open {@link InputStream} to read from.
-	 * @param count the amount of objects to read.
-	 * @return an array of WadEntry objects with their fields set.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static WadEntry[] read(InputStream in, int count) throws IOException
-	{
-		WadEntry[] out = new WadEntry[count];
-		for (int i = 0; i < count; i++)
-		{
-			out[i] = new WadEntry();
-			out[i].readBytes(in);
-		}
-		return out;
-	}
-	
-
 	/**
 	 * @return the name of the entry.
 	 */
@@ -182,22 +117,6 @@ public class WadEntry implements BinaryObject
 		}
 		
 		return bos.toByteArray();
-	}
-
-	@Override
-	public byte[] toBytes()
-	{
-		ByteArrayOutputStream bos = new ByteArrayOutputStream(LENGTH);
-		try { writeBytes(bos); } catch (IOException e) { /* Shouldn't happen. */ }
-		return bos.toByteArray();
-	}
-
-	@Override
-	public void fromBytes(byte[] data) throws IOException
-	{
-		ByteArrayInputStream bin = new ByteArrayInputStream(data);
-		readBytes(bin);
-		Utils.close(bin);
 	}
 
 	@Override

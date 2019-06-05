@@ -15,7 +15,7 @@ import net.mtrop.doom.texture.PatchNames;
 import net.mtrop.doom.texture.TextureSet;
 import net.mtrop.doom.texture.TextureSet.Patch;
 import net.mtrop.doom.texture.TextureSet.Texture;
-
+import net.mtrop.doom.BinaryObject;
 import net.mtrop.doom.LoggingFactory;
 import net.mtrop.doom.LoggingFactory.Logger;
 import net.mtrop.doom.util.Utils;
@@ -28,9 +28,9 @@ public final class TextureTest
 		
 		WadFile wad = new WadFile(args[0]);
 		
-		DoomTextureList texture1 = DoomTextureList.create(wad.getData("TEXTURE1"));
+		DoomTextureList texture1 = BinaryObject.create(DoomTextureList.class, wad.getData("TEXTURE1"));
 		//DoomTextureList texture2 = DoomTextureList.create(wad.getData("TEXTURE2"));
-		PatchNames pnames = PatchNames.create(wad.getData("PNAMES"));
+		PatchNames pnames = BinaryObject.create(PatchNames.class, wad.getData("PNAMES"));
 
 		Utils.close(wad);
 

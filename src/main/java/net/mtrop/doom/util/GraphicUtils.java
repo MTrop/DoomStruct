@@ -14,6 +14,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Set;
 
+import net.mtrop.doom.BinaryObject;
 import net.mtrop.doom.WadFile;
 import net.mtrop.doom.exception.TextureException;
 import net.mtrop.doom.exception.WadException;
@@ -271,12 +272,12 @@ public final class GraphicUtils
 		// figure out if Strife or Doom Texture Lump.
 		if (WadUtils.isStrifeTextureData(textureData))
 		{
-			textureList1 = StrifeTextureList.create(textureData);
+			textureList1 = BinaryObject.create(StrifeTextureList.class, textureData);
 			isStrife = true;
 		}
 		else
 		{
-			textureList1 = DoomTextureList.create(textureData);
+			textureList1 = BinaryObject.create(DoomTextureList.class, textureData);
 			isStrife = false;
 		}
 
@@ -285,16 +286,16 @@ public final class GraphicUtils
 		if (textureData != null)
 		{
 			if (isStrife)
-				textureList2 = StrifeTextureList.create(textureData);
+				textureList2 = BinaryObject.create(StrifeTextureList.class, textureData);
 			else
-				textureList2 = DoomTextureList.create(textureData);
+				textureList2 = BinaryObject.create(DoomTextureList.class, textureData);
 		}
 		
 		textureData = wf.getData("PNAMES");
 		if (textureData == null)
 			throw new TextureException("File \""+wf.getFilePath()+"\" has TEXTUREx without PNAMES!\n");
 
-		patchNames = PatchNames.create(textureData);
+		patchNames = BinaryObject.create(PatchNames.class, textureData);
 		
 		TextureSet out;
 		

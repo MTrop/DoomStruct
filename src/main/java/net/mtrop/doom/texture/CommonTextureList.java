@@ -7,8 +7,6 @@
  ******************************************************************************/
 package net.mtrop.doom.texture;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Comparator;
@@ -19,7 +17,6 @@ import net.mtrop.doom.struct.AbstractMappedVector;
 import net.mtrop.doom.struct.Sizable;
 import net.mtrop.doom.util.NameUtils;
 import net.mtrop.doom.util.SerialWriter;
-import net.mtrop.doom.util.Utils;
 
 /**
  * This is the lump that contains a collection of textures.
@@ -153,22 +150,6 @@ public abstract class CommonTextureList<T extends CommonTexture<?>> implements B
 	 */
 	public abstract T createTexture(String name);
 	
-	@Override
-	public byte[] toBytes()
-	{
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		try { writeBytes(bos); } catch (IOException e) { /* Shouldn't happen. */ }
-		return bos.toByteArray();
-	}
-
-	@Override
-	public void fromBytes(byte[] data) throws IOException
-	{
-		ByteArrayInputStream bin = new ByteArrayInputStream(data);
-		readBytes(bin);
-		Utils.close(bin);
-	}
-
 	@Override
 	public void writeBytes(OutputStream out) throws IOException
 	{

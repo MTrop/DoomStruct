@@ -7,8 +7,6 @@
  ******************************************************************************/
 package net.mtrop.doom.texture;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -20,7 +18,6 @@ import net.mtrop.doom.struct.Sizable;
 import net.mtrop.doom.util.NameUtils;
 import net.mtrop.doom.util.SerialReader;
 import net.mtrop.doom.util.SerialWriter;
-import net.mtrop.doom.util.Utils;
 
 /**
  * A list of names of available patch entries for texture composition.
@@ -46,35 +43,6 @@ public class PatchNames implements BinaryObject, Iterable<String>, Sizable
 		};
 	}
 
-	/**
-	 * Reads and creates a new PatchNames from an array of bytes.
-	 * This reads a full patch name set from the array.
-	 * @param bytes the byte array to read.
-	 * @return a new PatchNames object.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static PatchNames create(byte[] bytes) throws IOException
-	{
-		PatchNames out = new PatchNames();
-		out.fromBytes(bytes);
-		return out;
-	}
-	
-	/**
-	 * Reads and creates a new DoomTextureList from an {@link InputStream} implementation.
-	 * This reads from the stream until enough bytes for a full patch name set are read.
-	 * The stream is NOT closed at the end.
-	 * @param in the open {@link InputStream} to read from.
-	 * @return a new PatchNames object.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static PatchNames read(InputStream in) throws IOException
-	{
-		PatchNames out = new PatchNames();
-		out.readBytes(in);
-		return out;
-	}
-	
 	/**
 	 * Clears this list of patches.
 	 */
@@ -146,22 +114,6 @@ public class PatchNames implements BinaryObject, Iterable<String>, Sizable
 		return nameList.removeIndex(index);
 	}
 	
-	@Override
-	public byte[] toBytes()
-	{
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		try { writeBytes(bos); } catch (IOException e) { /* Shouldn't happen. */ }
-		return bos.toByteArray();
-	}
-
-	@Override
-	public void fromBytes(byte[] data) throws IOException
-	{
-		ByteArrayInputStream bin = new ByteArrayInputStream(data);
-		readBytes(bin);
-		Utils.close(bin);
-	}
-
 	@Override
 	public void readBytes(InputStream in) throws IOException
 	{

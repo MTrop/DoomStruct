@@ -284,35 +284,6 @@ public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 		compatibilityFlags = new boolean[COMPFLAG_LENGTH];
 		reset();
 	}
-	
-	/**
-	 * Reads and creates a new Demo object from an array of bytes.
-	 * This reads from the array until the end of the demo.
-	 * @param bytes the byte array to read.
-	 * @return a new Demo object.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static Demo create(byte[] bytes) throws IOException
-	{
-		Demo out = new Demo();
-		out.fromBytes(bytes);
-		return out;
-	}
-
-	/**
-	 * Reads and creates a new Demo from an {@link InputStream} implementation.
-	 * This reads from the stream until the end of the demo.
-	 * The stream is NOT closed at the end.
-	 * @param in the open {@link InputStream} to read from.
-	 * @return a new Demo with its fields set.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static Demo read(InputStream in) throws IOException
-	{
-		Demo out = new Demo();
-		out.readBytes(in);
-		return out;
-	}
 
 	/**
 	 * Resets the contents of this demo.

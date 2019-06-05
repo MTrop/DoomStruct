@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Array;
+import java.util.Iterator;
 
 import net.mtrop.doom.util.Utils;
 
@@ -90,6 +91,132 @@ public interface BinaryObject
 		return (BO[])out;
 	}
 
+	/**
+	 * Creates a deserializing scanner iterator that returns independent instances of objects.
+	 * @param <BO> the object type, a subtype of {@link BinaryObject}.
+	 * @param boClass the class to create.
+	 * @param in the input stream.
+	 * @param length the length of each object to read. 
+	 * @return an array of length <code>count</code> of the created objects.
+	 * @throws IOException if an error occurs during the read - most commonly "not enough bytes".
+	 */
+	static <BO extends BinaryObject> DiscreteScanner<BO> scanner(Class<BO> boClass, InputStream in, int length) throws IOException
+	{
+		return new DiscreteScanner<>(boClass, in, length);
+	}
+
+	/**
+	 * Creates an amount of objects of a specific class from an {@link InputStream}.
+	 * @param <BO> the object type, a subtype of {@link BinaryObject}.
+	 * @param boClass the class to create.
+	 * @param in the input stream.
+	 * @param length the length of each object to read. 
+	 * @return an array of length <code>count</code> of the created objects.
+	 * @throws IOException if an error occurs during the read - most commonly "not enough bytes".
+	 */
+	static <BO extends BinaryObject> InlineScanner<BO> inlineScanner(Class<BO> boClass, InputStream in, int length) throws IOException
+	{
+		return new InlineScanner<>(boClass, in, length);
+	}
+
+	/**
+	 * A deserializing scanner iterator that returns independent instances of objects.
+	 * @param <BO> the BinaryObject type.
+	 */
+	class DiscreteScanner<BO extends BinaryObject> implements Iterator<BO>
+	{
+		/** The input stream. */
+		private InputStream in;
+		/** The byte buffer. */
+		private byte[] buffer;
+		/** The object class. */
+		private Class<BO> objClass;
+		
+		private DiscreteScanner(Class<BO> clz, InputStream in, int len)
+		{
+			this.in = in;
+			this.buffer = new byte[len];
+			this.objClass = clz;
+		}
+		
+		@Override
+		public boolean hasNext()
+		{
+	        int b;
+			try {
+				b = in.read(buffer);
+			} catch (IOException e) {
+				throw new RuntimeException("Could not read bytes for " + objClass.getSimpleName(), e);
+			}
+	        if (b < buffer.length)
+	            return false;
+	        else
+	            return true;
+		}
+
+		@Override
+		public BO next()
+		{
+			try {
+				return create(objClass, buffer);
+			} catch (IOException e) {
+				throw new RuntimeException("Could not deserialize " + objClass.getSimpleName(), e);
+			}
+		}
+		
+	}
+	
+	/**
+	 * A deserializing scanner iterator that returns the same object instance with its contents changed.
+	 * @param <BO> the BinaryObject type.
+	 */
+	class InlineScanner<BO extends BinaryObject> implements Iterator<BO>
+	{
+		/** The input stream. */
+		private InputStream in;
+		/** The byte buffer. */
+		private byte[] buffer;
+		/** The object class. */
+		private Class<BO> objClass;
+		/** The object class. */
+		private BO outObject;
+		
+		private InlineScanner(Class<BO> clz, InputStream in, int len)
+		{
+			this.in = in;
+			this.buffer = new byte[len];
+			this.objClass = clz;
+			this.outObject = Utils.create(clz);
+		}
+		
+		@Override
+		public boolean hasNext()
+		{
+	        int b;
+			try {
+				b = in.read(buffer);
+			} catch (IOException e) {
+				throw new RuntimeException("Could not read bytes for " + objClass.getSimpleName(), e);
+			}
+	        if (b < buffer.length)
+	            return false;
+	        else
+	            return true;
+		}
+
+		@Override
+		public BO next()
+		{
+			try {
+				outObject.readBytes(in);
+				return outObject;
+			} catch (IOException e) {
+				throw new RuntimeException("Could not deserialize " + objClass.getSimpleName(), e);
+			}
+		}
+		
+	}
+	
 	/**
 	 * Gets the byte representation of this object. 
 	 * @return this object as a series of bytes.

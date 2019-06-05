@@ -28,6 +28,9 @@ import net.mtrop.doom.util.SerialWriter;
  */
 public class EndDoom implements BinaryObject
 {
+	/** A single colormap's length in bytes. */
+	public static final int LENGTH = 2 * 80 * 25;
+
 	public static final byte
 	BGCOLOR_BLACK = 0,
 	BGCOLOR_BLUE = 1,

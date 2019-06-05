@@ -7,8 +7,6 @@
  ******************************************************************************/
 package net.mtrop.doom.texture;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -21,7 +19,6 @@ import net.mtrop.doom.struct.Sizable;
 import net.mtrop.doom.util.NameUtils;
 import net.mtrop.doom.util.SerialReader;
 import net.mtrop.doom.util.SerialWriter;
-import net.mtrop.doom.util.Utils;
 
 /**
  * This class represents the contents of a Boom Engine SWITCHES
@@ -50,35 +47,6 @@ public class Switches implements BinaryObject, Iterable<Switches.Entry>, Sizable
 	public Switches()
 	{
 		entryList = new ArrayList<Entry>(20);
-	}
-	
-	/**
-	 * Reads and creates a new Switches object from an array of bytes.
-	 * This reads until it reaches the end of the entry list.
-	 * @param bytes the byte array to read.
-	 * @return a new Switches object.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static Switches create(byte[] bytes) throws IOException
-	{
-		Switches out = new Switches();
-		out.fromBytes(bytes);
-		return out;
-	}
-	
-	/**
-	 * Reads and creates a new Switches from an {@link InputStream} implementation.
-	 * This reads from the stream until enough bytes for a full {@link Switches} lump are read.
-	 * The stream is NOT closed at the end.
-	 * @param in the open {@link InputStream} to read from.
-	 * @return a new Switches with its fields set.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static Switches read(InputStream in) throws IOException
-	{
-		Switches out = new Switches();
-		out.readBytes(in);
-		return out;
 	}
 	
 	/**
@@ -124,22 +92,6 @@ public class Switches implements BinaryObject, Iterable<Switches.Entry>, Sizable
 	}
 	
 	@Override
-	public byte[] toBytes()
-	{
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		try { writeBytes(bos); } catch (IOException e) { /* Shouldn't happen. */ }
-		return bos.toByteArray();
-	}
-
-	@Override
-	public void fromBytes(byte[] data) throws IOException
-	{
-		ByteArrayInputStream bin = new ByteArrayInputStream(data);
-		readBytes(bin);
-		Utils.close(bin);
-	}
-
-	@Override
 	public void readBytes(InputStream in) throws IOException
 	{
 		entryList.clear();
@@ -181,6 +133,9 @@ public class Switches implements BinaryObject, Iterable<Switches.Entry>, Sizable
 	/** Entry for Switches. */
 	public static class Entry implements BinaryObject
 	{
+		/** Length of a single entry in bytes. */
+		public static final int LENGTH = 20;
+
 		/** The "off" texture name. */
 		protected String offName;
 		/** The "on" texture name. */
@@ -240,22 +195,6 @@ public class Switches implements BinaryObject, Iterable<Switches.Entry>, Sizable
 		public Game getGame()
 		{
 			return game;
-		}
-
-		@Override
-		public byte[] toBytes()
-		{
-			ByteArrayOutputStream bos = new ByteArrayOutputStream();
-			try { writeBytes(bos); } catch (IOException e) { /* Shouldn't happen. */ }
-			return bos.toByteArray();
-		}
-
-		@Override
-		public void fromBytes(byte[] data) throws IOException
-		{
-			ByteArrayInputStream bin = new ByteArrayInputStream(data);
-			readBytes(bin);
-			Utils.close(bin);
 		}
 
 		@Override

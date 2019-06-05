@@ -27,7 +27,9 @@ public class Palette implements BinaryObject
 	public static final int NUM_COLORS = 256;
 	/** Number of bytes per color in a Doom palette. */
 	public static final int BYTES_PER_COLOR = 3;
-	
+	/** A single palette's length in bytes. */
+	public static final int LENGTH = NUM_COLORS * BYTES_PER_COLOR;
+
 	/** Comparators for hue. */
 	private static final Comparator<byte[]> PALETTE_COMPARATOR = new Comparator<byte[]>()
 	{

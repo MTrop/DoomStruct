@@ -21,6 +21,8 @@ import net.mtrop.doom.util.Utils;
  */
 public class Colormap implements BinaryObject
 {
+	/** A single colormap's length in bytes. */
+	public static final int LENGTH = 256;
 	/** The number of total indices in a standard Doom color map. */
 	public static final int NUM_INDICES = 256;
 	

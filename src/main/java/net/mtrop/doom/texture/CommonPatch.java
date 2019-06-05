@@ -7,13 +7,8 @@
  ******************************************************************************/
 package net.mtrop.doom.texture;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-
 import net.mtrop.doom.BinaryObject;
 import net.mtrop.doom.util.RangeUtils;
-import net.mtrop.doom.util.Utils;
 
 /**
  * Singular patch entry for a texture.
@@ -92,22 +87,6 @@ public abstract class CommonPatch implements BinaryObject
 	}
 
 	@Override
-	public byte[] toBytes()
-	{
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		try { writeBytes(bos); } catch (IOException e) { /* Shouldn't happen. */ }
-		return bos.toByteArray();
-	}
-
-	@Override
-	public void fromBytes(byte[] data) throws IOException
-	{
-		ByteArrayInputStream bin = new ByteArrayInputStream(data);
-		readBytes(bin);
-		Utils.close(bin);
-	}
-
-	@Override
 	public String toString()
 	{
 		StringBuilder sb = new StringBuilder();
@@ -120,7 +99,5 @@ public abstract class CommonPatch implements BinaryObject
 		sb.append(")");
 		return sb.toString();
 	}
-	
-	
 
 }

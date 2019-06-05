@@ -40,35 +40,6 @@ public class DoomTextureList extends CommonTextureList<DoomTextureList.Texture> 
 		super(capacity);
 	}
 
-	/**
-	 * Reads and creates a new DoomTextureList from an array of bytes.
-	 * This reads a full texture set from the array.
-	 * @param bytes the byte array to read.
-	 * @return a new DoomTextureList with its fields set.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static DoomTextureList create(byte[] bytes) throws IOException
-	{
-		DoomTextureList out = new DoomTextureList();
-		out.fromBytes(bytes);
-		return out;
-	}
-	
-	/**
-	 * Reads and creates a new DoomTextureList from an {@link InputStream} implementation.
-	 * This reads from the stream until enough bytes for a full texture set are read.
-	 * The stream is NOT closed at the end.
-	 * @param in the open {@link InputStream} to read from.
-	 * @return a new DoomTextureList with its fields set.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static DoomTextureList read(InputStream in) throws IOException
-	{
-		DoomTextureList out = new DoomTextureList();
-		out.readBytes(in);
-		return out;
-	}
-	
 	@Override
 	public Texture createTexture(String texture) 
 	{
@@ -116,35 +87,6 @@ public class DoomTextureList extends CommonTextureList<DoomTextureList.Texture> 
 			super(name);
 		}
 
-		/**
-		 * Reads and creates a new DoomTexture object from an array of bytes.
-		 * This reads until it reaches the end of the texture.
-		 * @param bytes the byte array to read.
-		 * @return a new DoomTexture object.
-		 * @throws IOException if the stream cannot be read.
-		 */
-		public static Texture create(byte[] bytes) throws IOException
-		{
-			Texture out = new Texture();
-			out.fromBytes(bytes);
-			return out;
-		}
-		
-		/**
-		 * Reads and creates a new DoomTexture from an {@link InputStream} implementation.
-		 * This reads from the stream until enough bytes for a single {@link Texture} are read.
-		 * The stream is NOT closed at the end.
-		 * @param in the open {@link InputStream} to read from.
-		 * @return a new DoomTexture object.
-		 * @throws IOException if the stream cannot be read.
-		 */
-		public static Texture read(InputStream in) throws IOException
-		{
-			Texture out = new Texture();
-			out.readBytes(in);
-			return out;
-		}
-		
 		@Override
 		public Patch createPatch() 
 		{
@@ -197,6 +139,9 @@ public class DoomTextureList extends CommonTextureList<DoomTextureList.Texture> 
 		 */
 		public static class Patch extends CommonPatch
 		{
+			/** The length of a single patch. */
+			public static final int LENGTH = 10;
+			
 			@Override
 			public void readBytes(InputStream in) throws IOException
 			{

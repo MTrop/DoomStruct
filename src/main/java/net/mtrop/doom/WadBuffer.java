@@ -140,7 +140,7 @@ public class WadBuffer implements Wad
 		for (int x = 0; x < entryCount; x++)
 		{
 			sr.readBytes(in, entrybuffer);
-			WadEntry wadEntry = WadEntry.create(entrybuffer);
+			WadEntry wadEntry = BinaryObject.create(WadEntry.class, entrybuffer);
 			entries.add(wadEntry);
 		}
 	}

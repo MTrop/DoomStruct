@@ -7,8 +7,6 @@
  ******************************************************************************/
 package net.mtrop.doom.texture;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -21,7 +19,6 @@ import net.mtrop.doom.struct.Sizable;
 import net.mtrop.doom.util.NameUtils;
 import net.mtrop.doom.util.SerialReader;
 import net.mtrop.doom.util.SerialWriter;
-import net.mtrop.doom.util.Utils;
 
 /**
  * This class represents the contents of a Boom Engine ANIMATED
@@ -52,32 +49,57 @@ public class Animated implements BinaryObject, Iterable<Animated.Entry>, Sizable
 	}
 	
 	/**
-	 * Reads and creates a new Animated object from an array of bytes.
-	 * This reads until it reaches the end of the entry list.
-	 * @param bytes the byte array to read.
-	 * @return a new Animated object.
-	 * @throws IOException if the stream cannot be read.
+	 * Creates a flat entry.
+	 * @param lastName	the last name in the sequence.
+	 * @param firstName the first name in the sequence.
+	 * @param ticks the amount of ticks between each frame.
+	 * @return a new entry detailing an animated texture.
+	 * @throws IllegalArgumentException if <code>lastName</code> or <code>firstName</code> is not a valid texture name, or frame ticks is less than 1.
 	 */
-	public static Animated create(byte[] bytes) throws IOException
+	public static Entry flat(String lastName, String firstName, int ticks)
 	{
-		Animated out = new Animated();
-		out.fromBytes(bytes);
-		return out;
+		if (!NameUtils.isValidTextureName(lastName))
+			throw new IllegalArgumentException("Last texture name is invalid.");
+		else if (!NameUtils.isValidTextureName(firstName))
+			throw new IllegalArgumentException("First texture name is invalid.");
+		else if (ticks < 1 || ticks > Integer.MAX_VALUE)
+			throw new IllegalArgumentException("Frame ticks must be between 1 and 2^31 - 1.");
+		
+		return new Entry(false, lastName, firstName, ticks);
 	}
-	
+
 	/**
-	 * Reads and creates a new Animated from an {@link InputStream} implementation.
-	 * This reads from the stream until enough bytes for a full {@link Animated} lump are read.
-	 * The stream is NOT closed at the end.
-	 * @param in the open {@link InputStream} to read from.
-	 * @return a new Animated with its fields set.
-	 * @throws IOException if the stream cannot be read.
+	 * Creates a texture entry.
+	 * @param lastName	the last name in the sequence.
+	 * @param firstName the first name in the sequence.
+	 * @param ticks the amount of ticks between each frame.
+	 * @return a new entry detailing an animated texture.
+	 * @throws IllegalArgumentException if <code>lastName</code> or <code>firstName</code> is not a valid texture name, or frame ticks is less than 1.
 	 */
-	public static Animated read(InputStream in) throws IOException
+	public static Entry texture(String lastName, String firstName, int ticks)
 	{
-		Animated out = new Animated();
-		out.readBytes(in);
-		return out;
+		return new Entry(true, false, lastName, firstName, ticks);
+	}
+
+	/**
+	 * Creates a texture entry.
+	 * @param lastName	the last name in the sequence.
+	 * @param firstName the first name in the sequence.
+	 * @param ticks the amount of ticks between each frame.
+	 * @param decals if true, allows decals to be placed on this texture, false if not.
+	 * @return a new entry detailing an animated texture.
+	 * @throws IllegalArgumentException if <code>lastName</code> or <code>firstName</code> is not a valid texture name, or frame ticks is less than 1.
+	 */
+	public static Entry texture(String lastName, String firstName, int ticks, boolean decals)
+	{
+		if (!NameUtils.isValidTextureName(lastName))
+			throw new IllegalArgumentException("Last texture name is invalid.");
+		else if (!NameUtils.isValidTextureName(firstName))
+			throw new IllegalArgumentException("First texture name is invalid.");
+		else if (ticks < 1 || ticks > Integer.MAX_VALUE)
+			throw new IllegalArgumentException("Frame ticks must be between 1 and 2^31 - 1.");
+		
+		return new Entry(true, decals, lastName, firstName, ticks);
 	}
 
 	/**
@@ -123,22 +145,6 @@ public class Animated implements BinaryObject, Iterable<Animated.Entry>, Sizable
 	}
 
 	@Override
-	public byte[] toBytes()
-	{
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		try { writeBytes(bos); } catch (IOException e) { /* Shouldn't happen. */ }
-		return bos.toByteArray();
-	}
-
-	@Override
-	public void fromBytes(byte[] data) throws IOException
-	{
-		ByteArrayInputStream bin = new ByteArrayInputStream(data);
-		readBytes(bin);
-		Utils.close(bin);
-	}
-
-	@Override
 	public void readBytes(InputStream in) throws IOException
 	{
 		entryList.clear();
@@ -177,63 +183,12 @@ public class Animated implements BinaryObject, Iterable<Animated.Entry>, Sizable
 		return entryList.isEmpty();
 	}
 
-	/**
-	 * Creates a flat entry.
-	 * @param lastName	the last name in the sequence.
-	 * @param firstName the first name in the sequence.
-	 * @param ticks the amount of ticks between each frame.
-	 * @return a new entry detailing an animated texture.
-	 * @throws IllegalArgumentException if <code>lastName</code> or <code>firstName</code> is not a valid texture name, or frame ticks is less than 1.
-	 */
-	public static Entry flat(String lastName, String firstName, int ticks)
-	{
-		if (!NameUtils.isValidTextureName(lastName))
-			throw new IllegalArgumentException("Last texture name is invalid.");
-		else if (!NameUtils.isValidTextureName(firstName))
-			throw new IllegalArgumentException("First texture name is invalid.");
-		else if (ticks < 1 || ticks > Integer.MAX_VALUE)
-			throw new IllegalArgumentException("Frame ticks must be between 1 and 2^31 - 1.");
-		
-		return new Entry(false, lastName, firstName, ticks);
-	}
-
-	/**
-	 * Creates a texture entry.
-	 * @param lastName	the last name in the sequence.
-	 * @param firstName the first name in the sequence.
-	 * @param ticks the amount of ticks between each frame.
-	 * @return a new entry detailing an animated texture.
-	 * @throws IllegalArgumentException if <code>lastName</code> or <code>firstName</code> is not a valid texture name, or frame ticks is less than 1.
-	 */
-	public static Entry texture(String lastName, String firstName, int ticks)
-	{
-		return new Entry(true, false, lastName, firstName, ticks);
-	}
-	
-	/**
-	 * Creates a texture entry.
-	 * @param lastName	the last name in the sequence.
-	 * @param firstName the first name in the sequence.
-	 * @param ticks the amount of ticks between each frame.
-	 * @param decals if true, allows decals to be placed on this texture, false if not.
-	 * @return a new entry detailing an animated texture.
-	 * @throws IllegalArgumentException if <code>lastName</code> or <code>firstName</code> is not a valid texture name, or frame ticks is less than 1.
-	 */
-	public static Entry texture(String lastName, String firstName, int ticks, boolean decals)
-	{
-		if (!NameUtils.isValidTextureName(lastName))
-			throw new IllegalArgumentException("Last texture name is invalid.");
-		else if (!NameUtils.isValidTextureName(firstName))
-			throw new IllegalArgumentException("First texture name is invalid.");
-		else if (ticks < 1 || ticks > Integer.MAX_VALUE)
-			throw new IllegalArgumentException("Frame ticks must be between 1 and 2^31 - 1.");
-		
-		return new Entry(true, decals, lastName, firstName, ticks);
-	}
-	
 	/** Flat entry for ANIMATED. */
 	public static class Entry implements BinaryObject
 	{
+		/** Length of a single entry in bytes. */
+		public static final int LENGTH = 23;
+		
 		/** Is this a texture entry? If not, it's a flat. */
 		protected TextureType type;
 		/** The last texture name. */
@@ -355,22 +310,6 @@ public class Animated implements BinaryObject, Iterable<Animated.Entry>, Sizable
 		public int getTicks()
 		{
 			return ticks;
-		}
-
-		@Override
-		public byte[] toBytes()
-		{
-			ByteArrayOutputStream bos = new ByteArrayOutputStream();
-			try { writeBytes(bos); } catch (IOException e) { /* Shouldn't happen. */ }
-			return bos.toByteArray();
-		}
-
-		@Override
-		public void fromBytes(byte[] data) throws IOException
-		{
-			ByteArrayInputStream bin = new ByteArrayInputStream(data);
-			readBytes(bin);
-			Utils.close(bin);
 		}
 
 		@Override

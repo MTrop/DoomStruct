@@ -40,35 +40,6 @@ public class StrifeTextureList extends CommonTextureList<StrifeTextureList.Textu
 		super(capacity);
 	}
 
-	/**
-	 * Reads and creates a new StrifeTextureList from an array of bytes.
-	 * This reads a full texture set from the array.
-	 * @param bytes the byte array to read.
-	 * @return a new StrifeTextureList with its fields set.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static StrifeTextureList create(byte[] bytes) throws IOException
-	{
-		StrifeTextureList out = new StrifeTextureList();
-		out.fromBytes(bytes);
-		return out;
-	}
-	
-	/**
-	 * Reads and creates a new DoomTextureList from an {@link InputStream} implementation.
-	 * This reads from the stream until enough bytes for a full texture set are read.
-	 * The stream is NOT closed at the end.
-	 * @param in the open {@link InputStream} to read from.
-	 * @return a new StrifeTextureList with its fields set.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static StrifeTextureList read(InputStream in) throws IOException
-	{
-		StrifeTextureList out = new StrifeTextureList();
-		out.readBytes(in);
-		return out;
-	}
-
 	@Override
 	public Texture createTexture(String texture) 
 	{
@@ -76,7 +47,7 @@ public class StrifeTextureList extends CommonTextureList<StrifeTextureList.Textu
 		addCreatedTexture(out);
 		return out;
 	}
-
+	
 	@Override
 	public void readBytes(InputStream in) throws IOException
 	{
@@ -116,35 +87,6 @@ public class StrifeTextureList extends CommonTextureList<StrifeTextureList.Textu
 			super(name);
 		}
 
-		/**
-		 * Reads and creates a new StrifeTexture object from an array of bytes.
-		 * This reads until it reaches the end of the texture.
-		 * @param bytes the byte array to read.
-		 * @return a new DoomTexture object.
-		 * @throws IOException if the stream cannot be read.
-		 */
-		public static Texture create(byte[] bytes) throws IOException
-		{
-			Texture out = new Texture();
-			out.fromBytes(bytes);
-			return out;
-		}
-		
-		/**
-		 * Reads and creates a new StrifeTexture from an {@link InputStream} implementation.
-		 * This reads from the stream until enough bytes for a single {@link Texture} are read.
-		 * The stream is NOT closed at the end.
-		 * @param in the open {@link InputStream} to read from.
-		 * @return a new DoomTexture object.
-		 * @throws IOException if the stream cannot be read.
-		 */
-		public static Texture read(InputStream in) throws IOException
-		{
-			Texture out = new Texture();
-			out.readBytes(in);
-			return out;
-		}
-		
 		@Override
 		public Patch createPatch() 
 		{
@@ -191,6 +133,9 @@ public class StrifeTextureList extends CommonTextureList<StrifeTextureList.Textu
 		 */
 		public static class Patch extends CommonPatch
 		{
+			/** The length of a single patch. */
+			public static final int LENGTH = 10;
+
 			@Override
 			public void readBytes(InputStream in) throws IOException
 			{

@@ -119,7 +119,7 @@ public class WadMap implements Wad
 		for (int x = 0; x < entryCount; x++)
 		{
 			sr.readBytes(in, entrybuffer);
-			WadEntry entry = WadEntry.create(entrybuffer);
+			WadEntry entry = BinaryObject.create(WadEntry.class, entrybuffer);
 			entries.add(entry);
 		}
 	}

@@ -19,12 +19,10 @@ import javax.imageio.ImageIO;
 
 import net.mtrop.doom.BinaryObject;
 import net.mtrop.doom.GraphicObject;
-
-import com.blackrook.commons.Common;
-import com.blackrook.io.SuperReader;
-import com.blackrook.io.SuperWriter;
-import com.blackrook.io.container.PNGContainerReader;
-import com.blackrook.io.container.PNGContainerWriter;
+import net.mtrop.doom.util.PNGContainerReader;
+import net.mtrop.doom.util.PNGContainerWriter;
+import net.mtrop.doom.util.SerialReader;
+import net.mtrop.doom.util.SerialWriter;
 
 /**
  * Represents PNG-formatted data.
@@ -66,35 +64,6 @@ public class PNGImage extends BufferedImage implements BinaryObject, GraphicObje
 	{
 		this(image.getWidth(), image.getHeight());
 		setImage(image);
-	}
-
-	/**
-	 * Reads and creates a new PNGImage object from an array of bytes.
-	 * This reads until it reaches the end of the picture data.
-	 * @param bytes the byte array to read.
-	 * @return a new PNGImage from the data.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static PNGImage create(byte[] bytes) throws IOException
-	{
-		PNGImage out = new PNGImage();
-		out.fromBytes(bytes);
-		return out;
-	}
-
-	/**
-	 * Reads and creates a new PNGImage from an {@link InputStream} implementation.
-	 * This reads from the stream until enough bytes for the full {@link PNGImage} are read.
-	 * The stream is NOT closed at the end.
-	 * @param in the open {@link InputStream} to read from.
-	 * @return a new PNGImage from the data.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static PNGImage read(InputStream in) throws IOException
-	{
-		PNGImage out = new PNGImage();
-		out.readBytes(in);
-		return out;
 	}
 
 	@Override
@@ -140,22 +109,6 @@ public class PNGImage extends BufferedImage implements BinaryObject, GraphicObje
 	}
 
 	@Override
-	public byte[] toBytes()
-	{
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		try { writeBytes(bos); } catch (IOException e) { /* Shouldn't happen. */ }
-		return bos.toByteArray();
-	}
-
-	@Override
-	public void fromBytes(byte[] data) throws IOException
-	{
-		ByteArrayInputStream bin = new ByteArrayInputStream(data);
-		readBytes(bin);
-		Common.close(bin);
-	}
-
-	@Override
 	public void readBytes(InputStream in) throws IOException
 	{
 		byte[] b = Common.getBinaryContents(in);
@@ -165,9 +118,10 @@ public class PNGImage extends BufferedImage implements BinaryObject, GraphicObje
 		{
 			if (cin.getName().equals(PNG_OFFSET_CHUNK))
 			{
-				SuperReader sr = new SuperReader(new ByteArrayInputStream(cin.getData()), SuperReader.BIG_ENDIAN);
-				setOffsetX(sr.readInt());
-				setOffsetY(sr.readInt());
+				ByteArrayInputStream bis = new ByteArrayInputStream(cin.getData());
+				SerialReader sr = new SerialReader(SerialReader.BIG_ENDIAN);
+				setOffsetX(sr.readInt(bis));
+				setOffsetY(sr.readInt(bis));
 				break;
 			}
 		}
@@ -190,12 +144,15 @@ public class PNGImage extends BufferedImage implements BinaryObject, GraphicObje
 		pw.writeChunk(cin.getName(), cin.getData());
 		
 		ByteArrayOutputStream obos = new ByteArrayOutputStream();
-		obos.write(SuperWriter.intToBytes(getOffsetX(), SuperWriter.BIG_ENDIAN));
-		obos.write(SuperWriter.intToBytes(getOffsetY(), SuperWriter.BIG_ENDIAN));
+		SerialWriter sw = new SerialWriter(SerialWriter.BIG_ENDIAN);
+		sw.writeInt(obos, getOffsetX());
+		sw.writeInt(obos, getOffsetY());
 		pw.writeChunk(PNG_OFFSET_CHUNK, obos.toByteArray());
 		
 		while ((cin = pr.nextChunk()) != null)
 			pw.writeChunk(cin.getName(), cin.getData());
+		pw.close();
+		pr.close();
 	}
 	
 	

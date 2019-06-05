@@ -61,35 +61,6 @@ public class DMXSound implements BinaryObject
 	}
 	
 	/**
-	 * Reads and creates a new DMXSound object from an array of bytes.
-	 * This reads from the array until a full sound clip is read.
-	 * @param bytes the byte array to read.
-	 * @return a new DMXSound object.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static DMXSound create(byte[] bytes) throws IOException
-	{
-		DMXSound out = new DMXSound();
-		out.fromBytes(bytes);
-		return out;
-	}
-
-	/**
-	 * Reads and creates a new DMXSound from an {@link InputStream} implementation.
-	 * This reads from the stream until a full sound clip is read.
-	 * The stream is NOT closed at the end.
-	 * @param in the open {@link InputStream} to read from.
-	 * @return a new DMXSound object.
-	 * @throws IOException if the stream cannot be read.
-	 */
-	public static DMXSound read(InputStream in) throws IOException
-	{
-		DMXSound out = new DMXSound();
-		out.readBytes(in);
-		return out;
-	}
-
-	/**
 	 * @return the sampling rate of this sound clip in samples per second.
 	 */
 	public int getSampleRate()
@@ -139,22 +110,6 @@ public class DMXSound implements BinaryObject
 	public CustomWaveForm getWaveForm()
 	{
 		return waveForm;
-	}
-
-	@Override
-	public byte[] toBytes()
-	{
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		try { writeBytes(bos); } catch (IOException e) { /* Shouldn't happen. */ }
-		return bos.toByteArray();
-	}
-
-	@Override
-	public void fromBytes(byte[] data) throws IOException
-	{
-		ByteArrayInputStream bin = new ByteArrayInputStream(data);
-		readBytes(bin);
-		Utils.close(bin);
 	}
 
 	@Override
