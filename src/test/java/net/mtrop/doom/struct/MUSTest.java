@@ -11,7 +11,6 @@ import java.io.IOException;
 
 import net.mtrop.doom.WadFile;
 import net.mtrop.doom.sound.DMXMUS;
-import net.mtrop.doom.BinaryObject;
 import net.mtrop.doom.LoggingFactory;
 import net.mtrop.doom.LoggingFactory.Logger;
 import net.mtrop.doom.util.Utils;
@@ -21,13 +20,9 @@ public final class MUSTest
 	public static void main(String[] args) throws IOException
 	{
 		Logger logger = LoggingFactory.createConsoleLoggerFor(MUSTest.class);
-		
 		WadFile wad = new WadFile(args[0]);
-		DMXMUS mus = BinaryObject.create(DMXMUS.class, wad.getData("D_RUNNIN"));
-		
-		for (DMXMUS.Event event : mus)
+		for (DMXMUS.Event event : wad.getDataAs("D_RUNNIN", DMXMUS.class))
 			logger.info(event);
-		
 		Utils.close(wad);
 	}
 }

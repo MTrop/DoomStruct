@@ -322,7 +322,7 @@ public class DMXMUS implements BinaryObject, Iterable<DMXMUS.Event>
 						tics = sr.readVariableLengthInt(in);
 					eventList.add(new NoteReleaseEvent(channel, b, tics));
 				}
-					break;
+				break;
 					
 				case Event.TYPE_PLAY:
 				{
@@ -336,7 +336,7 @@ public class DMXMUS implements BinaryObject, Iterable<DMXMUS.Event>
 						tics = sr.readVariableLengthInt(in);
 					eventList.add(new NotePlayEvent(channel, note, volume, tics));
 				}
-					break;
+				break;
 
 				case Event.TYPE_PITCH:
 				{
@@ -346,7 +346,7 @@ public class DMXMUS implements BinaryObject, Iterable<DMXMUS.Event>
 						tics = sr.readVariableLengthInt(in);
 					eventList.add(new PitchEvent(channel, b, tics));
 				}
-					break;
+				break;
 					
 				case Event.TYPE_SYSTEM:
 				{
@@ -356,7 +356,7 @@ public class DMXMUS implements BinaryObject, Iterable<DMXMUS.Event>
 						tics = sr.readVariableLengthInt(in);
 					eventList.add(new SystemEvent(channel, b, tics));
 				}
-					break;
+				break;
 				
 				case Event.TYPE_CHANGE_CONTROLLER:
 				{
@@ -367,7 +367,7 @@ public class DMXMUS implements BinaryObject, Iterable<DMXMUS.Event>
 						tics = sr.readVariableLengthInt(in);
 					eventList.add(new ControllerChangeEvent(channel, b, b2, tics));
 				}
-					break;
+				break;
 
 				case Event.TYPE_SCORE_END:
 				{
@@ -377,7 +377,7 @@ public class DMXMUS implements BinaryObject, Iterable<DMXMUS.Event>
 					eventList.add(new ScoreEndEvent(channel, tics));
 					foundEnd = true;
 				}
-					break;
+				break;
 			}
 		}
 	}

@@ -9,7 +9,6 @@ package net.mtrop.doom.struct;
 
 import java.io.IOException;
 
-import net.mtrop.doom.BinaryObject;
 import net.mtrop.doom.WadFile;
 import net.mtrop.doom.map.binary.DoomSector;
 import net.mtrop.doom.map.bsp.BSPReject;
@@ -21,12 +20,9 @@ public final class RejectTest
 	public static void main(String[] args) throws IOException
 	{
 		WadFile wad = new WadFile(args[0]);
-		byte[] data = wad.getData("SECTORS");
-		byte[] data2 = wad.getData("REJECT");
-
-		DoomSector[] sectors = BinaryObject.create(DoomSector.class, data, data.length / 26);
+		DoomSector[] sectors = wad.getDataAs("SECTORS", DoomSector.class, DoomSector.LENGTH);
 		BSPReject reject = new BSPReject(sectors.length);
-		reject.fromBytes(data2);
+		reject.fromBytes(wad.getData("REJECT"));
 		
 		Utils.close(wad);
 	}

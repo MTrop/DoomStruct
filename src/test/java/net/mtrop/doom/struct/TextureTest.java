@@ -15,7 +15,6 @@ import net.mtrop.doom.texture.PatchNames;
 import net.mtrop.doom.texture.TextureSet;
 import net.mtrop.doom.texture.TextureSet.Patch;
 import net.mtrop.doom.texture.TextureSet.Texture;
-import net.mtrop.doom.BinaryObject;
 import net.mtrop.doom.LoggingFactory;
 import net.mtrop.doom.LoggingFactory.Logger;
 import net.mtrop.doom.util.Utils;
@@ -27,23 +26,11 @@ public final class TextureTest
 		Logger logger = LoggingFactory.createConsoleLoggerFor(TextureTest.class);
 		
 		WadFile wad = new WadFile(args[0]);
-		
-		DoomTextureList texture1 = BinaryObject.create(DoomTextureList.class, wad.getData("TEXTURE1"));
-		//DoomTextureList texture2 = DoomTextureList.create(wad.getData("TEXTURE2"));
-		PatchNames pnames = BinaryObject.create(PatchNames.class, wad.getData("PNAMES"));
-
+		TextureSet set = new TextureSet(
+			wad.getDataAs("PNAMES", PatchNames.class), 
+			wad.getDataAs("TEXTURE1", DoomTextureList.class)
+		);
 		Utils.close(wad);
-
-		/*
-		for (DoomTexture tex : texture1)
-		{
-			logger.infof("%-8s %dx%d %d patches", tex.getName(), tex.getWidth(), tex.getHeight(), tex.getPatchCount());
-			for (DoomTexture.Patch patch : tex)
-				logger.infof("\t%-8s (%d, %d)", pnames.getByIndex(patch.getPatchIndex()), patch.getOriginX(), patch.getOriginY());
-		}
-		*/
-		
-		TextureSet set = new TextureSet(pnames, texture1);
 		
 		for (Texture tex : set)
 		{
@@ -51,14 +38,5 @@ public final class TextureTest
 			for (Patch patch : tex)
 				logger.infof("\t%-8s (%d, %d)", patch.getName(), patch.getOriginX(), patch.getOriginY());
 		}
-		
-		/*
-		for (DoomTexture tex : texture2)
-		{
-			logger.infof("%-8s %dx%d %d patches", tex.getName(), tex.getWidth(), tex.getHeight(), tex.getPatchCount());
-			for (DoomTexture.Patch patch : tex)
-				logger.infof("\t%-8s (%d, %d)", pnames.getByIndex(patch.getPatchIndex()), patch.getOriginX(), patch.getOriginY());
-		}
-		*/
 	}
 }

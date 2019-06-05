@@ -8,11 +8,9 @@
 package net.mtrop.doom.struct;
 
 import java.io.IOException;
-import java.io.InputStream;
 
 import net.mtrop.doom.WadFile;
 import net.mtrop.doom.graphics.Palette;
-import net.mtrop.doom.BinaryObject;
 import net.mtrop.doom.LoggingFactory;
 import net.mtrop.doom.LoggingFactory.Logger;
 import net.mtrop.doom.util.Utils;
@@ -24,11 +22,8 @@ public final class PaletteTest
 		Logger logger = LoggingFactory.createConsoleLoggerFor(PaletteTest.class);
 		
 		WadFile wad = new WadFile(args[0]);
-		InputStream in = wad.getInputStream("PLAYPAL");
-
-		logger.info(BinaryObject.read(Palette.class, in));
-			
-		Utils.close(in);
+		for (Palette pal : wad.getDataAs("PLAYPAL", Palette.class, Palette.LENGTH))
+			logger.info(pal);
 		Utils.close(wad);
 	}
 }

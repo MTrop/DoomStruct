@@ -6,12 +6,14 @@
  ******************************************************************************/
 package net.mtrop.doom.util;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Random;
 
 /**
@@ -31,6 +33,30 @@ public final class Utils
 
 	public static final byte[] BITMASK = {0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, (byte)0x80};
 	
+	/**
+	 * Wraps an iterator as an iterable.
+	 * @param <T> the Iterator type.
+	 * @param iter the iterator.
+	 * @return an Iterable wrapping the provided Iterator.
+	 */
+	public static <T> Iterable<T> asIterable(final Iterator<T> iter)
+	{
+		return ()->iter;
+	}
+	
+	/**
+	 * Retrieves the binary contents of a stream until it hits the end of the stream.
+	 * @param in	the input stream to use.
+	 * @return		an array of len bytes that make up the data in the stream.
+	 * @throws IOException	if the read cannot be done.
+	 */
+	public static byte[] getBinaryContents(InputStream in) throws IOException
+	{
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		relay(in, bos);
+		return bos.toByteArray();
+	}
+
 	/**
 	 * Reads from an input stream, reading in a consistent set of data
 	 * and writing it to the output stream. The read/write is buffered

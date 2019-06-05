@@ -8,11 +8,9 @@
 package net.mtrop.doom.struct;
 
 import java.io.IOException;
-import java.io.InputStream;
 
 import net.mtrop.doom.WadFile;
 import net.mtrop.doom.demo.Demo;
-import net.mtrop.doom.BinaryObject;
 import net.mtrop.doom.LoggingFactory;
 import net.mtrop.doom.LoggingFactory.Logger;
 import net.mtrop.doom.util.Utils;
@@ -24,16 +22,11 @@ public final class DemoTest
 		Logger logger = LoggingFactory.createConsoleLoggerFor(DemoTest.class);
 		
 		WadFile wad = new WadFile(args[0]);
-		InputStream in = wad.getInputStream("DEMO1");
-
-		Demo demo = BinaryObject.read(Demo.class, in);
+		Demo demo = wad.getDataAs("DEMO1", Demo.class);
 		logger.info(demo);
 		for (Demo.Tic[] tics : demo)
 			for (Demo.Tic tic : tics)
 				logger.info(tic);
-				
-		
-		Utils.close(in);
 		Utils.close(wad);
 	}
 }

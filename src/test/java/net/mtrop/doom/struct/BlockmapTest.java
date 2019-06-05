@@ -8,11 +8,9 @@
 package net.mtrop.doom.struct;
 
 import java.io.IOException;
-import java.io.InputStream;
 
 import net.mtrop.doom.WadFile;
 import net.mtrop.doom.map.bsp.BSPBlockmap;
-import net.mtrop.doom.BinaryObject;
 import net.mtrop.doom.LoggingFactory;
 import net.mtrop.doom.LoggingFactory.Logger;
 import net.mtrop.doom.util.Utils;
@@ -22,13 +20,8 @@ public final class BlockmapTest
 	public static void main(String[] args) throws IOException
 	{
 		Logger logger = LoggingFactory.createConsoleLoggerFor(BlockmapTest.class);
-		
 		WadFile wad = new WadFile(args[0]);
-		InputStream in = wad.getInputStream("BLOCKMAP");
-
-		BSPBlockmap blockmap = BinaryObject.read(BSPBlockmap.class, in);
-		
-		Utils.close(in);
+		BSPBlockmap blockmap = wad.getDataAs("BLOCKMAP", BSPBlockmap.class);
 		Utils.close(wad);
 	}
 }

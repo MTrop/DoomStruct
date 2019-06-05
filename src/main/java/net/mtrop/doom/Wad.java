@@ -27,6 +27,9 @@ import java.util.Queue;
  * There may be some implementations of this structure that do not support certain operations, so in those cases, those
  * methods may throw an {@link UnsupportedOperationException}. Also, certain implementations may be more suited for
  * better tasks, so be sure to figure out which implementation suits your needs!
+ * <p>
+ * Most of the common methods are "defaulted" here. Implementors are encouraged to override these if your implementation
+ * can provide a more performant version than the one-size-fits-all methods here.
  * 
  * @author Matthew Tropiano
  */
@@ -55,7 +58,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * Gets the WadEntry at index n.
 	 * 
 	 * @param n the index of the entry in the entry list.
-	 * @throws ArrayIndexOutOfBoundsException if n &lt; 0 or &gt; size.
+	 * @throws ArrayIndexOutOfBoundsException if n &lt; 0 or &gt;= size.
 	 * @return the entry at <code>n</code>.
 	 */
 	WadEntry getEntry(int n);
@@ -205,7 +208,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @param entryName the name of the entry to find.
 	 * @param start the index with which to start the search.
 	 * @return the index of the entry in this file, or -1 if not found.
-	 * @throws ArrayIndexOutOfBoundsException if start &lt; 0 or &gt; size.
+	 * @throws ArrayIndexOutOfBoundsException if start &lt; 0 or &gt;= size.
 	 * @throws NullPointerException if <code>entryName</code> is <code>null</code>.
 	 */
 	default int getIndexOf(String entryName, int start)
@@ -237,9 +240,9 @@ public interface Wad extends Iterable<WadEntry>
 	/**
 	 * Retrieves the data of a particular entry index.
 	 * 
-	 * @param n the index of the entry in the file.
+	 * @param n the index of the entry in the Wad.
 	 * @throws IOException if the data couldn't be retrieved.
-	 * @throws ArrayIndexOutOfBoundsException if n &lt; 0 or &gt; size.
+	 * @throws ArrayIndexOutOfBoundsException if n &lt; 0 or &gt;= size.
 	 * @return a byte array of the data.
 	 */
 	default byte[] getData(int n) throws IOException
@@ -257,7 +260,7 @@ public interface Wad extends Iterable<WadEntry>
 	 */
 	default byte[] getData(String entryName) throws IOException
 	{
-		WadEntry entry = getEntry(entryName);
+		WadEntry entry = getEntry(entryName, 0);
 		return entry != null ? getData(entry) : null;
 	}
 
@@ -269,7 +272,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @return a byte array of the data, or null if the entry doesn't exist.
 	 * @throws IOException if the data couldn't be retrieved.
 	 * @throws NullPointerException if <code>entryName</code> is <code>null</code>.
-	 * @throws ArrayIndexOutOfBoundsException if start &lt; 0 or &gt; size.
+	 * @throws ArrayIndexOutOfBoundsException if start &lt; 0 or &gt;= size.
 	 */
 	default byte[] getData(String entryName, int start) throws IOException
 	{
@@ -288,12 +291,137 @@ public interface Wad extends Iterable<WadEntry>
 	byte[] getData(WadEntry entry) throws IOException;
 
 	/**
+	 * Retrieves the data of an entry at a particular index as a deserialized lump.
+	 * @param n the index of the entry in the Wad.
+	 * @param type the class type to deserialize into.
+	 * @return the data, deserialized, or null if the entry doesn't exist.
+	 * @throws IOException if the data couldn't be retrieved.
+	 * @throws ArrayIndexOutOfBoundsException if n &lt; 0 or &gt;= size.
+	 * @see BinaryObject#create(Class, byte[])
+	 */
+	default <BO extends BinaryObject> BO getDataAs(int n, Class<BO> type) throws IOException
+	{
+		byte[] data = getData(n);
+		return data != null ? BinaryObject.create(type, data) : null;
+	}
+
+	/**
+	 * Retrieves the data of the first occurrence of a particular entry as a deserialized lump.
+	 * @param entryName the name of the entry to find.
+	 * @param type the class type to deserialize into.
+	 * @return the data, deserialized, or null if the entry doesn't exist.
+	 * @throws IOException if the data couldn't be retrieved or the entry's offsets breach the file extents.
+	 * @throws NullPointerException if <code>entryName</code> is <code>null</code>.
+	 * @see BinaryObject#create(Class, byte[])
+	 */
+	default <BO extends BinaryObject> BO getDataAs(String entryName, Class<BO> type) throws IOException
+	{
+		byte[] data = getData(entryName);
+		return data != null ? BinaryObject.create(type, data) : null;
+	}
+
+	/**
+	 * Retrieves the data of the first occurrence of a particular entry from a starting index as a deserialized lump.
+	 * @param entryName the name of the entry to find.
+	 * @param start the index with which to start the search.
+	 * @param type the class type to deserialize into.
+	 * @return the data, deserialized, or null if the entry doesn't exist.
+	 * @throws IOException if the data couldn't be retrieved or the entry's offsets breach the file extents.
+	 * @throws NullPointerException if <code>entryName</code> is <code>null</code>.
+	 * @see BinaryObject#create(Class, byte[])
+	 */
+	default <BO extends BinaryObject> BO getDataAs(String entryName, int start, Class<BO> type) throws IOException
+	{
+		byte[] data = getData(entryName, start);
+		return data != null ? BinaryObject.create(type, data) : null;
+	}
+
+	/**
+	 * Retrieves the data of the specified entry as a deserialized lump.
+	 * @param entry the entry to use.
+	 * @param type the class type to deserialize into.
+	 * @return the data, deserialized.
+	 * @throws IOException if the data couldn't be retrieved or the entry's offsets breach the file extents.
+	 * @throws NullPointerException if <code>entry</code> is <code>null</code>.
+	 * @see BinaryObject#create(Class, byte[])
+	 */
+	default <BO extends BinaryObject> BO getDataAs(WadEntry entry, Class<BO> type) throws IOException
+	{
+		return BinaryObject.create(type, getData(entry));
+	}
+
+	/**
+	 * Retrieves the data of an entry at a particular index as a deserialized lump.
+	 * @param n the index of the entry in the Wad.
+	 * @param type the class type to deserialize into.
+	 * @param objectLength the length of each individual object in bytes.
+	 * @return the data, deserialized.
+	 * @throws IOException if the data couldn't be retrieved.
+	 * @throws ArrayIndexOutOfBoundsException if n &lt; 0 or &gt;= size.
+	 * @see BinaryObject#create(Class, byte[])
+	 */
+	default <BO extends BinaryObject> BO[] getDataAs(int n, Class<BO> type, int objectLength) throws IOException
+	{
+		byte[] data = getData(n);
+		return BinaryObject.create(type, data, data.length / objectLength);
+	}
+
+	/**
+	 * Retrieves the data of the first occurrence of a particular entry as a deserialized lump.
+	 * @param entryName the name of the entry to find.
+	 * @param type the class type to deserialize into.
+	 * @param objectLength the length of each individual object in bytes.
+	 * @return the data, deserialized, or null if the entry doesn't exist.
+	 * @throws IOException if the data couldn't be retrieved or the entry's offsets breach the file extents.
+	 * @throws NullPointerException if <code>entryName</code> is <code>null</code>.
+	 * @see BinaryObject#create(Class, byte[])
+	 */
+	default <BO extends BinaryObject> BO[] getDataAs(String entryName, Class<BO> type, int objectLength) throws IOException
+	{
+		byte[] data = getData(entryName);
+		return data != null ? BinaryObject.create(type, data, data.length / objectLength) : null;
+	}
+
+	/**
+	 * Retrieves the data of the first occurrence of a particular entry from a starting index as a deserialized lump.
+	 * @param entryName the name of the entry to find.
+	 * @param start the index with which to start the search.
+	 * @param type the class type to deserialize into.
+	 * @param objectLength the length of each individual object in bytes.
+	 * @return the data, deserialized, or null if the entry doesn't exist.
+	 * @throws IOException if the data couldn't be retrieved or the entry's offsets breach the file extents.
+	 * @throws NullPointerException if <code>entryName</code> is <code>null</code>.
+	 * @see BinaryObject#create(Class, byte[])
+	 */
+	default <BO extends BinaryObject> BO[] getDataAs(String entryName, int start, Class<BO> type, int objectLength) throws IOException
+	{
+		byte[] data = getData(entryName, start);
+		return data != null ? BinaryObject.create(type, data, data.length / objectLength) : null;
+	}
+
+	/**
+	 * Retrieves the data of the specified entry as a deserialized lump.
+	 * @param entry the entry to use.
+	 * @param type the class type to deserialize into.
+	 * @param objectLength the length of each individual object in bytes.
+	 * @return the data, deserialized.
+	 * @throws IOException if the data couldn't be retrieved or the entry's offsets breach the file extents.
+	 * @throws NullPointerException if <code>entry</code> is <code>null</code>.
+	 * @see BinaryObject#create(Class, byte[])
+	 */
+	default <BO extends BinaryObject> BO[] getDataAs(WadEntry entry, Class<BO> type, int objectLength) throws IOException
+	{
+		byte[] data = getData(entry);
+		return BinaryObject.create(type, data, data.length / objectLength);
+	}
+
+	/**
 	 * Retrieves the data of a particular entry index and returns it as a stream.
 	 * 
 	 * @param n the index of the entry in the file.
 	 * @return an open input stream of the data, or null if it can't be retrieved.
 	 * @throws IOException if the data couldn't be retrieved.
-	 * @throws ArrayIndexOutOfBoundsException if n &lt; 0 or &gt; size.
+	 * @throws ArrayIndexOutOfBoundsException if n &lt; 0 or &gt;= size.
 	 */
 	default InputStream getInputStream(int n) throws IOException
 	{
@@ -324,7 +452,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @return an open input stream of the data, or null if it can't be retrieved.
 	 * @throws IOException if the data couldn't be retrieved.
 	 * @throws NullPointerException if <code>entryName</code> is <code>null</code>.
-	 * @throws ArrayIndexOutOfBoundsException if start &lt; 0 or &gt; size.
+	 * @throws ArrayIndexOutOfBoundsException if start &lt; 0 or &gt;= size.
 	 */
 	default InputStream getInputStream(String entryName, int start) throws IOException
 	{
@@ -348,42 +476,151 @@ public interface Wad extends Iterable<WadEntry>
 	}
 
 	/**
-	 * Retrieves the data of the specified entry from a starting index and returns it as 
+	 * Retrieves the data of a particular entry at a specific index and returns it as 
+	 * a deserializing scanner iterator that returns independent instances of objects.
+	 * 
+	 * @param n the index of the entry.
+	 * @param type the class type to deserialize into.
+	 * @param objectLength the length of each object in the entry in bytes.
+	 * @return a scanner for the data.
+	 * @throws IOException if the data couldn't be retrieved or the entry's offsets breach the file extents.
+	 * @throws ArrayIndexOutOfBoundsException if n &lt; 0 or &gt;= size.
+	 */
+	default <BO extends BinaryObject> BinaryObject.Scanner<BO> getScanner(int n, Class<BO> type, int objectLength) throws IOException
+	{
+		InputStream in = getInputStream(n);
+		return BinaryObject.scanner(type, in, objectLength);
+	}
+
+	/**
+	 * Retrieves the data of the first occurrence of a particular entry and returns it as 
+	 * a deserializing scanner iterator that returns independent instances of objects.
+	 * 
+	 * @param entryName the name of the entry to find.
+	 * @param type the class type to deserialize into.
+	 * @param objectLength the length of each object in the entry in bytes.
+	 * @return a scanner for the data, or null if the entry can't be found.
+	 * @throws IOException if the data couldn't be retrieved or the entry's offsets breach the file extents.
+	 * @throws NullPointerException if <code>entryName</code> is <code>null</code>.
+	 */
+	default <BO extends BinaryObject> BinaryObject.Scanner<BO> getScanner(String entryName, Class<BO> type, int objectLength) throws IOException
+	{
+		InputStream in = getInputStream(entryName);
+		return in != null ? BinaryObject.scanner(type, in, objectLength) : null;
+	}
+
+	/**
+	 * Retrieves the data of the first occurrence of a particular entry from a starting index and returns it as 
+	 * a deserializing scanner iterator that returns independent instances of objects.
+	 * 
+	 * @param entryName the name of the entry to find.
+	 * @param start the index with which to start the search.
+	 * @param type the class type to deserialize into.
+	 * @param objectLength the length of each object in the entry in bytes.
+	 * @return a scanner for the data, or null if the entry can't be found.
+	 * @throws IOException if the data couldn't be retrieved or the entry's offsets breach the file extents.
+	 * @throws NullPointerException if <code>entryName</code> is <code>null</code>.
+	 */
+	default <BO extends BinaryObject> BinaryObject.Scanner<BO> getScanner(String entryName, int start, Class<BO> type, int objectLength) throws IOException
+	{
+		InputStream in = getInputStream(entryName, start);
+		return in != null ? BinaryObject.scanner(type, in, objectLength) : null;
+	}
+
+	/**
+	 * Retrieves the data of the specified entry and returns it as 
 	 * a deserializing scanner iterator that returns independent instances of objects.
 	 * 
 	 * @param entry the entry to use.
-	 * @param the class type to deserialize.
-	 * @param the length of each object in the entry in bytes.
+	 * @param type the class type to deserialize into.
+	 * @param objectLength the length of each object in the entry in bytes.
 	 * @return a scanner for the data.
 	 * @throws IOException if the data couldn't be retrieved or the entry's offsets breach the file extents.
 	 * @throws NullPointerException if <code>entry</code> is <code>null</code>.
 	 */
-	default <BO extends BinaryObject> BinaryObject.Scanner<BO> getScanner(WadEntry entry, Class<BO> type, int length) throws IOException
+	default <BO extends BinaryObject> BinaryObject.Scanner<BO> getScanner(WadEntry entry, Class<BO> type, int objectLength) throws IOException
 	{
-		InputStream in = getInputStream(entry);
-		return BinaryObject.scanner(type, in, length);
+		return BinaryObject.scanner(type, getInputStream(entry), objectLength);
 	}
 
 	/**
-	 * Retrieves the data of the specified entry from a starting index and returns it as a 
+	 * Retrieves the data of a particular entry at a specific index and returns it as 
+	 * a deserializing scanner iterator that returns the same object instance with its contents changed.
+	 * <p>This is useful for when you would want to quickly scan through a set of serialized objects while
+	 * ensuring low memory use. Do NOT store the references returned by <code>next()</code> anywhere as the contents
+	 * of that reference will be changed by the next call to <code>next()</code>.
+	 * 
+	 * @param n the index of the entry.
+	 * @param type the class type to deserialize into.
+	 * @param objectLength the length of each object in the entry in bytes.
+	 * @return a scanner for the data.
+	 * @throws IOException if the data couldn't be retrieved or the entry's offsets breach the file extents.
+	 * @throws ArrayIndexOutOfBoundsException if n &lt; 0 or &gt;= size.
+	 */
+	default <BO extends BinaryObject> BinaryObject.InlineScanner<BO> getInlineScanner(int n, Class<BO> type, int objectLength) throws IOException
+	{
+		InputStream in = getInputStream(n);
+		return BinaryObject.inlineScanner(type, in, objectLength);
+	}
+
+	/**
+	 * Retrieves the data of the first occurrence of a particular entry and returns it as 
+	 * a deserializing scanner iterator that returns the same object instance with its contents changed.
+	 * <p>This is useful for when you would want to quickly scan through a set of serialized objects while
+	 * ensuring low memory use. Do NOT store the references returned by <code>next()</code> anywhere as the contents
+	 * of that reference will be changed by the next call to <code>next()</code>.
+	 * 
+	 * @param entryName the name of the entry to find.
+	 * @param type the class type to deserialize into.
+	 * @param objectLength the length of each object in the entry in bytes.
+	 * @return a scanner for the data, or null if the entry can't be found.
+	 * @throws IOException if the data couldn't be retrieved or the entry's offsets breach the file extents.
+	 * @throws NullPointerException if <code>entryName</code> is <code>null</code>.
+	 */
+	default <BO extends BinaryObject> BinaryObject.InlineScanner<BO> getInlineScanner(String entryName, Class<BO> type, int objectLength) throws IOException
+	{
+		InputStream in = getInputStream(entryName);
+		return in != null ? BinaryObject.inlineScanner(type, in, objectLength) : null;
+	}
+
+	/**
+	 * Retrieves the data of the first occurrence of a particular entry from a starting index and returns it as 
+	 * a deserializing scanner iterator that returns the same object instance with its contents changed.
+	 * <p>This is useful for when you would want to quickly scan through a set of serialized objects while
+	 * ensuring low memory use. Do NOT store the references returned by <code>next()</code> anywhere as the contents
+	 * of that reference will be changed by the next call to <code>next()</code>.
+	 * 
+	 * @param entryName the name of the entry to find.
+	 * @param start the index with which to start the search.
+	 * @param type the class type to deserialize into.
+	 * @param objectLength the length of each object in the entry in bytes.
+	 * @return a scanner for the data, or null if the entry can't be found.
+	 * @throws IOException if the data couldn't be retrieved or the entry's offsets breach the file extents.
+	 * @throws NullPointerException if <code>entryName</code> is <code>null</code>.
+	 */
+	default <BO extends BinaryObject> BinaryObject.InlineScanner<BO> getInlineScanner(String entryName, int start, Class<BO> type, int objectLength) throws IOException
+	{
+		InputStream in = getInputStream(entryName, start);
+		return in != null ? BinaryObject.inlineScanner(type, in, objectLength) : null;
+	}
+
+	/**
+	 * Retrieves the data of the specified entry and returns it as a 
 	 * deserializing scanner iterator that returns the same object instance with its contents changed.
 	 * <p>This is useful for when you would want to quickly scan through a set of serialized objects while
 	 * ensuring low memory use. Do NOT store the references returned by <code>next()</code> anywhere as the contents
 	 * of that reference will be changed by the next call to <code>next()</code>.
 	 * 
 	 * @param entry the entry to use.
-	 * @param the class type to deserialize.
-	 * @param the length of each object in the entry in bytes.
+	 * @param type the class type to deserialize into.
+	 * @param objectLength the length of each object in the entry in bytes.
 	 * @return a scanner for the data.
 	 * @throws IOException if the data couldn't be retrieved or the entry's offsets breach the file extents.
 	 * @throws NullPointerException if <code>entry</code> is <code>null</code>.
 	 */
-	default <BO extends BinaryObject> BinaryObject.InlineScanner<BO> getInlineScanner(WadEntry entry, Class<BO> type, int length) throws IOException
+	default <BO extends BinaryObject> BinaryObject.InlineScanner<BO> getInlineScanner(WadEntry entry, Class<BO> type, int objectLength) throws IOException
 	{
-		InputStream in = getInputStream(entry);
-		if (in == null)
-			return null;
-		return BinaryObject.inlineScanner(type, in, length);
+		return BinaryObject.inlineScanner(type, getInputStream(entry), objectLength);
 	}
 
 	/**
@@ -519,7 +756,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * Deletes a Wad's entry and its contents. The overhead for multiple deletions may be expensive I/O-wise.
 	 * 
 	 * @param n the index of the entry to delete.
-	 * @throws ArrayIndexOutOfBoundsException if n &lt; 0 or &gt; size.
+	 * @throws ArrayIndexOutOfBoundsException if n &lt; 0 or &gt;= size.
 	 * @throws IOException if the file cannot be altered in such a manner.
 	 */
 	void deleteEntry(int n) throws IOException;

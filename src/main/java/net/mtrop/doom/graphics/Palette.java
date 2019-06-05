@@ -315,8 +315,7 @@ public class Palette implements BinaryObject
 		sb.append("Palette");
 		for (int i = 0; i < NUM_COLORS; i++)
 		{
-			byte[] c = colorPalette[i];
-			sb.append(' ').append(i).append(":").append(Arrays.toString(c));
+			sb.append(' ').append(i).append(":").append(Arrays.toString(colorPalette[i]));
 			if (i < NUM_COLORS - 1)
 				sb.append(", ");
 		}

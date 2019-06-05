@@ -23,16 +23,19 @@ import net.mtrop.doom.util.PNGContainerReader;
 import net.mtrop.doom.util.PNGContainerWriter;
 import net.mtrop.doom.util.SerialReader;
 import net.mtrop.doom.util.SerialWriter;
+import net.mtrop.doom.util.Utils;
 
 /**
  * Represents PNG-formatted data.
  * The export functions write this data back as PNG.
  * @author Matthew Tropiano
  */
-public class PNGImage extends BufferedImage implements BinaryObject, GraphicObject
+public class PNGImage implements BinaryObject, GraphicObject
 {
 	private static final String PNG_OFFSET_CHUNK = "grAb";
 	
+	/** The inner image. */
+	private BufferedImage image;
 	/** The offset from the center, horizontally, in pixels. */
 	private int offsetX; 
 	/** The offset from the center, vertically, in pixels. */
@@ -53,7 +56,9 @@ public class PNGImage extends BufferedImage implements BinaryObject, GraphicObje
 	 */
 	public PNGImage(int width, int height)
 	{
-		super(width, height, BufferedImage.TYPE_INT_ARGB);
+		this.image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		this.offsetX = 0;
+		this.offsetY = 0;
 	}
 
 	/**
@@ -64,6 +69,18 @@ public class PNGImage extends BufferedImage implements BinaryObject, GraphicObje
 	{
 		this(image.getWidth(), image.getHeight());
 		setImage(image);
+	}
+
+	@Override
+	public int getWidth()
+	{
+		return image.getWidth();
+	}
+
+	@Override
+	public int getHeight()
+	{
+		return image.getHeight();
 	}
 
 	@Override
@@ -98,20 +115,20 @@ public class PNGImage extends BufferedImage implements BinaryObject, GraphicObje
 
 	/**
 	 * Sets the pixel data for this graphic using an Image.
-	 * If the source image is scaled to this image's dimensions.
-	 * @param image the image to copy from. 
+	 * @param newImage the image to copy from. 
 	 */
-	public void setImage(BufferedImage image)
+	public void setImage(BufferedImage newImage)
 	{
-		Graphics2D g2d = (Graphics2D)this.getGraphics();
-		g2d.drawImage(image, 0, 0, getWidth(), getHeight(), null);
+		image = new BufferedImage(newImage.getWidth(), newImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2d = (Graphics2D)image.getGraphics();
+		g2d.drawImage(newImage, 0, 0, image.getWidth(), image.getHeight(), null);
 		g2d.dispose();
 	}
 
 	@Override
 	public void readBytes(InputStream in) throws IOException
 	{
-		byte[] b = Common.getBinaryContents(in);
+		byte[] b = Utils.getBinaryContents(in);
 		PNGContainerReader pr = new PNGContainerReader(new ByteArrayInputStream(b));
 		PNGContainerReader.Chunk cin = null;
 		while ((cin = pr.nextChunk()) != null)
@@ -125,7 +142,7 @@ public class PNGImage extends BufferedImage implements BinaryObject, GraphicObje
 				break;
 			}
 		}
-
+		pr.close();
 		setImage(ImageIO.read(new ByteArrayInputStream(b)));
 	}
 
@@ -133,7 +150,7 @@ public class PNGImage extends BufferedImage implements BinaryObject, GraphicObje
 	public void writeBytes(OutputStream out) throws IOException
 	{
 		ByteArrayOutputStream ibos = new ByteArrayOutputStream();
-		ImageIO.write(this, "PNG", ibos);
+		ImageIO.write(image, "PNG", ibos);
 		ByteArrayInputStream ibis = new ByteArrayInputStream(ibos.toByteArray());
 		PNGContainerReader pr = new PNGContainerReader(ibis);
 		PNGContainerReader.Chunk cin = null;
@@ -154,7 +171,5 @@ public class PNGImage extends BufferedImage implements BinaryObject, GraphicObje
 		pw.close();
 		pr.close();
 	}
-	
-	
 
 }

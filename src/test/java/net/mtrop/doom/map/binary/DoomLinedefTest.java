@@ -8,10 +8,8 @@
 package net.mtrop.doom.map.binary;
 
 import java.io.IOException;
-import java.io.InputStream;
 
 import net.mtrop.doom.WadFile;
-import net.mtrop.doom.BinaryObject;
 import net.mtrop.doom.LoggingFactory;
 import net.mtrop.doom.LoggingFactory.Logger;
 import net.mtrop.doom.util.Utils;
@@ -23,17 +21,9 @@ public class DoomLinedefTest
 		Logger logger = LoggingFactory.createConsoleLoggerFor(DoomLinedefTest.class);
 		
 		WadFile wad = new WadFile(args[0]);
-		InputStream in = wad.getInputStream("LINEDEFS");
-
 		int i = 0;
-		byte[] b = new byte[14];
-		while (in.read(b) > 0)
-		{
-			DoomLinedef object = BinaryObject.create(DoomLinedef.class, b);
+		for (DoomLinedef object : wad.getDataAs("LINEDEFS", DoomLinedef.class, DoomLinedef.LENGTH))
 			logger.info((i++) + " " + object);
-		}
-		
-		Utils.close(in);
 		Utils.close(wad);
 	}
 }

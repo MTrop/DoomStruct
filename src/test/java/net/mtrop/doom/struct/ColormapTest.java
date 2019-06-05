@@ -8,11 +8,9 @@
 package net.mtrop.doom.struct;
 
 import java.io.IOException;
-import java.io.InputStream;
 
 import net.mtrop.doom.WadFile;
 import net.mtrop.doom.graphics.Colormap;
-import net.mtrop.doom.BinaryObject;
 import net.mtrop.doom.LoggingFactory;
 import net.mtrop.doom.LoggingFactory.Logger;
 import net.mtrop.doom.util.Utils;
@@ -22,13 +20,8 @@ public final class ColormapTest
 	public static void main(String[] args) throws IOException
 	{
 		Logger logger = LoggingFactory.createConsoleLoggerFor(ColormapTest.class);
-		
 		WadFile wad = new WadFile(args[0]);
-		InputStream in = wad.getInputStream("COLORMAP");
-
-		Colormap colormap = BinaryObject.read(Colormap.class, in);
-		
-		Utils.close(in);
+		Colormap[] colormap = wad.getDataAs("COLORMAP", Colormap.class, Colormap.LENGTH);
 		Utils.close(wad);
 	}
 }
