@@ -25,6 +25,42 @@ import net.mtrop.doom.util.Utils;
 public interface BinaryObject
 {
 	/**
+	 * Gets the byte representation of this object. 
+	 * @return this object as a series of bytes.
+	 */
+	default byte[] toBytes()
+	{
+		ByteArrayOutputStream bos = new ByteArrayOutputStream(128);
+		try { writeBytes(bos); } catch (IOException e) { /* Shouldn't happen. */ }
+		return bos.toByteArray();
+	}
+
+	/**
+	 * Reads in the byte representation of this object and sets its fields.
+	 * @param data the byte array to read from. 
+	 * @throws IOException if a read error occurs.
+	 */
+	default void fromBytes(byte[] data) throws IOException
+	{
+		ByteArrayInputStream bin = new ByteArrayInputStream(data);
+		readBytes(bin);
+	}
+
+	/**
+	 * Reads from an {@link InputStream} and sets this object's fields. 
+	 * @param in the {@link InputStream} to read from. 
+	 * @throws IOException if a read error occurs.
+	 */
+	void readBytes(InputStream in) throws IOException;
+
+	/**
+	 * Writes this object to an {@link OutputStream}.
+	 * @param out the {@link OutputStream} to write to.
+	 * @throws IOException if a write error occurs.
+	 */
+	void writeBytes(OutputStream out) throws IOException;
+
+	/**
 	 * Creates a single object of a specific class from a serialized byte array.
 	 * @param <BO> the object type, a subtype of {@link BinaryObject}.
 	 * @param boClass the class to create.
@@ -100,13 +136,16 @@ public interface BinaryObject
 	 * @return an array of length <code>count</code> of the created objects.
 	 * @throws IOException if an error occurs during the read - most commonly "not enough bytes".
 	 */
-	static <BO extends BinaryObject> DiscreteScanner<BO> scanner(Class<BO> boClass, InputStream in, int length) throws IOException
+	static <BO extends BinaryObject> Scanner<BO> scanner(Class<BO> boClass, InputStream in, int length) throws IOException
 	{
-		return new DiscreteScanner<>(boClass, in, length);
+		return new Scanner<>(boClass, in, length);
 	}
 
 	/**
-	 * Creates an amount of objects of a specific class from an {@link InputStream}.
+	 * Creates a deserializing scanner iterator that returns the same object instance with its contents changed.
+	 * This is useful for when you would want to quickly scan through a set of serialized objects while
+	 * ensuring low memory use. Do NOT store the references returned by <code>next()</code> anywhere as the contents
+	 * of that reference will be changed by the next call to <code>next()</code>.
 	 * @param <BO> the object type, a subtype of {@link BinaryObject}.
 	 * @param boClass the class to create.
 	 * @param in the input stream.
@@ -123,7 +162,7 @@ public interface BinaryObject
 	 * A deserializing scanner iterator that returns independent instances of objects.
 	 * @param <BO> the BinaryObject type.
 	 */
-	class DiscreteScanner<BO extends BinaryObject> implements Iterator<BO>
+	class Scanner<BO extends BinaryObject> implements Iterator<BO>
 	{
 		/** The input stream. */
 		private InputStream in;
@@ -132,7 +171,7 @@ public interface BinaryObject
 		/** The object class. */
 		private Class<BO> objClass;
 		
-		private DiscreteScanner(Class<BO> clz, InputStream in, int len)
+		private Scanner(Class<BO> clz, InputStream in, int len)
 		{
 			this.in = in;
 			this.buffer = new byte[len];
@@ -145,13 +184,16 @@ public interface BinaryObject
 	        int b;
 			try {
 				b = in.read(buffer);
+		        if (b < buffer.length)
+		        {
+		        	in.close();
+		            return false;
+		        }
+		        else
+		            return true;
 			} catch (IOException e) {
 				throw new RuntimeException("Could not read bytes for " + objClass.getSimpleName(), e);
 			}
-	        if (b < buffer.length)
-	            return false;
-	        else
-	            return true;
 		}
 
 		@Override
@@ -195,13 +237,16 @@ public interface BinaryObject
 	        int b;
 			try {
 				b = in.read(buffer);
+		        if (b < buffer.length)
+		        {
+		        	in.close();
+		            return false;
+		        }
+		        else
+		            return true;
 			} catch (IOException e) {
 				throw new RuntimeException("Could not read bytes for " + objClass.getSimpleName(), e);
 			}
-	        if (b < buffer.length)
-	            return false;
-	        else
-	            return true;
 		}
 
 		@Override
@@ -216,41 +261,5 @@ public interface BinaryObject
 		}
 		
 	}
-	
-	/**
-	 * Gets the byte representation of this object. 
-	 * @return this object as a series of bytes.
-	 */
-	default byte[] toBytes()
-	{
-		ByteArrayOutputStream bos = new ByteArrayOutputStream(128);
-		try { writeBytes(bos); } catch (IOException e) { /* Shouldn't happen. */ }
-		return bos.toByteArray();
-	}
-
-	/**
-	 * Reads in the byte representation of this object and sets its fields.
-	 * @param data the byte array to read from. 
-	 * @throws IOException if a read error occurs.
-	 */
-	default void fromBytes(byte[] data) throws IOException
-	{
-		ByteArrayInputStream bin = new ByteArrayInputStream(data);
-		readBytes(bin);
-	}
-	
-	/**
-	 * Reads from an {@link InputStream} and sets this object's fields. 
-	 * @param in the {@link InputStream} to read from. 
-	 * @throws IOException if a read error occurs.
-	 */
-	void readBytes(InputStream in) throws IOException;
-
-	/**
-	 * Writes this object to an {@link OutputStream}.
-	 * @param out the {@link OutputStream} to write to.
-	 * @throws IOException if a write error occurs.
-	 */
-	void writeBytes(OutputStream out) throws IOException;
 	
 }

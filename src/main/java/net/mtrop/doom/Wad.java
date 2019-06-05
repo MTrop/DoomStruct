@@ -7,8 +7,11 @@
  ******************************************************************************/
 package net.mtrop.doom;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.LinkedList;
+import java.util.Queue;
 
 /**
  * Base interface for all WAD file type implementations for reading and writing to WAD structures, either in memory or
@@ -29,18 +32,25 @@ import java.io.InputStream;
  */
 public interface Wad extends Iterable<WadEntry>
 {
+	static final byte[] NO_DATA = new byte[0];
+
 	/**
 	 * Checks if this WAD is an Information WAD.
 	 * @return true if so, false if not.
 	 */
-	public boolean isIWAD();
+	boolean isIWAD();
 	
 	/**
 	 * Checks if this WAD is a Patch WAD.
 	 * @return true if so, false if not.
 	 */
-	public boolean isPWAD();
+	boolean isPWAD();
 	
+	/**
+	 * @return the number of entries in this Wad.
+	 */
+	int getSize();
+
 	/**
 	 * Gets the WadEntry at index n.
 	 * 
@@ -48,7 +58,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws ArrayIndexOutOfBoundsException if n &lt; 0 or &gt; size.
 	 * @return the entry at <code>n</code>.
 	 */
-	public WadEntry getEntry(int n);
+	WadEntry getEntry(int n);
 
 	/**
 	 * Gets the first WadEntry named <code>entryName</code>.
@@ -56,7 +66,11 @@ public interface Wad extends Iterable<WadEntry>
 	 * @param entryName the name of the entry.
 	 * @return the first entry named <code>entryName</code> or <code>null</code> if not found.
 	 */
-	public WadEntry getEntry(String entryName);
+	default WadEntry getEntry(String entryName)
+	{
+		int i = getIndexOf(entryName, 0);
+		return i != -1 ? getEntry(i) : null;
+	}
 
 	/**
 	 * Gets the first WadEntry named <code>entryName</code>, starting from a particular index.
@@ -65,7 +79,11 @@ public interface Wad extends Iterable<WadEntry>
 	 * @param startIndex the starting index to search from.
 	 * @return the first entry named <code>entryName</code> or <code>null</code> if not found.
 	 */
-	public WadEntry getEntry(String entryName, int startIndex);
+	default WadEntry getEntry(String entryName, int startIndex)
+	{
+		int i = getIndexOf(entryName, startIndex);
+		return i != -1 ? getEntry(i) : null;
+	}
 
 	/**
 	 * Gets the n-th WadEntry named <code>entryName</code>.
@@ -74,7 +92,21 @@ public interface Wad extends Iterable<WadEntry>
 	 * @param n the n-th occurrence to find, 0-based (0 is first, 1 is second, and so on).
 	 * @return the n-th entry named <code>entryName</code> or <code>null</code> if not found.
 	 */
-	public WadEntry getNthEntry(String entryName, int n);
+	default WadEntry getNthEntry(String entryName, int n)
+	{
+		int x = 0;
+		int s = getSize();
+		for (int i = 0; i < s; i++)
+		{
+			WadEntry entry = getEntry(i);
+			if (entry.getName().equals(entryName))
+			{
+				if (x++ == n)
+					return entry;
+			}
+		}
+		return null;
+	}
 
 	/**
 	 * Gets the last WadEntry named <code>entryName</code>.
@@ -82,14 +114,31 @@ public interface Wad extends Iterable<WadEntry>
 	 * @param entryName the name of the entry.
 	 * @return the last entry named <code>entryName</code> or <code>null</code> if not found.
 	 */
-	public WadEntry getLastEntry(String entryName);
+	default WadEntry getLastEntry(String entryName)
+	{
+		int s = getSize();
+		for (int i = s - 1; i >= 0; i--)
+		{
+			WadEntry entry = getEntry(i);
+			if (entry.getName().equals(entryName))
+				return entry;
+		}
+		return null;
+	}
+
 
 	/**
 	 * Returns all WadEntry objects.
 	 * 
 	 * @return an array of all of the WadEntry objects.
 	 */
-	public WadEntry[] getAllEntries();
+	default WadEntry[] getAllEntries()
+	{
+		WadEntry[] out = new WadEntry[getSize()];
+		for (int i = 0; i < out.length; i++)
+			out[i] = getEntry(i);
+		return out;
+	}
 
 	/**
 	 * Returns all WadEntry objects named <code>entryName</code>.
@@ -97,7 +146,22 @@ public interface Wad extends Iterable<WadEntry>
 	 * @param entryName the name of the entry.
 	 * @return an array of all of the WadEntry objects with the name <code>entryName</code>.
 	 */
-	public WadEntry[] getAllEntries(String entryName);
+	default WadEntry[] getAllEntries(String entryName)
+	{
+		Queue<WadEntry> w = new LinkedList<>();
+		
+		int s = getSize();
+		for (int i = 0; i < s; i++)
+		{
+			WadEntry entry = getEntry(i);
+			if (entry.getName().equals(entryName))
+				w.add(entry);
+		}
+		
+		WadEntry[] out = new WadEntry[w.size()];
+		w.toArray(out);
+		return out;
+	}
 
 	/**
 	 * Gets the indices of all WadEntry objects named <code>entryName</code>.
@@ -105,7 +169,23 @@ public interface Wad extends Iterable<WadEntry>
 	 * @param entryName the name of the entry.
 	 * @return an array of all of the WadEntry objects with the name <code>entryName</code>.
 	 */
-	public int[] getAllEntryIndices(String entryName);
+	default int[] getAllEntryIndices(String entryName)
+	{
+		Queue<Integer> w = new LinkedList<Integer>();
+		
+		int s = getSize();
+		for (int i = 0; i < s; i++)
+		{
+			WadEntry entry = getEntry(i);
+			if (entry.getName().equals(entryName))
+				w.add(i);
+		}
+		
+		int[] out = new int[w.size()];
+		for (int i = 0; i < out.length; i++)
+			out[i] = w.poll();
+		return out;
+	}
 
 	/**
 	 * Gets the first index of an entry of name <code>entryName</code>.
@@ -114,7 +194,10 @@ public interface Wad extends Iterable<WadEntry>
 	 * @return the index of the entry in this file, or -1 if not found.
 	 * @throws NullPointerException if <code>entryName</code> is <code>null</code>.
 	 */
-	public int getIndexOf(String entryName);
+	default int getIndexOf(String entryName)
+	{
+		return getIndexOf(entryName, 0);
+	}
 
 	/**
 	 * Gets the first index of an entry of name "entryName" from a starting point.
@@ -125,7 +208,14 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws ArrayIndexOutOfBoundsException if start &lt; 0 or &gt; size.
 	 * @throws NullPointerException if <code>entryName</code> is <code>null</code>.
 	 */
-	public int getIndexOf(String entryName, int start);
+	default int getIndexOf(String entryName, int start)
+	{
+		int s = getSize();
+		for (int i = start; i < s; i++)
+			if (getEntry(i).getName().equals(entryName))
+				return i;
+		return -1;
+	}
 
 	/**
 	 * Gets the last index of an entry of name <code>entryName</code>.
@@ -134,7 +224,15 @@ public interface Wad extends Iterable<WadEntry>
 	 * @return the index of the entry in this file, or -1 if not found.
 	 * @throws NullPointerException if <code>entryName</code> is <code>null</code>.
 	 */
-	public int getLastIndexOf(String entryName);
+	default int getLastIndexOf(String entryName)
+	{
+		int out = -1;
+		int s = getSize();
+		for (int i = 0; i < s; i++)
+			if (getEntry(i).getName().equals(entryName))
+				out = i;
+		return out;
+	}
 
 	/**
 	 * Retrieves the data of a particular entry index.
@@ -144,7 +242,10 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws ArrayIndexOutOfBoundsException if n &lt; 0 or &gt; size.
 	 * @return a byte array of the data.
 	 */
-	public byte[] getData(int n) throws IOException;
+	default byte[] getData(int n) throws IOException
+	{
+		return getData(getEntry(n));
+	}
 
 	/**
 	 * Retrieves the data of the first occurrence of a particular entry.
@@ -154,7 +255,11 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws IOException if the data couldn't be retrieved.
 	 * @throws NullPointerException if <code>entryName</code> is <code>null</code>.
 	 */
-	public byte[] getData(String entryName) throws IOException;
+	default byte[] getData(String entryName) throws IOException
+	{
+		WadEntry entry = getEntry(entryName);
+		return entry != null ? getData(entry) : null;
+	}
 
 	/**
 	 * Retrieves the data of the first occurrence of a particular entry from a starting index.
@@ -166,7 +271,11 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws NullPointerException if <code>entryName</code> is <code>null</code>.
 	 * @throws ArrayIndexOutOfBoundsException if start &lt; 0 or &gt; size.
 	 */
-	public byte[] getData(String entryName, int start) throws IOException;
+	default byte[] getData(String entryName, int start) throws IOException
+	{
+		int i = getIndexOf(entryName, start);
+		return i != -1 ? getData(i) : null;
+	}
 
 	/**
 	 * Retrieves the data of the specified entry.
@@ -176,54 +285,106 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws IOException if the data couldn't be retrieved or the entry's offsets breach the file extents.
 	 * @throws NullPointerException if <code>entry</code> is <code>null</code>.
 	 */
-	public byte[] getData(WadEntry entry) throws IOException;
+	byte[] getData(WadEntry entry) throws IOException;
 
 	/**
 	 * Retrieves the data of a particular entry index and returns it as a stream.
 	 * 
 	 * @param n the index of the entry in the file.
-	 * @return a ByteArrayInputStream of the data, or null if it can't be retrieved.
+	 * @return an open input stream of the data, or null if it can't be retrieved.
 	 * @throws IOException if the data couldn't be retrieved.
 	 * @throws ArrayIndexOutOfBoundsException if n &lt; 0 or &gt; size.
 	 */
-	public InputStream getInputStream(int n) throws IOException;
+	default InputStream getInputStream(int n) throws IOException
+	{
+		return getInputStream(getEntry(n));
+	}
 
 	/**
 	 * Retrieves the data of the first occurrence of a particular entry and returns it as a stream.
 	 * 
 	 * @param entryName the name of the entry to find.
-	 * @return a ByteArrayInputStream of the data, or null if it can't be retrieved.
+	 * @return an open input stream of the data, or null if it can't be retrieved.
 	 * @throws IOException if the data couldn't be retrieved.
 	 * @throws NullPointerException if <code>entryName</code> is <code>null</code>.
 	 */
-	public InputStream getInputStream(String entryName) throws IOException;
+	default InputStream getInputStream(String entryName) throws IOException
+	{
+		int index = getIndexOf(entryName);
+		if (index < 0)
+			return null;
+		return getInputStream(index);
+	}
 
 	/**
 	 * Retrieves the data of the first occurrence of a particular entry from a starting index and returns it as a stream.
 	 * 
 	 * @param entryName the name of the entry to find.
 	 * @param start the index with which to start the search.
-	 * @return a ByteArrayInputStream of the data, or null if it can't be retrieved.
+	 * @return an open input stream of the data, or null if it can't be retrieved.
 	 * @throws IOException if the data couldn't be retrieved.
 	 * @throws NullPointerException if <code>entryName</code> is <code>null</code>.
 	 * @throws ArrayIndexOutOfBoundsException if start &lt; 0 or &gt; size.
 	 */
-	public InputStream getInputStream(String entryName, int start) throws IOException;
+	default InputStream getInputStream(String entryName, int start) throws IOException
+	{
+		int index = getIndexOf(entryName, start);
+		if (index < 0)
+			return null;
+		return getInputStream(index);
+	}
 
 	/**
 	 * Retrieves the data of the specified entry from a starting index and returns it as a stream.
 	 * 
 	 * @param entry the entry to use.
-	 * @return a ByteArrayInputStream of the data.
+	 * @return an open input stream of the data.
 	 * @throws IOException if the data couldn't be retrieved or the entry's offsets breach the file extents.
 	 * @throws NullPointerException if <code>entry</code> is <code>null</code>.
 	 */
-	public InputStream getInputStream(WadEntry entry) throws IOException;
+	default InputStream getInputStream(WadEntry entry) throws IOException
+	{
+		return new ByteArrayInputStream(getData(entry));
+	}
 
 	/**
-	 * @return the number of entries in this Wad.
+	 * Retrieves the data of the specified entry from a starting index and returns it as 
+	 * a deserializing scanner iterator that returns independent instances of objects.
+	 * 
+	 * @param entry the entry to use.
+	 * @param the class type to deserialize.
+	 * @param the length of each object in the entry in bytes.
+	 * @return a scanner for the data.
+	 * @throws IOException if the data couldn't be retrieved or the entry's offsets breach the file extents.
+	 * @throws NullPointerException if <code>entry</code> is <code>null</code>.
 	 */
-	public int getSize();
+	default <BO extends BinaryObject> BinaryObject.Scanner<BO> getScanner(WadEntry entry, Class<BO> type, int length) throws IOException
+	{
+		InputStream in = getInputStream(entry);
+		return BinaryObject.scanner(type, in, length);
+	}
+
+	/**
+	 * Retrieves the data of the specified entry from a starting index and returns it as a 
+	 * deserializing scanner iterator that returns the same object instance with its contents changed.
+	 * <p>This is useful for when you would want to quickly scan through a set of serialized objects while
+	 * ensuring low memory use. Do NOT store the references returned by <code>next()</code> anywhere as the contents
+	 * of that reference will be changed by the next call to <code>next()</code>.
+	 * 
+	 * @param entry the entry to use.
+	 * @param the class type to deserialize.
+	 * @param the length of each object in the entry in bytes.
+	 * @return a scanner for the data.
+	 * @throws IOException if the data couldn't be retrieved or the entry's offsets breach the file extents.
+	 * @throws NullPointerException if <code>entry</code> is <code>null</code>.
+	 */
+	default <BO extends BinaryObject> BinaryObject.InlineScanner<BO> getInlineScanner(WadEntry entry, Class<BO> type, int length) throws IOException
+	{
+		InputStream in = getInputStream(entry);
+		if (in == null)
+			return null;
+		return BinaryObject.inlineScanner(type, in, length);
+	}
 
 	/**
 	 * Checks if this Wad contains a particular entry, false otherwise.
@@ -231,17 +392,23 @@ public interface Wad extends Iterable<WadEntry>
 	 * @param entryName the name of the entry.
 	 * @return true if so, false if not.
 	 */
-	public boolean contains(String entryName);
+	default boolean contains(String entryName)
+	{
+		return getIndexOf(entryName, 0) > -1;
+	}
 
 	/**
 	 * Checks if this Wad contains a particular entry from a starting entry index, false otherwise.
 	 * The name is case-sensitive. 
 	 * 
-	 * @param entry the name of the entry.
+	 * @param entryName the name of the entry.
 	 * @param index the index 
 	 * @return true if so, false if not.
 	 */
-	public boolean contains(String entry, int index);
+	default boolean contains(String entryName, int index)
+	{
+		return getIndexOf(entryName, 0) > -1;
+	}
 
 	/**
 	 * Adds data to this Wad, using entryName as the name of the entry. The overhead for multiple additions may be
@@ -254,7 +421,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws IOException if the data cannot be written.
 	 * @throws NullPointerException if <code>entryName</code> or <code>data</code> is <code>null</code>.
 	 */
-	public WadEntry addData(String entryName, byte[] data) throws IOException;
+	WadEntry addData(String entryName, byte[] data) throws IOException;
 
 	/**
 	 * Adds data to this Wad at a particular entry offset, using entryName as the name of the entry. The rest of the
@@ -269,7 +436,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws IOException if the data cannot be written.
 	 * @throws NullPointerException if <code>entryName</code> or <code>data</code> is <code>null</code>.
 	 */
-	public WadEntry addDataAt(int index, String entryName, byte[] data) throws IOException;
+	WadEntry addDataAt(int index, String entryName, byte[] data) throws IOException;
 
 	/**
 	 * Adds multiple entries of data to this Wad, using entryNames as the name of the entry, using the same indices
@@ -282,7 +449,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws ArrayIndexOutOfBoundsException if the lengths of entryNames and data do not match.
 	 * @throws NullPointerException if an object if <code>entryNames</code> or <code>data</code> is <code>null</code>.
 	 */
-	public WadEntry[] addAllData(String[] entryNames, byte[][] data) throws IOException;
+	WadEntry[] addAllData(String[] entryNames, byte[][] data) throws IOException;
 
 	/**
 	 * Adds multiple entries of data to this Wad at a particular entry offset, using entryNames as the name 
@@ -296,7 +463,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws ArrayIndexOutOfBoundsException if the lengths of entryNames and data do not match.
 	 * @throws NullPointerException if an object if <code>entryNames</code> or <code>data</code> is <code>null</code>.
 	 */
-	public WadEntry[] addAllDataAt(int index, String[] entryNames, byte[][] data) throws IOException;
+	WadEntry[] addAllDataAt(int index, String[] entryNames, byte[][] data) throws IOException;
 
 	/**
 	 * Adds an entry marker to the Wad (entry with 0 size, arbitrary offset).
@@ -307,7 +474,10 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws IOException if the entry cannot be written.
 	 * @throws NullPointerException if <code>name</code> is <code>null</code>.
 	 */
-	public WadEntry addMarker(String name) throws IOException;
+	default WadEntry addMarker(String name) throws IOException
+	{
+		return addData(name, NO_DATA);
+	}
 
 	/**
 	 * Adds an entry marker to the Wad (entry with 0 size, arbitrary offset).
@@ -319,7 +489,10 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws IOException if the entry cannot be written.
 	 * @throws NullPointerException if <code>name</code> is <code>null</code>.
 	 */
-	public WadEntry addMarkerAt(int index, String name) throws IOException;
+	default WadEntry addMarkerAt(int index, String name) throws IOException
+	{
+		return addDataAt(index, name, NO_DATA);
+	}
 
 	/**
 	 * Replaces the entry at an index in the WAD.
@@ -330,7 +503,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws IOException if the entry cannot be written.
 	 * @throws NullPointerException if <code>data</code> is <code>null</code>.
 	 */
-	public void replaceEntry(int index, byte[] data) throws IOException;
+	void replaceEntry(int index, byte[] data) throws IOException;
 
 	/**
 	 * Renames the entry at an index in the WAD.
@@ -340,7 +513,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws IllegalArgumentException if the provided name is not a valid name.
 	 * @throws IOException if the entry cannot be renamed.
 	 */
-	public void renameEntry(int index, String newName) throws IOException;
+	void renameEntry(int index, String newName) throws IOException;
 
 	/**
 	 * Deletes a Wad's entry and its contents. The overhead for multiple deletions may be expensive I/O-wise.
@@ -349,7 +522,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws ArrayIndexOutOfBoundsException if n &lt; 0 or &gt; size.
 	 * @throws IOException if the file cannot be altered in such a manner.
 	 */
-	public void deleteEntry(int n) throws IOException;
+	void deleteEntry(int n) throws IOException;
 
 	/**
 	 * Retrieves a contiguous set of entries from this Wad, starting from a desired index. If the amount of entries
@@ -361,7 +534,19 @@ public interface Wad extends Iterable<WadEntry>
 	 * @return an array of references to {@link WadEntry} objects.
 	 * @throws IllegalArgumentException if startIndex is less than 0.
 	 */
-	public WadEntry[] mapEntries(int startIndex, int maxLength);
+	default WadEntry[] mapEntries(int startIndex, int maxLength)
+	{
+		if (startIndex < 0)
+			throw new IllegalArgumentException("Starting index cannot be less than 0.");
+	
+		int len = Math.min(maxLength, getSize() - startIndex);
+		if (len <= 0)
+			return new WadEntry[0];
+		WadEntry[] out = new WadEntry[len];
+		for (int i = 0; i < len; i++)
+			out[i] = getEntry(startIndex + i);
+		return out;
+	}
 
 	/**
 	 * Replaces a series of WadEntry objects in this Wad, using the provided list of entries as the replacement list. If
@@ -373,7 +558,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws IOException if the entries ould not be written.
 	 * @throws IllegalArgumentException if startIndex is less than 0.
 	 */
-	public void unmapEntries(int startIndex, WadEntry[] entryList) throws IOException;
+	void unmapEntries(int startIndex, WadEntry[] entryList) throws IOException;
 
 	/**
 	 * Completely replaces the list of entries in this Wad with a completely different set of entries.
@@ -382,6 +567,6 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws IOException if the entries ould not be written.
 	 * @throws IllegalArgumentException if startIndex is less than 0.
 	 */
-	public void setEntries(WadEntry[] entryList) throws IOException;
+	void setEntries(WadEntry[] entryList) throws IOException;
 
 }
