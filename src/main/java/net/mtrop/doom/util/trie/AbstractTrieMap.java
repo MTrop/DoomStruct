@@ -105,7 +105,13 @@ public abstract class AbstractTrieMap<K extends Object, V extends Object, S exte
 		Result<Map.Entry<K, V>, S> result = searchByKey(key, true, false);
 		int added = 0;
 		for (Map.Entry<K, V> pair : result.getEncounteredValues())
-			out.set(startOffset + (added++), pair.getValue());
+		{
+			int index = startOffset + (added++);
+			if (index < out.size())
+				out.set(index, pair.getValue());
+			else
+				out.add(pair.getValue());
+		}
 		return added;
 	}
 	
@@ -139,7 +145,13 @@ public abstract class AbstractTrieMap<K extends Object, V extends Object, S exte
 		Result<Map.Entry<K, V>, S> result = searchByKey(key, false, true);
 		int added = 0;
 		for (Map.Entry<K, V> pair : result.getDescendantValues())
-			out.set(startOffset + (added++), pair.getValue());
+		{
+			int index = startOffset + (added++);
+			if (index < out.size())
+				out.set(index, pair.getValue());
+			else
+				out.add(pair.getValue());
+		}
 		return added;
 	}
 
@@ -176,7 +188,13 @@ public abstract class AbstractTrieMap<K extends Object, V extends Object, S exte
 		else
 		{
 			for (int i = result.getMovesToLastEncounter(); i < result.getSegments().length; i++)
-				out.set(startOffset + (i - result.getMovesToLastEncounter()), result.getSegments()[i]);
+			{
+				int index = startOffset + (i - result.getMovesToLastEncounter());
+				if (index < out.size())
+					out.set(index, result.getSegments()[i]);
+				else
+					out.add(result.getSegments()[i]);
+			}
 			
 			if (!result.getEncounteredValues().isEmpty())
 				return result.getEncounteredValues().get(result.getEncounteredValues().size() - 1).getValue();
@@ -214,7 +232,13 @@ public abstract class AbstractTrieMap<K extends Object, V extends Object, S exte
 		Result<Map.Entry<K, V>, S> result = searchByKey(key, true, false);
 		int added = 0;
 		for (Map.Entry<K, V> pair : result.getEncounteredValues())
-			out.set(startOffset + (added++), pair.getKey());
+		{
+			int index = startOffset + (added++);
+			if (index < out.size())
+				out.set(index, pair.getKey());
+			else
+				out.add(pair.getKey());
+		}
 		return added;
 	}
 
@@ -248,7 +272,13 @@ public abstract class AbstractTrieMap<K extends Object, V extends Object, S exte
 		Result<Map.Entry<K, V>, S> result = searchByKey(key, false, true);
 		int added = 0;
 		for (Map.Entry<K, V> pair : result.getDescendantValues())
-			out.set(startOffset + (added++), pair.getKey());
+		{
+			int index = startOffset + (added++);
+			if (index < out.size())
+				out.set(index, pair.getKey());
+			else
+				out.add(pair.getKey());
+		}
 		return added;
 	}
 
@@ -283,7 +313,13 @@ public abstract class AbstractTrieMap<K extends Object, V extends Object, S exte
 		else
 		{
 			for (int i = result.getMovesToLastEncounter(); i < result.getSegments().length; i++)
-				out.set(startOffset + (i - result.getMovesToLastEncounter()), result.getSegments()[i]);
+			{
+				int index = startOffset + (i - result.getMovesToLastEncounter());
+				if (index < out.size())
+					out.set(index, result.getSegments()[i]);
+				else
+					out.add(result.getSegments()[i]);
+			}
 			
 			return result.getEncounteredValues().get(result.getEncounteredValues().size() - 1).getKey();
 		}

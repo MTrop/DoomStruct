@@ -7,11 +7,11 @@
  ******************************************************************************/
 package net.mtrop.doom;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -89,7 +89,7 @@ public class DoomPK3 extends ZipFile
 	/**
 	 * Refreshes the entry lists, if ZIP contents changed.
 	 */
-	public void refreshEntries()
+	public final void refreshEntries()
 	{
 		CaseInsensitiveTrieMap<ZipEntry> entryList = new CaseInsensitiveTrieMap<ZipEntry>();
 		Enumeration<? extends ZipEntry> entries = entries();
@@ -129,6 +129,17 @@ public class DoomPK3 extends ZipFile
 	}
 	
 	/**
+	 * Checks if this Wad contains a particular entry, false otherwise.
+	 * <p>The name is case-insensitive.
+	 * @param entryName the name of the entry.
+	 * @return true if so, false if not.
+	 */
+	public boolean contains(String entryName)
+	{
+		return getEntry(entryName) != null;
+	}
+
+	/**
 	 * Gets the data in one entry in the PK3 by entry name (path and all).
 	 * @param entry the entry to extract and return as a byte array.
 	 * @return a byte array of the entry's data, or null if no corresponding entry.
@@ -139,9 +150,7 @@ public class DoomPK3 extends ZipFile
 	public byte[] getData(String entry) throws IOException
 	{
 		ZipEntry zentry = getEntry(entry);
-		if (zentry == null)
-			return null;
-		return getData(zentry);
+		return zentry != null ? getData(zentry) : null;
 	}
 
 	/**
@@ -171,11 +180,97 @@ public class DoomPK3 extends ZipFile
 	public InputStream getInputStream(String entry) throws IOException
 	{
 		ZipEntry zentry = getEntry(entry);
-		if (zentry == null)
-			return null;
-		return new ByteArrayInputStream(getData(zentry));
+		return zentry != null ? getInputStream(zentry) : null;
 	}
 	
+	/**
+	 * Retrieves the data of the first occurrence of a particular entry as a decoded string of characters.
+	 * <p>The name is case-insensitive.
+	 * @param entryName the name of the entry to find.
+	 * @param charset the source charset.
+	 * @return the data, decoded, or null if the entry doesn't exist.
+	 * @throws IOException if the data couldn't be retrieved or the entry's offsets breach the file extents.
+	 * @throws NullPointerException if <code>entryName</code> is <code>null</code>.
+	 * @see BinaryObject#create(Class, byte[])
+	 */
+	public String getTextData(String entryName, Charset charset) throws IOException
+	{
+		byte[] data = getData(entryName);
+		return data != null ? new String(data, charset) : null;
+	}
+
+	/**
+	 * Retrieves the data of the first occurrence of a particular entry as a deserialized lump.
+	 * <p>The name is case-insensitive.
+	 * @param <BO> a type that extends BinaryObject.
+	 * @param entryName the name of the entry to find.
+	 * @param type the class type to deserialize into.
+	 * @return the data, deserialized, or null if the entry doesn't exist.
+	 * @throws IOException if the data couldn't be retrieved or the entry's offsets breach the file extents.
+	 * @throws NullPointerException if <code>entryName</code> is <code>null</code>.
+	 * @see BinaryObject#create(Class, byte[])
+	 */
+	public <BO extends BinaryObject> BO getDataAs(String entryName, Class<BO> type) throws IOException
+	{
+		byte[] data = getData(entryName);
+		return data != null ? BinaryObject.create(type, data) : null;
+	}
+
+	/**
+	 * Retrieves the data of the first occurrence of a particular entry as a deserialized lump.
+	 * <p>The name is case-insensitive.
+	 * @param <BO> a type that extends BinaryObject.
+	 * @param entryName the name of the entry to find.
+	 * @param type the class type to deserialize into.
+	 * @param objectLength the length of each individual object in bytes.
+	 * @return the data, deserialized, or null if the entry doesn't exist.
+	 * @throws IOException if the data couldn't be retrieved or the entry's offsets breach the file extents.
+	 * @throws NullPointerException if <code>entryName</code> is <code>null</code>.
+	 * @see BinaryObject#create(Class, byte[])
+	 */
+	public <BO extends BinaryObject> BO[] getDataAs(String entryName, Class<BO> type, int objectLength) throws IOException
+	{
+		byte[] data = getData(entryName);
+		return data != null ? BinaryObject.create(type, data, data.length / objectLength) : null;
+	}
+
+	/**
+	 * Retrieves the data of the first occurrence of a particular entry and returns it as 
+	 * a deserializing scanner iterator that returns independent instances of objects.
+	 * <p>The name is case-insensitive.
+	 * @param <BO> a type that extends BinaryObject.
+	 * @param entryName the name of the entry to find.
+	 * @param type the class type to deserialize into.
+	 * @param objectLength the length of each object in the entry in bytes.
+	 * @return a scanner for the data, or null if the entry can't be found.
+	 * @throws IOException if the data couldn't be retrieved or the entry's offsets breach the file extents.
+	 */
+	public <BO extends BinaryObject> BinaryObject.Scanner<BO> getScanner(String entryName, Class<BO> type, int objectLength) throws IOException
+	{
+		InputStream in = getInputStream(entryName);
+		return in != null ? BinaryObject.scanner(type, in, objectLength) : null;
+	}
+
+	/**
+	 * Retrieves the data of the first occurrence of a particular entry and returns it as 
+	 * a deserializing scanner iterator that returns the same object instance with its contents changed.
+	 * <p>This is useful for when you would want to quickly scan through a set of serialized objects while
+	 * ensuring low memory use. Do NOT store the references returned by <code>next()</code> anywhere as the contents
+	 * of that reference will be changed by the next call to <code>next()</code>.
+	 * <p>The name is case-insensitive.
+	 * @param <BO> a type that extends BinaryObject.
+	 * @param entryName the name of the entry to find.
+	 * @param type the class type to deserialize into.
+	 * @param objectLength the length of each object in the entry in bytes.
+	 * @return a scanner for the data, or null if the entry can't be found.
+	 * @throws IOException if the data couldn't be retrieved or the entry's offsets breach the file extents.
+	 */
+	public <BO extends BinaryObject> BinaryObject.InlineScanner<BO> getInlineScanner(String entryName, Class<BO> type, int objectLength) throws IOException
+	{
+		InputStream in = getInputStream(entryName);
+		return in != null ? BinaryObject.inlineScanner(type, in, objectLength) : null;
+	}
+
 	/**
 	 * Gets the "entry name" for a ZipEntry, which is just the filename itself minus extension.
 	 * @param ze the ZipEntry to use.

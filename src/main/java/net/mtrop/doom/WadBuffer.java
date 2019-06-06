@@ -234,6 +234,12 @@ public class WadBuffer implements Wad
 	}
 
 	@Override
+	public InputStream getInputStream(WadEntry entry) throws IOException
+	{
+		return new WadBufferInputStream(entry.offset, entry.size);
+	}
+	
+	@Override
 	public void deleteEntry(int n) throws IOException
 	{
 		// get removed WadEntry.
@@ -353,4 +359,76 @@ public class WadBuffer implements Wad
 		return entries.iterator();
 	}
 
+	/**
+	 * Input stream for an entry. 
+	 */
+	private class WadBufferInputStream extends InputStream
+	{
+		private int offset;
+		private int amount;
+		private int marked;
+		private int markedAmount;
+		private int readlimit;
+		
+		private WadBufferInputStream(int offset, int length)
+		{
+			this.offset = offset;
+			this.amount = length;
+			this.marked = -1;
+			this.markedAmount = -1;
+			this.readlimit = -1;
+		}
+		
+		@Override
+		public int read() throws IOException
+		{
+			if (amount <= 0)
+				return -1;
+			
+			byte b = content.getData(offset++);
+			amount--;
+			if (--readlimit < 0)
+			{
+				marked = -1;
+				markedAmount = -1;
+			}
+			return b;
+		}
+
+		@Override
+		public int available() throws IOException
+		{
+			return amount;
+		}
+		
+		@Override
+		public synchronized void mark(int limit)
+		{
+			marked = offset;
+			markedAmount = amount;
+			readlimit = limit;
+		}
+		
+		@Override
+		public synchronized void reset() throws IOException
+		{
+			if (marked < 0)
+				throw new IOException("mark() not called or read limit expired.");
+			
+			offset = marked;
+			amount = markedAmount;
+
+			marked = -1;
+			markedAmount = -1;
+			readlimit = -1;
+		}
+		
+		@Override
+		public boolean markSupported()
+		{
+			return true;
+		}
+		
+	}
+	
 }

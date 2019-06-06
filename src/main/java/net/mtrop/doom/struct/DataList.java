@@ -54,6 +54,17 @@ public class DataList
 	}
 	
 	/**
+	 * Gets a byte of data from this buffer.
+	 * @param index the byte index.
+	 * @return a byte array of the requested data.
+	 * @throws ArrayIndexOutOfBoundsException if index exceeds or meets size.
+	 */
+	public byte getData(int index)
+	{
+		return buffer[index];
+	}
+	
+	/**
 	 * Gets a subset of data from this buffer.
 	 * @param offset the offset into the vector.
 	 * @param length the length of data in bytes to copy.
