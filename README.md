@@ -46,6 +46,38 @@ Contained in this release is a series of libraries that allow reading, writing,
 and extracting data in Doom Engine structures, found in the **net.mtrop.doom** 
 packages. 
 
+### Examples
+
+Open a WAD file (and close it).
+
+	WadFile wad = new WadFile("doom2.wad");
+	wad.close();
+
+Open `MAP01` in `DOOM2.WAD`.
+
+	WadFile wad = new WadFile("doom2.wad");
+	DoomMap map = MapUtils.createDoomMap(wad, "MAP01");
+	wad.close();
+
+Open `MAP29` in `DOOM2.WAD` and fetch all sectors with the `BLOOD1` floor texture.
+
+	WadFile wad = new WadFile("doom2.wad");
+	Set<DoomSector> set = new HashSet<>();
+	for (DoomSector sector : wad.getDataAs("SECTORS", wad.getIndexOf("MAP29"), DoomSector.class, DoomSector.LENGTH))
+		if (sector.getFloorTexture().equals("BLOOD1"))
+			set.add(sector);
+	wad.close();
+
+Open `MAP01` in `HEXEN.WAD` and fetch all things that have a special.
+
+	WadFile wad = new WadFile("hexen.wad");
+	Set<HexenThing> set = new HashSet<>();
+	for (HexenThing thing : wad.getDataAs("THINGS", wad.getIndexOf("MAP01"), HexenThing.class, HexenThing.LENGTH))
+		if (thing.getSpecial() > 0)
+			set.add(thing);
+	wad.close();
+
+
 ### Compiling with Ant
 
 To compile this library with Apache Ant, type:

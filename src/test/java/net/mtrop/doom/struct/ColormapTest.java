@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015-2016 Matt Tropiano
+ * Copyright (c) 2015-2019 Matt Tropiano
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
@@ -21,7 +21,8 @@ public final class ColormapTest
 	{
 		Logger logger = LoggingFactory.createConsoleLoggerFor(ColormapTest.class);
 		WadFile wad = new WadFile(args[0]);
-		Colormap[] colormap = wad.getDataAs("COLORMAP", Colormap.class, Colormap.LENGTH);
+		for (Colormap colormap : wad.getDataAs("COLORMAP", Colormap.class, Colormap.LENGTH))
+			logger.info(colormap);
 		Utils.close(wad);
 	}
 }

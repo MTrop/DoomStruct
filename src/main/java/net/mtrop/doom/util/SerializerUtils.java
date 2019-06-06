@@ -165,5 +165,21 @@ public final class SerializerUtils
 	{
 		return longToBytes(Double.doubleToRawLongBits(d), endianMode, out, offset);
 	}
+
+	/**
+	 * Converts a series of boolean values to bits,
+	 * going from least-significant to most-significant.
+	 * TRUE booleans set the bit, FALSE ones do not.
+	 * @param bool list of booleans. cannot exceed 32.
+	 * @return the resultant bitstring in an integer.
+	 */
+	public static int booleansToInt(boolean ... bool)
+	{
+		int out = 0;
+		for (int i = 0; i < Math.min(bool.length, 32); i++)
+			if (bool[i])
+				out |= (1 << i);
+		return out;
+	}
 	
 }

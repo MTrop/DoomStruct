@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015-2016 Matt Tropiano
+ * Copyright (c) 2015-2019 Matt Tropiano
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ import java.io.OutputStream;
 
 import net.mtrop.doom.util.SerialReader;
 import net.mtrop.doom.util.SerialWriter;
+import net.mtrop.doom.util.SerializerUtils;
 import net.mtrop.doom.util.Utils;
 
 /**
@@ -122,7 +123,7 @@ public class StrifeThing extends CommonThing
 		sw.writeShort(out, (short)angle);
 		sw.writeShort(out, (short)type);
 		
-		sw.writeUnsignedShort(out, Utils.booleansToInt(
+		sw.writeUnsignedShort(out, SerializerUtils.booleansToInt(
 			easy,
 			medium,
 			hard,

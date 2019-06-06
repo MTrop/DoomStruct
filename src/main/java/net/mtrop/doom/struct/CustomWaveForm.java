@@ -1,12 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2019 Black Rook Software
- * This program and the accompanying materials are made available under 
- * the terms of the MIT License, which accompanies this distribution.
+ * Copyright (c) 2015-2019 Matt Tropiano
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Lesser Public License v2.1
+ * which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
  ******************************************************************************/
 package net.mtrop.doom.struct;
 
 import java.util.Random;
 
+import net.mtrop.doom.util.RangeUtils;
 import net.mtrop.doom.util.Utils;
 
 /**
@@ -197,7 +200,7 @@ public class CustomWaveForm
 	{
 		double amp = getAmplitude();
 		for (int i = 0; i < samples.length; i++)
-			samples[i] = Utils.clampValue(samples[i]*value, -amp, amp);
+			samples[i] = RangeUtils.clampValue(samples[i]*value, -amp, amp);
 	}
 	
 	/**
@@ -210,7 +213,7 @@ public class CustomWaveForm
 	{
 		double amp = getAmplitude();
 		for (int i = 0; i < samples.length; i++)
-			samples[i] = Utils.clampValue(samples[i]+value, -amp, amp);
+			samples[i] = RangeUtils.clampValue(samples[i]+value, -amp, amp);
 	}
 	
 	/**
@@ -313,7 +316,7 @@ public class CustomWaveForm
 
 	public double getSample(double time)
 	{
-		time = Utils.wrapValue(time, 0.0, 1.0);
+		time = RangeUtils.wrapValue(time, 0.0, 1.0);
 		double spos = time / sampleIncrement;
 		double v1 = samples[(int)Math.floor(spos)];
 		switch (interpolationType)
@@ -323,21 +326,21 @@ public class CustomWaveForm
 				return v1;
 			case LINEAR:
 			{
-				double v2 = samples[Utils.wrapValue((int)Math.ceil(spos), 0, samples.length)];
+				double v2 = samples[RangeUtils.wrapValue((int)Math.ceil(spos), 0, samples.length)];
 				double interp = (time % sampleIncrement) / sampleIncrement;
 				return Utils.linearInterpolate(interp, v1, v2);
 			}
 			case COSINE:
 			{
-				double v2 = samples[Utils.wrapValue((int)Math.ceil(spos), 0, samples.length)];
+				double v2 = samples[RangeUtils.wrapValue((int)Math.ceil(spos), 0, samples.length)];
 				double interp = (time % sampleIncrement) / sampleIncrement;
 				return Utils.cosineInterpolate(interp, v1, v2);
 			}
 			case CUBIC:
 			{
-				double v2 = samples[Utils.wrapValue((int)Math.ceil(spos), 0, samples.length)];
-				double v0 = samples[Utils.wrapValue((int)Math.floor(spos - 1.0), 0, samples.length)];
-				double v3 = samples[Utils.wrapValue((int)Math.ceil(spos + 1.0), 0, samples.length)];
+				double v2 = samples[RangeUtils.wrapValue((int)Math.ceil(spos), 0, samples.length)];
+				double v0 = samples[RangeUtils.wrapValue((int)Math.floor(spos - 1.0), 0, samples.length)];
+				double v3 = samples[RangeUtils.wrapValue((int)Math.ceil(spos + 1.0), 0, samples.length)];
 				double interp = (time % sampleIncrement) / sampleIncrement;
 				return Utils.cubicInterpolate(interp, v0, v1, v2, v3);
 			}

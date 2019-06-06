@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015-2016 Matt Tropiano
+ * Copyright (c) 2015-2019 Matt Tropiano
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
@@ -304,7 +304,7 @@ public class WadFile implements Wad, AutoCloseable
 	}
 
 	@Override
-	public void unmapEntries(int startIndex, WadEntry[] entryList) throws IOException
+	public void unmapEntries(int startIndex, WadEntry... entryList) throws IOException
 	{
 		for (int i = 0; i < entryList.length; i++)
 			entries.set(startIndex + i, entryList[i]);
@@ -313,7 +313,7 @@ public class WadFile implements Wad, AutoCloseable
 	}
 
 	@Override
-	public void setEntries(WadEntry[] entryList) throws IOException
+	public void setEntries(WadEntry... entryList) throws IOException
 	{
 		entries.clear();
 		for (WadEntry WadEntry : entryList)

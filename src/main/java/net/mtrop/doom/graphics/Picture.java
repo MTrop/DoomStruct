@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015-2016 Matt Tropiano
+ * Copyright (c) 2015-2019 Matt Tropiano
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
@@ -18,7 +18,6 @@ import net.mtrop.doom.GraphicObject;
 import net.mtrop.doom.util.RangeUtils;
 import net.mtrop.doom.util.SerialReader;
 import net.mtrop.doom.util.SerialWriter;
-import net.mtrop.doom.util.Utils;
 
 /**
  * Doom graphic data stored as column-major indices (patches and most graphics with baked-in offsets). 
@@ -138,7 +137,7 @@ public class Picture implements BinaryObject, GraphicObject
 	public void setPixel(int x, int y, int value)
 	{
 		RangeUtils.checkRange("Pixel ("+x+", "+y+")", -1, 255, value);
-		pixels[x][y] = (short)Utils.clampValue(value, -1, 255);
+		pixels[x][y] = (short)RangeUtils.clampValue(value, -1, 255);
 	}
 	
 	/**

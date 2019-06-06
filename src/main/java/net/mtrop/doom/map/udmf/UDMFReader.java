@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015-2016 Matt Tropiano
+ * Copyright (c) 2015-2019 Matt Tropiano
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
@@ -25,6 +25,30 @@ public final class UDMFReader
 	private UDMFReader() {}
 	
 	/**
+	 * A listener for each new parsed entry or field that gets parsed in a UDMF structure.
+	 */
+	public interface Listener
+	{
+		/**
+		 * Called when a field is read from a UDMF structure.
+		 * @param name the name of the field.
+		 * @param value the parsed value.
+		 */
+		void onField(String name, Object value);
+
+		/**
+		 * Called when the start of a structure is read from a UDMF structure.
+		 * @param name the name (type) of the structure.
+		 */
+		void onStructureStart(String name);
+
+		/**
+		 * Called when a structure is ended in a UDMF structure.
+		 */
+		void onStructureEnd();
+	}
+	
+	/**
 	 * Reads UDMF-formatted data into a UDMFTable from an {@link InputStream}.
 	 * This will read until the end of the stream is reached.
 	 * Does not close the InputStream at the end of the read.
@@ -48,6 +72,37 @@ public final class UDMFReader
 	 * @throws IOException if the data can't be read.
 	 */
 	public static UDMFTable readData(Reader reader) throws IOException
+	{
+		ULexer lexer = new ULexer(reader);
+		UParser parser = new UParser(lexer);
+		parser.read();
+		return parser.getTable();
+	}
+	
+	/**
+	 * Reads UDMF-formatted data into a UDMFTable from an {@link InputStream}.
+	 * This will read until the end of the stream is reached.
+	 * Does not close the InputStream at the end of the read.
+	 * @param in the InputStream to read from.
+	 * @return a UDMFTable containing the structures.
+	 * @throws UDMFParseException if a parsing error occurs.
+	 * @throws IOException if the data can't be read.
+	 */
+	public static UDMFTable readData(InputStream in, UDMFReader.Listener listener) throws IOException
+	{
+		return readData(new InputStreamReader(in, "UTF8"));
+	}
+	
+	/**
+	 * Reads UDMF-formatted data into a UDMFTable from a {@link Reader}.
+	 * This will read until the end of the stream is reached.
+	 * Does not close the InputStream at the end of the read.
+	 * @param reader the reader to read from.
+	 * @return a UDMFTable containing the structures.
+	 * @throws UDMFParseException if a parsing error occurs.
+	 * @throws IOException if the data can't be read.
+	 */
+	public static UDMFTable readData(Reader reader, UDMFReader.Listener listener) throws IOException
 	{
 		ULexer lexer = new ULexer(reader);
 		UParser parser = new UParser(lexer);

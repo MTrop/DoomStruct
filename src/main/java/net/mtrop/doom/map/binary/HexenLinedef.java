@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015-2016 Matt Tropiano
+ * Copyright (c) 2015-2019 Matt Tropiano
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import java.util.Arrays;
 import net.mtrop.doom.util.RangeUtils;
 import net.mtrop.doom.util.SerialReader;
 import net.mtrop.doom.util.SerialWriter;
+import net.mtrop.doom.util.SerializerUtils;
 import net.mtrop.doom.util.Utils;
 
 /**
@@ -253,7 +254,7 @@ public class HexenLinedef extends CommonLinedef
 		sw.writeUnsignedShort(out, vertexStartIndex);
 		sw.writeUnsignedShort(out, vertexEndIndex);
 		
-		int flags = Utils.booleansToInt(
+		int flags = SerializerUtils.booleansToInt(
 			impassable,
 			monsterBlocking,
 			twoSided,

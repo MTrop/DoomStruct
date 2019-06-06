@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015-2016 Matt Tropiano
+ * Copyright (c) 2015-2019 Matt Tropiano
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
@@ -65,7 +65,7 @@ public interface Wad extends Iterable<WadEntry>
 
 	/**
 	 * Gets the first WadEntry named <code>entryName</code>.
-	 * 
+	 * <p>The name is case-insensitive.
 	 * @param entryName the name of the entry.
 	 * @return the first entry named <code>entryName</code> or <code>null</code> if not found.
 	 */
@@ -77,20 +77,35 @@ public interface Wad extends Iterable<WadEntry>
 
 	/**
 	 * Gets the first WadEntry named <code>entryName</code>, starting from a particular index.
-	 * 
+	 * <p>The name is case-insensitive.
 	 * @param entryName the name of the entry.
-	 * @param startIndex the starting index to search from.
+	 * @param start the index with which to start the search (a value less than 0 is considered 0).
 	 * @return the first entry named <code>entryName</code> or <code>null</code> if not found.
 	 */
-	default WadEntry getEntry(String entryName, int startIndex)
+	default WadEntry getEntry(String entryName, int start)
 	{
-		int i = getIndexOf(entryName, startIndex);
+		int i = getIndexOf(entryName, start);
 		return i != -1 ? getEntry(i) : null;
 	}
 
 	/**
+	 * Gets the first WadEntry named <code>entryName</code>, starting from a particular entry's index.
+	 * If <code>startEntryName</code> is not found, the search returns null. 
+	 * <p>The names are case-insensitive.
+	 * @param entryName the name of the entry.
+	 * @param startEntryName the name of the starting entry to find (first occurrence).
+	 * @return the first entry named <code>entryName</code> or <code>null</code> if <code>entryName</code> or <code>startEntryName</code> not found.
+	 * @throws NullPointerException if <code>entryName</code> or <code>startEntryName</code> is <code>null</code>.
+	 */
+	default WadEntry getEntry(String entryName, String startEntryName)
+	{
+		int start = getIndexOf(startEntryName);
+		return start >= 0 ? getEntry(entryName, start) : null;
+	}
+
+	/**
 	 * Gets the n-th WadEntry named <code>entryName</code>.
-	 * 
+	 * <p>The name is case-insensitive.
 	 * @param entryName the name of the entry.
 	 * @param n the n-th occurrence to find, 0-based (0 is first, 1 is second, and so on).
 	 * @return the n-th entry named <code>entryName</code> or <code>null</code> if not found.
@@ -102,7 +117,7 @@ public interface Wad extends Iterable<WadEntry>
 		for (int i = 0; i < s; i++)
 		{
 			WadEntry entry = getEntry(i);
-			if (entry.getName().equals(entryName))
+			if (entry.getName().equalsIgnoreCase(entryName))
 			{
 				if (x++ == n)
 					return entry;
@@ -113,7 +128,7 @@ public interface Wad extends Iterable<WadEntry>
 
 	/**
 	 * Gets the last WadEntry named <code>entryName</code>.
-	 * 
+	 * <p>The name is case-insensitive.
 	 * @param entryName the name of the entry.
 	 * @return the last entry named <code>entryName</code> or <code>null</code> if not found.
 	 */
@@ -123,7 +138,7 @@ public interface Wad extends Iterable<WadEntry>
 		for (int i = s - 1; i >= 0; i--)
 		{
 			WadEntry entry = getEntry(i);
-			if (entry.getName().equals(entryName))
+			if (entry.getName().equalsIgnoreCase(entryName))
 				return entry;
 		}
 		return null;
@@ -131,8 +146,7 @@ public interface Wad extends Iterable<WadEntry>
 
 
 	/**
-	 * Returns all WadEntry objects.
-	 * 
+	 * Returns all WadEntry objects (in a new array).
 	 * @return an array of all of the WadEntry objects.
 	 */
 	default WadEntry[] getAllEntries()
@@ -145,7 +159,7 @@ public interface Wad extends Iterable<WadEntry>
 
 	/**
 	 * Returns all WadEntry objects named <code>entryName</code>.
-	 * 
+	 * <p>The name is case-insensitive.
 	 * @param entryName the name of the entry.
 	 * @return an array of all of the WadEntry objects with the name <code>entryName</code>.
 	 */
@@ -157,7 +171,7 @@ public interface Wad extends Iterable<WadEntry>
 		for (int i = 0; i < s; i++)
 		{
 			WadEntry entry = getEntry(i);
-			if (entry.getName().equals(entryName))
+			if (entry.getName().equalsIgnoreCase(entryName))
 				w.add(entry);
 		}
 		
@@ -168,7 +182,7 @@ public interface Wad extends Iterable<WadEntry>
 
 	/**
 	 * Gets the indices of all WadEntry objects named <code>entryName</code>.
-	 * 
+	 * <p>The name is case-insensitive.
 	 * @param entryName the name of the entry.
 	 * @return an array of all of the WadEntry objects with the name <code>entryName</code>.
 	 */
@@ -180,7 +194,7 @@ public interface Wad extends Iterable<WadEntry>
 		for (int i = 0; i < s; i++)
 		{
 			WadEntry entry = getEntry(i);
-			if (entry.getName().equals(entryName))
+			if (entry.getName().equalsIgnoreCase(entryName))
 				w.add(i);
 		}
 		
@@ -192,10 +206,9 @@ public interface Wad extends Iterable<WadEntry>
 
 	/**
 	 * Gets the first index of an entry of name <code>entryName</code>.
-	 * 
+	 * <p>The name is case-insensitive.
 	 * @param entryName the name of the entry to find.
 	 * @return the index of the entry in this file, or -1 if not found.
-	 * @throws NullPointerException if <code>entryName</code> is <code>null</code>.
 	 */
 	default int getIndexOf(String entryName)
 	{
@@ -204,35 +217,47 @@ public interface Wad extends Iterable<WadEntry>
 
 	/**
 	 * Gets the first index of an entry of name "entryName" from a starting point.
-	 * 
+	 * <p>The name is case-insensitive.
 	 * @param entryName the name of the entry to find.
-	 * @param start the index with which to start the search.
+	 * @param start the index with which to start the search (a value less than 0 is considered 0).
 	 * @return the index of the entry in this file, or -1 if not found.
 	 * @throws ArrayIndexOutOfBoundsException if start &lt; 0 or &gt;= size.
-	 * @throws NullPointerException if <code>entryName</code> is <code>null</code>.
 	 */
 	default int getIndexOf(String entryName, int start)
 	{
 		int s = getSize();
-		for (int i = start; i < s; i++)
-			if (getEntry(i).getName().equals(entryName))
+		for (int i = Math.max(0, start); i < s; i++)
+			if (getEntry(i).getName().equalsIgnoreCase(entryName))
 				return i;
 		return -1;
 	}
 
 	/**
+	 * Gets the first index of an entry of name "entryName" from a starting point entry "startEntryName".
+	 * If <code>startEntryName</code> is not found, the search returns null. 
+	 * <p>The names are case-insensitive.
+	 * @param entryName the name of the entry.
+	 * @param startEntryName the name of the starting entry to find (first occurrence).
+	 * @return the index of the entry named <code>entryName</code> in this file, or -1 if <code>entryName</code> or <code>startEntryName</code> not found.
+	 */
+	default int getIndexOf(String entryName, String startEntryName)
+	{
+		int start = getIndexOf(startEntryName);
+		return start >= 0 ? getIndexOf(entryName, start) : -1;
+	}
+
+	/**
 	 * Gets the last index of an entry of name <code>entryName</code>.
-	 * 
+	 * <p>The name is case-insensitive.
 	 * @param entryName the name of the entry to find.
 	 * @return the index of the entry in this file, or -1 if not found.
-	 * @throws NullPointerException if <code>entryName</code> is <code>null</code>.
 	 */
 	default int getLastIndexOf(String entryName)
 	{
 		int out = -1;
 		int s = getSize();
 		for (int i = 0; i < s; i++)
-			if (getEntry(i).getName().equals(entryName))
+			if (getEntry(i).getName().equalsIgnoreCase(entryName))
 				out = i;
 		return out;
 	}
@@ -252,11 +277,10 @@ public interface Wad extends Iterable<WadEntry>
 
 	/**
 	 * Retrieves the data of the first occurrence of a particular entry.
-	 * 
+	 * <p>The name is case-insensitive.
 	 * @param entryName the name of the entry to find.
 	 * @return a byte array of the data, or null if the entry doesn't exist.
 	 * @throws IOException if the data couldn't be retrieved.
-	 * @throws NullPointerException if <code>entryName</code> is <code>null</code>.
 	 */
 	default byte[] getData(String entryName) throws IOException
 	{
@@ -266,7 +290,7 @@ public interface Wad extends Iterable<WadEntry>
 
 	/**
 	 * Retrieves the data of the first occurrence of a particular entry from a starting index.
-	 * 
+	 * <p>The name is case-insensitive.
 	 * @param entryName the name of the entry to find.
 	 * @param start the index with which to start the search.
 	 * @return a byte array of the data, or null if the entry doesn't exist.
@@ -281,6 +305,21 @@ public interface Wad extends Iterable<WadEntry>
 	}
 
 	/**
+	 * Retrieves the data of the first occurrence of a particular entry from a starting entry (by name).
+	 * <p>The names are case-insensitive.
+	 * @param entryName the name of the entry to find.
+	 * @param startEntryName the starting entry (by name) with which to start the search.
+	 * @return a byte array of the data, or null if the entry doesn't exist.
+	 * @throws IOException if the data couldn't be retrieved.
+	 * @throws NullPointerException if <code>entryName</code> or <code>startEntryName</code> is <code>null</code>.
+	 */
+	default byte[] getData(String entryName, String startEntryName) throws IOException
+	{
+		int i = getIndexOf(entryName, startEntryName);
+		return i != -1 ? getData(i) : null;
+	}
+
+	/**
 	 * Retrieves the data of the specified entry.
 	 * 
 	 * @param entry the entry to use.
@@ -289,6 +328,78 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws NullPointerException if <code>entry</code> is <code>null</code>.
 	 */
 	byte[] getData(WadEntry entry) throws IOException;
+
+	/**
+	 * Retrieves the data of a particular entry index and returns it as a stream.
+	 * 
+	 * @param n the index of the entry in the file.
+	 * @return an open input stream of the data, or null if it can't be retrieved.
+	 * @throws IOException if the data couldn't be retrieved.
+	 * @throws ArrayIndexOutOfBoundsException if n &lt; 0 or &gt;= size.
+	 */
+	default InputStream getInputStream(int n) throws IOException
+	{
+		return getInputStream(getEntry(n));
+	}
+
+	/**
+	 * Retrieves the data of the first occurrence of a particular entry and returns it as a stream.
+	 * <p>The name is case-insensitive.
+	 * @param entryName the name of the entry to find.
+	 * @return an open input stream of the data, or null if it can't be retrieved.
+	 * @throws IOException if the data couldn't be retrieved.
+	 * @throws NullPointerException if <code>entryName</code> is <code>null</code>.
+	 */
+	default InputStream getInputStream(String entryName) throws IOException
+	{
+		int index = getIndexOf(entryName);
+		return index >= 0 ? getInputStream(index) : null;
+	}
+
+	/**
+	 * Retrieves the data of the first occurrence of a particular entry from a starting index and returns it as a stream.
+	 * <p>The name is case-insensitive.
+	 * @param entryName the name of the entry to find.
+	 * @param start the index with which to start the search.
+	 * @return an open input stream of the data, or null if it can't be retrieved.
+	 * @throws IOException if the data couldn't be retrieved.
+	 * @throws NullPointerException if <code>entryName</code> is <code>null</code>.
+	 * @throws ArrayIndexOutOfBoundsException if start &lt; 0 or &gt;= size.
+	 */
+	default InputStream getInputStream(String entryName, int start) throws IOException
+	{
+		int index = getIndexOf(entryName, start);
+		return index >= 0 ? getInputStream(index) : null;
+	}
+
+	/**
+	 * Retrieves the data of the first occurrence of a particular entry from a starting entry (by name) and returns it as a stream.
+	 * <p>The names are case-insensitive.
+	 * @param entryName the name of the entry to find.
+	 * @param startEntryName the starting entry with which to start the search.
+	 * @return an open input stream of the data, or null if it can't be retrieved.
+	 * @throws IOException if the data couldn't be retrieved.
+	 * @throws NullPointerException if <code>entryName</code> is <code>null</code>.
+	 * @throws ArrayIndexOutOfBoundsException if start &lt; 0 or &gt;= size.
+	 */
+	default InputStream getInputStream(String entryName, String startEntryName) throws IOException
+	{
+		int index = getIndexOf(entryName, startEntryName);
+		return index >= 0 ? getInputStream(index) : null;
+	}
+
+	/**
+	 * Retrieves the data of the specified entry from a starting index and returns it as a stream.
+	 * 
+	 * @param entry the entry to use.
+	 * @return an open input stream of the data.
+	 * @throws IOException if the data couldn't be retrieved or the entry's offsets breach the file extents.
+	 * @throws NullPointerException if <code>entry</code> is <code>null</code>.
+	 */
+	default InputStream getInputStream(WadEntry entry) throws IOException
+	{
+		return new ByteArrayInputStream(getData(entry));
+	}
 
 	/**
 	 * Retrieves the data of an entry at a particular index as a deserialized lump.
@@ -307,6 +418,7 @@ public interface Wad extends Iterable<WadEntry>
 
 	/**
 	 * Retrieves the data of the first occurrence of a particular entry as a deserialized lump.
+	 * <p>The name is case-insensitive.
 	 * @param entryName the name of the entry to find.
 	 * @param type the class type to deserialize into.
 	 * @return the data, deserialized, or null if the entry doesn't exist.
@@ -322,6 +434,7 @@ public interface Wad extends Iterable<WadEntry>
 
 	/**
 	 * Retrieves the data of the first occurrence of a particular entry from a starting index as a deserialized lump.
+	 * <p>The name is case-insensitive.
 	 * @param entryName the name of the entry to find.
 	 * @param start the index with which to start the search.
 	 * @param type the class type to deserialize into.
@@ -333,6 +446,23 @@ public interface Wad extends Iterable<WadEntry>
 	default <BO extends BinaryObject> BO getDataAs(String entryName, int start, Class<BO> type) throws IOException
 	{
 		byte[] data = getData(entryName, start);
+		return data != null ? BinaryObject.create(type, data) : null;
+	}
+
+	/**
+	 * Retrieves the data of the first occurrence of a particular entry from a starting entry (by name) as a deserialized lump.
+	 * <p>The names are case-insensitive.
+	 * @param entryName the name of the entry to find.
+	 * @param startEntryName the starting entry (by name) with which to start the search.
+	 * @param type the class type to deserialize into.
+	 * @return the data, deserialized, or null if the entry doesn't exist.
+	 * @throws IOException if the data couldn't be retrieved or the entry's offsets breach the file extents.
+	 * @throws NullPointerException if <code>entryName</code> is <code>null</code>.
+	 * @see BinaryObject#create(Class, byte[])
+	 */
+	default <BO extends BinaryObject> BO getDataAs(String entryName, String startEntryName, Class<BO> type) throws IOException
+	{
+		byte[] data = getData(entryName, startEntryName);
 		return data != null ? BinaryObject.create(type, data) : null;
 	}
 
@@ -368,6 +498,7 @@ public interface Wad extends Iterable<WadEntry>
 
 	/**
 	 * Retrieves the data of the first occurrence of a particular entry as a deserialized lump.
+	 * <p>The name is case-insensitive.
 	 * @param entryName the name of the entry to find.
 	 * @param type the class type to deserialize into.
 	 * @param objectLength the length of each individual object in bytes.
@@ -384,6 +515,7 @@ public interface Wad extends Iterable<WadEntry>
 
 	/**
 	 * Retrieves the data of the first occurrence of a particular entry from a starting index as a deserialized lump.
+	 * <p>The name is case-insensitive.
 	 * @param entryName the name of the entry to find.
 	 * @param start the index with which to start the search.
 	 * @param type the class type to deserialize into.
@@ -396,6 +528,24 @@ public interface Wad extends Iterable<WadEntry>
 	default <BO extends BinaryObject> BO[] getDataAs(String entryName, int start, Class<BO> type, int objectLength) throws IOException
 	{
 		byte[] data = getData(entryName, start);
+		return data != null ? BinaryObject.create(type, data, data.length / objectLength) : null;
+	}
+
+	/**
+	 * Retrieves the data of the first occurrence of a particular entry from a starting entry (by name) as a deserialized lump.
+	 * <p>The names are case-insensitive.
+	 * @param entryName the name of the entry to find.
+	 * @param startEntryName the starting entry (by name) with which to start the search.
+	 * @param type the class type to deserialize into.
+	 * @param objectLength the length of each individual object in bytes.
+	 * @return the data, deserialized, or null if the entry doesn't exist.
+	 * @throws IOException if the data couldn't be retrieved or the entry's offsets breach the file extents.
+	 * @throws NullPointerException if <code>entryName</code> is <code>null</code>.
+	 * @see BinaryObject#create(Class, byte[])
+	 */
+	default <BO extends BinaryObject> BO[] getDataAs(String entryName, String startEntryName, Class<BO> type, int objectLength) throws IOException
+	{
+		byte[] data = getData(entryName, startEntryName);
 		return data != null ? BinaryObject.create(type, data, data.length / objectLength) : null;
 	}
 
@@ -413,66 +563,6 @@ public interface Wad extends Iterable<WadEntry>
 	{
 		byte[] data = getData(entry);
 		return BinaryObject.create(type, data, data.length / objectLength);
-	}
-
-	/**
-	 * Retrieves the data of a particular entry index and returns it as a stream.
-	 * 
-	 * @param n the index of the entry in the file.
-	 * @return an open input stream of the data, or null if it can't be retrieved.
-	 * @throws IOException if the data couldn't be retrieved.
-	 * @throws ArrayIndexOutOfBoundsException if n &lt; 0 or &gt;= size.
-	 */
-	default InputStream getInputStream(int n) throws IOException
-	{
-		return getInputStream(getEntry(n));
-	}
-
-	/**
-	 * Retrieves the data of the first occurrence of a particular entry and returns it as a stream.
-	 * 
-	 * @param entryName the name of the entry to find.
-	 * @return an open input stream of the data, or null if it can't be retrieved.
-	 * @throws IOException if the data couldn't be retrieved.
-	 * @throws NullPointerException if <code>entryName</code> is <code>null</code>.
-	 */
-	default InputStream getInputStream(String entryName) throws IOException
-	{
-		int index = getIndexOf(entryName);
-		if (index < 0)
-			return null;
-		return getInputStream(index);
-	}
-
-	/**
-	 * Retrieves the data of the first occurrence of a particular entry from a starting index and returns it as a stream.
-	 * 
-	 * @param entryName the name of the entry to find.
-	 * @param start the index with which to start the search.
-	 * @return an open input stream of the data, or null if it can't be retrieved.
-	 * @throws IOException if the data couldn't be retrieved.
-	 * @throws NullPointerException if <code>entryName</code> is <code>null</code>.
-	 * @throws ArrayIndexOutOfBoundsException if start &lt; 0 or &gt;= size.
-	 */
-	default InputStream getInputStream(String entryName, int start) throws IOException
-	{
-		int index = getIndexOf(entryName, start);
-		if (index < 0)
-			return null;
-		return getInputStream(index);
-	}
-
-	/**
-	 * Retrieves the data of the specified entry from a starting index and returns it as a stream.
-	 * 
-	 * @param entry the entry to use.
-	 * @return an open input stream of the data.
-	 * @throws IOException if the data couldn't be retrieved or the entry's offsets breach the file extents.
-	 * @throws NullPointerException if <code>entry</code> is <code>null</code>.
-	 */
-	default InputStream getInputStream(WadEntry entry) throws IOException
-	{
-		return new ByteArrayInputStream(getData(entry));
 	}
 
 	/**
@@ -495,13 +585,12 @@ public interface Wad extends Iterable<WadEntry>
 	/**
 	 * Retrieves the data of the first occurrence of a particular entry and returns it as 
 	 * a deserializing scanner iterator that returns independent instances of objects.
-	 * 
+	 * <p>The name is case-insensitive.
 	 * @param entryName the name of the entry to find.
 	 * @param type the class type to deserialize into.
 	 * @param objectLength the length of each object in the entry in bytes.
 	 * @return a scanner for the data, or null if the entry can't be found.
 	 * @throws IOException if the data couldn't be retrieved or the entry's offsets breach the file extents.
-	 * @throws NullPointerException if <code>entryName</code> is <code>null</code>.
 	 */
 	default <BO extends BinaryObject> BinaryObject.Scanner<BO> getScanner(String entryName, Class<BO> type, int objectLength) throws IOException
 	{
@@ -512,18 +601,34 @@ public interface Wad extends Iterable<WadEntry>
 	/**
 	 * Retrieves the data of the first occurrence of a particular entry from a starting index and returns it as 
 	 * a deserializing scanner iterator that returns independent instances of objects.
-	 * 
+	 * <p>The name is case-insensitive.
 	 * @param entryName the name of the entry to find.
 	 * @param start the index with which to start the search.
 	 * @param type the class type to deserialize into.
 	 * @param objectLength the length of each object in the entry in bytes.
 	 * @return a scanner for the data, or null if the entry can't be found.
 	 * @throws IOException if the data couldn't be retrieved or the entry's offsets breach the file extents.
-	 * @throws NullPointerException if <code>entryName</code> is <code>null</code>.
 	 */
 	default <BO extends BinaryObject> BinaryObject.Scanner<BO> getScanner(String entryName, int start, Class<BO> type, int objectLength) throws IOException
 	{
 		InputStream in = getInputStream(entryName, start);
+		return in != null ? BinaryObject.scanner(type, in, objectLength) : null;
+	}
+
+	/**
+	 * Retrieves the data of the first occurrence of a particular entry from a starting entry (by name) and returns it as 
+	 * a deserializing scanner iterator that returns independent instances of objects.
+	 * <p>The names are case-insensitive.
+	 * @param entryName the name of the entry to find.
+	 * @param startEntryName the starting entry (by name) with which to start the search.
+	 * @param type the class type to deserialize into.
+	 * @param objectLength the length of each object in the entry in bytes.
+	 * @return a scanner for the data, or null if the entry can't be found.
+	 * @throws IOException if the data couldn't be retrieved or the entry's offsets breach the file extents.
+	 */
+	default <BO extends BinaryObject> BinaryObject.Scanner<BO> getScanner(String entryName, String startEntryName, Class<BO> type, int objectLength) throws IOException
+	{
+		InputStream in = getInputStream(entryName, startEntryName);
 		return in != null ? BinaryObject.scanner(type, in, objectLength) : null;
 	}
 
@@ -569,13 +674,12 @@ public interface Wad extends Iterable<WadEntry>
 	 * <p>This is useful for when you would want to quickly scan through a set of serialized objects while
 	 * ensuring low memory use. Do NOT store the references returned by <code>next()</code> anywhere as the contents
 	 * of that reference will be changed by the next call to <code>next()</code>.
-	 * 
+	 * <p>The name is case-insensitive.
 	 * @param entryName the name of the entry to find.
 	 * @param type the class type to deserialize into.
 	 * @param objectLength the length of each object in the entry in bytes.
 	 * @return a scanner for the data, or null if the entry can't be found.
 	 * @throws IOException if the data couldn't be retrieved or the entry's offsets breach the file extents.
-	 * @throws NullPointerException if <code>entryName</code> is <code>null</code>.
 	 */
 	default <BO extends BinaryObject> BinaryObject.InlineScanner<BO> getInlineScanner(String entryName, Class<BO> type, int objectLength) throws IOException
 	{
@@ -589,18 +693,37 @@ public interface Wad extends Iterable<WadEntry>
 	 * <p>This is useful for when you would want to quickly scan through a set of serialized objects while
 	 * ensuring low memory use. Do NOT store the references returned by <code>next()</code> anywhere as the contents
 	 * of that reference will be changed by the next call to <code>next()</code>.
-	 * 
+	 * <p>The name is case-insensitive.
 	 * @param entryName the name of the entry to find.
 	 * @param start the index with which to start the search.
 	 * @param type the class type to deserialize into.
 	 * @param objectLength the length of each object in the entry in bytes.
 	 * @return a scanner for the data, or null if the entry can't be found.
 	 * @throws IOException if the data couldn't be retrieved or the entry's offsets breach the file extents.
-	 * @throws NullPointerException if <code>entryName</code> is <code>null</code>.
 	 */
 	default <BO extends BinaryObject> BinaryObject.InlineScanner<BO> getInlineScanner(String entryName, int start, Class<BO> type, int objectLength) throws IOException
 	{
 		InputStream in = getInputStream(entryName, start);
+		return in != null ? BinaryObject.inlineScanner(type, in, objectLength) : null;
+	}
+
+	/**
+	 * Retrieves the data of the first occurrence of a particular entry from a starting entry (by name) and returns it as 
+	 * a deserializing scanner iterator that returns the same object instance with its contents changed.
+	 * <p>This is useful for when you would want to quickly scan through a set of serialized objects while
+	 * ensuring low memory use. Do NOT store the references returned by <code>next()</code> anywhere as the contents
+	 * of that reference will be changed by the next call to <code>next()</code>.
+	 * <p>The names are case-insensitive.
+	 * @param entryName the name of the entry to find.
+	 * @param startEntryName the starting entry (by name) with which to start the search.
+	 * @param type the class type to deserialize into.
+	 * @param objectLength the length of each object in the entry in bytes.
+	 * @return a scanner for the data, or null if the entry can't be found.
+	 * @throws IOException if the data couldn't be retrieved or the entry's offsets breach the file extents.
+	 */
+	default <BO extends BinaryObject> BinaryObject.InlineScanner<BO> getInlineScanner(String entryName, String startEntryName, Class<BO> type, int objectLength) throws IOException
+	{
+		InputStream in = getInputStream(entryName, startEntryName);
 		return in != null ? BinaryObject.inlineScanner(type, in, objectLength) : null;
 	}
 
@@ -625,7 +748,7 @@ public interface Wad extends Iterable<WadEntry>
 
 	/**
 	 * Checks if this Wad contains a particular entry, false otherwise.
-	 * The name is case-sensitive. 
+	 * <p>The name is case-insensitive.
 	 * @param entryName the name of the entry.
 	 * @return true if so, false if not.
 	 */
@@ -636,15 +759,26 @@ public interface Wad extends Iterable<WadEntry>
 
 	/**
 	 * Checks if this Wad contains a particular entry from a starting entry index, false otherwise.
-	 * The name is case-sensitive. 
-	 * 
+	 * <p>The name is case-insensitive.
 	 * @param entryName the name of the entry.
-	 * @param index the index 
+	 * @param index the index to start from.
 	 * @return true if so, false if not.
 	 */
 	default boolean contains(String entryName, int index)
 	{
-		return getIndexOf(entryName, 0) > -1;
+		return getIndexOf(entryName, index) > -1;
+	}
+
+	/**
+	 * Checks if this Wad contains a particular entry from a starting entry (by name), false otherwise.
+	 * <p>The names are case-insensitive.
+	 * @param entryName the name of the entry.
+	 * @param startEntryName the starting entry (by name). 
+	 * @return true if so, false if not.
+	 */
+	default boolean contains(String entryName, String startEntryName)
+	{
+		return getIndexOf(entryName, startEntryName) > -1;
 	}
 
 	/**
@@ -795,7 +929,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws IOException if the entries ould not be written.
 	 * @throws IllegalArgumentException if startIndex is less than 0.
 	 */
-	void unmapEntries(int startIndex, WadEntry[] entryList) throws IOException;
+	void unmapEntries(int startIndex, WadEntry... entryList) throws IOException;
 
 	/**
 	 * Completely replaces the list of entries in this Wad with a completely different set of entries.
@@ -804,6 +938,6 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws IOException if the entries ould not be written.
 	 * @throws IllegalArgumentException if startIndex is less than 0.
 	 */
-	void setEntries(WadEntry[] entryList) throws IOException;
+	void setEntries(WadEntry... entryList) throws IOException;
 
 }

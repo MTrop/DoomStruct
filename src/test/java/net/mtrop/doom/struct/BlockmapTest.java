@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015-2016 Matt Tropiano
+ * Copyright (c) 2015-2019 Matt Tropiano
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ public final class BlockmapTest
 		Logger logger = LoggingFactory.createConsoleLoggerFor(BlockmapTest.class);
 		WadFile wad = new WadFile(args[0]);
 		BSPBlockmap blockmap = wad.getDataAs("BLOCKMAP", BSPBlockmap.class);
+		byte[] out = blockmap.toBytes();
 		Utils.close(wad);
 	}
 }

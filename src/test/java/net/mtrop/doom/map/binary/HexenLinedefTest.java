@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015-2016 Matt Tropiano
+ * Copyright (c) 2015-2019 Matt Tropiano
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
@@ -8,10 +8,8 @@
 package net.mtrop.doom.map.binary;
 
 import java.io.IOException;
-import java.io.InputStream;
 
 import net.mtrop.doom.WadFile;
-import net.mtrop.doom.BinaryObject;
 import net.mtrop.doom.LoggingFactory;
 import net.mtrop.doom.LoggingFactory.Logger;
 import net.mtrop.doom.util.Utils;
@@ -23,14 +21,9 @@ public class HexenLinedefTest
 		Logger logger = LoggingFactory.createConsoleLoggerFor(HexenLinedefTest.class);
 		
 		WadFile wad = new WadFile(args[0]);
-		InputStream in = wad.getInputStream("LINEDEFS");
-
 		int i = 0;
-		byte[] b = new byte[16];
-		while (in.read(b) > 0)
-			logger.info((i++) + " " + BinaryObject.create(HexenLinedef.class, b));
-		
-		Utils.close(in);
+		for (HexenLinedef object : wad.getDataAs("LINEDEFS", HexenLinedef.class, HexenLinedef.LENGTH))
+			logger.info((i++) + " " + object);
 		Utils.close(wad);
 	}
 }

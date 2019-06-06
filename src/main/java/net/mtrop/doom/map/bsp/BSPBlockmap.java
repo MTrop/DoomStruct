@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015-2016 Matt Tropiano
+ * Copyright (c) 2015-2019 Matt Tropiano
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
@@ -7,16 +7,20 @@
  ******************************************************************************/
 package net.mtrop.doom.map.bsp;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Queue;
 
 import net.mtrop.doom.BinaryObject;
+import net.mtrop.doom.struct.HashDequeMap;
+import net.mtrop.doom.struct.SparseGridIndex.Pair;
+import net.mtrop.doom.struct.SparseQueueGridIndex;
 import net.mtrop.doom.util.RangeUtils;
+import net.mtrop.doom.util.SerialReader;
+import net.mtrop.doom.util.SerialWriter;
 
 /**
  * Representation of the Blockmap lump for a map.
@@ -162,23 +166,17 @@ public class BSPBlockmap implements BinaryObject
 	}
 
 	@Override
-	public int getByteLength()
-	{
-		return LENGTH_INDETERMINATE;
-	}
-	
-	@Override
 	public void readBytes(InputStream in) throws IOException
 	{
-		SuperReader sr = new SuperReader(in,SuperReader.LITTLE_ENDIAN);
+		SerialReader sr = new SerialReader(SerialReader.LITTLE_ENDIAN);
 		innerMap.clear();
-		startX = sr.readShort();
-		startY = sr.readShort();
-		int maxX = sr.readUnsignedShort();
-		int maxY = sr.readUnsignedShort();
+		startX = sr.readShort(in);
+		startY = sr.readShort(in);
+		int maxX = sr.readUnsignedShort(in);
+		int maxY = sr.readUnsignedShort(in);
 
 		// read offset table
-		short[] indices = sr.readShorts(maxX*maxY);
+		short[] indices = sr.readShorts(in, maxX * maxY);
 		
 		// data must be treated as a stream: find highest short offset so that the reading can stop.
 		int offMax = -1;
@@ -189,23 +187,23 @@ public class BSPBlockmap implements BinaryObject
 		}
 		
 		// precache linedef lists at each particular offset: blockmap may be compressed.
-		HashedQueueMap<Integer, Integer> indexList = new HashedQueueMap<Integer, Integer>();
+		HashDequeMap<Integer, Integer> indexList = new HashDequeMap<Integer, Integer>();
 		int index = 4 + (maxX*maxY);
 		while (index <= offMax)
 		{
 			int nindex = index;
-			short n = sr.readShort();
+			short n = sr.readShort(in);
 			nindex++;
 			
 			if (n != 0)
 				throw new IOException("Blockmap list at short index "+index+" should start with 0.");
 
-			n = sr.readShort();
+			n = sr.readShort(in);
 			nindex++;
 			while (n != -1)
 			{
-				indexList.enqueue(index, (n & 0x0ffff));
-				n = sr.readShort();
+				indexList.addLast(index, (n & 0x0ffff));
+				n = sr.readShort(in);
 				nindex++;
 			}
 			
@@ -218,7 +216,7 @@ public class BSPBlockmap implements BinaryObject
 			{
 				// "touch" entry. this is so the maximum column/row
 				// still gets written on call to getDoomBytes()
-				innerMap.set(i, j, new Queue<Integer>());			
+				innerMap.set(i, j, new LinkedList<Integer>());			
 				
 				// add index list to map.
 				int ind = indices[(i*maxY)+j];
@@ -231,23 +229,23 @@ public class BSPBlockmap implements BinaryObject
 	@Override
 	public void writeBytes(OutputStream out) throws IOException
 	{
-		SuperWriter sw = new SuperWriter(out, SuperWriter.LITTLE_ENDIAN);
-		sw.writeShort((short)startX);
-		sw.writeShort((short)startY);
+		SerialWriter sw = new SerialWriter(SerialWriter.LITTLE_ENDIAN);
+		sw.writeShort(out, (short)startX);
+		sw.writeShort(out, (short)startY);
 		int maxX = 0;
 		int maxY = 0;
 
-		for (ObjectPair<Pair, Queue<Integer>> hp : innerMap)
+		for (Map.Entry<Pair, Queue<Integer>> hp : innerMap)
 		{
 			Pair p = hp.getKey();
-			maxX = Math.max(maxX, p.x);
-			maxY = Math.max(maxY, p.y);
+			maxX = Math.max(maxX, p.getX());
+			maxY = Math.max(maxY, p.getY());
 		}
 		maxX++;
 		maxY++;
 
-		sw.writeUnsignedShort(maxX);
-		sw.writeUnsignedShort(maxY);
+		sw.writeUnsignedShort(out, maxX);
+		sw.writeUnsignedShort(out, maxY);
 		
 		// convert linedef indices for offset calculation
 		short[][][] shorts = new short[maxX][maxY][];
@@ -274,7 +272,7 @@ public class BSPBlockmap implements BinaryObject
 		for (int x = 0; x < maxX; x++)
 			for (int y = 0; y < maxY; y++)
 			{
-				sw.writeShort(offset);
+				sw.writeShort(out, offset);
 				offset += 2 + shorts[x][y].length;
 			}
 		
@@ -282,10 +280,10 @@ public class BSPBlockmap implements BinaryObject
 		for (int x = 0; x < maxX; x++)
 			for (int y = 0; y < maxY; y++)
 			{
-				sw.writeShort((short)0);
+				sw.writeShort(out, (short)0);
 				for (int n = 0; n < shorts[x][y].length; n++)
-					sw.writeShort(shorts[x][y][n]);
-				sw.writeShort((short)-1);
+					sw.writeShort(out, shorts[x][y][n]);
+				sw.writeShort(out, (short)-1);
 			}
 
 	}

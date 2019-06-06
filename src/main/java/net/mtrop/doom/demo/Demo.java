@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015-2016 Matt Tropiano
+ * Copyright (c) 2015-2019 Matt Tropiano
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
@@ -1291,7 +1291,7 @@ public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 				{
 					sw.writeByte(out, t.forwardMovement);
 					sw.writeByte(out, t.rightStrafe);
-					sw.writeByte(out, (byte)(Utils.clampValue(t.turnLeft, -127, 127)));
+					sw.writeByte(out, (byte)(RangeUtils.clampValue(t.turnLeft, -127, 127)));
 					sw.writeByte(out, t.action);
 				}
 			}
@@ -1377,9 +1377,9 @@ public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 		public static Tic create(int forward, int rightStrafe, int turnLeft, byte action)
 		{
 			Tic out = new Tic();
-			out.forwardMovement = (byte)Utils.clampValue(forward, -127, 127);
-			out.rightStrafe = (byte)Utils.clampValue(rightStrafe, -127, 127);
-			out.turnLeft = (short)Utils.clampValue(turnLeft, -32767, 32767);
+			out.forwardMovement = (byte)RangeUtils.clampValue(forward, -127, 127);
+			out.rightStrafe = (byte)RangeUtils.clampValue(rightStrafe, -127, 127);
+			out.turnLeft = (short)RangeUtils.clampValue(turnLeft, -32767, 32767);
 			out.action = action;
 			return out;
 		}

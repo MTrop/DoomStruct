@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2019 Black Rook Software
- * From Black Rook Base https://github.com/BlackRookSoftware/Base 
+ * 
  * This program and the accompanying materials are made available under 
  * the terms of the MIT License, which accompanies this distribution.
  ******************************************************************************/
@@ -119,37 +119,6 @@ public final class Utils
 	}
 
 	/**
-	 * Converts a series of bytes to an integer.
-	 * @param b				the bytes to convert.
-	 * @param endianMode	the endian mode of the bytes.
-	 */
-	public static int bytesToInt(byte[] b, boolean endianMode)
-	{
-		int out = 0;
-	
-		int stop = Math.min(b.length,SIZEOF_INT);
-		for (int x = 0; x < stop; x++)
-			out |= (b[x]&0xFF) << Byte.SIZE*(endianMode ? x : SIZEOF_INT-1-x);
-	
-		return out;
-	}
-
-	/**
-	 * Converts an integer to a series of bytes.
-	 * @param i				the integer to convert.
-	 * @param endianMode	the endian mode of the bytes.
-	 * @param out			the output array.
-	 * @param offset		the offset into the array to write.
-	 * @return the next array offset after the write. 
-	 */
-	public static int intToBytes(int i, boolean endianMode, byte[] out, int offset)
-	{
-		for (int x = endianMode ? 0 : SIZEOF_INT-1; endianMode ? (x < SIZEOF_INT) : (x >= 0); x += endianMode ? 1 : -1)
-			out[offset + (endianMode ? x : SIZEOF_INT-1 - x)] = (byte)((i & (0xFF << Byte.SIZE*x)) >> Byte.SIZE*x);
-		return offset + SIZEOF_INT;
-	}
-
-	/**
 	 * Checks if a value is "empty."
 	 * The following is considered "empty":
 	 * <ul>
@@ -232,22 +201,6 @@ public final class Utils
 	}
 
 	/**
-	 * Converts a series of boolean values to bits,
-	 * going from least-significant to most-significant.
-	 * TRUE booleans set the bit, FALSE ones do not.
-	 * @param bool list of booleans. cannot exceed 32.
-	 * @return the resultant bitstring in an integer.
-	 */
-	public static int booleansToInt(boolean ... bool)
-	{
-		int out = 0;
-		for (int i = 0; i < Math.min(bool.length, 32); i++)
-			if (bool[i])
-				out |= (1 << i);
-		return out;
-	}
-
-	/**
 	 * Returns a random boolean.
 	 * @param rand the random number generator.
 	 * @return true or false.
@@ -277,142 +230,6 @@ public final class Utils
 	}
 
 	/**
-	 * Coerces an integer to the range bounded by lo and hi.
-	 * <br>Example: clampValue(32,-16,16) returns 16.
-	 * <br>Example: clampValue(4,-16,16) returns 4.
-	 * <br>Example: clampValue(-1000,-16,16) returns -16.
-	 * @param val the integer.
-	 * @param lo the lower bound.
-	 * @param hi the upper bound.
-	 * @return the value after being "forced" into the range.
-	 */
-	public static int clampValue(int val, int lo, int hi)
-	{
-		return Math.min(Math.max(val,lo),hi);
-	}
-
-	/**
-	 * Coerces a short to the range bounded by lo and hi.
-	 * <br>Example: clampValue(32,-16,16) returns 16.
-	 * <br>Example: clampValue(4,-16,16) returns 4.
-	 * <br>Example: clampValue(-1000,-16,16) returns -16.
-	 * @param val the short.
-	 * @param lo the lower bound.
-	 * @param hi the upper bound.
-	 * @return the value after being "forced" into the range.
-	 */
-	public static short clampValue(short val, short lo, short hi)
-	{
-		return (short)Math.min((short)Math.max(val,lo),hi);
-	}
-
-	/**
-	 * Coerces a float to the range bounded by lo and hi.
-	 * <br>Example: clampValue(32,-16,16) returns 16.
-	 * <br>Example: clampValue(4,-16,16) returns 4.
-	 * <br>Example: clampValue(-1000,-16,16) returns -16.
-	 * @param val the float.
-	 * @param lo the lower bound.
-	 * @param hi the upper bound.
-	 * @return the value after being "forced" into the range.
-	 */
-	public static float clampValue(float val, float lo, float hi)
-	{
-		return Math.min(Math.max(val,lo),hi);
-	}
-
-	/**
-	 * Coerces a double to the range bounded by lo and hi.
-	 * <br>Example: clampValue(32,-16,16) returns 16.
-	 * <br>Example: clampValue(4,-16,16) returns 4.
-	 * <br>Example: clampValue(-1000,-16,16) returns -16.
-	 * @param val the double.
-	 * @param lo the lower bound.
-	 * @param hi the upper bound.
-	 * @return the value after being "forced" into the range.
-	 */
-	public static double clampValue(double val, double lo, double hi)
-	{
-		return Math.min(Math.max(val,lo),hi);
-	}
-
-	/**
-	 * Coerces an integer to the range bounded by lo and hi, by "wrapping" the value.
-	 * <br>Example: wrapValue(32,-16,16) returns 0.
-	 * <br>Example: wrapValue(4,-16,16) returns 4.
-	 * <br>Example: wrapValue(-1000,-16,16) returns 8.
-	 * @param val the integer.
-	 * @param lo the lower bound.
-	 * @param hi the upper bound.
-	 * @return the value after being "wrapped" into the range.
-	 */
-	public static int wrapValue(int val, int lo, int hi)
-	{
-		val = val - (int)(val - lo) / (hi - lo) * (hi - lo);
-	   	if (val < 0)
-	   		val = val + hi - lo;
-	   	return val;
-	}
-
-	/**
-	 * Coerces a short to the range bounded by lo and hi, by "wrapping" the value.
-	 * <br>Example: wrapValue(32,-16,16) returns 0.
-	 * <br>Example: wrapValue(4,-16,16) returns 4.
-	 * <br>Example: wrapValue(-1000,-16,16) returns 8.
-	 * @param val the short.
-	 * @param lo the lower bound.
-	 * @param hi the upper bound.
-	 * @return the value after being "wrapped" into the range.
-	 */
-	public static short wrapValue(short val, short lo, short hi)
-	{
-		val = (short)(val - (val - lo) / (hi - lo) * (hi - lo));
-	   	if (val < 0)
-	   		val = (short)(val + hi - lo);
-	   	return val;
-	}
-
-	/**
-	 * Coerces a float to the range bounded by lo and hi, by "wrapping" the value.
-	 * <br>Example: wrapValue(32,-16,16) returns 0.
-	 * <br>Example: wrapValue(4,-16,16) returns 4.
-	 * <br>Example: wrapValue(-1000,-16,16) returns 8.
-	 * @param val the float.
-	 * @param lo the lower bound.
-	 * @param hi the upper bound.
-	 * @return the value after being "wrapped" into the range.
-	 */
-	public static float wrapValue(float val, float lo, float hi)
-	{
-		float range = hi - lo;
-		val = val - lo;
-		val = (val % range);
-		if (val < 0.0)
-			val = val + hi;
-		return val;
-	}
-
-	/**
-	 * Coerces a double to the range bounded by lo and hi, by "wrapping" the value.
-	 * <br>Example: wrapValue(32,-16,16) returns 0.
-	 * <br>Example: wrapValue(4,-16,16) returns 4.
-	 * <br>Example: wrapValue(-1000,-16,16) returns 8.
-	 * @param val the double.
-	 * @param lo the lower bound.
-	 * @param hi the upper bound.
-	 * @return the value after being "wrapped" into the range.
-	 */
-	public static double wrapValue(double val, double lo, double hi)
-	{
-		double range = hi - lo;
-		val = val - lo;
-		val = (val % range);
-		if (val < 0.0)
-			val = val + hi;
-		return val;
-	}
-
-	/**
 	 * Gets a scalar factor that equals how "far along" a value is along an interval.
 	 * @param value the value to test.
 	 * @param lo the lower value of the interval.
@@ -424,7 +241,7 @@ public final class Utils
 	{
 		if (lo == hi)
 			return 0.0;
-		return clampValue((value - lo) / (hi - lo), 0, 1);
+		return RangeUtils.clampValue((value - lo) / (hi - lo), 0, 1);
 	}
 
 	/**
