@@ -294,9 +294,8 @@ public class HexenLinedef extends CommonLinedef
 		StringBuilder sb = new StringBuilder();
 		sb.append("Linedef");
 		sb.append(' ').append(vertexStartIndex).append(" to ").append(vertexEndIndex);
-		sb.append(' ').append("Sidedef ");
-		sb.append(' ').append("Front ").append(sidedefFrontIndex);
-		sb.append(' ').append("Back ").append(sidedefBackIndex);
+		sb.append(' ').append("Front Sidedef ").append(sidedefFrontIndex);
+		sb.append(' ').append("Back Sidedef ").append(sidedefBackIndex);
 		
 		if (impassable) sb.append(' ').append("IMPASSABLE");
 		if (monsterBlocking) sb.append(' ').append("MONSTERBLOCK");

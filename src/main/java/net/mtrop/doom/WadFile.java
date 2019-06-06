@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.mtrop.doom.enums.WadType;
 import net.mtrop.doom.exception.WadException;
 import net.mtrop.doom.util.NameUtils;
 import net.mtrop.doom.util.SerialWriter;
@@ -44,7 +43,7 @@ public class WadFile implements Wad, AutoCloseable
 	private List<WadEntry> entries;
 
 	/** Type of Wad File (IWAD or PWAD). */
-	private WadType type;
+	private Type type;
 
 	/** Offset of the beginning of the entry list. */
 	private int entryListOffset;
@@ -83,14 +82,14 @@ public class WadFile implements Wad, AutoCloseable
 		// read header
 		file.read(buffer);
 		String head = new String(buffer,"ASCII");
-		if (!head.equals(WadType.IWAD.toString()) && !head.equals(WadType.PWAD.toString()))
+		if (!head.equals(Type.IWAD.toString()) && !head.equals(Type.PWAD.toString()))
 			throw new WadException("Not a Wad file or supported Wad file type.");
 
-		if (head.equals(WadType.IWAD.toString()))
-			type = WadType.IWAD;
+		if (head.equals(Type.IWAD.toString()))
+			type = Type.IWAD;
 			
-		if (head.equals(WadType.PWAD.toString()))
-			type = WadType.PWAD;
+		if (head.equals(Type.PWAD.toString()))
+			type = Type.PWAD;
 		
 		fileName = f.getName();
 		filePath = f.getPath();
@@ -160,7 +159,7 @@ public class WadFile implements Wad, AutoCloseable
 	{
 		FileOutputStream fo = new FileOutputStream(f);
 		SerialWriter sw = new SerialWriter(SerialWriter.LITTLE_ENDIAN);
-		sw.writeBytes(fo, WadType.PWAD.name().getBytes("ASCII"));
+		sw.writeBytes(fo, Type.PWAD.name().getBytes("ASCII"));
 		sw.writeInt(fo, 0);		// number of entries.
 		sw.writeInt(fo, 12);	// offset to entry list.
 		fo.close();
@@ -204,13 +203,13 @@ public class WadFile implements Wad, AutoCloseable
 	@Override
 	public boolean isIWAD()
 	{
-		return type == WadType.IWAD;
+		return type == Type.IWAD;
 	}
 	
 	@Override
 	public boolean isPWAD()
 	{
-		return type == WadType.PWAD;
+		return type == Type.PWAD;
 	}
 	
 	@Override
@@ -409,7 +408,7 @@ public class WadFile implements Wad, AutoCloseable
 	 * Gets the type of WAD that this is.
 	 * @return the WAD type.
 	 */
-	public WadType getType()
+	public Type getType()
 	{
 		return type;
 	}

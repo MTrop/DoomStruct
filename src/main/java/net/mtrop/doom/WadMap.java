@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.mtrop.doom.enums.WadType;
 import net.mtrop.doom.exception.WadException;
 import net.mtrop.doom.map.DoomMap;
 import net.mtrop.doom.map.HexenMap;
@@ -40,7 +39,7 @@ import net.mtrop.doom.util.SerialReader;
 public class WadMap implements Wad
 {
 	/** Type of Wad File (IWAD or PWAD). */
-	private WadType type;
+	private Type type;
 	/** The list of entries. */
 	protected List<WadEntry> entries;
 
@@ -103,7 +102,7 @@ public class WadMap implements Wad
 		entries.clear();
 
 		try {
-			type = WadType.valueOf(sr.readString(in, 4, "ASCII"));
+			type = Type.valueOf(sr.readString(in, 4, "ASCII"));
 		} catch (IllegalArgumentException e) {
 			throw new WadException("Not a WAD file.");
 		}
@@ -125,13 +124,13 @@ public class WadMap implements Wad
 	@Override
 	public boolean isIWAD()
 	{
-		return type == WadType.IWAD;
+		return type == Type.IWAD;
 	}
 
 	@Override
 	public boolean isPWAD()
 	{
-		return type == WadType.PWAD;
+		return type == Type.PWAD;
 	}
 
 	@Override

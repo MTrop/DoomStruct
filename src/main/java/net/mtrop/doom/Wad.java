@@ -39,6 +39,15 @@ public interface Wad extends Iterable<WadEntry>
 	static final byte[] NO_DATA = new byte[0];
 
 	/**
+	 * Internal WAD type.
+	 */
+	public enum Type
+	{
+		PWAD, 
+		IWAD;
+	}
+
+	/**
 	 * Checks if this WAD is an Information WAD.
 	 * @return true if so, false if not.
 	 */

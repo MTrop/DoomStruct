@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.mtrop.doom.enums.WadType;
 import net.mtrop.doom.exception.WadException;
 import net.mtrop.doom.struct.DataList;
 import net.mtrop.doom.util.NameUtils;
@@ -34,7 +33,7 @@ import net.mtrop.doom.util.Utils;
 public class WadBuffer implements Wad
 {
 	/** Type of Wad File (IWAD or PWAD). */
-	private WadType type;
+	private Type type;
 	/** The data itself. */
 	protected DataList content;
 	/** The list of entries. */
@@ -45,14 +44,14 @@ public class WadBuffer implements Wad
 	 */
 	public WadBuffer()
 	{
-		this(WadType.PWAD);
+		this(Type.PWAD);
 	}
 	
 	/**
 	 * Creates an empty WadBuffer with a specific type.
 	 * @param type the type to set.
 	 */
-	public WadBuffer(WadType type)
+	public WadBuffer(Type type)
 	{
 		this.type = type;
 		this.content = new DataList();
@@ -114,7 +113,7 @@ public class WadBuffer implements Wad
 		entries.clear();
 
 		try {
-			type = WadType.valueOf(sr.readString(in, 4, "ASCII"));
+			type = Type.valueOf(sr.readString(in, 4, "ASCII"));
 		} catch (IllegalArgumentException e) {
 			throw new WadException("Not a WAD file.");
 		}
@@ -200,13 +199,13 @@ public class WadBuffer implements Wad
 	@Override
 	public boolean isIWAD()
 	{
-		return getType() == WadType.IWAD;
+		return getType() == Type.IWAD;
 	}
 
 	@Override
 	public boolean isPWAD()
 	{
-		return getType() == WadType.PWAD;
+		return getType() == Type.PWAD;
 	}
 
 	@Override
@@ -339,7 +338,7 @@ public class WadBuffer implements Wad
 	 * Sets the type of WAD that this is.
 	 * @param type the new type.
 	 */
-	public void setType(WadType type)
+	public void setType(Type type)
 	{
 		this.type = type;
 	}
@@ -348,7 +347,7 @@ public class WadBuffer implements Wad
 	 * Gets the type of WAD that this is.
 	 * @return the wad type.
 	 */
-	public WadType getType()
+	public Type getType()
 	{
 		return type;
 	}
