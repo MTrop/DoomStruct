@@ -59,7 +59,6 @@ public final class UDMFWriter
 				x++;
 			}
 		}
-		
 	}
 
 	/**

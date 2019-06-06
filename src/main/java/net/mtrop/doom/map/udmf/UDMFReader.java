@@ -11,8 +11,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.LinkedList;
+import java.io.StringReader;
 
+import net.mtrop.doom.map.udmf.listener.UDMFFullTableListener;
 import net.mtrop.doom.struct.Lexer;
 import net.mtrop.doom.struct.Lexer.Parser;
 
@@ -22,32 +23,6 @@ import net.mtrop.doom.struct.Lexer.Parser;
  */
 public final class UDMFReader
 {
-	private UDMFReader() {}
-	
-	/**
-	 * A listener for each new parsed entry or field that gets parsed in a UDMF structure.
-	 */
-	public interface Listener
-	{
-		/**
-		 * Called when a field is read from a UDMF structure.
-		 * @param name the name of the field.
-		 * @param value the parsed value.
-		 */
-		void onField(String name, Object value);
-
-		/**
-		 * Called when the start of a structure is read from a UDMF structure.
-		 * @param name the name (type) of the structure.
-		 */
-		void onStructureStart(String name);
-
-		/**
-		 * Called when a structure is ended in a UDMF structure.
-		 */
-		void onStructureEnd();
-	}
-	
 	/**
 	 * Reads UDMF-formatted data into a UDMFTable from an {@link InputStream}.
 	 * This will read until the end of the stream is reached.
@@ -63,20 +38,44 @@ public final class UDMFReader
 	}
 	
 	/**
+	 * Reads UDMF-formatted data into a UDMFTable from a String.
+	 * This will read until the end of the stream is reached.
+	 * @param data the String to read from.
+	 * @return a UDMFTable containing the structures.
+	 * @throws UDMFParseException if a parsing error occurs.
+	 * @throws IOException if the data can't be read.
+	 */
+	public static UDMFTable readData(String data) throws IOException
+	{
+		return readData(new StringReader(data));
+	}
+	
+	/**
 	 * Reads UDMF-formatted data into a UDMFTable from a {@link Reader}.
 	 * This will read until the end of the stream is reached.
-	 * Does not close the InputStream at the end of the read.
+	 * Does not close the Reader at the end of the read.
 	 * @param reader the reader to read from.
-	 * @return a UDMFTable containing the structures.
+	 * @return a UDMFTable containing the parsed structures.
 	 * @throws UDMFParseException if a parsing error occurs.
 	 * @throws IOException if the data can't be read.
 	 */
 	public static UDMFTable readData(Reader reader) throws IOException
 	{
-		ULexer lexer = new ULexer(reader);
-		UParser parser = new UParser(lexer);
-		parser.read();
-		return parser.getTable();
+		UDMFFullTableListener listener = new UDMFFullTableListener();
+		readData(reader, listener);
+		String[] errors = listener.getErrorMessages();
+		if (errors.length > 0)
+		{
+			StringBuilder sb = new StringBuilder();
+			for (int i = 0; i < errors.length; i++)
+			{
+				sb.append(errors[i]);
+				if (i < errors.length-1)
+					sb.append('\n');
+			}
+			throw new UDMFParseException(sb.toString());
+		}
+		return listener.getTable();
 	}
 	
 	/**
@@ -84,13 +83,11 @@ public final class UDMFReader
 	 * This will read until the end of the stream is reached.
 	 * Does not close the InputStream at the end of the read.
 	 * @param in the InputStream to read from.
-	 * @return a UDMFTable containing the structures.
-	 * @throws UDMFParseException if a parsing error occurs.
 	 * @throws IOException if the data can't be read.
 	 */
-	public static UDMFTable readData(InputStream in, UDMFReader.Listener listener) throws IOException
+	public static void readData(InputStream in, UDMFParserListener listener) throws IOException
 	{
-		return readData(new InputStreamReader(in, "UTF8"));
+		readData(new InputStreamReader(in, "UTF8"));
 	}
 	
 	/**
@@ -98,18 +95,16 @@ public final class UDMFReader
 	 * This will read until the end of the stream is reached.
 	 * Does not close the InputStream at the end of the read.
 	 * @param reader the reader to read from.
-	 * @return a UDMFTable containing the structures.
-	 * @throws UDMFParseException if a parsing error occurs.
 	 * @throws IOException if the data can't be read.
 	 */
-	public static UDMFTable readData(Reader reader, UDMFReader.Listener listener) throws IOException
+	public static void readData(Reader reader, UDMFParserListener listener) throws IOException
 	{
 		ULexer lexer = new ULexer(reader);
-		UParser parser = new UParser(lexer);
-		parser.read();
-		return parser.getTable();
+		(new UParser(lexer, listener)).read();
 	}
 	
+	private UDMFReader() {}
+
 	/**
 	 * Parser for UDMF data.
 	 * This is NOT a thread safe object - if read is called by more
@@ -118,31 +113,20 @@ public final class UDMFReader
 	 */
 	private static class UParser extends Parser
 	{
-		/** Struct table. */
-		private UDMFTable table;
-		/** List of errors. */
-		private LinkedList<String> errors;
-
+		private UDMFParserListener listener;
+		
 		/**
 		 * Creates a new instance of a UDMF Reader.
 		 */
-		public UParser(ULexer lexer)
+		public UParser(ULexer lexer, UDMFParserListener listener)
 		{
 			super(lexer);
-			this.table = null;
-			this.errors = new LinkedList<>();
+			this.listener = listener;
 		}
 		
 		private void addErrorMessage(String message)
 		{
-			errors.add(getTokenInfoLine(message));
-		}
-		
-		private String[] getErrorMessages()
-		{
-			String[] out = new String[errors.size()];
-			errors.toArray(out);
-			return out;
+			listener.onParseError(getTokenInfoLine(message));
 		}
 		
 		/**
@@ -153,28 +137,9 @@ public final class UDMFReader
 		{
 			UDMFTable udmfTable = new UDMFTable();
 			nextToken();
-			
+			listener.onStart();
 			while (currentToken() != null && StructureList(udmfTable));
-
-			String[] errors = getErrorMessages();
-			if (errors.length > 0)
-			{
-				StringBuilder sb = new StringBuilder();
-				for (int i = 0; i < errors.length; i++)
-				{
-					sb.append(errors[i]);
-					if (i < errors.length-1)
-						sb.append('\n');
-				}
-				throw new UDMFParseException(sb.toString());
-			}
-			
-			table = udmfTable;
-		}
-
-		public UDMFTable getTable()
-		{
-			return table;
+			listener.onEnd();
 		}
 
 		private boolean StructureList(UDMFTable table)
@@ -201,19 +166,16 @@ public final class UDMFReader
 						return false;
 					}
 					
-					table.getGlobalFields().set(currentId, currentValue);
-					currentId = null;
-					currentValue = null;
-					
+					listener.onAttribute(currentId, currentValue);
 					return true;
 				}
 				else if (currentType(ULexerKernel.TYPE_LBRACE))
 				{
-					UDMFObject udmfObject = new UDMFObject();
 					String currentStructType = currentId;
 					nextToken();
-					
-					if (!FieldExpressionList(udmfObject))
+					listener.onObjectStart(currentStructType);
+
+					if (!FieldExpressionList())
 						return false;
 
 					if (!matchType(ULexerKernel.TYPE_RBRACE))
@@ -222,7 +184,7 @@ public final class UDMFReader
 						return false;
 					}
 
-					table.addObject(currentStructType, udmfObject);
+					listener.onObjectEnd(currentStructType);
 					return true;
 				}
 				else
@@ -239,7 +201,7 @@ public final class UDMFReader
 			
 		}
 		
-		private boolean doField(UDMFObject udmfObject)
+		private boolean doField()
 		{
 			Object currentValue;
 			String currentId = currentToken().getLexeme();
@@ -263,21 +225,18 @@ public final class UDMFReader
 				return false;
 			}
 			
-			udmfObject.set(currentId, currentValue);
-			currentId = null;
-			currentValue = null;
-			
+			listener.onAttribute(currentId, currentValue);
 			return true;
 		}
 
 		/*
 		 * FieldExpressionList := IDENTIFIER = Value ; FieldExpressionList | [e]
 		 */
-		private boolean FieldExpressionList(UDMFObject udmfObject)
+		private boolean FieldExpressionList()
 		{
 			while (currentType(ULexerKernel.TYPE_IDENTIFIER))
 			{
-				if (!doField(udmfObject))
+				if (!doField())
 					return false;
 			}
 			
@@ -449,7 +408,5 @@ public final class UDMFReader
 		{
 			super(KERNEL, "UDMFLexer", reader);
 		}
-
 	}
-
 }

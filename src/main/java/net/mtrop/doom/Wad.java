@@ -10,6 +10,7 @@ package net.mtrop.doom;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -401,6 +402,85 @@ public interface Wad extends Iterable<WadEntry>
 		return new ByteArrayInputStream(getData(entry));
 	}
 
+	/**
+	 * Retrieves the data of an entry at a particular index as a decoded string of characters.
+	 * @param n the index of the entry in the Wad.
+	 * @param charset the source charset.
+	 * @return the data, decoded, or null if the entry doesn't exist.
+	 * @throws IOException if the data couldn't be retrieved.
+	 * @throws ArrayIndexOutOfBoundsException if n &lt; 0 or &gt;= size.
+	 * @see BinaryObject#create(Class, byte[])
+	 */
+	default String getTextData(int n, Charset charset) throws IOException
+	{
+		byte[] data = getData(n);
+		return data != null ? new String(data, charset) : null;
+	}
+
+	/**
+	 * Retrieves the data of the first occurrence of a particular entry as a decoded string of characters.
+	 * <p>The name is case-insensitive.
+	 * @param entryName the name of the entry to find.
+	 * @param charset the source charset.
+	 * @return the data, decoded, or null if the entry doesn't exist.
+	 * @throws IOException if the data couldn't be retrieved or the entry's offsets breach the file extents.
+	 * @throws NullPointerException if <code>entryName</code> is <code>null</code>.
+	 * @see BinaryObject#create(Class, byte[])
+	 */
+	default String getTextData(String entryName, Charset charset) throws IOException
+	{
+		byte[] data = getData(entryName);
+		return data != null ? new String(data, charset) : null;
+	}
+
+	/**
+	 * Retrieves the data of the first occurrence of a particular entry from a starting index as a decoded string of characters.
+	 * <p>The name is case-insensitive.
+	 * @param entryName the name of the entry to find.
+	 * @param charset the source charset.
+	 * @param type the class type to deserialize into.
+	 * @return the data, decoded, or null if the entry doesn't exist.
+	 * @throws IOException if the data couldn't be retrieved or the entry's offsets breach the file extents.
+	 * @throws NullPointerException if <code>entryName</code> is <code>null</code>.
+	 * @see BinaryObject#create(Class, byte[])
+	 */
+	default String getTextData(String entryName, int start, Charset charset) throws IOException
+	{
+		byte[] data = getData(entryName, start);
+		return data != null ? new String(data, charset) : null;
+	}
+
+	/**
+	 * Retrieves the data of the first occurrence of a particular entry from a starting entry (by name) as a decoded string of characters.
+	 * <p>The names are case-insensitive.
+	 * @param entryName the name of the entry to find.
+	 * @param startEntryName the starting entry (by name) with which to start the search.
+	 * @param charset the source charset.
+	 * @return the data, decoded, or null if the entry doesn't exist.
+	 * @throws IOException if the data couldn't be retrieved or the entry's offsets breach the file extents.
+	 * @throws NullPointerException if <code>entryName</code> is <code>null</code>.
+	 * @see BinaryObject#create(Class, byte[])
+	 */
+	default String getTextData(String entryName, String startEntryName, Charset charset) throws IOException
+	{
+		byte[] data = getData(entryName, startEntryName);
+		return data != null ? new String(data, charset) : null;
+	}
+
+	/**
+	 * Retrieves the data of the specified entry as a decoded string of characters.
+	 * @param entry the entry to use.
+	 * @param charset the source charset.
+	 * @return the data, decoded.
+	 * @throws IOException if the data couldn't be retrieved or the entry's offsets breach the file extents.
+	 * @throws NullPointerException if <code>entry</code> is <code>null</code>.
+	 * @see BinaryObject#create(Class, byte[])
+	 */
+	default String getTextData(WadEntry entry, Charset charset) throws IOException
+	{
+		return new String(getData(entry), charset);
+	}
+	
 	/**
 	 * Retrieves the data of an entry at a particular index as a deserialized lump.
 	 * @param n the index of the entry in the Wad.

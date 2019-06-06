@@ -29,7 +29,7 @@ public class UDMFReaderTest
 		WadFile wad = new WadFile(args[0]);
 		InputStream in = wad.getInputStream("TEXTMAP");
 
-		UDMFTable udmftable = UDMFReader.readData(in);
+		UDMFTable udmftable = UDMFReader.readData(wad.getInputStream("TEXTMAP"));
 		StringWriter writer = new StringWriter();
 		UDMFWriter.writeData(udmftable, writer);
 		logger.info("\n"+writer.toString());

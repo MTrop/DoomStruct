@@ -18,36 +18,44 @@ import java.util.Map.Entry;
  */
 public class UDMFObject implements Iterable<Map.Entry<String, Object>>
 {
-	private Map<String, Object> fields;
+	private Map<String, Object> attributes;
 	
 	/** Creates a new UDMFObject. */
 	public UDMFObject()
 	{
-		this.fields = new HashMap<>(8, 1.0f);
+		this.attributes = new HashMap<>(8, 1.0f);
 	}
 	
 	/**
-	 * Gets the corresponding field by name.
+	 * Clears all attributes from the structure. 
+	 */
+	public void clear()
+	{
+		attributes.clear();
+	}
+	
+	/**
+	 * Gets a corresponding attribute by name.
 	 * @param attributeName the name of the attribute.
 	 * @return the corresponding value, or null if no value.
 	 */
 	public Object get(String attributeName)
 	{
-		return fields.get(attributeName.toLowerCase());
+		return attributes.get(attributeName.toLowerCase());
 	}
 	
 	/**
-	 * Removes the corresponding field by name.
+	 * Removes a corresponding attribute by name.
 	 * @param attributeName the name of the attribute.
 	 * @return the removed value, or null if no value.
 	 */
 	public Object remove(String attributeName)
 	{
-		return fields.remove(attributeName.toLowerCase());
+		return attributes.remove(attributeName.toLowerCase());
 	}
 	
 	/**
-	 * Sets a field value by name.
+	 * Sets an attribute value by name.
 	 * @param attributeName the name of the attribute.
 	 * @param value the value of the attribute, null to remove.
 	 */
@@ -56,15 +64,15 @@ public class UDMFObject implements Iterable<Map.Entry<String, Object>>
 		attributeName = attributeName.toLowerCase();
 		
 		if (value == null)
-			fields.remove(attributeName);
+			attributes.remove(attributeName);
 		else if (value instanceof Boolean)
-			fields.put(attributeName.toLowerCase(), value);
+			attributes.put(attributeName.toLowerCase(), value);
 		else if (value instanceof Integer)
-			fields.put(attributeName.toLowerCase(), value);
+			attributes.put(attributeName.toLowerCase(), value);
 		else if (value instanceof Float)
-			fields.put(attributeName.toLowerCase(), value);
+			attributes.put(attributeName.toLowerCase(), value);
 		else
-			fields.put(attributeName.toLowerCase(), String.valueOf(value));
+			attributes.put(attributeName.toLowerCase(), String.valueOf(value));
 	}
 	
 	/**
@@ -77,7 +85,7 @@ public class UDMFObject implements Iterable<Map.Entry<String, Object>>
 	 */
 	public void setBoolean(String attributeName, Boolean value)
 	{
-		fields.put(attributeName.toLowerCase(), value);
+		attributes.put(attributeName.toLowerCase(), value);
 	}
 
 	/**
@@ -104,7 +112,7 @@ public class UDMFObject implements Iterable<Map.Entry<String, Object>>
 	 */
 	public Boolean getBoolean(String attributeName, Boolean def)
 	{
-		Object obj = fields.get(attributeName.toLowerCase());
+		Object obj = attributes.get(attributeName.toLowerCase());
 		if (obj == null)
 			return def;
 		return createForType(attributeName, obj, Boolean.class);
@@ -122,7 +130,7 @@ public class UDMFObject implements Iterable<Map.Entry<String, Object>>
 	 */
 	public void setInteger(String attributeName, Integer value)
 	{
-		fields.put(attributeName.toLowerCase(), value);
+		attributes.put(attributeName.toLowerCase(), value);
 	}
 
 	/**
@@ -155,7 +163,7 @@ public class UDMFObject implements Iterable<Map.Entry<String, Object>>
 	 */
 	public Integer getInteger(String attributeName, Integer def)
 	{
-		Object obj = fields.get(attributeName.toLowerCase());
+		Object obj = attributes.get(attributeName.toLowerCase());
 		if (obj == null)
 			return def;
 		return createForType(attributeName, obj, Integer.class);
@@ -173,7 +181,7 @@ public class UDMFObject implements Iterable<Map.Entry<String, Object>>
 	 */
 	public void setFloat(String attributeName, Float value)
 	{
-		fields.put(attributeName.toLowerCase(), value);
+		attributes.put(attributeName.toLowerCase(), value);
 	}
 
 	/**
@@ -204,7 +212,7 @@ public class UDMFObject implements Iterable<Map.Entry<String, Object>>
 	 */
 	public Float getFloat(String attributeName, Float def)
 	{
-		Object obj = fields.get(attributeName.toLowerCase());
+		Object obj = attributes.get(attributeName.toLowerCase());
 		if (obj == null)
 			return def;
 		return createForType(attributeName, obj, Float.class);
@@ -218,7 +226,7 @@ public class UDMFObject implements Iterable<Map.Entry<String, Object>>
 	 */
 	public void setString(String attributeName, String value)
 	{
-		fields.put(attributeName.toLowerCase(), value);
+		attributes.put(attributeName.toLowerCase(), value);
 	}
 
 	/**
@@ -241,7 +249,7 @@ public class UDMFObject implements Iterable<Map.Entry<String, Object>>
 	 */
 	public String getString(String attributeName, String def)
 	{
-		Object obj = fields.get(attributeName.toLowerCase());
+		Object obj = attributes.get(attributeName.toLowerCase());
 		if (obj == null)
 			return def;
 		return String.valueOf(obj);
@@ -250,7 +258,7 @@ public class UDMFObject implements Iterable<Map.Entry<String, Object>>
 	@Override
 	public Iterator<Entry<String, Object>> iterator()
 	{
-		return fields.entrySet().iterator();
+		return attributes.entrySet().iterator();
 	}
 
 	@SuppressWarnings("unchecked")

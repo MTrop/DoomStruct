@@ -86,7 +86,7 @@ public final class WadUtils
 		byte[] buf = new byte[4];
 	
 		System.arraycopy(b, ptr, buf, 0, 4);
-		int textureCount = SerializerUtils.bytesToInt(buf, Utils.LITTLE_ENDIAN);
+		int textureCount = SerializerUtils.bytesToInt(buf, SerializerUtils.LITTLE_ENDIAN);
 		ptr = (textureCount * 4) + 20;
 		
 		boolean good = true;
@@ -95,7 +95,7 @@ public final class WadUtils
 			System.arraycopy(b, ptr, buf, 0, 4);
 			
 			// test for unused texture data.
-			if (SerializerUtils.bytesToInt(buf, Utils.LITTLE_ENDIAN) != 0)
+			if (SerializerUtils.bytesToInt(buf, SerializerUtils.LITTLE_ENDIAN) != 0)
 				good = false;
 	
 			// test for unused patch data.
@@ -103,13 +103,13 @@ public final class WadUtils
 			{
 				ptr += 4;
 				System.arraycopy(b, ptr, buf, 0, 2);
-				int patches = SerializerUtils.bytesToInt(buf, Utils.LITTLE_ENDIAN);
+				int patches = SerializerUtils.bytesToInt(buf, SerializerUtils.LITTLE_ENDIAN);
 				ptr += 2;
 				while (patches > 0)
 				{
 					ptr += 6;
 					System.arraycopy(b, ptr, buf, 0, 4);
-					int x = SerializerUtils.bytesToInt(buf, Utils.LITTLE_ENDIAN);
+					int x = SerializerUtils.bytesToInt(buf, SerializerUtils.LITTLE_ENDIAN);
 					if (x > 1 || x < 0)
 						good = false;
 					ptr += 4;

@@ -8,16 +8,11 @@
 package net.mtrop.doom.map.udmf.attributes;
 
 /**
- * Contains linedef attributes for Strife namespaces.
+ * Contains known global attributes.
  * @author Matthew Tropiano
  */
-public interface UDMFStrifeLinedefAttributes extends UDMFCommonLinedefAttributes
+public interface UDMFGlobalAttributes
 {
-	/** Linedef flag: Linedef is translucent. */
-	public static final String ATTRIB_FLAG_TRANSLUCENT = "translucent";
-	/** Linedef flag: Linedef is a railing that can be jumped over. */
-	public static final String ATTRIB_FLAG_JUMPOVER = "jumpover";
-	/** Linedef flag: Linedef blocks floating enemies. */
-	public static final String ATTRIB_FLAG_BLOCK_FLOAT = "blockfloaters";
-
+	/** Global attribute: UDMF namespace. */
+	public static final String ATTRIB_NAMESPACE = "namespace";
 }

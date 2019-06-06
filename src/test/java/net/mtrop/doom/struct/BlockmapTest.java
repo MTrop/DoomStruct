@@ -22,7 +22,7 @@ public final class BlockmapTest
 		Logger logger = LoggingFactory.createConsoleLoggerFor(BlockmapTest.class);
 		WadFile wad = new WadFile(args[0]);
 		BSPBlockmap blockmap = wad.getDataAs("BLOCKMAP", BSPBlockmap.class);
-		byte[] out = blockmap.toBytes();
+		logger.info(blockmap.toBytes());
 		Utils.close(wad);
 	}
 }
