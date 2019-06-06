@@ -69,6 +69,7 @@ public class WadEntry implements BinaryObject
 	 * Creates a WadEntry.
 	 * @param b the entry as serialized bytes.
 	 * @return the constructed WadEntry.
+	 * @throws IOException if an entry cannot be read.
 	 * @throws IllegalArgumentException if the name is invalid or the offset or size is negative.
 	 */
 	public static WadEntry create(byte[] b) throws IOException

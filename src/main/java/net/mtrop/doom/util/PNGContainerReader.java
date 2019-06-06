@@ -24,6 +24,8 @@ public class PNGContainerReader implements AutoCloseable
 	
 	/**
 	 * Creates a new PNG container reader from a file.
+	 * @param f the file to read.
+	 * @throws IOException if a read error occurs or this is not a PNG file.
 	 */
 	public PNGContainerReader(File f) throws IOException
 	{
@@ -32,22 +34,20 @@ public class PNGContainerReader implements AutoCloseable
 	
 	/**
 	 * Creates a new PNG container reader using an input stream.
+	 * @param i the input stream to read.
+	 * @throws IOException if a read error occurs or this is not PNG data.
 	 */
 	public PNGContainerReader(InputStream i) throws IOException
 	{
 		this.in = i;
-		checkHeader();
-	}
-	
-	/** Checks the PNG header. Throws an Exception if bad. */
-	protected void checkHeader() throws IOException
-	{
 		if (!Arrays.equals(PNG_HEADER, (new SerialReader(SerialReader.BIG_ENDIAN)).readBytes(in, 8)))
 			throw new IOException("Not a PNG file. Header may be corrupt.");
 	}
-
+	
 	/**
 	 * Reads the next chunk in this container stream.
+	 * @return a new chunk.
+	 * @throws IOException on a read error.
 	 */
 	public Chunk nextChunk() throws IOException
 	{
@@ -84,7 +84,7 @@ public class PNGContainerReader implements AutoCloseable
 		}
 
 		/**
-		 * Gets this chunk's identifier.
+		 * @return this chunk's identifier.
 		 */
 		public String getName()
 		{
@@ -92,7 +92,7 @@ public class PNGContainerReader implements AutoCloseable
 		}
 
 		/**
-		 * Gets this chunk's CRC value.
+		 * @return this chunk's CRC value.
 		 */
 		public int getCRCNumber()
 		{
@@ -100,7 +100,7 @@ public class PNGContainerReader implements AutoCloseable
 		}
 
 		/**
-		 * Gets the data in this chunk.
+		 * @return the data in this chunk.
 		 */
 		public byte[] getData()
 		{
@@ -114,7 +114,7 @@ public class PNGContainerReader implements AutoCloseable
 		}
 		
 		/**
-		 * Is this chunk not a part of the required image chunks?
+		 * @return true if this chunk is not a part of the required image chunks.
 		 */
 		public boolean isAncillary()
 		{
@@ -122,7 +122,7 @@ public class PNGContainerReader implements AutoCloseable
 		}
 		
 		/**
-		 * Is this chunk part of a non-public specification?
+		 * @return true if this chunk is part of a non-public specification.
 		 */
 		public boolean isPrivate()
 		{
@@ -130,7 +130,7 @@ public class PNGContainerReader implements AutoCloseable
 		}
 		
 		/**
-		 * Does this chunk have the reserved bit set?
+		 * @return true if this chunk is this chunk has the reserved bit set.
 		 */
 		public boolean isReserved()
 		{
@@ -138,8 +138,8 @@ public class PNGContainerReader implements AutoCloseable
 		}
 
 		/**
-		 * Is this chunk safe to blindly copy, requiring no
-		 * other chunks and contains no image-centric data?
+		 * @return true if this chunk is safe to blindly copy, requiring no
+		 * other chunks and contains no image-centric data.
 		 */
 		public boolean isSafeToCopy()
 		{

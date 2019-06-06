@@ -83,11 +83,25 @@ public final class UDMFReader
 	 * This will read until the end of the stream is reached.
 	 * Does not close the InputStream at the end of the read.
 	 * @param in the InputStream to read from.
+	 * @param listener the listener to use for listening to parsed structure events.
 	 * @throws IOException if the data can't be read.
 	 */
 	public static void readData(InputStream in, UDMFParserListener listener) throws IOException
 	{
-		readData(new InputStreamReader(in, "UTF8"));
+		readData(new InputStreamReader(in, "UTF8"), listener);
+	}
+	
+	/**
+	 * Reads UDMF-formatted data into a UDMFTable from a String.
+	 * This will read until the end of the stream is reached.
+	 * @param data the String to read from.
+	 * @param listener the listener to use for listening to parsed structure events.
+	 * @throws UDMFParseException if a parsing error occurs.
+	 * @throws IOException if the data can't be read.
+	 */
+	public static void readData(String data, UDMFParserListener listener) throws IOException
+	{
+		readData(new StringReader(data), listener);
 	}
 	
 	/**
@@ -95,6 +109,7 @@ public final class UDMFReader
 	 * This will read until the end of the stream is reached.
 	 * Does not close the InputStream at the end of the read.
 	 * @param reader the reader to read from.
+	 * @param listener the listener to use for listening to parsed structure events.
 	 * @throws IOException if the data can't be read.
 	 */
 	public static void readData(Reader reader, UDMFParserListener listener) throws IOException

@@ -9,6 +9,7 @@ package net.mtrop.doom.util;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -29,27 +30,25 @@ public class PNGContainerWriter implements AutoCloseable
 	private boolean wroteHeader;
 	
 	/**
-	 * Creates a new PNG container reader from a file.
+	 * Creates a new PNG container writer using a file to write to.
+	 * @param f the file to read.
+	 * @throws FileNotFoundException if the file to be created is an existing directory.
+	 * @throws SecurityException if the file cannot be created.
 	 */
-	public PNGContainerWriter(File f) throws IOException
+	public PNGContainerWriter(File f) throws FileNotFoundException
 	{
 		this(new FileOutputStream(f));
 	}
 	
 	/**
-	 * Creates a new PNG container reader using an input stream.
+	 * Creates a new PNG container writer using an input stream.
+	 * @param out the output stream to write to.
 	 */
-	public PNGContainerWriter(OutputStream out) throws IOException
+	public PNGContainerWriter(OutputStream out)
 	{
 		this.out = out;
 	}
 	
-	/** Starts the PNG header. Called if not called yet. */
-	protected void startHeader() throws IOException
-	{
-		(new SerialWriter(SerialWriter.BIG_ENDIAN)).writeBytes(out, PNG_HEADER);
-	}
-
 	/**
 	 * Writes the next chunk in this container stream.
 	 * @param name	the name of the chunk. Must be length 4 (excluding whitespace), 
@@ -64,7 +63,7 @@ public class PNGContainerWriter implements AutoCloseable
 		
 		if (!wroteHeader)
 		{
-			startHeader();
+			(new SerialWriter(SerialWriter.BIG_ENDIAN)).writeBytes(out, PNG_HEADER);
 			wroteHeader = true;
 		}
 		

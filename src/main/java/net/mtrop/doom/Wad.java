@@ -437,8 +437,8 @@ public interface Wad extends Iterable<WadEntry>
 	 * Retrieves the data of the first occurrence of a particular entry from a starting index as a decoded string of characters.
 	 * <p>The name is case-insensitive.
 	 * @param entryName the name of the entry to find.
+	 * @param start the starting index to search from.
 	 * @param charset the source charset.
-	 * @param type the class type to deserialize into.
 	 * @return the data, decoded, or null if the entry doesn't exist.
 	 * @throws IOException if the data couldn't be retrieved or the entry's offsets breach the file extents.
 	 * @throws NullPointerException if <code>entryName</code> is <code>null</code>.
@@ -483,6 +483,7 @@ public interface Wad extends Iterable<WadEntry>
 	
 	/**
 	 * Retrieves the data of an entry at a particular index as a deserialized lump.
+	 * @param <BO> a type that extends BinaryObject.
 	 * @param n the index of the entry in the Wad.
 	 * @param type the class type to deserialize into.
 	 * @return the data, deserialized, or null if the entry doesn't exist.
@@ -499,6 +500,7 @@ public interface Wad extends Iterable<WadEntry>
 	/**
 	 * Retrieves the data of the first occurrence of a particular entry as a deserialized lump.
 	 * <p>The name is case-insensitive.
+	 * @param <BO> a type that extends BinaryObject.
 	 * @param entryName the name of the entry to find.
 	 * @param type the class type to deserialize into.
 	 * @return the data, deserialized, or null if the entry doesn't exist.
@@ -515,6 +517,7 @@ public interface Wad extends Iterable<WadEntry>
 	/**
 	 * Retrieves the data of the first occurrence of a particular entry from a starting index as a deserialized lump.
 	 * <p>The name is case-insensitive.
+	 * @param <BO> a type that extends BinaryObject.
 	 * @param entryName the name of the entry to find.
 	 * @param start the index with which to start the search.
 	 * @param type the class type to deserialize into.
@@ -532,6 +535,7 @@ public interface Wad extends Iterable<WadEntry>
 	/**
 	 * Retrieves the data of the first occurrence of a particular entry from a starting entry (by name) as a deserialized lump.
 	 * <p>The names are case-insensitive.
+	 * @param <BO> a type that extends BinaryObject.
 	 * @param entryName the name of the entry to find.
 	 * @param startEntryName the starting entry (by name) with which to start the search.
 	 * @param type the class type to deserialize into.
@@ -548,6 +552,7 @@ public interface Wad extends Iterable<WadEntry>
 
 	/**
 	 * Retrieves the data of the specified entry as a deserialized lump.
+	 * @param <BO> a type that extends BinaryObject.
 	 * @param entry the entry to use.
 	 * @param type the class type to deserialize into.
 	 * @return the data, deserialized.
@@ -562,6 +567,7 @@ public interface Wad extends Iterable<WadEntry>
 
 	/**
 	 * Retrieves the data of an entry at a particular index as a deserialized lump.
+	 * @param <BO> a type that extends BinaryObject.
 	 * @param n the index of the entry in the Wad.
 	 * @param type the class type to deserialize into.
 	 * @param objectLength the length of each individual object in bytes.
@@ -579,6 +585,7 @@ public interface Wad extends Iterable<WadEntry>
 	/**
 	 * Retrieves the data of the first occurrence of a particular entry as a deserialized lump.
 	 * <p>The name is case-insensitive.
+	 * @param <BO> a type that extends BinaryObject.
 	 * @param entryName the name of the entry to find.
 	 * @param type the class type to deserialize into.
 	 * @param objectLength the length of each individual object in bytes.
@@ -596,6 +603,7 @@ public interface Wad extends Iterable<WadEntry>
 	/**
 	 * Retrieves the data of the first occurrence of a particular entry from a starting index as a deserialized lump.
 	 * <p>The name is case-insensitive.
+	 * @param <BO> a type that extends BinaryObject.
 	 * @param entryName the name of the entry to find.
 	 * @param start the index with which to start the search.
 	 * @param type the class type to deserialize into.
@@ -614,6 +622,7 @@ public interface Wad extends Iterable<WadEntry>
 	/**
 	 * Retrieves the data of the first occurrence of a particular entry from a starting entry (by name) as a deserialized lump.
 	 * <p>The names are case-insensitive.
+	 * @param <BO> a type that extends BinaryObject.
 	 * @param entryName the name of the entry to find.
 	 * @param startEntryName the starting entry (by name) with which to start the search.
 	 * @param type the class type to deserialize into.
@@ -631,6 +640,7 @@ public interface Wad extends Iterable<WadEntry>
 
 	/**
 	 * Retrieves the data of the specified entry as a deserialized lump.
+	 * @param <BO> a type that extends BinaryObject.
 	 * @param entry the entry to use.
 	 * @param type the class type to deserialize into.
 	 * @param objectLength the length of each individual object in bytes.
@@ -649,6 +659,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * Retrieves the data of a particular entry at a specific index and returns it as 
 	 * a deserializing scanner iterator that returns independent instances of objects.
 	 * 
+	 * @param <BO> a type that extends BinaryObject.
 	 * @param n the index of the entry.
 	 * @param type the class type to deserialize into.
 	 * @param objectLength the length of each object in the entry in bytes.
@@ -666,6 +677,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * Retrieves the data of the first occurrence of a particular entry and returns it as 
 	 * a deserializing scanner iterator that returns independent instances of objects.
 	 * <p>The name is case-insensitive.
+	 * @param <BO> a type that extends BinaryObject.
 	 * @param entryName the name of the entry to find.
 	 * @param type the class type to deserialize into.
 	 * @param objectLength the length of each object in the entry in bytes.
@@ -682,6 +694,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * Retrieves the data of the first occurrence of a particular entry from a starting index and returns it as 
 	 * a deserializing scanner iterator that returns independent instances of objects.
 	 * <p>The name is case-insensitive.
+	 * @param <BO> a type that extends BinaryObject.
 	 * @param entryName the name of the entry to find.
 	 * @param start the index with which to start the search.
 	 * @param type the class type to deserialize into.
@@ -699,6 +712,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * Retrieves the data of the first occurrence of a particular entry from a starting entry (by name) and returns it as 
 	 * a deserializing scanner iterator that returns independent instances of objects.
 	 * <p>The names are case-insensitive.
+	 * @param <BO> a type that extends BinaryObject.
 	 * @param entryName the name of the entry to find.
 	 * @param startEntryName the starting entry (by name) with which to start the search.
 	 * @param type the class type to deserialize into.
@@ -716,6 +730,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * Retrieves the data of the specified entry and returns it as 
 	 * a deserializing scanner iterator that returns independent instances of objects.
 	 * 
+	 * @param <BO> a type that extends BinaryObject.
 	 * @param entry the entry to use.
 	 * @param type the class type to deserialize into.
 	 * @param objectLength the length of each object in the entry in bytes.
@@ -735,6 +750,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * ensuring low memory use. Do NOT store the references returned by <code>next()</code> anywhere as the contents
 	 * of that reference will be changed by the next call to <code>next()</code>.
 	 * 
+	 * @param <BO> a type that extends BinaryObject.
 	 * @param n the index of the entry.
 	 * @param type the class type to deserialize into.
 	 * @param objectLength the length of each object in the entry in bytes.
@@ -755,6 +771,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * ensuring low memory use. Do NOT store the references returned by <code>next()</code> anywhere as the contents
 	 * of that reference will be changed by the next call to <code>next()</code>.
 	 * <p>The name is case-insensitive.
+	 * @param <BO> a type that extends BinaryObject.
 	 * @param entryName the name of the entry to find.
 	 * @param type the class type to deserialize into.
 	 * @param objectLength the length of each object in the entry in bytes.
@@ -774,6 +791,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * ensuring low memory use. Do NOT store the references returned by <code>next()</code> anywhere as the contents
 	 * of that reference will be changed by the next call to <code>next()</code>.
 	 * <p>The name is case-insensitive.
+	 * @param <BO> a type that extends BinaryObject.
 	 * @param entryName the name of the entry to find.
 	 * @param start the index with which to start the search.
 	 * @param type the class type to deserialize into.
@@ -794,6 +812,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * ensuring low memory use. Do NOT store the references returned by <code>next()</code> anywhere as the contents
 	 * of that reference will be changed by the next call to <code>next()</code>.
 	 * <p>The names are case-insensitive.
+	 * @param <BO> a type that extends BinaryObject.
 	 * @param entryName the name of the entry to find.
 	 * @param startEntryName the starting entry (by name) with which to start the search.
 	 * @param type the class type to deserialize into.
@@ -814,6 +833,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * ensuring low memory use. Do NOT store the references returned by <code>next()</code> anywhere as the contents
 	 * of that reference will be changed by the next call to <code>next()</code>.
 	 * 
+	 * @param <BO> a type that extends BinaryObject.
 	 * @param entry the entry to use.
 	 * @param type the class type to deserialize into.
 	 * @param objectLength the length of each object in the entry in bytes.

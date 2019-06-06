@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE project>
 <!-- ====================================================================== 
-     Black Rook Base Build File    
+     Doom Struct Build File    
      Matt Tropiano                                                                
      ====================================================================== -->
 <project name="build" default="compile">
 
-	<description>Black Rook Base</description>
+	<description>Doom Struct</description>
 
 	<property file="build.properties" />
 
@@ -17,15 +17,29 @@
 	<!-- Project Libs -->
 	
 	<!-- Project Info -->
-	<property name="project.archive" value="blackrook-base" />
-	<property name="project.javadoc.title" value="Black Rook Base" />
+	<property name="project.archive" value="doomstruct" />
+	<property name="project.javadoc.title" value="Doom Struct" />
 	<property name="project.classpath" value=""/>
-	<property name="project.testclass" value="com.blackrook.base.TestTest"/>
-	<property name="project.testclass.main" value="com.blackrook.base.util.TestUtils"/>
+	<property name="project.testclass" value=""/>
+	<property name="project.testclass.main" value=""/>
 	<property name="project.javadoc.packages" value="
-		com.blackrook.base,
-		com.blackrook.base.trie,
-		com.blackrook.base.util
+		net.mtrop.doom,
+		net.mtrop.doom.demo,
+		net.mtrop.doom.enums,
+		net.mtrop.doom.exception,
+		net.mtrop.doom.graphics,
+		net.mtrop.doom.map,
+		net.mtrop.doom.map.binary,
+		net.mtrop.doom.map.bsp,
+		net.mtrop.doom.map.udmf,
+		net.mtrop.doom.map.udmf.attributes,
+		net.mtrop.doom.map.udmf.listener,
+		net.mtrop.doom.sound,
+		net.mtrop.doom.struct,
+		net.mtrop.doom.texture,
+		net.mtrop.doom.util,
+		net.mtrop.doom.util.resource,
+		net.mtrop.doom.util.trie
 		"
 	/>
 	

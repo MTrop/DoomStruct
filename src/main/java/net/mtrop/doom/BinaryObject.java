@@ -65,7 +65,6 @@ public interface BinaryObject
 	 * @param <BO> the object type, a subtype of {@link BinaryObject}.
 	 * @param boClass the class to create.
 	 * @param b the array of bytes.
-	 * @param count the (maximum) amount of objects to read. 
 	 * @return an array of length <code>count</code> of the created objects.
 	 * @throws IOException if an error occurs during the read - most commonly "not enough bytes".
 	 */
@@ -79,7 +78,6 @@ public interface BinaryObject
 	 * @param <BO> the object type, a subtype of {@link BinaryObject}.
 	 * @param boClass the class to create.
 	 * @param in the input stream.
-	 * @param count the (maximum) amount of objects to read. 
 	 * @return an array of length <code>count</code> of the created objects.
 	 * @throws IOException if an error occurs during the read - most commonly "not enough bytes".
 	 */
