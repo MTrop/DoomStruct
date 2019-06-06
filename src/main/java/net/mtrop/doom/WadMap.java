@@ -217,4 +217,10 @@ public class WadMap implements Wad
 	{
 		return entries.iterator();
 	}
+
+	@Override
+	public void close() throws IOException
+	{
+		// Do nothing.
+	}
 }

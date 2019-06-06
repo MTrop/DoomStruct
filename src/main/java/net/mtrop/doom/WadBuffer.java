@@ -135,7 +135,7 @@ public class WadBuffer implements Wad
 		for (int x = 0; x < entryCount; x++)
 		{
 			sr.readBytes(in, entrybuffer);
-			WadEntry wadEntry = BinaryObject.create(WadEntry.class, entrybuffer);
+			WadEntry wadEntry = WadEntry.create(entrybuffer);
 			entries.add(wadEntry);
 		}
 	}
@@ -357,6 +357,12 @@ public class WadBuffer implements Wad
 	public Iterator<WadEntry> iterator()
 	{
 		return entries.iterator();
+	}
+
+	@Override
+	public void close() throws IOException
+	{
+		// Do nothing.
 	}
 
 	/**

@@ -1040,4 +1040,11 @@ public interface Wad extends Iterable<WadEntry>
 	 */
 	void setEntries(WadEntry... entryList) throws IOException;
 
+	/**
+	 * Closes this WAD.
+	 * Does nothing on some implementations. 
+	 * @throws IOException if an error occurred during close.
+	 */
+	void close() throws IOException;
+	
 }
