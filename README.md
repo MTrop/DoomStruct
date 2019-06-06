@@ -63,7 +63,7 @@ Open `MAP29` in `DOOM2.WAD` and fetch all sectors with the `BLOOD1` floor textur
 
 	WadFile wad = new WadFile("doom2.wad");
 	Set<DoomSector> set = new HashSet<>();
-	for (DoomSector sector : wad.getDataAs("SECTORS", wad.getIndexOf("MAP29"), DoomSector.class, DoomSector.LENGTH))
+	for (DoomSector sector : wad.getDataAs("SECTORS", "MAP29", DoomSector.class, DoomSector.LENGTH))
 		if (sector.getFloorTexture().equals("BLOOD1"))
 			set.add(sector);
 	wad.close();
@@ -72,7 +72,7 @@ Open `MAP01` in `HEXEN.WAD` and fetch all things that have a special.
 
 	WadFile wad = new WadFile("hexen.wad");
 	Set<HexenThing> set = new HashSet<>();
-	for (HexenThing thing : wad.getDataAs("THINGS", wad.getIndexOf("MAP01"), HexenThing.class, HexenThing.LENGTH))
+	for (HexenThing thing : wad.getDataAs("THINGS", "MAP01", HexenThing.class, HexenThing.LENGTH))
 		if (thing.getSpecial() > 0)
 			set.add(thing);
 	wad.close();
