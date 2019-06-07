@@ -29,9 +29,9 @@ public abstract class CommonMap
 
 	protected CommonMap()
 	{
-		sectors = new ArrayList<DoomSector>(33);
-		vertices = new ArrayList<DoomVertex>(200);
-		sidedefs = new ArrayList<DoomSidedef>(200);
+		this.sectors = new ArrayList<DoomSector>(33);
+		this.vertices = new ArrayList<DoomVertex>(200);
+		this.sidedefs = new ArrayList<DoomSidedef>(200);
 	}
 	
 	/**

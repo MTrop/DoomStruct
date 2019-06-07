@@ -20,10 +20,10 @@ import net.mtrop.doom.util.SerializerUtils;
 import net.mtrop.doom.util.Utils;
 
 /**
- * Hexen/ZDoom 20-byte format implementation of Thing.
+ * Hexen 20-byte format implementation of Thing.
  * @author Matthew Tropiano
  */
-public class HexenThing extends DoomThing implements BinaryObject
+public class HexenThing extends CommonThing implements BinaryObject
 {
 	/** Byte length of this object. */
 	public static final int LENGTH = 20;
@@ -41,6 +41,12 @@ public class HexenThing extends DoomThing implements BinaryObject
 	protected boolean cleric;
 	/** Flag: Thing appears for mage. */
 	protected boolean mage;
+	/** Flag: Thing appears for single player. */
+	protected boolean singlePlayer;
+	/** Flag: Thing appears for cooperative. */
+	protected boolean cooperative;
+	/** Flag: Thing appears for deathmatch. */
+	protected boolean deathmatch;
 	
 	/** Thing action special. */
 	protected int special;
@@ -52,7 +58,20 @@ public class HexenThing extends DoomThing implements BinaryObject
 	 */
 	public HexenThing()
 	{
-		arguments = new int[5];
+		super();
+		this.id = 0;
+		this.z = 0;
+
+		this.dormant = false;
+		this.fighter = false;
+		this.cleric = false;
+		this.mage = false;
+		this.singlePlayer = false;
+		this.cooperative = false;
+		this.deathmatch = false;
+		
+		this.special = 0;
+		this.arguments = new int[5];
 	}
 
 	/**
@@ -115,7 +134,7 @@ public class HexenThing extends DoomThing implements BinaryObject
 	 */
 	public boolean isSinglePlayer()
 	{
-		return !notSinglePlayer;
+		return singlePlayer;
 	}
 
 	/**
@@ -124,7 +143,7 @@ public class HexenThing extends DoomThing implements BinaryObject
 	 */
 	public void setSinglePlayer(boolean singlePlayer)
 	{
-		this.notSinglePlayer = !singlePlayer;
+		this.singlePlayer = singlePlayer;
 	}
 
 	/**
@@ -132,7 +151,7 @@ public class HexenThing extends DoomThing implements BinaryObject
 	 */
 	public boolean isCooperative()
 	{
-		return !notCooperative;
+		return cooperative;
 	}
 
 	/**
@@ -141,7 +160,7 @@ public class HexenThing extends DoomThing implements BinaryObject
 	 */
 	public void setCooperative(boolean cooperative)
 	{
-		this.notCooperative = !cooperative;
+		this.cooperative = cooperative;
 	}
 
 	/**
@@ -149,7 +168,7 @@ public class HexenThing extends DoomThing implements BinaryObject
 	 */
 	public boolean isDeathmatch()
 	{
-		return !notDeathmatch;
+		return deathmatch;
 	}
 
 	/**
@@ -158,7 +177,7 @@ public class HexenThing extends DoomThing implements BinaryObject
 	 */
 	public void setDeathmatch(boolean deathmatch)
 	{
-		this.notDeathmatch = !deathmatch;
+		this.deathmatch = deathmatch;
 	}
 
 	/**
@@ -296,9 +315,9 @@ public class HexenThing extends DoomThing implements BinaryObject
 		fighter = Utils.bitIsSet(flags, (1 << 5));
 		cleric = Utils.bitIsSet(flags, (1 << 6));
 		mage = Utils.bitIsSet(flags, (1 << 7));
-		notSinglePlayer = !Utils.bitIsSet(flags, (1 << 8));
-		notCooperative = !Utils.bitIsSet(flags, (1 << 9));
-		notDeathmatch = !Utils.bitIsSet(flags, (1 << 10));
+		singlePlayer = !Utils.bitIsSet(flags, (1 << 8));
+		cooperative = !Utils.bitIsSet(flags, (1 << 9));
+		deathmatch = !Utils.bitIsSet(flags, (1 << 10));
 		
 		special = sr.readUnsignedByte(in);
 		arguments[0] = sr.readUnsignedByte(in);
@@ -329,9 +348,9 @@ public class HexenThing extends DoomThing implements BinaryObject
 			fighter,
 			cleric,
 			mage,
-			!notSinglePlayer,
-			!notCooperative,
-			!notDeathmatch
+			singlePlayer,
+			cooperative,
+			deathmatch
 		));
 		
 		sw.writeByte(out, (byte)special);
@@ -352,21 +371,20 @@ public class HexenThing extends DoomThing implements BinaryObject
 		sb.append(" Type:").append(type);
 		sb.append(" Angle:").append(angle);
 		sb.append(" ID:").append(id);
-		
+		sb.append(" Special ").append(special);
+		sb.append(" Args ").append(Arrays.toString(arguments));
+
 		if (easy) sb.append(' ').append("EASY");
 		if (medium) sb.append(' ').append("MEDIUM");
 		if (hard) sb.append(' ').append("HARD");
 		if (ambush) sb.append(' ').append("AMBUSH");
 		if (dormant) sb.append(' ').append("DORMANT");
-		if (!notSinglePlayer) sb.append(' ').append("SINGLEPLAYER");
-		if (!notCooperative) sb.append(' ').append("COOPERTIVE");
-		if (!notDeathmatch) sb.append(' ').append("DEATHMATCH");
 		if (fighter) sb.append(' ').append("FIGHTER");
 		if (cleric) sb.append(' ').append("CLERIC");
 		if (mage) sb.append(' ').append("MAGE");
-		
-		sb.append(' ').append("Special ").append(special);
-		sb.append(' ').append("Args ").append(Arrays.toString(arguments));
+		if (singlePlayer) sb.append(' ').append("SINGLEPLAYER");
+		if (cooperative) sb.append(' ').append("COOPERTIVE");
+		if (deathmatch) sb.append(' ').append("DEATHMATCH");
 		
 		return sb.toString();
 	}

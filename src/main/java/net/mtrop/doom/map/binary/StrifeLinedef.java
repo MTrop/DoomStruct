@@ -19,26 +19,29 @@ import net.mtrop.doom.util.SerializerUtils;
 import net.mtrop.doom.util.Utils;
 
 /**
- * Doom/Boom 14-byte format implementation of Linedef.
+ * Strife 14-byte format implementation of Linedef.
  * @author Matthew Tropiano
  */
-public class DoomLinedef extends CommonLinedef implements BinaryObject
+public class StrifeLinedef extends CommonLinedef implements BinaryObject
 {
 	/** Byte length of this object. */
 	public static final int LENGTH = 14;
 
-	/** Flag: (Boom) Line passes activation through to other lines. */
-	protected boolean passThru;
+	/** Flag: Line is a railing. */
+	protected boolean railing;
+	/** Flag: Line blocks flying monsters. */
+	protected boolean blockFloating;
 	/** Linedef special tag. */
 	protected int tag;
 
 	/**
 	 * Creates a new linedef.
 	 */
-	public DoomLinedef()
+	public StrifeLinedef()
 	{
 		super();
-		this.passThru = false;
+		this.railing = false;
+		this.blockFloating = false;
 		this.tag = 0;
 	}
 
@@ -61,22 +64,39 @@ public class DoomLinedef extends CommonLinedef implements BinaryObject
 	}
 
 	/**
-	 * Sets if this line's activated special does not block the activation search.
-	 * @param passThru true to set, false to clear.
+	 * @return true if this line is a railing, false if not.
 	 */
-	public void setPassThru(boolean passThru)
+	public boolean isRailing()
 	{
-		this.passThru = passThru;
+		return railing;
 	}
 
 	/**
-	 * @return true if this line's activated special does not block the activation search, false if so.
+	 * Sets if this line is a railing.
+	 * @param railing true to set, false to clear.
 	 */
-	public boolean isPassThru()
+	public void setRailing(boolean railing)
 	{
-		return passThru;
+		this.railing = railing;
 	}
-
+	
+	/**
+	 * @return true if this line blocks floating monsters, false if not.
+	 */
+	public boolean isBlockFloating()
+	{
+		return blockFloating;
+	}
+	
+	/**
+	 * Sets if this line  blocks floating monsters, false if not.
+	 * @param blockFloating true to set, false to clear.
+	 */
+	public void setBlockFloating(boolean blockFloating)
+	{
+		this.blockFloating = blockFloating;
+	}
+	
 	@Override
 	public void readBytes(InputStream in) throws IOException
 	{
@@ -96,7 +116,8 @@ public class DoomLinedef extends CommonLinedef implements BinaryObject
 		soundBlocking = Utils.bitIsSet(flags, (1 << 6));
 		notDrawn = Utils.bitIsSet(flags, (1 << 7));
 		mapped = Utils.bitIsSet(flags, (1 << 8));
-		passThru = Utils.bitIsSet(flags, (1 << 9));
+		railing = Utils.bitIsSet(flags, (1 << 9));
+		blockFloating = Utils.bitIsSet(flags, (1 << 10));
 		
 		special = sr.readUnsignedShort(in);
 		tag = sr.readUnsignedShort(in);
@@ -121,7 +142,8 @@ public class DoomLinedef extends CommonLinedef implements BinaryObject
 			soundBlocking,
 			notDrawn,
 			mapped,
-			passThru
+			railing,
+			blockFloating
 		));
 		
 		sw.writeUnsignedShort(out, special);
@@ -138,6 +160,8 @@ public class DoomLinedef extends CommonLinedef implements BinaryObject
 		sb.append(' ').append(vertexStartIndex).append(" to ").append(vertexEndIndex);
 		sb.append(' ').append("Front Sidedef ").append(sidedefFrontIndex);
 		sb.append(' ').append("Back Sidedef ").append(sidedefBackIndex);
+		sb.append(' ').append("Special ").append(special);
+		sb.append(' ').append("Tag ").append(tag);
 		
 		if (impassable) sb.append(' ').append("IMPASSABLE");
 		if (monsterBlocking) sb.append(' ').append("MONSTERBLOCK");
@@ -148,10 +172,9 @@ public class DoomLinedef extends CommonLinedef implements BinaryObject
 		if (soundBlocking) sb.append(' ').append("SOUNDBLOCKING");
 		if (notDrawn) sb.append(' ').append("NOTDRAWN");
 		if (mapped) sb.append(' ').append("MAPPED");
-		if (passThru) sb.append(' ').append("PASSTHRU");
+		if (railing) sb.append(' ').append("RAILING");
+		if (blockFloating) sb.append(' ').append("BLOCKFLOATING");
 		
-		sb.append(' ').append("Special ").append(special);
-		sb.append(' ').append("Tag ").append(tag);
 		return sb.toString();
 	}
 	

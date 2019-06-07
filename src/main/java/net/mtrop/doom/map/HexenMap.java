@@ -30,8 +30,8 @@ public class HexenMap extends CommonMap
 	public HexenMap()
 	{
 		super();
-		things = new ArrayList<HexenThing>(100);
-		linedefs = new ArrayList<HexenLinedef>(100);
+		this.things = new ArrayList<HexenThing>(100);
+		this.linedefs = new ArrayList<HexenLinedef>(100);
 	}
 	
 	/**

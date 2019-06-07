@@ -31,6 +31,8 @@ public class DoomVertex implements BinaryObject
 	 */
 	public DoomVertex()
 	{
+		this.x = 0;
+		this.y = 0;
 	}
 
 	/**

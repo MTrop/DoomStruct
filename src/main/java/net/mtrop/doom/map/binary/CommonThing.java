@@ -33,14 +33,20 @@ public abstract class CommonThing implements BinaryObject
 	protected boolean hard;
 	/** Flag: Thing ambushes player (does not activate on sound). */
 	protected boolean ambush;
-	/** Flag: Thing is not in Single Player. */
-	protected boolean notSinglePlayer;
 
 	/**
 	 * Creates a new thing.
 	 */
 	public CommonThing()
 	{
+		this.x = 0;
+		this.y = 0;
+		this.angle = 0;
+		this.type = 0;
+		this.easy = false;
+		this.medium = false;
+		this.hard = false;
+		this.ambush = false;
 	}
 
 	/**
@@ -197,23 +203,5 @@ public abstract class CommonThing implements BinaryObject
 	{
 		this.ambush = ambush;
 	}
-
-	/**
-	 * @return true if this does NOT appear on single player, false if not.
-	 */
-	public boolean isNotSinglePlayer()
-	{
-		return notSinglePlayer;
-	}
-
-	/**
-	 * Sets if this does NOT appear on single player.
-	 * @param notSinglePlayer true to set, false to clear.
-	 */
-	public void setNotSinglePlayer(boolean notSinglePlayer)
-	{
-		this.notSinglePlayer = notSinglePlayer;
-	}
-	
 
 }

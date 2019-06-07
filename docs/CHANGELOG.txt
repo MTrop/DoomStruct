@@ -1,9 +1,11 @@
-Doom Struct (C) 2015-2018 Matt Tropiano et al.
+Doom Struct (C) 2015-2019 Matt Tropiano et al.
 
-Slated for 1.0.3
+Changed in 2.0.0
 ----------------
 
-- Made WadFile AutoCloseable and fixed finalize() deprecation.
+- Lots of refactorings.
+- Better data deserialization.
+- Better UDMF parsing.
 
 
 Changed in 1.0.2

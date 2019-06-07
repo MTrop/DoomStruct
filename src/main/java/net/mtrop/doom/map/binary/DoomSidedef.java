@@ -45,10 +45,12 @@ public class DoomSidedef implements BinaryObject
 	 */
 	public DoomSidedef()
 	{
-		textureTop = MapObjectConstants.TEXTURE_BLANK;
-		textureBottom = MapObjectConstants.TEXTURE_BLANK;
-		textureMiddle = MapObjectConstants.TEXTURE_BLANK;
-		sectorIndex = MapObjectConstants.NULL_REFERENCE;
+		this.offsetX = 0;
+		this.offsetY = 0;
+		this.textureTop = MapObjectConstants.TEXTURE_BLANK;
+		this.textureBottom = MapObjectConstants.TEXTURE_BLANK;
+		this.textureMiddle = MapObjectConstants.TEXTURE_BLANK;
+		this.sectorIndex = MapObjectConstants.NULL_REFERENCE;
 	}
 	
 	/**

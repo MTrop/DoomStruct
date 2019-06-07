@@ -25,7 +25,6 @@
 	<property name="project.javadoc.packages" value="
 		net.mtrop.doom,
 		net.mtrop.doom.demo,
-		net.mtrop.doom.enums,
 		net.mtrop.doom.exception,
 		net.mtrop.doom.graphics,
 		net.mtrop.doom.map,

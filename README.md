@@ -15,12 +15,19 @@ actively maintained.
 
 NONE
 
+### Required Modules
+
+[java.desktop](https://docs.oracle.com/en/java/javase/11/docs/api/java.desktop/module-summary.html)  
+* [java.xml](https://docs.oracle.com/en/java/javase/11/docs/api/java.xml/module-summary.html)  
+* [java.datatransfer](https://docs.oracle.com/en/java/javase/11/docs/api/java.datatransfer/module-summary.html)  
+* [java.base](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/module-summary.html)  
+
 ### Source
 
 The MASTER branch contains stable code (I hope). The DEVELOP branch's contents may always
 shift. 
 
-The library will be in flux until version 1.0. 
+The library will be in flux until version 2.0. 
 
 ### Introduction
 

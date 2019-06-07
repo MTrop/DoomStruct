@@ -16,10 +16,10 @@ import java.util.Set;
 
 import net.mtrop.doom.Wad;
 import net.mtrop.doom.WadEntry;
-import net.mtrop.doom.enums.MapFormat;
 import net.mtrop.doom.exception.MapException;
 import net.mtrop.doom.map.DoomMap;
 import net.mtrop.doom.map.HexenMap;
+import net.mtrop.doom.map.MapFormat;
 import net.mtrop.doom.map.StrifeMap;
 import net.mtrop.doom.map.binary.DoomLinedef;
 import net.mtrop.doom.map.binary.DoomSector;
@@ -28,6 +28,7 @@ import net.mtrop.doom.map.binary.DoomThing;
 import net.mtrop.doom.map.binary.DoomVertex;
 import net.mtrop.doom.map.binary.HexenLinedef;
 import net.mtrop.doom.map.binary.HexenThing;
+import net.mtrop.doom.map.binary.StrifeLinedef;
 import net.mtrop.doom.map.binary.StrifeThing;
 import net.mtrop.doom.map.bsp.BSPNode;
 import net.mtrop.doom.map.bsp.BSPSegment;
@@ -227,7 +228,7 @@ public final class MapUtils
 					break;
 	
 				case LUMP_LINEDEFS:
-					map.setLinedefs(wad.getDataAs(entry, DoomLinedef.class, DoomLinedef.LENGTH));
+					map.setLinedefs(wad.getDataAs(entry, StrifeLinedef.class, DoomLinedef.LENGTH));
 					break;
 			}
 		}
@@ -456,6 +457,7 @@ public final class MapUtils
 		
 		for (int i = 0; i < count; i++)
 		{
+			// TODO: Attempt to detect ZDoom/Strife
 			String name = wad.getEntry(i + index).getName();
 			if (name.equals(LUMP_BEHAVIOR))
 				return MapFormat.HEXEN;

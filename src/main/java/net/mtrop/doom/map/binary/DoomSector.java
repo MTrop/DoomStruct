@@ -47,8 +47,13 @@ public class DoomSector implements BinaryObject
 	 */
 	public DoomSector()
 	{
-		floorTexture = MapObjectConstants.TEXTURE_BLANK;
-		ceilingTexture = MapObjectConstants.TEXTURE_BLANK;
+		this.floorHeight = 0;
+		this.ceilingHeight = 0;
+		this.floorTexture = MapObjectConstants.TEXTURE_BLANK;
+		this.ceilingTexture = MapObjectConstants.TEXTURE_BLANK;
+		this.lightLevel = 0;
+		this.special = 0;
+		this.tag = 0;
 	}
 	
 	/**
@@ -136,7 +141,7 @@ public class DoomSector implements BinaryObject
 	 */
 	public void setLightLevel(int lightLevel)
 	{
-		RangeUtils.checkShort("Light Level", lightLevel);
+		RangeUtils.checkByteUnsigned("Light Level", lightLevel);
 		this.lightLevel = lightLevel;
 	}
 	

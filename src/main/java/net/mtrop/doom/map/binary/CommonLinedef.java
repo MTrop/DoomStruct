@@ -51,10 +51,21 @@ public abstract class CommonLinedef implements BinaryObject
 
 	protected CommonLinedef()
 	{
-		vertexStartIndex = MapObjectConstants.NULL_REFERENCE;
-		vertexEndIndex = MapObjectConstants.NULL_REFERENCE;
-		sidedefFrontIndex = MapObjectConstants.NULL_REFERENCE;
-		sidedefBackIndex = MapObjectConstants.NULL_REFERENCE;
+		this.vertexStartIndex = MapObjectConstants.NULL_REFERENCE;
+		this.vertexEndIndex = MapObjectConstants.NULL_REFERENCE;
+		this.sidedefFrontIndex = MapObjectConstants.NULL_REFERENCE;
+		this.sidedefBackIndex = MapObjectConstants.NULL_REFERENCE;
+		
+		this.special = 0;
+		this.impassable = false;
+		this.monsterBlocking = false;
+		this.twoSided = false;
+		this.upperUnpegged = false;
+		this.lowerUnpegged = false;
+		this.secret = false;
+		this.mapped = false;
+		this.notDrawn = false;
+		this.soundBlocking = false;
 	}
 	
 	/**

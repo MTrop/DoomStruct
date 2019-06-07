@@ -18,7 +18,7 @@ import net.mtrop.doom.util.SerializerUtils;
 import net.mtrop.doom.util.Utils;
 
 /**
- * Doom/Boom 10-byte format implementation of Thing.
+ * Doom/Boom/MBF 10-byte format implementation of Thing.
  * @author Matthew Tropiano
  */
 public class DoomThing extends CommonThing implements BinaryObject
@@ -26,6 +26,8 @@ public class DoomThing extends CommonThing implements BinaryObject
 	/** Byte length of this object. */
 	public static final int LENGTH = 10;
 	
+	/** Flag: Thing is not in Single Player. */
+	protected boolean notSinglePlayer;
 	/** Flag: Thing is not in Cooperative. */
 	protected boolean notCooperative;
 	/** Flag: Thing is not in Deathmatch. */
@@ -38,6 +40,28 @@ public class DoomThing extends CommonThing implements BinaryObject
 	 */
 	public DoomThing()
 	{
+		super();
+		this.notSinglePlayer = false;
+		this.notCooperative = false;
+		this.notDeathmatch = false;
+		this.friendly = false;
+	}
+
+	/**
+	 * @return true if this does NOT appear on single player, false if not.
+	 */
+	public boolean isNotSinglePlayer()
+	{
+		return notSinglePlayer;
+	}
+
+	/**
+	 * Sets if this does NOT appear on single player.
+	 * @param notSinglePlayer true to set, false to clear.
+	 */
+	public void setNotSinglePlayer(boolean notSinglePlayer)
+	{
+		this.notSinglePlayer = notSinglePlayer;
 	}
 
 	/**

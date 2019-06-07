@@ -64,10 +64,6 @@ public class HexenLinedef extends CommonLinedef
 	
 	/** Flag: Line special is repeated. */
 	protected boolean repeatable;
-	/** Flag: (ZDoom) Line is activated by players and monsters. */
-	protected boolean activatedByMonsters;
-	/** Flag: (ZDoom) Line blocks everything. */
-	protected boolean blocksEverything;
 
 	/** Special activation type. */
 	protected int activationType;
@@ -80,7 +76,10 @@ public class HexenLinedef extends CommonLinedef
 	 */
 	public HexenLinedef()
 	{
-		arguments = new int[5];
+		super();
+		this.repeatable = false;
+		this.activationType = ACTIVATION_PLAYER_CROSSES;
+		this.arguments = new int[5];
 	}
 
 	/**
@@ -119,40 +118,6 @@ public class HexenLinedef extends CommonLinedef
 	{
 		RangeUtils.checkRange("Activation Type", ACTIVATION_PLAYER_CROSSES, ACTIVATION_PLAYER_USES_PASSTHRU, activationType);
 		this.activationType = activationType;
-	}
-	
-	/**
-	 * @return true if this line's special is activated by monsters, false if not.
-	 */
-	public boolean isActivatedByMonsters()
-	{
-		return activatedByMonsters;
-	}
-	
-	/**
-	 * Sets if this line's special is activated by monsters.
-	 * @param activatedByMonsters true to set, false to clear.
-	 */
-	public void setActivatedByMonsters(boolean activatedByMonsters)
-	{
-		this.activatedByMonsters = activatedByMonsters;
-	}
-	
-	/**
-	 * @return true if this line blocks everything, false if not.
-	 */
-	public boolean isBlocksEverything()
-	{
-		return blocksEverything;
-	}
-	
-	/**
-	 * Sets if this line blocks everything.
-	 * @param blocksEverything true to set, false to clear.
-	 */
-	public void setBlocksEverything(boolean blocksEverything)
-	{
-		this.blocksEverything = blocksEverything;
 	}
 	
 	/**
@@ -231,8 +196,6 @@ public class HexenLinedef extends CommonLinedef
 		notDrawn = Utils.bitIsSet(flags, (1 << 7));
 		mapped = Utils.bitIsSet(flags, (1 << 8));
 		repeatable = Utils.bitIsSet(flags, (1 << 9));
-		activatedByMonsters = Utils.bitIsSet(flags, (1 << 13));
-		blocksEverything = Utils.bitIsSet(flags, (1 << 15));
 		
 		activationType = (0x01C00 & flags) >> 10;
 		
@@ -264,13 +227,7 @@ public class HexenLinedef extends CommonLinedef
 			soundBlocking,
 			notDrawn,
 			mapped,
-			repeatable,
-			false,
-			false,
-			false,
-			activatedByMonsters,
-			false,
-			blocksEverything
+			repeatable
 		);
 		
 		flags |= ACTIVATION_FLAGS[activationType];
@@ -296,6 +253,9 @@ public class HexenLinedef extends CommonLinedef
 		sb.append(' ').append(vertexStartIndex).append(" to ").append(vertexEndIndex);
 		sb.append(' ').append("Front Sidedef ").append(sidedefFrontIndex);
 		sb.append(' ').append("Back Sidedef ").append(sidedefBackIndex);
+		sb.append(' ').append("Special ").append(special);
+		sb.append(' ').append("Args ").append(Arrays.toString(arguments));
+		sb.append(' ').append("Activation ").append(ACTIVATION_NAME[activationType]);
 		
 		if (impassable) sb.append(' ').append("IMPASSABLE");
 		if (monsterBlocking) sb.append(' ').append("MONSTERBLOCK");
@@ -307,12 +267,7 @@ public class HexenLinedef extends CommonLinedef
 		if (notDrawn) sb.append(' ').append("NOTDRAWN");
 		if (mapped) sb.append(' ').append("MAPPED");
 		if (repeatable) sb.append(' ').append("REPEATABLE");
-		if (activatedByMonsters) sb.append(' ').append("PLAYERSANDMONSTERACTIVATE");
-		if (blocksEverything) sb.append(' ').append("BLOCKEVERYTHING");
 		
-		sb.append(' ').append("Special ").append(special);
-		sb.append(' ').append("Args ").append(Arrays.toString(arguments));
-		sb.append(' ').append("Activation ").append(ACTIVATION_NAME[activationType]);
 		return sb.toString();
 	}
 	

@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
  ******************************************************************************/
-package net.mtrop.doom.enums;
+package net.mtrop.doom.map;
 
 /**
  * Enumeration of internal map format types.
@@ -19,6 +19,8 @@ public enum MapFormat
 	STRIFE,
 	/** Format commonly used by Hexen and ZDoom-derivative ports. */
 	HEXEN,
+	/** Format used by ZDoom - Hexen format, except some objects have different flags. */
+	ZDOOM,
 	/** Format commonly used by all extensible ports. */
 	UDMF;
 }

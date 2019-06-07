@@ -27,6 +27,10 @@ public class StrifeThing extends CommonThing
 	/** Byte length of this object. */
 	public static final int LENGTH = 10;
 
+	/** Flag: Thing spawns in standing mode. */
+	protected boolean standing;
+	/** Flag: Thing is only in multiplayer. */
+	protected boolean multiplayer;
 	/** Flag: Thing is an ally. */
 	protected boolean ally;
 	/** Flag: Thing is 25% translucent. */
@@ -39,6 +43,11 @@ public class StrifeThing extends CommonThing
 	 */
 	public StrifeThing()
 	{
+		this.standing = false;
+		this.multiplayer = false;
+		this.ally = false;
+		this.translucent25 = false;
+		this.translucent75 = false;
 	}
 
 	/**
@@ -107,9 +116,9 @@ public class StrifeThing extends CommonThing
 		medium = Utils.bitIsSet(flags, (1 << 1));
 		hard = Utils.bitIsSet(flags, (1 << 2));
 		ambush = Utils.bitIsSet(flags, (1 << 3));
-		notSinglePlayer = Utils.bitIsSet(flags, (1 << 4));
+		multiplayer = Utils.bitIsSet(flags, (1 << 4));
 		ambush = Utils.bitIsSet(flags, (1 << 5));
-		ally = Utils.bitIsSet(flags, (1 << 7));
+		ally = Utils.bitIsSet(flags, (1 << 6));
 		translucent25 = Utils.bitIsSet(flags, (1 << 8));
 		translucent75 = Utils.bitIsSet(flags, (1 << 9));
 	}
@@ -127,11 +136,11 @@ public class StrifeThing extends CommonThing
 			easy,
 			medium,
 			hard,
+			standing,
+			multiplayer,
 			ambush,
-			notSinglePlayer,
-			ambush,
-			false,
 			ally,
+			false,
 			translucent25,
 			translucent75
 		));		
@@ -149,8 +158,9 @@ public class StrifeThing extends CommonThing
 		if (easy) sb.append(' ').append("EASY");
 		if (medium) sb.append(' ').append("MEDIUM");
 		if (hard) sb.append(' ').append("HARD");
+		if (standing) sb.append(' ').append("STANDING");
 		if (ambush) sb.append(' ').append("AMBUSH");
-		if (notSinglePlayer) sb.append(' ').append("NOTSINGLEPLAYER");
+		if (multiplayer) sb.append(' ').append("NOTSINGLEPLAYER");
 		if (ally) sb.append(' ').append("ALLY");
 		if (translucent25) sb.append(' ').append("TRANSLUCENT25");
 		if (translucent75) sb.append(' ').append("TRANSLUCENT75");

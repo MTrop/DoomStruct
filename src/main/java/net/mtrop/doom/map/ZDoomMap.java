@@ -10,34 +10,34 @@ package net.mtrop.doom.map;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.mtrop.doom.map.binary.DoomLinedef;
-import net.mtrop.doom.map.binary.DoomThing;
+import net.mtrop.doom.map.binary.ZDoomLinedef;
+import net.mtrop.doom.map.binary.ZDoomThing;
 
 /**
  * Doom map in Doom Format.
  * @author Matthew Tropiano
  */
-public class DoomMap extends CommonMap
+public class ZDoomMap extends CommonMap
 {
 	/** List of Things. */
-	private List<DoomThing> things;
+	private List<ZDoomThing> things;
 	/** List of Linedefs. */
-	private List<DoomLinedef> linedefs;
+	private List<ZDoomLinedef> linedefs;
 	
 	/**
 	 * Creates a blank map.
 	 */
-	public DoomMap()
+	public ZDoomMap()
 	{
 		super();
-		this.things = new ArrayList<DoomThing>(100);
-		this.linedefs = new ArrayList<DoomLinedef>(100);
+		this.things = new ArrayList<ZDoomThing>(100);
+		this.linedefs = new ArrayList<ZDoomLinedef>(100);
 	}
 	
 	/**
 	 * @return the underlying list of things.
 	 */
-	public List<DoomThing> getThings()
+	public List<ZDoomThing> getThings()
 	{
 		return things;
 	}
@@ -47,17 +47,17 @@ public class DoomMap extends CommonMap
 	 * Input objects are copied to the underlying list.
 	 * @param things the new list of things.
 	 */
-	public void setThings(DoomThing ... things)
+	public void setThings(ZDoomThing ... things)
 	{
 		this.things.clear();
-		for (DoomThing obj : things)
+		for (ZDoomThing obj : things)
 			this.things.add(obj);
 	}
 
 	/**
 	 * @return the underlying list of linedefs.
 	 */
-	public List<DoomLinedef> getLinedefs()
+	public List<ZDoomLinedef> getLinedefs()
 	{
 		return linedefs;
 	}
@@ -67,10 +67,10 @@ public class DoomMap extends CommonMap
 	 * Input objects are copied to the underlying list.
 	 * @param linedefs the new list of linedefs.
 	 */
-	public void setLinedefs(DoomLinedef ... linedefs)
+	public void setLinedefs(ZDoomLinedef ... linedefs)
 	{
 		this.linedefs.clear();
-		for (DoomLinedef obj : linedefs)
+		for (ZDoomLinedef obj : linedefs)
 			this.linedefs.add(obj);
 	}
 	

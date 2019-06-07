@@ -25,6 +25,7 @@ import net.mtrop.doom.util.Utils;
  * do so is minimal in this class. Bulk reads/additions/writes/changes are best left for the {@link WadBuffer} class. 
  * Many writing I/O operations will cause the opened file to be changed many times, the length of time of 
  * which being dictated by the length of the entry list (as the list grows, so does the time it takes to write/change it).
+ * <p>WadFile operations are not thread-safe!
  * @author Matthew Tropiano
  */
 public class WadFile implements Wad, AutoCloseable
@@ -76,10 +77,11 @@ public class WadFile implements Wad, AutoCloseable
 		if (!f.exists())
 			throw new FileNotFoundException(f.getPath() + " does not exist!");
 		
-		file = new RandomAccessFile(f,"rws");
+		this.file = new RandomAccessFile(f,"rws");
 		byte[] buffer = new byte[4];
 
 		// read header
+		file.seek(0);
 		file.read(buffer);
 		String head = new String(buffer,"ASCII");
 		if (!head.equals(Type.IWAD.toString()) && !head.equals(Type.PWAD.toString()))
@@ -91,9 +93,9 @@ public class WadFile implements Wad, AutoCloseable
 		if (head.equals(Type.PWAD.toString()))
 			type = Type.PWAD;
 		
-		fileName = f.getName();
-		filePath = f.getPath();
-		fileAbsolutePath = f.getAbsolutePath();
+		this.fileName = f.getName();
+		this.filePath = f.getPath();
+		this.fileAbsolutePath = f.getAbsolutePath();
 		
 		file.read(buffer);
 		int size = SerializerUtils.bytesToInt(buffer, Utils.LITTLE_ENDIAN);

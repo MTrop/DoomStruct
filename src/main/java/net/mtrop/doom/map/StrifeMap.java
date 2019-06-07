@@ -10,7 +10,7 @@ package net.mtrop.doom.map;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.mtrop.doom.map.binary.DoomLinedef;
+import net.mtrop.doom.map.binary.StrifeLinedef;
 import net.mtrop.doom.map.binary.StrifeThing;
 
 /**
@@ -22,7 +22,7 @@ public class StrifeMap extends CommonMap
 	/** List of Things. */
 	private List<StrifeThing> things;
 	/** List of Linedefs. */
-	private List<DoomLinedef> linedefs;
+	private List<StrifeLinedef> linedefs;
 	
 	/**
 	 * Creates a blank map.
@@ -30,8 +30,8 @@ public class StrifeMap extends CommonMap
 	public StrifeMap()
 	{
 		super();
-		things = new ArrayList<StrifeThing>(100);
-		linedefs = new ArrayList<DoomLinedef>(100);
+		this.things = new ArrayList<StrifeThing>(100);
+		this.linedefs = new ArrayList<StrifeLinedef>(100);
 	}
 	
 	/**
@@ -57,7 +57,7 @@ public class StrifeMap extends CommonMap
 	/**
 	 * @return the underlying list of linedefs.
 	 */
-	public List<DoomLinedef> getLinedefs()
+	public List<StrifeLinedef> getLinedefs()
 	{
 		return linedefs;
 	}
@@ -67,10 +67,10 @@ public class StrifeMap extends CommonMap
 	 * Input objects are copied to the underlying list.
 	 * @param linedefs the new list of linedefs.
 	 */
-	public void setLinedefs(DoomLinedef ... linedefs)
+	public void setLinedefs(StrifeLinedef ... linedefs)
 	{
 		this.linedefs.clear();
-		for (DoomLinedef obj : linedefs)
+		for (StrifeLinedef obj : linedefs)
 			this.linedefs.add(obj);
 	}
 	

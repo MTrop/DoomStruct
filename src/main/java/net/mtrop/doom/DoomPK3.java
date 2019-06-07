@@ -60,9 +60,9 @@ public class DoomPK3 extends ZipFile
 	public DoomPK3(File pk3File) throws ZipException, IOException
 	{
 		super(pk3File);
-		entryTable = new CaseInsensitiveTrieMap<ZipEntry>();
-		filePath = pk3File.getPath();
-		fileName = pk3File.getName();
+		this.entryTable = new CaseInsensitiveTrieMap<ZipEntry>();
+		this.filePath = pk3File.getPath();
+		this.fileName = pk3File.getName();
 		refreshEntries();
 	}
 	

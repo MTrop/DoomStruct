@@ -258,7 +258,6 @@ public abstract class AbstractTrie<V extends Object, S extends Object> implement
 	
 	/**
 	 * Removes all objects from the trie.
-	 * @since 2.21.0
 	 */
 	public void clear()
 	{

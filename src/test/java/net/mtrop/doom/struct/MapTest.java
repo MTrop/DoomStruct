@@ -10,8 +10,8 @@ package net.mtrop.doom.struct;
 import java.io.IOException;
 
 import net.mtrop.doom.WadFile;
-import net.mtrop.doom.enums.MapFormat;
 import net.mtrop.doom.exception.MapException;
+import net.mtrop.doom.map.MapFormat;
 import net.mtrop.doom.util.MapUtils;
 
 import net.mtrop.doom.LoggingFactory;
