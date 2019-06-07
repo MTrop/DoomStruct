@@ -10,9 +10,9 @@ package net.mtrop.doom.map;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.mtrop.doom.map.binary.DoomSector;
-import net.mtrop.doom.map.binary.DoomSidedef;
-import net.mtrop.doom.map.binary.DoomVertex;
+import net.mtrop.doom.map.data.DoomSector;
+import net.mtrop.doom.map.data.DoomSidedef;
+import net.mtrop.doom.map.data.DoomVertex;
 
 /**
  * Common structures for binary maps loaded from a Wad.

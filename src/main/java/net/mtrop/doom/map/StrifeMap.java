@@ -10,8 +10,8 @@ package net.mtrop.doom.map;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.mtrop.doom.map.binary.StrifeLinedef;
-import net.mtrop.doom.map.binary.StrifeThing;
+import net.mtrop.doom.map.data.StrifeLinedef;
+import net.mtrop.doom.map.data.StrifeThing;
 
 /**
  * Doom map in Doom Format, but using Strife-flagged things.

@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
  ******************************************************************************/
-package net.mtrop.doom.map.binary;
+package net.mtrop.doom.map.data;
 
 import net.mtrop.doom.BinaryObject;
 import net.mtrop.doom.map.MapObjectConstants;

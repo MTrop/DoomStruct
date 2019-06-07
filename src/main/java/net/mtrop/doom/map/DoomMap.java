@@ -10,8 +10,8 @@ package net.mtrop.doom.map;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.mtrop.doom.map.binary.DoomLinedef;
-import net.mtrop.doom.map.binary.DoomThing;
+import net.mtrop.doom.map.data.DoomLinedef;
+import net.mtrop.doom.map.data.DoomThing;
 
 /**
  * Doom map in Doom Format.

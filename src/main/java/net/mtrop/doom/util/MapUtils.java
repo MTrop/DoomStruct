@@ -21,19 +21,19 @@ import net.mtrop.doom.map.DoomMap;
 import net.mtrop.doom.map.HexenMap;
 import net.mtrop.doom.map.MapFormat;
 import net.mtrop.doom.map.StrifeMap;
-import net.mtrop.doom.map.binary.DoomLinedef;
-import net.mtrop.doom.map.binary.DoomSector;
-import net.mtrop.doom.map.binary.DoomSidedef;
-import net.mtrop.doom.map.binary.DoomThing;
-import net.mtrop.doom.map.binary.DoomVertex;
-import net.mtrop.doom.map.binary.HexenLinedef;
-import net.mtrop.doom.map.binary.HexenThing;
-import net.mtrop.doom.map.binary.StrifeLinedef;
-import net.mtrop.doom.map.binary.StrifeThing;
 import net.mtrop.doom.map.bsp.BSPNode;
 import net.mtrop.doom.map.bsp.BSPSegment;
 import net.mtrop.doom.map.bsp.BSPSubsector;
 import net.mtrop.doom.map.bsp.BSPTree;
+import net.mtrop.doom.map.data.DoomLinedef;
+import net.mtrop.doom.map.data.DoomSector;
+import net.mtrop.doom.map.data.DoomSidedef;
+import net.mtrop.doom.map.data.DoomThing;
+import net.mtrop.doom.map.data.DoomVertex;
+import net.mtrop.doom.map.data.HexenLinedef;
+import net.mtrop.doom.map.data.HexenThing;
+import net.mtrop.doom.map.data.StrifeLinedef;
+import net.mtrop.doom.map.data.StrifeThing;
 
 /**
  * Map utility methods and functions.

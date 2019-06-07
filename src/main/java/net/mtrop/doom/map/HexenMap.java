@@ -10,8 +10,8 @@ package net.mtrop.doom.map;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.mtrop.doom.map.binary.HexenLinedef;
-import net.mtrop.doom.map.binary.HexenThing;
+import net.mtrop.doom.map.data.HexenLinedef;
+import net.mtrop.doom.map.data.HexenThing;
 
 /**
  * Doom map in Doom Format.
