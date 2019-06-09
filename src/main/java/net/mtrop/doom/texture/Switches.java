@@ -15,10 +15,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.mtrop.doom.BinaryObject;
+import net.mtrop.doom.io.SerialReader;
+import net.mtrop.doom.io.SerialWriter;
 import net.mtrop.doom.struct.Sizable;
 import net.mtrop.doom.util.NameUtils;
-import net.mtrop.doom.util.SerialReader;
-import net.mtrop.doom.util.SerialWriter;
 
 /**
  * This class represents the contents of a Boom Engine SWITCHES
@@ -85,6 +85,7 @@ public class Switches implements BinaryObject, Iterable<Switches.Entry>, Sizable
 	 * @param offName the "off" name for the switch.
 	 * @param onName the "on" name for the switch.
 	 * @param game the game type that this switch works with.
+	 * @throws IllegalArgumentException if any of the texture names are invalid or game is null.
 	 */
 	public void addEntry(String offName, String onName, Game game)
 	{
@@ -161,10 +162,8 @@ public class Switches implements BinaryObject, Iterable<Switches.Entry>, Sizable
 		 */
 		Entry(String offName, String onName, Game game)
 		{
-			if (!NameUtils.isValidTextureName(offName))
-				throw new IllegalArgumentException("\"Off\" Texture Name is invalid.");
-			if (!NameUtils.isValidTextureName(offName))
-				throw new IllegalArgumentException("\"On\" Texture Name is invalid.");
+			NameUtils.checkValidTextureName(offName);
+			NameUtils.checkValidTextureName(onName);
 			if (game == null)
 				throw new IllegalArgumentException("Game cannot be null.");
 

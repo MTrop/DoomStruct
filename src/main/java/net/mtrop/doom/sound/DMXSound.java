@@ -10,12 +10,12 @@ package net.mtrop.doom.sound;
 import java.io.*;
 
 import net.mtrop.doom.BinaryObject;
+import net.mtrop.doom.io.SerialReader;
+import net.mtrop.doom.io.SerialWriter;
 import net.mtrop.doom.struct.CustomWaveForm;
 import net.mtrop.doom.struct.CustomWaveForm.InterpolationType;
+import net.mtrop.doom.util.MathUtils;
 import net.mtrop.doom.util.RangeUtils;
-import net.mtrop.doom.util.SerialReader;
-import net.mtrop.doom.util.SerialWriter;
-import net.mtrop.doom.util.Utils;
 
 /**
  * This class holds digital sound information.
@@ -130,7 +130,7 @@ public class DMXSound implements BinaryObject
 		
 		byte[] b = sr.readBytes(in, sampleCount - 32);
 		for (int i = 0; i < b.length; i++)
-			waveForm.setSampleValue(i, (Utils.getInterpolationFactor((b[i] & 0x0ff), 0, 255) * 2.0) - 1.0);
+			waveForm.setSampleValue(i, (MathUtils.getInterpolationFactor((b[i] & 0x0ff), 0, 255) * 2.0) - 1.0);
 		
 		sr.readBytes(in, 16); // padding
 	}

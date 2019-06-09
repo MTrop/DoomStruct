@@ -13,10 +13,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.mtrop.doom.exception.WadException;
+import net.mtrop.doom.io.SerialWriter;
+import net.mtrop.doom.util.MathUtils;
 import net.mtrop.doom.util.NameUtils;
-import net.mtrop.doom.util.SerialWriter;
 import net.mtrop.doom.util.SerializerUtils;
-import net.mtrop.doom.util.Utils;
 
 /**
  * The class that reads WadFile information and provides random access to Wad files.
@@ -98,10 +98,10 @@ public class WadFile implements Wad, AutoCloseable
 		this.fileAbsolutePath = f.getAbsolutePath();
 		
 		file.read(buffer);
-		int size = SerializerUtils.bytesToInt(buffer, Utils.LITTLE_ENDIAN);
+		int size = SerializerUtils.bytesToInt(buffer, MathUtils.LITTLE_ENDIAN);
 
 		file.read(buffer);
-		entryListOffset = SerializerUtils.bytesToInt(buffer, Utils.LITTLE_ENDIAN);
+		entryListOffset = SerializerUtils.bytesToInt(buffer, MathUtils.LITTLE_ENDIAN);
 		
 		this.entries = new ArrayList<WadEntry>((size + 1) * 2);
 		
@@ -119,13 +119,14 @@ public class WadFile implements Wad, AutoCloseable
 		}
 	}
 
-	private void writeEntryList() throws IOException
+	/**
+	 * Writes the header and the entry list out to the Wad file.
+	 * @throws IOException if the header/entry list cannot be written.
+	 */
+	public void flushEntries() throws IOException
 	{
-		file.seek(entryListOffset);
-		for (WadEntry wfe : entries)
-			file.write(wfe.toBytes());
-		if (file.getFilePointer() < file.length())
-			file.setLength(file.getFilePointer());
+		writeHeader();
+		writeEntryList();
 	}
 
 	private void writeHeader() throws IOException
@@ -136,6 +137,15 @@ public class WadFile implements Wad, AutoCloseable
 		file.write(b);
 		SerializerUtils.intToBytes(entryListOffset, SerializerUtils.LITTLE_ENDIAN, b, 0);
 		file.write(b);
+	}
+
+	private void writeEntryList() throws IOException
+	{
+		file.seek(entryListOffset);
+		for (WadEntry wfe : entries)
+			file.write(wfe.toBytes());
+		if (file.getFilePointer() < file.length())
+			file.setLength(file.getFilePointer());
 	}
 
 	/**
@@ -168,7 +178,7 @@ public class WadFile implements Wad, AutoCloseable
 		try{
 			return new WadFile(f);
 		} catch (WadException e) {
-			throw new RuntimeException("INTERNALL ERROR.");
+			throw new RuntimeException("INTERNAL ERROR.");
 		}
 	}
 	
@@ -240,7 +250,15 @@ public class WadFile implements Wad, AutoCloseable
 	}
 
 	@Override
-	public void deleteEntry(int n) throws IOException
+	public WadEntry removeEntry(int n) throws IOException
+	{
+		WadEntry entry = entries.remove(n);
+		flushEntries();
+		return entry;
+	}
+
+	@Override
+	public WadEntry deleteEntry(int n) throws IOException
 	{
 		// get removed WadEntry.
 		WadEntry entry = entries.remove(n);
@@ -264,15 +282,16 @@ public class WadFile implements Wad, AutoCloseable
 	
 		entryListOffset = dataOffset;
 	
-		// adjust offsets from last WadEntry.
-		for (int i = n; i < entries.size(); i++)
+		// adjust offsets.
+		if (entry.size > 0) for (int i = 0; i < entries.size(); i++)
 		{
 			WadEntry e = entries.get(i);
-			e.offset -= entry.getSize();
+			if (e.offset > entry.offset)
+				e.offset -= entry.size;
 		}
 	
-		writeHeader();
-		writeEntryList();
+		flushEntries();
+		return entry;
 	}
 
 	@Override
@@ -282,8 +301,7 @@ public class WadFile implements Wad, AutoCloseable
 		if (entry == null)
 			throw new IOException("Index is out of range.");
 		
-		if (!NameUtils.isValidEntryName(newName))
-			throw new IllegalArgumentException("Entry name \""+newName+"\" does not fit entry requirements.");
+		NameUtils.checkValidEntryName(newName);
 		
 		entry.name = newName;
 	
@@ -310,8 +328,7 @@ public class WadFile implements Wad, AutoCloseable
 	{
 		for (int i = 0; i < entryList.length; i++)
 			entries.set(startIndex + i, entryList[i]);
-		writeHeader();
-		writeEntryList();
+		flushEntries();
 	}
 
 	@Override
@@ -320,21 +337,38 @@ public class WadFile implements Wad, AutoCloseable
 		entries.clear();
 		for (WadEntry WadEntry : entryList)
 			entries.add(WadEntry);
-		writeHeader();
-		writeEntryList();
+		flushEntries();
 	}
 
 	@Override
 	public WadEntry addData(String entryName, byte[] data) throws IOException
 	{
+		return addData(entryName, data, false);
+	}
+
+	/**
+	 * Adds data to this Wad, using entryName as the name of the new entry. 
+	 * The overhead for multiple additions may be expensive I/O-wise depending on the Wad implementation.
+	 * <p>
+	 * <b>NOTE: If this is called with <code>noFlush</code> being true, you <i>must</i> call {@link #flushEntries()} or
+	 * the Wad file will be in an unreadable state!</b>
+	 * @param entryName the name of the entry to add this as.
+	 * @param data the bytes of data to add as this wad's data.
+	 * @param noFlush if true, this will not update the header nor flush the new entries to the file.
+	 * @return a WadEntry that describes the added data.
+	 * @throws IllegalArgumentException if the provided name is not a valid name.
+	 * @throws IOException if the data cannot be written.
+	 * @throws NullPointerException if <code>entryName</code> or <code>data</code> is <code>null</code>.
+	 */
+	public WadEntry addData(String entryName, byte[] data, boolean noFlush) throws IOException
+	{
 		WadEntry entry = WadEntry.create(entryName, entryListOffset, data.length);
 		entries.add(entry);
-
 		file.seek(entryListOffset);
 		file.write(data);
 		entryListOffset += data.length;
-		writeHeader();
-		writeEntryList();
+		if (noFlush)
+			flushEntries();
 		return entry;
 	}
 
@@ -343,12 +377,38 @@ public class WadFile implements Wad, AutoCloseable
 	{
 		WadEntry entry = WadEntry.create(entryName, entryListOffset, data.length);
 		entries.add(index, entry);
-
 		file.seek(entryListOffset);
 		file.write(data);
 		entryListOffset += data.length;
-		writeHeader();
-		writeEntryList();
+		flushEntries();
+		return entry;
+	}
+
+	/**
+	 * Adds data to this Wad, using entryName as the name of the new entry. 
+	 * The rest of the entries in the wad are shifted down one index. 
+	 * The overhead for multiple additions may be expensive I/O-wise depending on the Wad implementation.
+	 * <p>
+	 * <b>NOTE: If this is called with <code>noFlush</code> being true, you <i>must</i> call {@link #flushEntries()} or
+	 * the Wad file will be in an unreadable state!</b>
+	 * @param index the index at which to add the entry.
+	 * @param entryName the name of the entry to add this as.
+	 * @param data the bytes of data to add as this wad's data.
+	 * @param noFlush if true, this will not update the header nor flush the new entries to the file.
+	 * @return a WadEntry that describes the added data.
+	 * @throws IllegalArgumentException if the provided name is not a valid name.
+	 * @throws IOException if the data cannot be written.
+	 * @throws NullPointerException if <code>entryName</code> or <code>data</code> is <code>null</code>.
+	 */
+	public WadEntry addDataAt(int index, String entryName, byte[] data, boolean noFlush) throws IOException
+	{
+		WadEntry entry = WadEntry.create(entryName, entryListOffset, data.length);
+		entries.add(index, entry);
+		file.seek(entryListOffset);
+		file.write(data);
+		entryListOffset += data.length;
+		if (noFlush)
+			flushEntries();
 		return entry;
 	}
 
@@ -374,8 +434,7 @@ public class WadFile implements Wad, AutoCloseable
 			entryListOffset += data[i].length;
 		}
 
-		writeHeader();
-		writeEntryList();
+		flushEntries();
 		return out;
 	}
 
@@ -401,8 +460,7 @@ public class WadFile implements Wad, AutoCloseable
 			entryListOffset += data[i].length;
 		}
 
-		writeHeader();
-		writeEntryList();
+		flushEntries();
 		return out;
 	}
 

@@ -15,9 +15,9 @@ import java.util.HashMap;
 
 import net.mtrop.doom.BinaryObject;
 import net.mtrop.doom.GraphicObject;
+import net.mtrop.doom.io.SerialReader;
+import net.mtrop.doom.io.SerialWriter;
 import net.mtrop.doom.util.RangeUtils;
-import net.mtrop.doom.util.SerialReader;
-import net.mtrop.doom.util.SerialWriter;
 
 /**
  * Doom graphic data stored as column-major indices (patches and most graphics with baked-in offsets). 

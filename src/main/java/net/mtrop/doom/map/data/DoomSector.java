@@ -12,11 +12,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import net.mtrop.doom.BinaryObject;
+import net.mtrop.doom.io.SerialReader;
+import net.mtrop.doom.io.SerialWriter;
 import net.mtrop.doom.map.MapObjectConstants;
 import net.mtrop.doom.util.NameUtils;
 import net.mtrop.doom.util.RangeUtils;
-import net.mtrop.doom.util.SerialReader;
-import net.mtrop.doom.util.SerialWriter;
 
 /**
  * Doom/Boom 26-byte format implementation of Sector.
@@ -101,8 +101,7 @@ public class DoomSector implements BinaryObject
 	 */
 	public void setFloorTexture(String floorTexture)
 	{
-		if (!NameUtils.isValidTextureName(floorTexture))
-			throw new IllegalArgumentException("Texture name is invalid.");
+		NameUtils.checkValidTextureName(floorTexture);
 		this.floorTexture = floorTexture;
 	}
 	
@@ -121,8 +120,7 @@ public class DoomSector implements BinaryObject
 	 */
 	public void setCeilingTexture(String ceilingTexture)
 	{
-		if (!NameUtils.isValidTextureName(ceilingTexture))
-			throw new IllegalArgumentException("Texture name is invalid.");
+		NameUtils.checkValidTextureName(ceilingTexture);
 		this.ceilingTexture = ceilingTexture;
 	}
 	

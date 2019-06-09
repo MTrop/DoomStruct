@@ -13,9 +13,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Array;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
-
-import net.mtrop.doom.util.Utils;
 
 /**
  * Common elements of all objects that are loaded from binary data.
@@ -83,7 +82,7 @@ public interface BinaryObject
 	 */
 	static <BO extends BinaryObject> BO read(Class<BO> boClass, InputStream in) throws IOException
 	{
-		BO out = (BO)Utils.create(boClass);
+		BO out = (BO)Reflect.create(boClass);
 		out.readBytes(in);
 		return out;
 	}
@@ -118,7 +117,7 @@ public interface BinaryObject
 		int i = 0;
 		while (count-- > 0)
 		{
-			out[i] = Utils.create(boClass);
+			out[i] = Reflect.create(boClass);
 			out[i].readBytes(in);
 			i++;
 		}
@@ -226,7 +225,7 @@ public interface BinaryObject
 			this.in = in;
 			this.buffer = new byte[len];
 			this.objClass = clz;
-			this.outObject = Utils.create(clz);
+			this.outObject = Reflect.create(clz);
 		}
 		
 		@Override
@@ -258,6 +257,42 @@ public interface BinaryObject
 			}
 		}
 		
+	}
+	
+	static class Reflect
+	{
+		/**
+		 * Creates a new instance of a class from a class type.
+		 * This essentially calls {@link Class#newInstance()}, but wraps the call
+		 * in a try/catch block that only throws an exception if something goes wrong.
+		 * @param <T> the return object type.
+		 * @param clazz the class type to instantiate.
+		 * @return a new instance of an object.
+		 * @throws RuntimeException if instantiation cannot happen, either due to
+		 * a non-existent constructor or a non-visible constructor.
+		 */
+		private static <T> T create(Class<T> clazz)
+		{
+			Object out = null;
+			try {
+				out = clazz.getDeclaredConstructor().newInstance();
+			} catch (SecurityException ex) {
+				throw new RuntimeException(ex);
+			} catch (IllegalAccessException e) {
+				throw new RuntimeException(e);
+			} catch (InstantiationException e) {
+				throw new RuntimeException(e);
+			} catch (IllegalArgumentException e) {
+				throw new RuntimeException(e);
+			} catch (InvocationTargetException e) {
+				throw new RuntimeException(e);
+			} catch (NoSuchMethodException e) {
+				throw new RuntimeException(e);
+			}
+			
+			return clazz.cast(out);
+		}
+
 	}
 	
 }

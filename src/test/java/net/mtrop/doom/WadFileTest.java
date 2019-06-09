@@ -8,7 +8,7 @@
 package net.mtrop.doom;
 
 import net.mtrop.doom.LoggingFactory.Logger;
-import net.mtrop.doom.util.Utils;
+import net.mtrop.doom.util.IOUtils;
 
 public final class WadFileTest
 {
@@ -25,7 +25,7 @@ public final class WadFileTest
 		wad = new WadFile(args[0]);
 		for (WadEntry e : wad)
 			out.info(e.toString());
-		Utils.close((WadFile)wad);
+		IOUtils.close((WadFile)wad);
 		out.info("*************************************************************");
 		wad = new WadMap(args[0]);
 		for (WadEntry e : wad)

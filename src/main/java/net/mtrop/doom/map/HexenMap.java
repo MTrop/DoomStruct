@@ -7,71 +7,24 @@
  ******************************************************************************/
 package net.mtrop.doom.map;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import net.mtrop.doom.map.data.DoomSector;
+import net.mtrop.doom.map.data.DoomSidedef;
+import net.mtrop.doom.map.data.DoomVertex;
 import net.mtrop.doom.map.data.HexenLinedef;
 import net.mtrop.doom.map.data.HexenThing;
 
 /**
- * Doom map in Doom Format.
+ * Hexen map in ZDoom/Hexen Format.
  * @author Matthew Tropiano
  */
-public class HexenMap extends CommonMap
+public class HexenMap extends CommonMap<DoomVertex, HexenLinedef, DoomSidedef, DoomSector, HexenThing>
 {
-	/** List of Things. */
-	private List<HexenThing> things;
-	/** List of Linedefs. */
-	private List<HexenLinedef> linedefs;
-	
 	/**
 	 * Creates a blank map.
 	 */
 	public HexenMap()
 	{
 		super();
-		this.things = new ArrayList<HexenThing>(100);
-		this.linedefs = new ArrayList<HexenLinedef>(100);
-	}
-	
-	/**
-	 * @return the underlying list of things.
-	 */
-	public List<HexenThing> getThings()
-	{
-		return things;
 	}
 
-	/**
-	 * Sets the things on this map. 
-	 * Input objects are copied to the underlying list.
-	 * @param things the new list of things.
-	 */
-	public void setThings(HexenThing ... things)
-	{
-		this.things.clear();
-		for (HexenThing obj : things)
-			this.things.add(obj);
-	}
-
-	/**
-	 * @return the underlying list of linedefs.
-	 */
-	public List<HexenLinedef> getLinedefs()
-	{
-		return linedefs;
-	}
-
-	/**
-	 * Replaces the list of linedefs in the map.
-	 * Input objects are copied to the underlying list.
-	 * @param linedefs the new list of linedefs.
-	 */
-	public void setLinedefs(HexenLinedef ... linedefs)
-	{
-		this.linedefs.clear();
-		for (HexenLinedef obj : linedefs)
-			this.linedefs.add(obj);
-	}
-	
 }

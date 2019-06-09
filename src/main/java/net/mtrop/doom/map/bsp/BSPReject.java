@@ -12,9 +12,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import net.mtrop.doom.BinaryObject;
-import net.mtrop.doom.util.SerialReader;
-import net.mtrop.doom.util.SerialWriter;
-import net.mtrop.doom.util.Utils;
+import net.mtrop.doom.io.SerialReader;
+import net.mtrop.doom.io.SerialWriter;
 
 /**
  * Represents the Reject lump.
@@ -25,6 +24,8 @@ import net.mtrop.doom.util.Utils;
  */
 public class BSPReject implements BinaryObject
 {
+	private static final byte[] BITMASK = {0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, (byte)0x80};
+	
 	/** The reject grid itself. */
 	private boolean[][] grid;
 	
@@ -75,7 +76,7 @@ public class BSPReject implements BinaryObject
 					curByte = sr.readByte(in);
 					bit = 0;
 				}
-				grid[i][j] = (curByte & Utils.BITMASK[bit]) != 0;
+				grid[i][j] = (curByte & BITMASK[bit]) != 0;
 				bit++;
 			}
 	}

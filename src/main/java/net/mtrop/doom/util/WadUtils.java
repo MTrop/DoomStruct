@@ -7,12 +7,15 @@
  ******************************************************************************/
 package net.mtrop.doom.util;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
 import net.mtrop.doom.Wad;
 import net.mtrop.doom.WadEntry;
+import net.mtrop.doom.WadFile;
 
 /**
  * WAD utility methods and functions.
@@ -21,6 +24,25 @@ import net.mtrop.doom.WadEntry;
 public final class WadUtils
 {
 	private WadUtils() {}
+
+	/**
+	 * Creates a new WAD file by copying the contents of an existing WAD to another file,
+	 * which discards all un-addressed data from the first. The source Wad must be an 
+	 * implementation that supports retrieving data from it.
+	 * @param source the source Wad.
+	 * @param destination the destination file.
+	 * @throws UnsupportedOperationException if the provided Wad is not an implementation that you can read data from.
+	 * @throws SecurityException if the target file cannot be written to due to security reasons.
+	 * @throws IOException if a read or write error occurs.
+	 */
+	public static void cleanEntries(Wad source, File destination) throws IOException
+	{
+		WadFile wadFile = WadFile.createWadFile(destination);
+		for (WadEntry entry : source)
+			wadFile.addData(entry.getName(), source.getData(entry), true);
+		wadFile.flushEntries();
+		wadFile.close();
+	}
 
 	/**
 	 * Finds all entries within a WAD entry namespace.

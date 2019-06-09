@@ -17,10 +17,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.mtrop.doom.BinaryObject;
+import net.mtrop.doom.io.SerialReader;
+import net.mtrop.doom.io.SerialWriter;
+import net.mtrop.doom.util.IOUtils;
 import net.mtrop.doom.util.RangeUtils;
-import net.mtrop.doom.util.SerialReader;
-import net.mtrop.doom.util.SerialWriter;
-import net.mtrop.doom.util.Utils;
 
 /**
  * This class is an abstract representation of a DEMO lump in Doom.
@@ -950,7 +950,7 @@ public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 	{
 		ByteArrayInputStream bin = new ByteArrayInputStream(data);
 		readBytes(bin);
-		Utils.close(bin);
+		IOUtils.close(bin);
 	}
 
 	@Override

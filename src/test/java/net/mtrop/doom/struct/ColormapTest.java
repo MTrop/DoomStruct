@@ -13,7 +13,7 @@ import net.mtrop.doom.WadFile;
 import net.mtrop.doom.graphics.Colormap;
 import net.mtrop.doom.LoggingFactory;
 import net.mtrop.doom.LoggingFactory.Logger;
-import net.mtrop.doom.util.Utils;
+import net.mtrop.doom.util.IOUtils;
 
 public final class ColormapTest
 {
@@ -23,6 +23,6 @@ public final class ColormapTest
 		WadFile wad = new WadFile(args[0]);
 		for (Colormap colormap : wad.getDataAs("COLORMAP", Colormap.class, Colormap.LENGTH))
 			logger.info(colormap);
-		Utils.close(wad);
+		IOUtils.close(wad);
 	}
 }

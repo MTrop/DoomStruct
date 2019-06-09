@@ -13,7 +13,7 @@ import net.mtrop.doom.WadFile;
 import net.mtrop.doom.LoggingFactory;
 import net.mtrop.doom.LoggingFactory.Logger;
 import net.mtrop.doom.map.data.DoomVertex;
-import net.mtrop.doom.util.Utils;
+import net.mtrop.doom.util.IOUtils;
 
 public class DoomVertexTest
 {
@@ -25,6 +25,6 @@ public class DoomVertexTest
 		int i = 0;
 		for (DoomVertex object : wad.getDataAs("VERTEXES", DoomVertex.class, DoomVertex.LENGTH))
 			logger.info((i++) + " " + object);
-		Utils.close(wad);
+		IOUtils.close(wad);
 	}
 }

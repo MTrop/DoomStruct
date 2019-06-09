@@ -45,9 +45,7 @@ public abstract class CommonTexture<P extends CommonPatch> implements BinaryObje
 	 */
 	public CommonTexture(String name)
 	{
-		if (!NameUtils.isValidTextureName(name))
-			throw new IllegalArgumentException("Invalid texture name.");
-		
+		NameUtils.checkValidTextureName(name);
 		this.name = name;
 		width = 0;
 		height = 0;

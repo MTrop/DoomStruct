@@ -12,9 +12,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import net.mtrop.doom.BinaryObject;
+import net.mtrop.doom.io.SerialReader;
+import net.mtrop.doom.io.SerialWriter;
 import net.mtrop.doom.util.NameUtils;
-import net.mtrop.doom.util.SerialReader;
-import net.mtrop.doom.util.SerialWriter;
 
 /**
  * This is the lump that contains a collection of Doom-formatted textures.

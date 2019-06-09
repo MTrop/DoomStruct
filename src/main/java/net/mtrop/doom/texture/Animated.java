@@ -15,10 +15,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.mtrop.doom.BinaryObject;
+import net.mtrop.doom.io.SerialReader;
+import net.mtrop.doom.io.SerialWriter;
 import net.mtrop.doom.struct.Sizable;
 import net.mtrop.doom.util.NameUtils;
-import net.mtrop.doom.util.SerialReader;
-import net.mtrop.doom.util.SerialWriter;
 
 /**
  * This class represents the contents of a Boom Engine ANIMATED
@@ -58,11 +58,9 @@ public class Animated implements BinaryObject, Iterable<Animated.Entry>, Sizable
 	 */
 	public static Entry flat(String lastName, String firstName, int ticks)
 	{
-		if (!NameUtils.isValidTextureName(lastName))
-			throw new IllegalArgumentException("Last texture name is invalid.");
-		else if (!NameUtils.isValidTextureName(firstName))
-			throw new IllegalArgumentException("First texture name is invalid.");
-		else if (ticks < 1 || ticks > Integer.MAX_VALUE)
+		NameUtils.checkValidTextureName(lastName);
+		NameUtils.checkValidTextureName(firstName);
+		if (ticks < 1 || ticks > Integer.MAX_VALUE)
 			throw new IllegalArgumentException("Frame ticks must be between 1 and 2^31 - 1.");
 		
 		return new Entry(false, lastName, firstName, ticks);
@@ -92,11 +90,9 @@ public class Animated implements BinaryObject, Iterable<Animated.Entry>, Sizable
 	 */
 	public static Entry texture(String lastName, String firstName, int ticks, boolean decals)
 	{
-		if (!NameUtils.isValidTextureName(lastName))
-			throw new IllegalArgumentException("Last texture name is invalid.");
-		else if (!NameUtils.isValidTextureName(firstName))
-			throw new IllegalArgumentException("First texture name is invalid.");
-		else if (ticks < 1 || ticks > Integer.MAX_VALUE)
+		NameUtils.checkValidTextureName(lastName);
+		NameUtils.checkValidTextureName(firstName);
+		if (ticks < 1 || ticks > Integer.MAX_VALUE)
 			throw new IllegalArgumentException("Frame ticks must be between 1 and 2^31 - 1.");
 		
 		return new Entry(true, decals, lastName, firstName, ticks);

@@ -7,71 +7,24 @@
  ******************************************************************************/
 package net.mtrop.doom.map;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import net.mtrop.doom.map.data.DoomLinedef;
+import net.mtrop.doom.map.data.DoomSector;
+import net.mtrop.doom.map.data.DoomSidedef;
 import net.mtrop.doom.map.data.DoomThing;
+import net.mtrop.doom.map.data.DoomVertex;
 
 /**
  * Doom map in Doom Format.
  * @author Matthew Tropiano
  */
-public class DoomMap extends CommonMap
+public class DoomMap extends CommonMap<DoomVertex, DoomLinedef, DoomSidedef, DoomSector, DoomThing>
 {
-	/** List of Things. */
-	private List<DoomThing> things;
-	/** List of Linedefs. */
-	private List<DoomLinedef> linedefs;
-	
 	/**
 	 * Creates a blank map.
 	 */
 	public DoomMap()
 	{
 		super();
-		this.things = new ArrayList<DoomThing>(100);
-		this.linedefs = new ArrayList<DoomLinedef>(100);
-	}
-	
-	/**
-	 * @return the underlying list of things.
-	 */
-	public List<DoomThing> getThings()
-	{
-		return things;
 	}
 
-	/**
-	 * Sets the things on this map. 
-	 * Input objects are copied to the underlying list.
-	 * @param things the new list of things.
-	 */
-	public void setThings(DoomThing ... things)
-	{
-		this.things.clear();
-		for (DoomThing obj : things)
-			this.things.add(obj);
-	}
-
-	/**
-	 * @return the underlying list of linedefs.
-	 */
-	public List<DoomLinedef> getLinedefs()
-	{
-		return linedefs;
-	}
-
-	/**
-	 * Replaces the list of linedefs in the map.
-	 * Input objects are copied to the underlying list.
-	 * @param linedefs the new list of linedefs.
-	 */
-	public void setLinedefs(DoomLinedef ... linedefs)
-	{
-		this.linedefs.clear();
-		for (DoomLinedef obj : linedefs)
-			this.linedefs.add(obj);
-	}
-	
 }

@@ -12,12 +12,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import net.mtrop.doom.BinaryObject;
-import net.mtrop.doom.struct.AbstractMappedVector;
-import net.mtrop.doom.struct.AbstractVector.VectorIterator;
+import net.mtrop.doom.io.SerialReader;
+import net.mtrop.doom.io.SerialWriter;
 import net.mtrop.doom.struct.Sizable;
+import net.mtrop.doom.struct.vector.AbstractMappedVector;
+import net.mtrop.doom.struct.vector.AbstractVector.VectorIterator;
 import net.mtrop.doom.util.NameUtils;
-import net.mtrop.doom.util.SerialReader;
-import net.mtrop.doom.util.SerialWriter;
 
 /**
  * A list of names of available patch entries for texture composition.
@@ -60,9 +60,7 @@ public class PatchNames implements BinaryObject, Iterable<String>, Sizable
 	 */
 	public int addEntry(String name)
 	{
-		if (!NameUtils.isValidEntryName(name))
-			throw new IllegalArgumentException("name is not a valid entry name.");
-		
+		NameUtils.checkValidEntryName(name);
 		if (nameList.contains(name))
 			return nameList.getIndexOf(name);
 		

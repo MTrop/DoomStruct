@@ -1,7 +1,5 @@
 package net.mtrop.doom.map.udmf.listener;
 
-import java.util.LinkedList;
-
 import net.mtrop.doom.map.udmf.UDMFObject;
 import net.mtrop.doom.map.udmf.UDMFParserListener;
 
@@ -13,14 +11,11 @@ public abstract class UDMFTypeListener implements UDMFParserListener
 {
 	/** Current object being read. */
 	private UDMFObject current;
-	/** Error list. */
-	private LinkedList<String> errors;
 
 	@Override
 	public void onStart()
 	{
 		this.current = null;
-		this.errors = new LinkedList<>();
 	}
 
 	@Override
@@ -52,21 +47,8 @@ public abstract class UDMFTypeListener implements UDMFParserListener
 	}
 
 	@Override
-	public void onParseError(String error)
-	{
-		errors.add(error);
-	}
+	public abstract void onParseError(String error);
 
-	/**
-	 * @return the list of error messages during parse.
-	 */
-	public String[] getErrorMessages()
-	{
-		String[] out = new String[errors.size()];
-		errors.toArray(out);
-		return out;
-	}
-	
 	/**
 	 * Called when a global attribute is encountered.
 	 * @param name the name of the attribute.

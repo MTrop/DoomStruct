@@ -8,13 +8,18 @@
 package net.mtrop.doom.map.data;
 
 import net.mtrop.doom.BinaryObject;
+import net.mtrop.doom.map.data.flags.BoomLinedefFlags;
+import net.mtrop.doom.map.data.flags.DoomLinedefFlags;
+import net.mtrop.doom.map.data.flags.HexenLinedefFlags;
+import net.mtrop.doom.map.data.flags.StrifeLinedefFlags;
+import net.mtrop.doom.map.data.flags.ZDoomLinedefFlags;
 import net.mtrop.doom.util.RangeUtils;
 
 /**
  * Contains common elements of all binary things.
  * @author Matthew Tropiano
  */
-public abstract class CommonThing implements BinaryObject
+abstract class CommonThing implements BinaryObject
 {
 	/** Thing X position. */
 	protected int x;
@@ -25,15 +30,9 @@ public abstract class CommonThing implements BinaryObject
 	/** Thing type (editor number). */
 	protected int type;
 
-	/** Flag: Thing is present on easy skill. */
-	protected boolean easy;
-	/** Flag: Thing is present on medium skill. */
-	protected boolean medium;
-	/** Flag: Thing is present on hard skill. */
-	protected boolean hard;
-	/** Flag: Thing ambushes player (does not activate on sound). */
-	protected boolean ambush;
-
+	/** Behavior bitflags. */
+	protected int flags;
+	
 	/**
 	 * Creates a new thing.
 	 */
@@ -43,10 +42,7 @@ public abstract class CommonThing implements BinaryObject
 		this.y = 0;
 		this.angle = 0;
 		this.type = 0;
-		this.easy = false;
-		this.medium = false;
-		this.hard = false;
-		this.ambush = false;
+		this.flags = 0;
 	}
 
 	/**
@@ -137,71 +133,53 @@ public abstract class CommonThing implements BinaryObject
 	}
 
 	/**
-	 * @return true if this appears on skills considered "easy," false if not.
+	 * @return this linedef's full bitflags.
 	 */
-	public boolean isEasy()
+	public int getFlags()
 	{
-		return easy;
+		return flags;
 	}
 
 	/**
-	 * Sets if this appears on skills considered "easy."
-	 * @param easy true to set, false to clear.
+	 * Sets/replaces this linedef's full bitflags.
+	 * @param flags the flags to set
 	 */
-	public void setEasy(boolean easy)
+	public void setFlags(int flags)
 	{
-		this.easy = easy;
+		this.flags = flags;
 	}
 
 	/**
-	 * @return true if this appears on skills considered "medium," false if not.
+	 * Check's if a flag bit is set.
+	 * @param flagType the flag type (constant).
+	 * @return true if set, false if not.
+	 * @see DoomLinedefFlags
+	 * @see BoomLinedefFlags
+	 * @see HexenLinedefFlags
+	 * @see StrifeLinedefFlags
+	 * @see ZDoomLinedefFlags
 	 */
-	public boolean isMedium()
+	public boolean isFlagSet(int flagType)
 	{
-		return medium;
+		return (flags & (1 << flagType)) != 0;
 	}
 
 	/**
-	 * Sets if this appears on skills considered "medium."
-	 * @param medium true to set, false to clear.
+	 * Sets/clears a bit flag.
+	 * @param flagType the flag type (constant).
+	 * @param set if true, set the bit. If false, clear it.
+	 * @see DoomLinedefFlags
+	 * @see BoomLinedefFlags
+	 * @see HexenLinedefFlags
+	 * @see StrifeLinedefFlags
+	 * @see ZDoomLinedefFlags
 	 */
-	public void setMedium(boolean medium)
+	public void setFlag(int flagType, boolean set)
 	{
-		this.medium = medium;
-	}
-
-	/**
-	 * @return true if this appears on skills considered "hard," false if not.
-	 */
-	public boolean isHard()
-	{
-		return hard;
-	}
-
-	/**
-	 * Sets if this appears on skills considered "hard."
-	 * @param hard true to set, false to clear.
-	 */
-	public void setHard(boolean hard)
-	{
-		this.hard = hard;
-	}
-
-	/**
-	 * @return true if this ambushes players, false if not.
-	 */
-	public boolean isAmbush()
-	{
-		return ambush;
-	}
-
-	/**
-	 * Sets if this ambushes players.
-	 * @param ambush true to set, false to clear.
-	 */
-	public void setAmbush(boolean ambush)
-	{
-		this.ambush = ambush;
+		flags = set
+			? flags | (1 << flagType)
+			: flags & ~(1 << flagType)
+		;
 	}
 
 }

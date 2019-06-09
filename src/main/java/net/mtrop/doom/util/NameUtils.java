@@ -65,18 +65,20 @@ public final class NameUtils
 	 */
 	public static boolean isValidEntryName(String name)
 	{
-		return name != null && ENTRY_NAME.matcher(name).matches();
+		return name != null && isStringEmpty(name) && ENTRY_NAME.matcher(name).matches();
 	}
 
 	/**
 	 * Tests if an input string is a valid entry name, and if not, converts it into a valid one.
 	 * <p>
-	 * All characters must be A-Z (uppercase only), 0-9, and [ ] - _ plus the backslash ("\").
+	 * In a valid entry, all characters must be A-Z (uppercase only), 0-9, and [ ] - _ plus the backslash ("\").
 	 * <p>
 	 * Lowercase letters are made uppercase and unknown characters are converted to dashes.
 	 * Latin characters with diacritical marks are converted to their normalized forms.
 	 * Names are truncated to 8 characters.
 	 * The entry will also be cut at the first null character, if any.
+	 * <p>
+	 * An empty string (see {@link #isStringEmpty(Object)} is converted to "-".
 	 * @param name the input name to test.
 	 * @return true if so, false if not.
 	 */
@@ -85,7 +87,7 @@ public final class NameUtils
 		if (isValidEntryName(name))
 			return name;
 		
-		if (Utils.isEmpty(name))
+		if (isStringEmpty(name))
 			return "-";
 			
 		// remove diacritics
@@ -124,6 +126,18 @@ public final class NameUtils
 	}
 	
 	/**
+	 * Tests if an input string is a valid entry name, and if not, throws an exception.
+	 * @param name the input name to test.
+	 * @throws IllegalArgumentException if the entry name is invalid.
+	 * @see NameUtils#isValidEntryName(String)
+	 */
+	public static void checkValidEntryName(String name)
+	{
+		if (!isValidEntryName(name))
+			throw new IllegalArgumentException("The provided entry name, \""+name+"\", is invalid. All characters must be A-Z (uppercase only), 0-9, and [ ] - _ plus the backslash \\.");
+	}
+
+	/**
 	 * Tests if an input string is a valid texture name.
 	 * <p>
 	 * A Texture must have an alphanumeric name that is up to 8 characters long, and can only contain
@@ -133,7 +147,7 @@ public final class NameUtils
 	 */
 	public static boolean isValidTextureName(String name)
 	{
-		return !Utils.isEmpty(name) && TEXTURE_NAME.matcher(name).matches();
+		return !isStringEmpty(name) && TEXTURE_NAME.matcher(name).matches();
 	}
 
 	/**
@@ -155,7 +169,7 @@ public final class NameUtils
 		if (isValidTextureName(name))
 			return name;
 		
-		if (Utils.isEmpty(name))
+		if (isStringEmpty(name))
 			return EMPTY_TEXTURE_NAME;
 			
 		// remove diacritics
@@ -187,5 +201,32 @@ public final class NameUtils
 		return sb.toString();
 	}
 
-	
+	/**
+	 * Tests if an input string is a valid entry name, and if not, throws an exception.
+	 * @param name the input name to test.
+	 * @throws IllegalArgumentException if the entry name is invalid.
+	 * @see #isValidTextureName(String)
+	 */
+	public static void checkValidTextureName(String name)
+	{
+		if (!isValidTextureName(name))
+			throw new IllegalArgumentException("The provided texture name, \""+name+"\", is invalid. All characters must be A-Z (uppercase only), 0-9, and - and _.");
+	}
+
+	/**
+	 * Checks if a string is "empty."
+	 * A string is considered "empty" if the string the empty string, or are {@link String#trim()}'ed down to the empty string.
+	 * @param obj the object to check.
+	 * @return true if the provided object is considered "empty", false otherwise.
+	 */
+	public static boolean isStringEmpty(Object obj)
+	{
+		if (obj == null)
+			return true;
+		else if (obj instanceof String)
+			return ((String)obj).trim().length() == 0;
+		else
+			return false;
+	}
+
 }

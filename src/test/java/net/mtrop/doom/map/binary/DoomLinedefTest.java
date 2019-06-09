@@ -13,7 +13,7 @@ import net.mtrop.doom.WadFile;
 import net.mtrop.doom.LoggingFactory;
 import net.mtrop.doom.LoggingFactory.Logger;
 import net.mtrop.doom.map.data.DoomLinedef;
-import net.mtrop.doom.util.Utils;
+import net.mtrop.doom.util.IOUtils;
 
 public class DoomLinedefTest
 {
@@ -25,6 +25,6 @@ public class DoomLinedefTest
 		int i = 0;
 		for (DoomLinedef object : wad.getDataAs("LINEDEFS", DoomLinedef.class, DoomLinedef.LENGTH))
 			logger.info((i++) + " " + object);
-		Utils.close(wad);
+		IOUtils.close(wad);
 	}
 }

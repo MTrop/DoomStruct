@@ -13,7 +13,7 @@ import net.mtrop.doom.WadFile;
 import net.mtrop.doom.texture.Animated;
 import net.mtrop.doom.LoggingFactory;
 import net.mtrop.doom.LoggingFactory.Logger;
-import net.mtrop.doom.util.Utils;
+import net.mtrop.doom.util.IOUtils;
 
 public final class AnimatedTest
 {
@@ -25,6 +25,6 @@ public final class AnimatedTest
 		for (Animated.Entry entry : wad.getDataAs("ANIMATED", Animated.class))
 			logger.info(entry);
 		
-		Utils.close(wad);
+		IOUtils.close(wad);
 	}
 }

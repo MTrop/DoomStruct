@@ -19,11 +19,11 @@ import javax.imageio.ImageIO;
 
 import net.mtrop.doom.BinaryObject;
 import net.mtrop.doom.GraphicObject;
-import net.mtrop.doom.util.PNGContainerReader;
-import net.mtrop.doom.util.PNGContainerWriter;
-import net.mtrop.doom.util.SerialReader;
-import net.mtrop.doom.util.SerialWriter;
-import net.mtrop.doom.util.Utils;
+import net.mtrop.doom.io.PNGContainerReader;
+import net.mtrop.doom.io.PNGContainerWriter;
+import net.mtrop.doom.io.SerialReader;
+import net.mtrop.doom.io.SerialWriter;
+import net.mtrop.doom.util.IOUtils;
 
 /**
  * Represents PNG-formatted data.
@@ -128,7 +128,7 @@ public class PNGImage implements BinaryObject, GraphicObject
 	@Override
 	public void readBytes(InputStream in) throws IOException
 	{
-		byte[] b = Utils.getBinaryContents(in);
+		byte[] b = IOUtils.getBinaryContents(in);
 		PNGContainerReader pr = new PNGContainerReader(new ByteArrayInputStream(b));
 		PNGContainerReader.Chunk cin = null;
 		while ((cin = pr.nextChunk()) != null)

@@ -15,12 +15,12 @@ import java.util.Map;
 import java.util.Queue;
 
 import net.mtrop.doom.BinaryObject;
-import net.mtrop.doom.struct.HashDequeMap;
-import net.mtrop.doom.struct.SparseGridIndex.Pair;
-import net.mtrop.doom.struct.SparseQueueGridIndex;
+import net.mtrop.doom.io.SerialReader;
+import net.mtrop.doom.io.SerialWriter;
+import net.mtrop.doom.struct.map.HashDequeMap;
+import net.mtrop.doom.struct.map.SparseQueueGridIndex;
+import net.mtrop.doom.struct.map.SparseGridIndex.Pair;
 import net.mtrop.doom.util.RangeUtils;
-import net.mtrop.doom.util.SerialReader;
-import net.mtrop.doom.util.SerialWriter;
 
 /**
  * Representation of the Blockmap lump for a map.

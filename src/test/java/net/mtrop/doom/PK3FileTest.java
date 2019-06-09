@@ -8,7 +8,7 @@
 package net.mtrop.doom;
 
 import net.mtrop.doom.LoggingFactory.Logger;
-import net.mtrop.doom.util.Utils;
+import net.mtrop.doom.util.IOUtils;
 
 public final class PK3FileTest
 {
@@ -20,7 +20,7 @@ public final class PK3FileTest
 		for (String path : pk3.getEntriesStartingWith("sprites/"))
 			out.info(path);
 		
-		Utils.close(pk3);
+		IOUtils.close(pk3);
 	}
 
 }

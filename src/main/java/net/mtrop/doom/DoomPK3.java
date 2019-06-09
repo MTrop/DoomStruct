@@ -7,10 +7,13 @@
  ******************************************************************************/
 package net.mtrop.doom;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,8 +23,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
-import net.mtrop.doom.util.Utils;
-import net.mtrop.doom.util.trie.CaseInsensitiveTrieMap;
+import net.mtrop.doom.struct.trie.CaseInsensitiveTrieMap;
+import net.mtrop.doom.util.IOUtils;
 
 /**
  * Doom PK3 file. Contains a whole bunch of Doom resources,
@@ -110,14 +113,11 @@ public class DoomPK3 extends ZipFile
 	 * @param key the start of an entry.
 	 * @return an array of entry names starting with the key string.  
 	 */
-	public String[] getEntriesStartingWith(String key)
+	public List<String> getEntriesStartingWith(String key)
 	{
 		List<String> outList = new ArrayList<String>();
 		entryTable.getKeysAfterKey(key, outList);
-		String[] out = new String[outList.size()];
-		outList.toArray(out);
-		Arrays.sort(out);
-		return out;
+		return outList;
 	}
 	
 	/**
@@ -129,7 +129,7 @@ public class DoomPK3 extends ZipFile
 	}
 	
 	/**
-	 * Checks if this Wad contains a particular entry, false otherwise.
+	 * Checks if this Wad contains a particular entry.
 	 * <p>The name is case-insensitive.
 	 * @param entryName the name of the entry.
 	 * @return true if so, false if not.
@@ -165,14 +165,13 @@ public class DoomPK3 extends ZipFile
 	{
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		InputStream in = getInputStream(entry);
-		Utils.relay(in, bos);
-		Utils.close(in);
+		IOUtils.relay(in, bos);
+		IOUtils.close(in);
 		return bos.toByteArray();
 	}
 
 	/**
 	 * Gets the data in one entry in the PK3 as an input stream by entry name (path and all).
-	 * The data is extracted fully before it is returned as a stream.
 	 * @param entry the entry to extract and return as a byte array.
 	 * @return an InputStream of the entry's data.
 	 * @throws IOException if a read error occurs. 
@@ -184,12 +183,12 @@ public class DoomPK3 extends ZipFile
 	}
 	
 	/**
-	 * Retrieves the data of the first occurrence of a particular entry as a decoded string of characters.
+	 * Retrieves the data for a particular entry as a decoded string of characters.
 	 * <p>The name is case-insensitive.
 	 * @param entryName the name of the entry to find.
 	 * @param charset the source charset.
 	 * @return the data, decoded, or null if the entry doesn't exist.
-	 * @throws IOException if the data couldn't be retrieved or the entry's offsets breach the file extents.
+	 * @throws IOException if the data couldn't be retrieved.
 	 * @throws NullPointerException if <code>entryName</code> is <code>null</code>.
 	 * @see BinaryObject#create(Class, byte[])
 	 */
@@ -200,13 +199,29 @@ public class DoomPK3 extends ZipFile
 	}
 
 	/**
-	 * Retrieves the data of the first occurrence of a particular entry as a deserialized lump.
+	 * Retrieves a Reader for a particular entry as a decoded stream of characters.
+	 * <p>The name is case-insensitive.
+	 * @param entryName the name of the entry to find.
+	 * @param charset the source charset.
+	 * @return a Reader for reading the character stream, or null if the entry doesn't exist.
+	 * @throws IOException if the data couldn't be retrieved.
+	 * @throws NullPointerException if <code>entryName</code> is <code>null</code>.
+	 * @see BinaryObject#create(Class, byte[])
+	 */
+	public Reader getReader(String entryName, Charset charset) throws IOException
+	{
+		InputStream in = getInputStream(entryName);
+		return in != null ? new BufferedReader(new InputStreamReader(in, charset)) : null;
+	}
+
+	/**
+	 * Retrieves the data for a particular entry as a deserialized lump.
 	 * <p>The name is case-insensitive.
 	 * @param <BO> a type that extends BinaryObject.
 	 * @param entryName the name of the entry to find.
 	 * @param type the class type to deserialize into.
 	 * @return the data, deserialized, or null if the entry doesn't exist.
-	 * @throws IOException if the data couldn't be retrieved or the entry's offsets breach the file extents.
+	 * @throws IOException if the data couldn't be retrieved.
 	 * @throws NullPointerException if <code>entryName</code> is <code>null</code>.
 	 * @see BinaryObject#create(Class, byte[])
 	 */
@@ -217,14 +232,14 @@ public class DoomPK3 extends ZipFile
 	}
 
 	/**
-	 * Retrieves the data of the first occurrence of a particular entry as a deserialized lump.
+	 * Retrieves the data for a particular entry as a deserialized lump of multiple objects.
 	 * <p>The name is case-insensitive.
 	 * @param <BO> a type that extends BinaryObject.
 	 * @param entryName the name of the entry to find.
 	 * @param type the class type to deserialize into.
 	 * @param objectLength the length of each individual object in bytes.
 	 * @return the data, deserialized, or null if the entry doesn't exist.
-	 * @throws IOException if the data couldn't be retrieved or the entry's offsets breach the file extents.
+	 * @throws IOException if the data couldn't be retrieved.
 	 * @throws NullPointerException if <code>entryName</code> is <code>null</code>.
 	 * @see BinaryObject#create(Class, byte[])
 	 */
@@ -235,7 +250,53 @@ public class DoomPK3 extends ZipFile
 	}
 
 	/**
-	 * Retrieves the data of the first occurrence of a particular entry and returns it as 
+	 * Retrieves the data for a particular entry as a deserialized lump of multiple objects.
+	 * <p>The name is case-insensitive.
+	 * @param <BO> a type that extends BinaryObject.
+	 * @param entryName the name of the entry to find.
+	 * @param type the class type to deserialize into.
+	 * @param objectLength the length of each individual object in bytes.
+	 * @return the data, deserialized, or null if the entry doesn't exist.
+	 * @throws IOException if the data couldn't be retrieved.
+	 * @throws NullPointerException if <code>entryName</code> is <code>null</code>.
+	 * @see BinaryObject#create(Class, byte[])
+	 */
+	public <BO extends BinaryObject> List<BO> getDataAsList(String entryName, Class<BO> type, int objectLength) throws IOException
+	{
+		byte[] data = getData(entryName);
+		return data != null ? Arrays.asList(BinaryObject.create(type, data, data.length / objectLength)) : null;
+	}
+
+	/**
+	 * Retrieves the data for a particular entry, presuming it to be a WAD of some kind,
+	 * and returns it as a WadMap. 
+	 * @param entryName the name of the entry to find.
+	 * @return a WadMap representing the contents of the entry, or null if the entry doesn't exist.
+	 * @throws IOException if the data couldn't be retrieved.
+	 * @throws NullPointerException if <code>entryName</code> is <code>null</code>.
+	 */
+	public WadMap getDataAsWadMap(String entryName) throws IOException
+	{
+		InputStream in = getInputStream(entryName);
+		return in != null ? new WadMap(in) : null;
+	}
+
+	/**
+	 * Retrieves the data for a particular entry, presuming it to be a WAD of some kind,
+	 * and returns it as a fully read WadBuffer. Changing the WadBuffer does NOT change the entry data. 
+	 * @param entryName the name of the entry to find.
+	 * @return a WadBuffer containing the contents of the entry, or null if the entry doesn't exist.
+	 * @throws IOException if the data couldn't be retrieved.
+	 * @throws NullPointerException if <code>entryName</code> is <code>null</code>.
+	 */
+	public WadBuffer getDataAsWadBuffer(String entryName) throws IOException
+	{
+		InputStream in = getInputStream(entryName);
+		return in != null ? new WadBuffer(in) : null;
+	}
+
+	/**
+	 * Retrieves the data for a particular entry and returns it as 
 	 * a deserializing scanner iterator that returns independent instances of objects.
 	 * <p>The name is case-insensitive.
 	 * @param <BO> a type that extends BinaryObject.
@@ -243,7 +304,7 @@ public class DoomPK3 extends ZipFile
 	 * @param type the class type to deserialize into.
 	 * @param objectLength the length of each object in the entry in bytes.
 	 * @return a scanner for the data, or null if the entry can't be found.
-	 * @throws IOException if the data couldn't be retrieved or the entry's offsets breach the file extents.
+	 * @throws IOException if the data couldn't be retrieved.
 	 */
 	public <BO extends BinaryObject> BinaryObject.Scanner<BO> getScanner(String entryName, Class<BO> type, int objectLength) throws IOException
 	{
@@ -252,7 +313,7 @@ public class DoomPK3 extends ZipFile
 	}
 
 	/**
-	 * Retrieves the data of the first occurrence of a particular entry and returns it as 
+	 * Retrieves the data for a particular entry and returns it as 
 	 * a deserializing scanner iterator that returns the same object instance with its contents changed.
 	 * <p>This is useful for when you would want to quickly scan through a set of serialized objects while
 	 * ensuring low memory use. Do NOT store the references returned by <code>next()</code> anywhere as the contents
@@ -263,7 +324,7 @@ public class DoomPK3 extends ZipFile
 	 * @param type the class type to deserialize into.
 	 * @param objectLength the length of each object in the entry in bytes.
 	 * @return a scanner for the data, or null if the entry can't be found.
-	 * @throws IOException if the data couldn't be retrieved or the entry's offsets breach the file extents.
+	 * @throws IOException if the data couldn't be retrieved.
 	 */
 	public <BO extends BinaryObject> BinaryObject.InlineScanner<BO> getInlineScanner(String entryName, Class<BO> type, int objectLength) throws IOException
 	{

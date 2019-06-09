@@ -16,10 +16,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.mtrop.doom.BinaryObject;
-import net.mtrop.doom.struct.SortedList;
-import net.mtrop.doom.util.SerialReader;
-import net.mtrop.doom.util.SerialWriter;
-import net.mtrop.doom.util.Utils;
+import net.mtrop.doom.io.SerialReader;
+import net.mtrop.doom.io.SerialWriter;
+import net.mtrop.doom.struct.vector.SortedList;
+import net.mtrop.doom.util.MathUtils;
 
 /**
  * Abstraction of MUS formatted music sequence data.
@@ -309,7 +309,7 @@ public class DMXMUS implements BinaryObject, Iterable<DMXMUS.Event>
 		while (!foundEnd)
 		{
 			byte eventDesc = sr.readByte(in);
-			boolean last = Utils.bitIsSet(eventDesc, 0x80);
+			boolean last = MathUtils.bitIsSet(eventDesc, 0x80);
 			byte channel = (byte)(eventDesc & 0x0f);
 
 			switch ((eventDesc & 0x70) >>> 4)
@@ -329,7 +329,7 @@ public class DMXMUS implements BinaryObject, Iterable<DMXMUS.Event>
 					byte b = sr.readByte(in);
 					byte note = (byte)(b & 0x7f);
 					byte volume = NotePlayEvent.VOLUME_NO_CHANGE;
-					if (Utils.bitIsSet(b, 0x80))
+					if (MathUtils.bitIsSet(b, 0x80))
 						volume = sr.readByte(in);
 					int tics = 0;
 					if (last)

@@ -16,7 +16,7 @@ import net.mtrop.doom.util.MapUtils;
 
 import net.mtrop.doom.LoggingFactory;
 import net.mtrop.doom.LoggingFactory.Logger;
-import net.mtrop.doom.util.Utils;
+import net.mtrop.doom.util.IOUtils;
 
 public final class MapTest
 {
@@ -35,15 +35,15 @@ public final class MapTest
 				case DOOM:
 					logger.info(MapUtils.createDoomMap(wad, i));
 					break;
-				case STRIFE:
-					logger.info(MapUtils.createStrifeMap(wad, i));
-					break;
 				case HEXEN:
 					logger.info(MapUtils.createHexenMap(wad, i));
+					break;
+				case UDMF:
+					logger.info(MapUtils.createUDMFMap(wad, i));
 					break;
 			}
 			
 		}
-		Utils.close(wad);
+		IOUtils.close(wad);
 	}
 }

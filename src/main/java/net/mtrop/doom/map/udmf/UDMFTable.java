@@ -10,7 +10,7 @@ package net.mtrop.doom.map.udmf;
 import java.util.Deque;
 import java.util.Map;
 
-import net.mtrop.doom.struct.HashDequeMap;
+import net.mtrop.doom.struct.map.HashDequeMap;
 
 /**
  * This holds a bunch of {@link UDMFObject}s for reading Doom information.

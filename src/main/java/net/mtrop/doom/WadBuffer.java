@@ -19,16 +19,16 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.mtrop.doom.exception.WadException;
+import net.mtrop.doom.io.SerialReader;
+import net.mtrop.doom.io.SerialWriter;
 import net.mtrop.doom.struct.DataList;
+import net.mtrop.doom.util.IOUtils;
 import net.mtrop.doom.util.NameUtils;
-import net.mtrop.doom.util.SerialReader;
-import net.mtrop.doom.util.SerialWriter;
-import net.mtrop.doom.util.Utils;
 
 /**
  * An implementation of DoomWad where any and all WAD information is manipulated in memory.
  * This loads everything in the WAD into memory as uninterpreted raw bytes.
- * <p>WadFile operations are not thread-safe!
+ * <p>WadBuffer operations are not thread-safe!
  * @author Matthew Tropiano
  */
 public class WadBuffer implements Wad
@@ -157,14 +157,6 @@ public class WadBuffer implements Wad
 	}
 	
 	/**
-	 * Removes a WadEntry.
-	 */
-	private WadEntry removeEntry(int n)
-	{
-		return entries.remove(n);
-	}
-
-	/**
 	 * Writes the contents of this buffer out to an output stream in Wad format.
 	 * Does not close the stream.
 	 * @param out the output stream to write to.
@@ -194,7 +186,7 @@ public class WadBuffer implements Wad
 	{
 		FileOutputStream fos = new FileOutputStream(f);
 		writeToStream(fos);
-		Utils.close(fos);
+		IOUtils.close(fos);
 	}
 	
 	@Override
@@ -238,9 +230,15 @@ public class WadBuffer implements Wad
 	{
 		return new WadBufferInputStream(entry.offset, entry.size);
 	}
-	
+
 	@Override
-	public void deleteEntry(int n) throws IOException
+	public WadEntry removeEntry(int n) throws IOException
+	{
+		return entries.remove(n);
+	}
+
+	@Override
+	public WadEntry deleteEntry(int n) throws IOException
 	{
 		// get removed WadEntry.
 		WadEntry wfe = removeEntry(n);
@@ -257,6 +255,7 @@ public class WadBuffer implements Wad
 			WadEntry e = entries.get(i);
 			e.offset -= wfe.getSize();
 		}
+		return wfe;
 	}
 
 	@Override
@@ -266,8 +265,7 @@ public class WadBuffer implements Wad
 		if (entry == null)
 			throw new IOException("Index is out of range.");
 		
-		if (!NameUtils.isValidEntryName(newName))
-			throw new IllegalArgumentException("Entry name \""+newName+"\" does not fit entry requirements.");
+		NameUtils.checkValidEntryName(newName);
 		
 		entry.name = newName;
 	}

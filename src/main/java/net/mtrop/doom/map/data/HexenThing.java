@@ -13,11 +13,9 @@ import java.io.OutputStream;
 import java.util.Arrays;
 
 import net.mtrop.doom.BinaryObject;
+import net.mtrop.doom.io.SerialReader;
+import net.mtrop.doom.io.SerialWriter;
 import net.mtrop.doom.util.RangeUtils;
-import net.mtrop.doom.util.SerialReader;
-import net.mtrop.doom.util.SerialWriter;
-import net.mtrop.doom.util.SerializerUtils;
-import net.mtrop.doom.util.Utils;
 
 /**
  * Hexen 20-byte format implementation of Thing.
@@ -305,20 +303,7 @@ public class HexenThing extends CommonThing implements BinaryObject
 		z = sr.readShort(in);
 		angle = sr.readShort(in);
 		type = sr.readShort(in);
-		
-		int flags = sr.readUnsignedShort(in);
-		easy = Utils.bitIsSet(flags, (1 << 0));
-		medium = Utils.bitIsSet(flags, (1 << 1));
-		hard = Utils.bitIsSet(flags, (1 << 2));
-		ambush = Utils.bitIsSet(flags, (1 << 3));
-		dormant = Utils.bitIsSet(flags, (1 << 4));
-		fighter = Utils.bitIsSet(flags, (1 << 5));
-		cleric = Utils.bitIsSet(flags, (1 << 6));
-		mage = Utils.bitIsSet(flags, (1 << 7));
-		singlePlayer = !Utils.bitIsSet(flags, (1 << 8));
-		cooperative = !Utils.bitIsSet(flags, (1 << 9));
-		deathmatch = !Utils.bitIsSet(flags, (1 << 10));
-		
+		flags = sr.readUnsignedShort(in);
 		special = sr.readUnsignedByte(in);
 		arguments[0] = sr.readUnsignedByte(in);
 		arguments[1] = sr.readUnsignedByte(in);
@@ -338,21 +323,7 @@ public class HexenThing extends CommonThing implements BinaryObject
 		sw.writeShort(out, (short)z);
 		sw.writeShort(out, (short)angle);
 		sw.writeShort(out, (short)type);
-		
-		sw.writeUnsignedShort(out, SerializerUtils.booleansToInt(
-			easy,
-			medium,
-			hard,
-			ambush,
-			dormant,
-			fighter,
-			cleric,
-			mage,
-			singlePlayer,
-			cooperative,
-			deathmatch
-		));
-		
+		sw.writeUnsignedShort(out, flags & 0x0FFFF);
 		sw.writeByte(out, (byte)special);
 		sw.writeByte(out, (byte)arguments[0]);
 		sw.writeByte(out, (byte)arguments[1]);
@@ -371,21 +342,9 @@ public class HexenThing extends CommonThing implements BinaryObject
 		sb.append(" Type:").append(type);
 		sb.append(" Angle:").append(angle);
 		sb.append(" ID:").append(id);
+		sb.append(' ').append("Flags 0x").append(String.format("%016x", flags & 0x0FFFF));
 		sb.append(" Special ").append(special);
 		sb.append(" Args ").append(Arrays.toString(arguments));
-
-		if (easy) sb.append(' ').append("EASY");
-		if (medium) sb.append(' ').append("MEDIUM");
-		if (hard) sb.append(' ').append("HARD");
-		if (ambush) sb.append(' ').append("AMBUSH");
-		if (dormant) sb.append(' ').append("DORMANT");
-		if (fighter) sb.append(' ').append("FIGHTER");
-		if (cleric) sb.append(' ').append("CLERIC");
-		if (mage) sb.append(' ').append("MAGE");
-		if (singlePlayer) sb.append(' ').append("SINGLEPLAYER");
-		if (cooperative) sb.append(' ').append("COOPERTIVE");
-		if (deathmatch) sb.append(' ').append("DEATHMATCH");
-		
 		return sb.toString();
 	}
 

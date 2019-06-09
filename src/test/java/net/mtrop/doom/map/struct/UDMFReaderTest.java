@@ -18,7 +18,7 @@ import net.mtrop.doom.map.udmf.UDMFWriter;
 
 import net.mtrop.doom.LoggingFactory;
 import net.mtrop.doom.LoggingFactory.Logger;
-import net.mtrop.doom.util.Utils;
+import net.mtrop.doom.util.IOUtils;
 
 public class UDMFReaderTest
 {
@@ -34,7 +34,7 @@ public class UDMFReaderTest
 		UDMFWriter.writeData(udmftable, writer);
 		logger.info("\n"+writer.toString());
 		
-		Utils.close(in);
-		Utils.close(wad);
+		IOUtils.close(in);
+		IOUtils.close(wad);
 	}
 }

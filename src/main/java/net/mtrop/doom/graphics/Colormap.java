@@ -10,7 +10,7 @@ package net.mtrop.doom.graphics;
 import java.io.*;
 
 import net.mtrop.doom.BinaryObject;
-import net.mtrop.doom.util.Utils;
+import net.mtrop.doom.util.MathUtils;
 
 /**
  * This is a single entry that indexes the palette indices for color lookup.
@@ -84,7 +84,7 @@ public class Colormap implements BinaryObject
 		float len = Math.abs(startValue - endValue) + 1f;
 		
 		for (int i = min; i <= max; i++)
-			indices[i] = (int)Utils.linearInterpolate((i - min) / len, startValue, endValue);
+			indices[i] = (int)MathUtils.linearInterpolate((i - min) / len, startValue, endValue);
 	}
 	
 	/**

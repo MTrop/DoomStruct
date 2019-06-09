@@ -17,7 +17,7 @@ import net.mtrop.doom.texture.TextureSet.Patch;
 import net.mtrop.doom.texture.TextureSet.Texture;
 import net.mtrop.doom.LoggingFactory;
 import net.mtrop.doom.LoggingFactory.Logger;
-import net.mtrop.doom.util.Utils;
+import net.mtrop.doom.util.IOUtils;
 
 public final class TextureTest
 {
@@ -30,7 +30,7 @@ public final class TextureTest
 			wad.getDataAs("PNAMES", PatchNames.class), 
 			wad.getDataAs("TEXTURE1", DoomTextureList.class)
 		);
-		Utils.close(wad);
+		IOUtils.close(wad);
 		
 		for (Texture tex : set)
 		{

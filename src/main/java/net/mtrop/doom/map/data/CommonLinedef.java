@@ -9,13 +9,18 @@ package net.mtrop.doom.map.data;
 
 import net.mtrop.doom.BinaryObject;
 import net.mtrop.doom.map.MapObjectConstants;
+import net.mtrop.doom.map.data.flags.BoomLinedefFlags;
+import net.mtrop.doom.map.data.flags.DoomLinedefFlags;
+import net.mtrop.doom.map.data.flags.HexenLinedefFlags;
+import net.mtrop.doom.map.data.flags.StrifeLinedefFlags;
+import net.mtrop.doom.map.data.flags.ZDoomLinedefFlags;
 import net.mtrop.doom.util.RangeUtils;
 
 /**
- * Contains common elements of all binary linedef.
+ * Contains common elements of all binary linedefs.
  * @author Matthew Tropiano
  */
-public abstract class CommonLinedef implements BinaryObject
+abstract class CommonLinedef implements BinaryObject
 {
 	/** Vertex start. */
 	protected int vertexStartIndex;
@@ -27,27 +32,11 @@ public abstract class CommonLinedef implements BinaryObject
 	/** Back sidedef. */
 	protected int sidedefBackIndex;
 
+	/** Behavior bitflags. */
+	protected int flags;
+	
 	/** Linedef special. */
 	protected int special;
-
-	/** Flag: Creatures (players and monsters) cannot pass. */
-	protected boolean impassable;
-	/** Flag: Monsters cannot pass. */
-	protected boolean monsterBlocking;
-	/** Flag: Line has two sides: projectiles/hitscans can pass. */
-	protected boolean twoSided;
-	/** Flag: Line's upper texture is drawn from top to bottom. */
-	protected boolean upperUnpegged;
-	/** Flag: Line's lower texture is drawn from bottom to top. */
-	protected boolean lowerUnpegged;
-	/** Flag: Line's drawn like one-sided impassable ones on automap. */
-	protected boolean secret;
-	/** Flag: Line's immediately drawn on automap. */
-	protected boolean mapped;
-	/** Flag: Line's NEVER drawn on automap. */
-	protected boolean notDrawn;
-	/** Flag: Line blocks sound propagation. */
-	protected boolean soundBlocking;
 
 	protected CommonLinedef()
 	{
@@ -55,17 +44,8 @@ public abstract class CommonLinedef implements BinaryObject
 		this.vertexEndIndex = MapObjectConstants.NULL_REFERENCE;
 		this.sidedefFrontIndex = MapObjectConstants.NULL_REFERENCE;
 		this.sidedefBackIndex = MapObjectConstants.NULL_REFERENCE;
-		
+		this.flags = 0;
 		this.special = 0;
-		this.impassable = false;
-		this.monsterBlocking = false;
-		this.twoSided = false;
-		this.upperUnpegged = false;
-		this.lowerUnpegged = false;
-		this.secret = false;
-		this.mapped = false;
-		this.notDrawn = false;
-		this.soundBlocking = false;
 	}
 	
 	/**
@@ -161,157 +141,55 @@ public abstract class CommonLinedef implements BinaryObject
 	{
 		return special;
 	}
-	
+
 	/**
-	 * Sets if this blocks - at the very least - player and monster movement.
-	 * @param impassable true to set, false to clear.
+	 * @return this linedef's full bitflags.
 	 */
-	public void setImpassable(boolean impassable)
+	public int getFlags()
 	{
-		this.impassable = impassable;
+		return flags;
 	}
 	
 	/**
-	 * @return true if this blocks - at the very least - player and monster movement, false if not.
+	 * Sets/replaces this linedef's full bitflags.
+	 * @param flags the flags to set
 	 */
-	public boolean isImpassable()
+	public void setFlags(int flags)
 	{
-		return impassable;
+		this.flags = flags;
 	}
 	
 	/**
-	 * Sets if this line blocks monsters.
-	 * @param monsterBlocking true to set, false to clear.
+	 * Check's if a flag bit is set.
+	 * @param flagType the flag type (constant).
+	 * @return true if set, false if not.
+	 * @see DoomLinedefFlags
+	 * @see BoomLinedefFlags
+	 * @see HexenLinedefFlags
+	 * @see StrifeLinedefFlags
+	 * @see ZDoomLinedefFlags
 	 */
-	public void setMonsterBlocking(boolean monsterBlocking)
+	public boolean isFlagSet(int flagType)
 	{
-		this.monsterBlocking = monsterBlocking;
-	}
-	
-	/**
-	 * @return true if this line blocks monsters, false if not.
-	 */
-	public boolean isMonsterBlocking()
-	{
-		return monsterBlocking;
-	}
-	
-	/**
-	 * Sets if this line is two-sided.
-	 * @param twoSided true to set, false to clear.
-	 */
-	public void setTwoSided(boolean twoSided)
-	{
-		this.twoSided = twoSided;
-	}
-	
-	/**
-	 * @return true if this line is two-sided, false if not.
-	 */
-	public boolean isTwoSided()
-	{
-		return twoSided;
-	}
-	
-	/**
-	 * Sets if this line's upper texture is unpegged.
-	 * @param upperUnpegged true to set, false to clear.
-	 */
-	public void setUpperUnpegged(boolean upperUnpegged)
-	{
-		this.upperUnpegged = upperUnpegged;
-	}
-	
-	/**
-	 * @return true if this line's upper texture is unpegged, false if not.
-	 */
-	public boolean isUpperUnpegged()
-	{
-		return upperUnpegged;
-	}
-	
-	/**
-	 * Sets if this line's lower texture is unpegged.
-	 * @param lowerUnpegged true to set, false to clear.
-	 */
-	public void setLowerUnpegged(boolean lowerUnpegged)
-	{
-		this.lowerUnpegged = lowerUnpegged;
-	}
-	
-	/**
-	 * @return true if this line's lower texture is unpegged, false if not.
-	 */
-	public boolean isLowerUnpegged()
-	{
-		return lowerUnpegged;
-	}
-	
-	/**
-	 * Sets if this line is shown as one-sided on the automap.
-	 * @param secret true to set, false to clear.
-	 */
-	public void setSecret(boolean secret)
-	{
-		this.secret = secret;
-	}
-	
-	/**
-	 * @return true if this line is shown as one-sided on the automap, false if not.
-	 */
-	public boolean isSecret()
-	{
-		return secret;
-	}
-	
-	/**
-	 * Sets if this line is always drawn on the automap.
-	 * @param mapped true to set, false to clear.
-	 */
-	public void setMapped(boolean mapped)
-	{
-		this.mapped = mapped;
-	}
-	
-	/**
-	 * @return true if this line is always drawn on the automap, false if not.
-	 */
-	public boolean isMapped()
-	{
-		return mapped;
-	}
-	/**
-	 * Sets if this line is not drawn on the automap. 
-	 * @param notDrawn true to set, false to clear.
-	 */
-	public void setNotDrawn(boolean notDrawn)
-	{
-		this.notDrawn = notDrawn;
-	}
-	
-	/**
-	 * @return true if this line is not drawn on the automap, false if so.
-	 */
-	public boolean isNotDrawn()
-	{
-		return notDrawn;
-	}
-	
-	/**
-	 * Sets if this line blocks sound (must be doubled-up to block sound completely).
-	 * @param soundBlocking true to set, false to clear.
-	 */
-	public void setSoundBlocking(boolean soundBlocking)
-	{
-		this.soundBlocking = soundBlocking;
-	}
-	
-	/**
-	 * @return true if this line blocks sound (must be doubled-up to block sound completely), false if not.
-	 */
-	public boolean isSoundBlocking()
-	{
-		return soundBlocking;
+		return (flags & (1 << flagType)) != 0;
 	}
 
+	/**
+	 * Sets/clears a bit flag.
+	 * @param flagType the flag type (constant).
+	 * @param set if true, set the bit. If false, clear it.
+	 * @see DoomLinedefFlags
+	 * @see BoomLinedefFlags
+	 * @see HexenLinedefFlags
+	 * @see StrifeLinedefFlags
+	 * @see ZDoomLinedefFlags
+	 */
+	public void setFlag(int flagType, boolean set)
+	{
+		flags = set
+			? flags | (1 << flagType)
+			: flags & ~(1 << flagType)
+		;
+	}
+	
 }

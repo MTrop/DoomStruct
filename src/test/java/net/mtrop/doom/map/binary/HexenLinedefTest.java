@@ -13,7 +13,7 @@ import net.mtrop.doom.WadFile;
 import net.mtrop.doom.LoggingFactory;
 import net.mtrop.doom.LoggingFactory.Logger;
 import net.mtrop.doom.map.data.HexenLinedef;
-import net.mtrop.doom.util.Utils;
+import net.mtrop.doom.util.IOUtils;
 
 public class HexenLinedefTest
 {
@@ -25,6 +25,6 @@ public class HexenLinedefTest
 		int i = 0;
 		for (HexenLinedef object : wad.getDataAs("LINEDEFS", HexenLinedef.class, HexenLinedef.LENGTH))
 			logger.info((i++) + " " + object);
-		Utils.close(wad);
+		IOUtils.close(wad);
 	}
 }

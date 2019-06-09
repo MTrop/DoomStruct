@@ -17,10 +17,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.mtrop.doom.exception.WadException;
+import net.mtrop.doom.io.SerialReader;
 import net.mtrop.doom.map.DoomMap;
 import net.mtrop.doom.map.HexenMap;
-import net.mtrop.doom.map.StrifeMap;
-import net.mtrop.doom.util.SerialReader;
+import net.mtrop.doom.map.UDMFMap;
 
 /**
  * This is just a basic mapping of WAD entries to a file.
@@ -33,7 +33,7 @@ import net.mtrop.doom.util.SerialReader;
  * stream.
  * <p>
  * Despite the name, this is not a structure that reads Doom Map information.
- * Use {@link DoomMap}, {@link HexenMap}, or {@link StrifeMap} for that purpose.  
+ * Use {@link DoomMap}, {@link HexenMap}, or {@link UDMFMap} for that purpose.  
  * @author Matthew Tropiano
  */
 public class WadMap implements Wad
@@ -164,9 +164,15 @@ public class WadMap implements Wad
 	}
 
 	@Override
-	public void deleteEntry(int n) throws IOException
+	public WadEntry deleteEntry(int n) throws IOException
 	{
 		throw new UnsupportedOperationException("This class does not support deleteEntry()");
+	}
+
+	@Override
+	public WadEntry removeEntry(int n) throws IOException
+	{
+		throw new UnsupportedOperationException("This class does not support removeEntry()");
 	}
 
 	@Override

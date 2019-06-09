@@ -13,14 +13,10 @@ package net.mtrop.doom.map;
  */
 public enum MapFormat
 {
-	/** Format commonly used by Doom, Boom, and MBF/SMMU ports, plus Heretic. */
+	/** Format commonly used by Doom, Boom, and MBF/SMMU ports, plus Heretic and Strife. */
 	DOOM,
-	/** Format used in Strife - Doom format, except some objects have different flags. */
-	STRIFE,
 	/** Format commonly used by Hexen and ZDoom-derivative ports. */
 	HEXEN,
-	/** Format used by ZDoom - Hexen format, except some objects have different flags. */
-	ZDOOM,
 	/** Format commonly used by all extensible ports. */
 	UDMF;
 }

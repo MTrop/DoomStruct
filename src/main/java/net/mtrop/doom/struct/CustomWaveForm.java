@@ -9,8 +9,8 @@ package net.mtrop.doom.struct;
 
 import java.util.Random;
 
+import net.mtrop.doom.util.MathUtils;
 import net.mtrop.doom.util.RangeUtils;
-import net.mtrop.doom.util.Utils;
 
 /**
  * An abstract representation of a WaveForm.
@@ -140,7 +140,7 @@ public class CustomWaveForm
 		sampleIncrement = 1.0 / samples.length;
 		this.interpolationType = interpolationType;
 		for (int i = 0; i < samples.length; i++)
-			samples[i] = Utils.randDoubleN(random) * amplitude;
+			samples[i] = MathUtils.randDoubleN(random) * amplitude;
 	}
 	
 	/**
@@ -328,13 +328,13 @@ public class CustomWaveForm
 			{
 				double v2 = samples[RangeUtils.wrapValue((int)Math.ceil(spos), 0, samples.length)];
 				double interp = (time % sampleIncrement) / sampleIncrement;
-				return Utils.linearInterpolate(interp, v1, v2);
+				return MathUtils.linearInterpolate(interp, v1, v2);
 			}
 			case COSINE:
 			{
 				double v2 = samples[RangeUtils.wrapValue((int)Math.ceil(spos), 0, samples.length)];
 				double interp = (time % sampleIncrement) / sampleIncrement;
-				return Utils.cosineInterpolate(interp, v1, v2);
+				return MathUtils.cosineInterpolate(interp, v1, v2);
 			}
 			case CUBIC:
 			{
@@ -342,7 +342,7 @@ public class CustomWaveForm
 				double v0 = samples[RangeUtils.wrapValue((int)Math.floor(spos - 1.0), 0, samples.length)];
 				double v3 = samples[RangeUtils.wrapValue((int)Math.ceil(spos + 1.0), 0, samples.length)];
 				double interp = (time % sampleIncrement) / sampleIncrement;
-				return Utils.cubicInterpolate(interp, v0, v1, v2, v3);
+				return MathUtils.cubicInterpolate(interp, v0, v1, v2, v3);
 			}
 		}
 	}

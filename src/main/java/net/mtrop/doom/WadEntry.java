@@ -12,9 +12,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import net.mtrop.doom.io.SerialReader;
+import net.mtrop.doom.io.SerialWriter;
 import net.mtrop.doom.util.NameUtils;
-import net.mtrop.doom.util.SerialReader;
-import net.mtrop.doom.util.SerialWriter;
 
 /**
  * Abstraction of a single entry from a WAD.
@@ -55,8 +55,7 @@ public class WadEntry implements BinaryObject
 	 */
 	public static WadEntry create(String name, int offset, int size)
 	{
-		if (!NameUtils.isValidEntryName(name))
-			throw new IllegalArgumentException("Entry name \""+name+"\" does not fit entry requirements.");
+		NameUtils.checkValidEntryName(name);
 		if (offset < 0)
 			throw new IllegalArgumentException("Entry offset is negative.");
 		if (size < 0)

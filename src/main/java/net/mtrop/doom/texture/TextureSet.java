@@ -15,10 +15,9 @@ import java.util.List;
 import java.util.Queue;
 
 import net.mtrop.doom.exception.TextureException;
-import net.mtrop.doom.struct.AbstractMappedVector;
 import net.mtrop.doom.struct.Sizable;
+import net.mtrop.doom.struct.vector.AbstractMappedVector;
 import net.mtrop.doom.util.NameUtils;
-import net.mtrop.doom.util.Utils;
 
 /**
  * A helper class for the TEXTUREx and PNAMES setup that Doom Texture definitions use.
@@ -99,9 +98,7 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 	 */
 	public Texture createTexture(String textureName)
 	{
-		if (!NameUtils.isValidTextureName(textureName))
-			throw new IllegalArgumentException("Not a valid texture name.");
-		
+		NameUtils.checkValidTextureName(textureName);
 		Texture out = new Texture(textureName);
 		textureList.add(out);
 		return out;
@@ -286,16 +283,15 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 		 * Adds a patch to this entry.
 		 * @param name the name of the patch. Must be valid.
 		 * @return the created patch.
-		 * @see NameUtils#isValidEntryName(String)
+		 * @see NameUtils#checkValidEntryName(String)
 		 * @throws IllegalArgumentException if the patch name is empty or not a valid entry name.
 		 */
 		public Patch createPatch(String name)
 		{
-			if (Utils.isEmpty(name))
+			if (NameUtils.isStringEmpty(name))
 				throw new IllegalArgumentException("patch name cannot be empty.");
 
-			if (!NameUtils.isValidEntryName(name))
-				throw new IllegalArgumentException("patch name must be a valid entry name.");
+			NameUtils.checkValidEntryName(name);
 			
 			Patch p = new Patch(name);
 			patches.add(p);
