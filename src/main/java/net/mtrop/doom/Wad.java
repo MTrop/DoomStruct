@@ -851,7 +851,7 @@ public interface Wad extends Iterable<WadEntry>
 	/**
 	 * Retrieves the data of a particular entry at a specific index and returns it as 
 	 * a deserializing scanner iterator that returns independent instances of objects.
-	 * 
+	 * <p>Use of this to iterate through objects may be preferable when all of them in a lump do not need to be scanned or deserialized.
 	 * @param <BO> a type that extends BinaryObject.
 	 * @param n the index of the entry.
 	 * @param type the class type to deserialize into.
@@ -869,6 +869,7 @@ public interface Wad extends Iterable<WadEntry>
 	/**
 	 * Retrieves the data of the first occurrence of a particular entry and returns it as 
 	 * a deserializing scanner iterator that returns independent instances of objects.
+	 * <p>Use of this to iterate through objects may be preferable when all of them in a lump do not need to be scanned or deserialized.
 	 * <p>The name is case-insensitive.
 	 * @param <BO> a type that extends BinaryObject.
 	 * @param entryName the name of the entry to find.
@@ -886,6 +887,7 @@ public interface Wad extends Iterable<WadEntry>
 	/**
 	 * Retrieves the data of the first occurrence of a particular entry from a starting index and returns it as 
 	 * a deserializing scanner iterator that returns independent instances of objects.
+	 * <p>Use of this to iterate through objects may be preferable when all of them in a lump do not need to be scanned or deserialized.
 	 * <p>The name is case-insensitive.
 	 * @param <BO> a type that extends BinaryObject.
 	 * @param entryName the name of the entry to find.
@@ -904,6 +906,7 @@ public interface Wad extends Iterable<WadEntry>
 	/**
 	 * Retrieves the data of the first occurrence of a particular entry from a starting entry (by name) and returns it as 
 	 * a deserializing scanner iterator that returns independent instances of objects.
+	 * <p>Use of this to iterate through objects may be preferable when all of them in a lump do not need to be scanned or deserialized.
 	 * <p>The names are case-insensitive.
 	 * @param <BO> a type that extends BinaryObject.
 	 * @param entryName the name of the entry to find.
@@ -922,7 +925,7 @@ public interface Wad extends Iterable<WadEntry>
 	/**
 	 * Retrieves the data of the specified entry and returns it as 
 	 * a deserializing scanner iterator that returns independent instances of objects.
-	 * 
+	 * <p>Use of this to iterate through objects may be preferable when all of them in a lump do not need to be scanned or deserialized.
 	 * @param <BO> a type that extends BinaryObject.
 	 * @param entry the entry to use.
 	 * @param type the class type to deserialize into.
