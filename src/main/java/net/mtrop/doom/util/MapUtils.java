@@ -461,7 +461,7 @@ public final class MapUtils
 	/**
 	 * Returns all of the entry names of every map in the wad.
 	 * This algorithm scans for map entry names. If it finds one, the previous entry is the probably the header.
-	 * @param wad the DoomWad to search in.
+	 * @param wad the Wad to search in.
 	 * @return an array of all of the entry indices of maps. 
 	 */
 	public static String[] getAllMapHeaders(Wad wad)

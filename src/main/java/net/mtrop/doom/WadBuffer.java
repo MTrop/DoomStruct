@@ -26,7 +26,7 @@ import net.mtrop.doom.struct.DataList;
 import net.mtrop.doom.util.NameUtils;
 
 /**
- * An implementation of DoomWad where any and all WAD information is manipulated in memory.
+ * An implementation of Wad where any and all WAD information is manipulated in memory.
  * This loads everything in the WAD into memory as uninterpreted raw bytes.
  * <p>WadBuffer operations are not thread-safe!
  * @author Matthew Tropiano
