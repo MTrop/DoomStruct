@@ -14,9 +14,8 @@ import net.mtrop.doom.util.MathUtils;
 
 /**
  * This is a single entry that indexes the palette indices for color lookup.
- * This is NOT the representation of the complete COLORMAP lump, see ColorMapLump
- * for that implementation. This is merely a single entry in that lump. Other commercial
- * IWAD lumps that are colormaps are the TRANTBL lumps in Hexen.
+ * The COLORMAP lump contains several of these.
+ * Other commercial IWAD lumps that are colormaps or contain many colormaps are the TRANTBL lumps in Hexen and TINTTAB.
  * @author Matthew Tropiano
  */
 public class Colormap implements BinaryObject

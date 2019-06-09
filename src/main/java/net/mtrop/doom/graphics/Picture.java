@@ -44,9 +44,9 @@ public class Picture implements BinaryObject, GraphicObject
 	}
 	
 	/**
-	 * Creates a new patch.
-	 * @param width		the width of the patch in pixels.
-	 * @param height	the height of the patch in pixels.
+	 * Creates a new picture.
+	 * @param width		the width of the picture in pixels.
+	 * @param height	the height of the picture in pixels.
 	 */
 	public Picture(int width, int height)
 	{
@@ -60,10 +60,10 @@ public class Picture implements BinaryObject, GraphicObject
 	}
 
 	/**
-	 * Sets the dimensions of this patch.
-	 * WARNING: This will clear all of the data in the patch.
-	 * @param width	the width of the patch in pixels.
-	 * @param height the height of the patch in pixels.
+	 * Sets the dimensions of this picture.
+	 * WARNING: This will clear all of the data in the picture.
+	 * @param width	the width of the picture in pixels.
+	 * @param height the height of the picture in pixels.
 	 */
 	public void setDimensions(int width, int height)
 	{
@@ -124,13 +124,13 @@ public class Picture implements BinaryObject, GraphicObject
 	}
 	
 	/**
-	 * Sets the pixel data at a location in the patch.
+	 * Sets the pixel data at a location in the picture.
 	 * Valid values are in the range of -1 to 255, with
 	 * 0 to 255 being palette indexes and -1 being translucent
 	 * pixel information. Values outside this range are CLAMPED into the
 	 * range.
-	 * @param x	patch x-coordinate.
-	 * @param y	patch y-coordinate.
+	 * @param x	picture x-coordinate.
+	 * @param y	picture y-coordinate.
 	 * @param value	the value to set.
 	 * @throws IllegalArgumentException if the offset is outside the range -1 to 255.
 	 */
@@ -141,9 +141,9 @@ public class Picture implements BinaryObject, GraphicObject
 	}
 	
 	/**
-	 * Gets the pixel data at a location in the patch.
-	 * @param x	patch x-coordinate.
-	 * @param y	patch y-coordinate.
+	 * Gets the pixel data at a location in the picture.
+	 * @param x	picture x-coordinate.
+	 * @param y	picture y-coordinate.
 	 * @return a palette index value from 0 to 255 or PIXEL_TRANSLUCENT if the pixel is not filled in.
 	 */
 	public int getPixel(int x, int y)
@@ -169,7 +169,7 @@ public class Picture implements BinaryObject, GraphicObject
 			offMax = i > offMax ? i : offMax;
 		}
 		
-		// precache columns at each particular offset: patch may be compressed.
+		// precache columns at each particular offset: picture may be compressed.
 		HashMap<Integer, byte[]> columnData = new HashMap<Integer, byte[]>();
 
 		for (int i = 0; i < columnOffsets.length; i++)

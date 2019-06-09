@@ -16,16 +16,14 @@ import net.mtrop.doom.GraphicObject;
 import net.mtrop.doom.util.RangeUtils;
 
 /**
- * <p>
  * Doom graphic data that has no header data for its dimensions/offsets.
- * </p>
  * <p>
  * Normally, flats are the floor/ceiling textures in the Doom engine that are
  * a set size (64x64) and thus have no need for header information, but fullscreen
  * pictures like Doom's TITLEPIC are also a straight mapping of pixels with assumed
  * dimensions (in this case, 320x200). This class can read both, and its dimensions can
  * be arbitrarily set by the programmer regardless of the amount of data inside.
- * </p>
+ * <p>
  * NOTE: The {@link Flat#readBytes(InputStream)} method will only read as many bytes as possible to fill the
  * current dimensions of the flat, as this information is not found in the byte data.
  * @author Matthew Tropiano

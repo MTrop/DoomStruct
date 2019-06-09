@@ -106,8 +106,7 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 
 	/**
 	 * Returns a sequence of texture names. Order and list of entries
-	 * are dependent on the alphabetical order of all of the textures
-	 * in this set.
+	 * are dependent on the order of all of the textures in this set.
 	 * @param firstName the first texture name in the sequence. 
 	 * @param lastName the last texture name in the sequence.
 	 * @return an array of all of the textures in the sequence, including

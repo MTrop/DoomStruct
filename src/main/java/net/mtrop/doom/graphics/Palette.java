@@ -18,7 +18,8 @@ import net.mtrop.doom.BinaryObject;
 
 /**
  * The palette that makes up the Doom Engine's color palette.
- * All colors are all opaque. This contains an indexed set of 256 colors.
+ * The colors are all opaque. This contains an indexed set of 256 colors.
+ * Doom's PLAYPAL lump contains several of these.
  * @author Matthew Tropiano
  */
 public class Palette implements BinaryObject

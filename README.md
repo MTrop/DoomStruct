@@ -34,18 +34,42 @@ The library will be in flux until version 2.0.
 The purpose of the Doom Struct project is to provide a means to read/write
 data structures for the Doom Engine and similar derivatives.
 
+### Why?
+
+There are several libraries out there for reading data from Doom in many different programming languages,
+but there isn't a decent one for Java. And by decent, I mean:
+
+* Useful
+* Documented
+* Performant
+* Efficient
+
+The goal with this library is to get end-users up-and-running quickly with little boilerplate code,
+and to ensure clarity within documentation and with written code, and future-proofing to a reasonable
+extent.
+
+
 ### Implemented Features (so far)
 
-- Reads WAD files.
-- Can read PK3 package type.
-- Reads all Doom map and data structures in Doom, Hexen/ZDoom, or Strife 
+* Reads/edits WAD files.
+* Reads PK3 files (zips).
+* Full UDMF parsing/writing support.
+* Reads/edits all Doom data structures in Doom, Hexen/ZDoom, or Strife 
   formats. This includes textures, patches, lines, vertices, things, sectors,
   nodes, palettes, colormaps, text, PNG data, MUS data, flats, blockmaps,
   reject, and even ENDOOM-type VGA lumps.
-- Contains a utility class for converting Doom graphics to standard Java
-  graphics structures.
-- Can read/edit Boom-engine data lumps like ANIMATED and SWITCHES. 
-- Full UDMF parsing/writing support.
+* Supports PNGs with offset data (grAb).
+* Reads/edits Boom-engine data lumps like ANIMATED and SWITCHES. 
+* Contains a utility class for converting Doom graphics to standard Java
+  graphics structures, and vice-versa.
+* Contains a utility class for managing texture sets without needing to care too much
+  about Doom's nightmarish texture data setup. 
+
+### In the Future...
+
+* Better ENDOOM rendering options.
+* Stuff for drawing maps more easily.
+* Inline lump content editing (not just reading).
 
 ### Library
 
@@ -97,9 +121,16 @@ Open `SQUARE1.PK3`, fetch `maps/E1A1.WAD` and read it into a UDMF Map.
 	UDMFMap map = MapUtils.createUDMFMap(wad, "e1a1");
 	pk3.close();
 
+Open `DOOM2.WAD`, read `DEMO2` and figure out its duration in seconds.
+
+	WadFile wad = new WadFile("doom2.wad");
+	Demo demo = wad.getDataAs("demo2", Demo.class);
+	wad.close();
+	double duration = demo.getLength();
+
 Open `DOOM2.WAD`, fetch all `TROO*` graphic entries and export them as PNGs.
 
-	WadFile wad = new WadFile("H:/DoomDev/Iwads/doom2.wad");
+	WadFile wad = new WadFile("doom2.wad");
 	final Palette pal = wad.getDataAs("playpal", Palette.class);
 	for (WadEntry entry : wad) {
 		if (entry.getName().startsWith("TROO")) {
@@ -108,6 +139,7 @@ Open `DOOM2.WAD`, fetch all `TROO*` graphic entries and export them as PNGs.
 		}
 	}
 	wad.close();
+
 
 
 ### Compiling with Ant
@@ -152,3 +184,5 @@ If it was not, please contact me for a copy, or to notify me of a distribution
 that has not included it. 
 
 This contains code copied from Black Rook Base, under the terms of the MIT License (docs/LICENSE-BlackRookBase.txt).
+
+<sub>Eat your heart out, <a href="https://github.com/devinacker/omgifol">OMGIFOL</a>!</sub>

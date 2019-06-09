@@ -218,6 +218,7 @@ public final class GraphicUtils
 	 * @param endoom the EndDoom lump to render.
 	 * @param blinking if true, this will render the "blinking" characters.
 	 * @return a BufferedImage that represents the graphic image in RGB color (including transparency).
+	 * @throws NullPointerException if endoom is null.
 	 */
 	public static BufferedImage createImageForEndDoom(EndDoom endoom, boolean blinking)
 	{
