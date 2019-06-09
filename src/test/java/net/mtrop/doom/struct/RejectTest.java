@@ -10,9 +10,9 @@ package net.mtrop.doom.struct;
 import java.io.IOException;
 
 import net.mtrop.doom.WadFile;
+
 import net.mtrop.doom.map.bsp.BSPReject;
 import net.mtrop.doom.map.data.DoomSector;
-import net.mtrop.doom.util.IOUtils;
 
 public final class RejectTest
 {
@@ -23,6 +23,6 @@ public final class RejectTest
 		BSPReject reject = new BSPReject(sectors.length);
 		reject.fromBytes(wad.getData("REJECT"));
 		
-		IOUtils.close(wad);
+		wad.close();
 	}
 }

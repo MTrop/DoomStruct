@@ -576,6 +576,8 @@ public interface Wad extends Iterable<WadEntry>
 
 	/**
 	 * Retrieves the data of an entry at a particular index as a deserialized lump.
+	 * <p>Note that if the lump ordinarily as multiple amounts of the object type in question, this
+	 * will read only the first one.
 	 * @param <BO> a type that extends BinaryObject.
 	 * @param n the index of the entry in the Wad.
 	 * @param type the class type to deserialize into.
@@ -593,6 +595,8 @@ public interface Wad extends Iterable<WadEntry>
 	/**
 	 * Retrieves the data of the first occurrence of a particular entry as a deserialized lump.
 	 * <p>The name is case-insensitive.
+	 * <p>Note that if the lump ordinarily as multiple amounts of the object type in question, this
+	 * will read only the first one.
 	 * @param <BO> a type that extends BinaryObject.
 	 * @param entryName the name of the entry to find.
 	 * @param type the class type to deserialize into.
@@ -610,6 +614,8 @@ public interface Wad extends Iterable<WadEntry>
 	/**
 	 * Retrieves the data of the first occurrence of a particular entry from a starting index as a deserialized lump.
 	 * <p>The name is case-insensitive.
+	 * <p>Note that if the lump ordinarily as multiple amounts of the object type in question, this
+	 * will read only the first one.
 	 * @param <BO> a type that extends BinaryObject.
 	 * @param entryName the name of the entry to find.
 	 * @param start the index with which to start the search.
@@ -628,6 +634,8 @@ public interface Wad extends Iterable<WadEntry>
 	/**
 	 * Retrieves the data of the first occurrence of a particular entry from a starting entry (by name) as a deserialized lump.
 	 * <p>The names are case-insensitive.
+	 * <p>Note that if the lump ordinarily as multiple amounts of the object type in question, this
+	 * will read only the first one.
 	 * @param <BO> a type that extends BinaryObject.
 	 * @param entryName the name of the entry to find.
 	 * @param startEntryName the starting entry (by name) with which to start the search.
@@ -645,6 +653,8 @@ public interface Wad extends Iterable<WadEntry>
 
 	/**
 	 * Retrieves the data of the specified entry as a deserialized lump.
+	 * <p>Note that if the lump ordinarily as multiple amounts of the object type in question, this
+	 * will read only the first one.
 	 * @param <BO> a type that extends BinaryObject.
 	 * @param entry the entry to use.
 	 * @param type the class type to deserialize into.

@@ -14,9 +14,9 @@ import java.util.List;
 
 import net.mtrop.doom.exception.WadException;
 import net.mtrop.doom.io.SerialWriter;
+import net.mtrop.doom.io.SerializerUtils;
 import net.mtrop.doom.util.MathUtils;
 import net.mtrop.doom.util.NameUtils;
-import net.mtrop.doom.util.SerializerUtils;
 
 /**
  * The class that reads WadFile information and provides random access to Wad files.

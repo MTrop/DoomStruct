@@ -23,8 +23,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
+import net.mtrop.doom.io.IOUtils;
 import net.mtrop.doom.struct.trie.CaseInsensitiveTrieMap;
-import net.mtrop.doom.util.IOUtils;
 
 /**
  * Doom PK3 file. Contains a whole bunch of Doom resources,

@@ -12,8 +12,8 @@ import java.io.IOException;
 import net.mtrop.doom.WadFile;
 import net.mtrop.doom.LoggingFactory;
 import net.mtrop.doom.LoggingFactory.Logger;
+
 import net.mtrop.doom.map.data.HexenThing;
-import net.mtrop.doom.util.IOUtils;
 
 public class HexenThingTest
 {
@@ -25,6 +25,6 @@ public class HexenThingTest
 		int i = 0;
 		for (HexenThing object : wad.getDataAs("THINGS", HexenThing.class, HexenThing.LENGTH))
 			logger.info((i++) + " " + object);
-		IOUtils.close(wad);
+		wad.close();
 	}
 }

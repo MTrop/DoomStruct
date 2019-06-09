@@ -19,11 +19,11 @@ import javax.imageio.ImageIO;
 
 import net.mtrop.doom.BinaryObject;
 import net.mtrop.doom.GraphicObject;
+import net.mtrop.doom.io.IOUtils;
 import net.mtrop.doom.io.PNGContainerReader;
 import net.mtrop.doom.io.PNGContainerWriter;
 import net.mtrop.doom.io.SerialReader;
 import net.mtrop.doom.io.SerialWriter;
-import net.mtrop.doom.util.IOUtils;
 
 /**
  * Represents PNG-formatted data.

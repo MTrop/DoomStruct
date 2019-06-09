@@ -13,7 +13,7 @@ import net.mtrop.doom.WadFile;
 import net.mtrop.doom.sound.DMXMUS;
 import net.mtrop.doom.LoggingFactory;
 import net.mtrop.doom.LoggingFactory.Logger;
-import net.mtrop.doom.util.IOUtils;
+
 
 public final class MUSTest
 {
@@ -23,6 +23,6 @@ public final class MUSTest
 		WadFile wad = new WadFile(args[0]);
 		for (DMXMUS.Event event : wad.getDataAs("D_RUNNIN", DMXMUS.class))
 			logger.info(event);
-		IOUtils.close(wad);
+		wad.close();
 	}
 }

@@ -11,9 +11,9 @@ import java.io.IOException;
 
 import net.mtrop.doom.WadFile;
 import net.mtrop.doom.demo.Demo;
+
 import net.mtrop.doom.LoggingFactory;
 import net.mtrop.doom.LoggingFactory.Logger;
-import net.mtrop.doom.util.IOUtils;
 
 public final class DemoTest
 {
@@ -27,6 +27,6 @@ public final class DemoTest
 		for (Demo.Tic[] tics : demo)
 			for (Demo.Tic tic : tics)
 				logger.info(tic);
-		IOUtils.close(wad);
+		wad.close();
 	}
 }

@@ -1,4 +1,4 @@
-package net.mtrop.doom.util;
+package net.mtrop.doom.io;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

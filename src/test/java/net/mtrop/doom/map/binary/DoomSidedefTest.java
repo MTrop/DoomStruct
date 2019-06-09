@@ -12,8 +12,8 @@ import java.io.IOException;
 import net.mtrop.doom.WadFile;
 import net.mtrop.doom.LoggingFactory;
 import net.mtrop.doom.LoggingFactory.Logger;
+
 import net.mtrop.doom.map.data.DoomSidedef;
-import net.mtrop.doom.util.IOUtils;
 
 public class DoomSidedefTest
 {
@@ -25,6 +25,6 @@ public class DoomSidedefTest
 		int i = 0;
 		for (DoomSidedef object : wad.getDataAs("SIDEDEFS", DoomSidedef.class, DoomSidedef.LENGTH))
 			logger.info((i++) + " " + object);
-		IOUtils.close(wad);
+		wad.close();
 	}
 }

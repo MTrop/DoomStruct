@@ -12,8 +12,8 @@ import java.io.IOException;
 import net.mtrop.doom.WadFile;
 import net.mtrop.doom.LoggingFactory;
 import net.mtrop.doom.LoggingFactory.Logger;
+
 import net.mtrop.doom.map.data.DoomSector;
-import net.mtrop.doom.util.IOUtils;
 
 public class DoomSectorTest
 {
@@ -25,6 +25,6 @@ public class DoomSectorTest
 		int i = 0;
 		for (DoomSector object : wad.getDataAs("SECTORS", DoomSector.class, DoomSector.LENGTH))
 			logger.info((i++) + " " + object);
-		IOUtils.close(wad);
+		wad.close();
 	}
 }

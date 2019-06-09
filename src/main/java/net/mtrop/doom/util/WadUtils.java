@@ -16,6 +16,7 @@ import java.util.regex.Pattern;
 import net.mtrop.doom.Wad;
 import net.mtrop.doom.WadEntry;
 import net.mtrop.doom.WadFile;
+import net.mtrop.doom.io.SerializerUtils;
 
 /**
  * WAD utility methods and functions.

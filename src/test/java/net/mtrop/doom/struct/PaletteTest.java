@@ -11,9 +11,9 @@ import java.io.IOException;
 
 import net.mtrop.doom.WadFile;
 import net.mtrop.doom.graphics.Palette;
+
 import net.mtrop.doom.LoggingFactory;
 import net.mtrop.doom.LoggingFactory.Logger;
-import net.mtrop.doom.util.IOUtils;
 
 public final class PaletteTest
 {
@@ -24,6 +24,6 @@ public final class PaletteTest
 		WadFile wad = new WadFile(args[0]);
 		for (Palette pal : wad.getDataAs("PLAYPAL", Palette.class, Palette.LENGTH))
 			logger.info(pal);
-		IOUtils.close(wad);
+		wad.close();
 	}
 }

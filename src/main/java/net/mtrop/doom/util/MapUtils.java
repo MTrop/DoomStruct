@@ -360,13 +360,13 @@ public final class MapUtils
 	 * @throws IOException if the WAD can't be read from.
 	 * @throws UnsupportedOperationException if attempting to read from a {@link Wad} type that does not contain data.
 	 */
-	public static HexenMap createUDMFMap(Wad wad, String headerName) throws MapException, IOException
+	public static UDMFMap createUDMFMap(Wad wad, String headerName) throws MapException, IOException
 	{
 		int index = wad.getLastIndexOf(headerName);
 		if (index < 0)
 			throw new MapException("Cannot find map by header name "+headerName);
 		
-		return createHexenMap(wad, index);
+		return createUDMFMap(wad, index);
 	}
 
 	/**

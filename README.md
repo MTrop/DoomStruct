@@ -60,28 +60,53 @@ Open a WAD file (and close it).
 	WadFile wad = new WadFile("doom2.wad");
 	wad.close();
 
-Open `MAP01` in `DOOM2.WAD`.
+Open `DOOM2.WAD` and read `MAP01` into a Doom Map.
 
 	WadFile wad = new WadFile("doom2.wad");
-	DoomMap map = MapUtils.createDoomMap(wad, "MAP01");
+	DoomMap map = MapUtils.createDoomMap(wad, "map01");
 	wad.close();
 
-Open `MAP29` in `DOOM2.WAD` and fetch all sectors with the `BLOOD1` floor texture.
+Open `DOOM2.WAD` and fetch all sectors in `MAP29` with the `BLOOD1` floor texture.
 
 	WadFile wad = new WadFile("doom2.wad");
-	Set<DoomSector> set = new HashSet<>();
-	for (DoomSector sector : wad.getDataAs("SECTORS", "MAP29", DoomSector.class, DoomSector.LENGTH))
-		if (sector.getFloorTexture().equals("BLOOD1"))
-			set.add(sector);
+	Set<DoomSector> set = wad.getDataAsList("sectors", "map29", DoomSector.class, DoomSector.LENGTH).stream()
+		.filter((sector) -> sector.getFloorTexture().equals("BLOOD1"))
+		.collect(Collectors.toSet());
 	wad.close();
 
-Open `MAP01` in `HEXEN.WAD` and fetch all things that have a special.
+Open `HEXEN.WAD` and fetch all things in `MAP01` that have a special.
 
 	WadFile wad = new WadFile("hexen.wad");
-	Set<HexenThing> set = new HashSet<>();
-	for (HexenThing thing : wad.getDataAs("THINGS", "MAP01", HexenThing.class, HexenThing.LENGTH))
-		if (thing.getSpecial() > 0)
-			set.add(thing);
+	Set<HexenThing> set = wad.getDataAsList("things", "map01", HexenThing.class, HexenThing.LENGTH).stream()
+		.filter((thing) -> thing.getSpecial() > 0)
+		.collect(Collectors.toSet());
+	wad.close();
+
+Open `DOOM.WAD` and fetch all maps that have less than 1000 linedefs.
+
+	final WadFile wad = new WadFile("doom.wad");
+	Set<String> set = Arrays.asList(MapUtils.getAllMapHeaders(wad)).stream()
+		.filter((header) -> wad.getEntry("linedefs", header).getSize() / DoomLinedef.LENGTH < 1000)
+		.collect(Collectors.toSet());
+	wad.close();
+
+Open `SQUARE1.PK3`, fetch `maps/E1A1.WAD` and read it into a UDMF Map.
+
+	DoomPK3 pk3 = new DoomPK3("square1.pk3");
+	WadBuffer wad = pk3.getDataAsWadBuffer("maps/e1a1.wad");
+	UDMFMap map = MapUtils.createUDMFMap(wad, "e1a1");
+	pk3.close();
+
+Open `DOOM2.WAD`, fetch all `TROO*` graphic entries and export them as PNGs.
+
+	WadFile wad = new WadFile("H:/DoomDev/Iwads/doom2.wad");
+	final Palette pal = wad.getDataAs("playpal", Palette.class);
+	for (WadEntry entry : wad) {
+		if (entry.getName().startsWith("TROO")) {
+			Picture p = wad.getDataAs(entry, Picture.class);
+			ImageIO.write(GraphicUtils.createImage(p, pal), "PNG", new File(entry.getName()+".png"));
+		}
+	}
 	wad.close();
 
 

@@ -13,7 +13,7 @@ import net.mtrop.doom.WadFile;
 import net.mtrop.doom.map.bsp.BSPBlockmap;
 import net.mtrop.doom.LoggingFactory;
 import net.mtrop.doom.LoggingFactory.Logger;
-import net.mtrop.doom.util.IOUtils;
+
 
 public final class BlockmapTest
 {
@@ -23,6 +23,6 @@ public final class BlockmapTest
 		WadFile wad = new WadFile(args[0]);
 		BSPBlockmap blockmap = wad.getDataAs("BLOCKMAP", BSPBlockmap.class);
 		logger.info(blockmap.toBytes());
-		IOUtils.close(wad);
+		wad.close();
 	}
 }
