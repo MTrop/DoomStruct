@@ -135,17 +135,17 @@ public class WadBuffer implements Wad
 		for (int x = 0; x < entryCount; x++)
 		{
 			sr.readBytes(in, entrybuffer);
-			WadEntry wadEntry = WadEntry.create(entrybuffer);
-			entries.add(wadEntry);
+			WadEntry entry = WadEntry.create(entrybuffer);
+			entries.add(entry);
 		}
 	}
 	
 	/**
 	 * Converts a WadEntry offset to the offset into the data vector.
 	 */
-	private int getContentOffset(WadEntry WadEntry)
+	private int getContentOffset(WadEntry entry)
 	{
-		return WadEntry.getOffset() - 12; 
+		return entry.getOffset() - 12; 
 	}
 	
 	/**
@@ -273,12 +273,20 @@ public class WadBuffer implements Wad
 	@Override
 	public void replaceEntry(int index, byte[] data) throws IOException
 	{
-		WadEntry WadEntry = removeEntry(index);
-		if (WadEntry == null)
+		WadEntry entry = getEntry(index);
+		if (entry == null)
 			throw new IOException("Index is out of range.");
 		
-		String name = WadEntry.getName();
-		addDataAt(index, name, data);
+		if (data.length != entry.size)
+		{
+			deleteEntry(index);
+			String name = entry.getName();
+			addDataAt(index, name, data);
+		}
+		else
+		{
+			content.setData(entry.offset, data);
+		}
 	}
 
 	@Override

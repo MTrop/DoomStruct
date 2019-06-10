@@ -265,29 +265,32 @@ public class WadFile implements Wad, AutoCloseable
 		if (entry == null)
 			throw new IOException("Index is out of range.");
 	
-		byte[] buffer = new byte[65536];
-		int offset = entry.getOffset();
-		int dataOffset = entry.getOffset() + entry.getSize();
-	
-		while (dataOffset < entryListOffset)
+		if (entry.getSize() > 0)
 		{
-			int amount = Math.min(entryListOffset - dataOffset, buffer.length);
-			file.seek(dataOffset);
-			int readAmount = file.read(buffer, 0, amount);
-			file.seek(offset);
-			file.write(buffer, 0, readAmount);
-			offset += readAmount;
-			dataOffset += readAmount;
-		}
-	
-		entryListOffset = dataOffset;
-	
-		// adjust offsets.
-		if (entry.size > 0) for (int i = 0; i < entries.size(); i++)
-		{
-			WadEntry e = entries.get(i);
-			if (e.offset > entry.offset)
-				e.offset -= entry.size;
+			byte[] buffer = new byte[65536];
+			int offset = entry.getOffset();
+			int dataOffset = entry.getOffset() + entry.getSize();
+		
+			while (dataOffset < entryListOffset)
+			{
+				int amount = Math.min(entryListOffset - dataOffset, buffer.length);
+				file.seek(dataOffset);
+				int readAmount = file.read(buffer, 0, amount);
+				file.seek(offset);
+				file.write(buffer, 0, readAmount);
+				offset += readAmount;
+				dataOffset += readAmount;
+			}
+		
+			entryListOffset = dataOffset;
+		
+			// adjust offsets.
+			if (entry.size > 0) for (int i = 0; i < entries.size(); i++)
+			{
+				WadEntry e = entries.get(i);
+				if (e.offset > entry.offset)
+					e.offset -= entry.size;
+			}
 		}
 	
 		flushEntries();
@@ -317,10 +320,17 @@ public class WadFile implements Wad, AutoCloseable
 		if (entry == null)
 			throw new IOException("Index is out of range.");
 		
-		deleteEntry(index);
-		
-		String name = entry.getName();
-		addDataAt(index, name, data);
+		if (data.length != entry.size)
+		{
+			deleteEntry(index);
+			String name = entry.getName();
+			addDataAt(index, name, data);
+		}
+		else
+		{
+			file.seek(entry.offset);
+			file.write(data);
+		}
 	}
 
 	@Override

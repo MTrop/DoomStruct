@@ -94,6 +94,18 @@ public class DataList
 	}
 	
 	/**
+	 * Sets a subset of data in this buffer.
+	 * @param offset the offset into the vector.
+	 * @param data the data to overwrite with.
+	 * @throws IndexOutOfBoundsException if offset plus length exceeds size.
+	 */
+	public void setData(int offset, byte[] data)
+	{
+		capacityCheck(offset + data.length);
+		System.arraycopy(buffer, offset, data, 0, data.length);
+	}
+	
+	/**
 	 * Gets the capacity of this buffer.
 	 * @return the current capacity in bytes.
 	 */

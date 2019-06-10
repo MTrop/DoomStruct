@@ -1163,6 +1163,8 @@ public interface Wad extends Iterable<WadEntry>
 
 	/**
 	 * Replaces the entry at an index in the Wad.
+	 * If the incoming data is the same size as the entry at the index, 
+	 * this will change the data in-place without deleting and adding.
 	 * 
 	 * @param index the index of the entry to replace.
 	 * @param data the data to replace the entry with.
