@@ -37,6 +37,7 @@ public final class SoundUtils
 	 * Imports a file as a DMXSound.
 	 * This is dependent on the drivers in the Java SPI to read supported files.
 	 * If the input has multiple channels, they are lazily muxed into a single channel.
+	 * <p>NOTE: DMX Sounds are stored as mono, 8-bit PCM waveforms. Some sound information will be lost on conversion!
 	 * @param file the input audio stream.
 	 * @throws IOException if an error occurs on write.
 	 * @throws UnsupportedAudioFileException if the file is an unrecognized audio type.

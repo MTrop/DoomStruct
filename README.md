@@ -56,12 +56,14 @@ extent.
 * Full UDMF parsing/writing support.
 * Reads/edits all Doom data structures in Doom, Hexen/ZDoom, or Strife 
   formats. This includes textures, patches, lines, vertices, things, sectors,
-  nodes, palettes, colormaps, text, PNG data, MUS data, flats, blockmaps,
+  nodes, palettes, colormaps, text, PNG data, music data, sound data, flats, blockmaps,
   reject, and even ENDOOM-type VGA lumps.
 * Supports PNGs with offset data (grAb).
 * Reads/edits Boom-engine data lumps like ANIMATED and SWITCHES. 
 * Contains a utility class for converting Doom graphics to standard Java
   graphics structures, and vice-versa.
+* Contains a utility class for converting Doom DMX sound data to other formats via
+  the Java SPI, and vice-versa.
 * Contains a utility class for managing texture sets without needing to care too much
   about Doom's nightmarish texture data setup. 
 

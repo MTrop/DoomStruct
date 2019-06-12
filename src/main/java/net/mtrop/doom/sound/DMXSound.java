@@ -20,6 +20,8 @@ import net.mtrop.doom.util.RangeUtils;
  * This class holds digital sound information.
  * The format that this reads is the DMX PCM Format, by Digital Expressions, Inc.,
  * written by Paul Radek. Doom uses this format for storing sound data.
+ * <p>NOTE: Even though this stores samples as doubles, DMX Sounds are serialized as mono, 8-bit PCM waveforms. 
+ * Some sound information will be lost on conversion!
  * @author Matthew Tropiano
  */
 public class DMXSound implements BinaryObject
