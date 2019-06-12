@@ -18,6 +18,7 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
+import net.mtrop.doom.io.IOUtils;
 import net.mtrop.doom.io.JSPISoundHandle;
 import net.mtrop.doom.io.JSPISoundHandle.Decoder;
 import net.mtrop.doom.io.SerializerUtils;
@@ -74,6 +75,7 @@ public final class SoundUtils
 				out.addSample(muxSamples(channelSamples));
 			}
 		}
+		IOUtils.close(decoder);
 		
 		return out;
 	}
