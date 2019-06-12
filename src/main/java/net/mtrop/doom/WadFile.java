@@ -98,10 +98,10 @@ public class WadFile implements Wad, AutoCloseable
 		this.fileAbsolutePath = f.getAbsolutePath();
 		
 		file.read(buffer);
-		int size = SerializerUtils.bytesToInt(buffer, MathUtils.LITTLE_ENDIAN);
+		int size = SerializerUtils.bytesToInt(buffer, 0, MathUtils.LITTLE_ENDIAN);
 
 		file.read(buffer);
-		entryListOffset = SerializerUtils.bytesToInt(buffer, MathUtils.LITTLE_ENDIAN);
+		entryListOffset = SerializerUtils.bytesToInt(buffer, 0, MathUtils.LITTLE_ENDIAN);
 		
 		this.entries = new ArrayList<WadEntry>((size + 1) * 2);
 		

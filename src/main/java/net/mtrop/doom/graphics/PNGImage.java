@@ -125,6 +125,15 @@ public class PNGImage implements BinaryObject, GraphicObject
 		g2d.dispose();
 	}
 
+	/**
+	 * Gets the reference to this image's internal buffered image.
+	 * @return the image that this contains.
+	 */
+	public BufferedImage getImage()
+	{
+		return image;
+	}
+	
 	@Override
 	public void readBytes(InputStream in) throws IOException
 	{

@@ -1168,8 +1168,8 @@ public interface Wad extends Iterable<WadEntry>
 	 * 
 	 * @param index the index of the entry to replace.
 	 * @param data the data to replace the entry with.
-	 * @throws IllegalArgumentException if the provided name is not a valid name.
-	 * @throws IOException if the entry cannot be written.
+	 * @throws IndexOutOfBoundsException if index &lt; 0 or &gt;= size.
+	 * @throws IOException if the entry cannot be replaced.
 	 * @throws NullPointerException if <code>data</code> is <code>null</code>.
 	 */
 	void replaceEntry(int index, byte[] data) throws IOException;
@@ -1179,7 +1179,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * 
 	 * @param index the index of the entry to rename.
 	 * @param newName the new name of the entry.
-	 * @throws IllegalArgumentException if the provided name is not a valid name.
+	 * @throws IndexOutOfBoundsException if index &lt; 0 or &gt;= size.
 	 * @throws IOException if the entry cannot be renamed.
 	 */
 	void renameEntry(int index, String newName) throws IOException;
@@ -1189,20 +1189,21 @@ public interface Wad extends Iterable<WadEntry>
 	 * This will leave abandoned, un-adressed data in a Wad file and will not be removed until the data
 	 * is purged. 
 	 * 
-	 * @param n the index of the entry to delete.
+	 * @param index the index of the entry to delete.
 	 * @return the entry removed from the Wad.
-	 * @throws ArrayIndexOutOfBoundsException if n &lt; 0 or &gt;= size.
+	 * @throws IndexOutOfBoundsException if index &lt; 0 or &gt;= size.
+	 * @throws IOException if the entry cannot be removed.
 	 */
-	WadEntry removeEntry(int n) throws IOException;
+	WadEntry removeEntry(int index) throws IOException;
 
 	/**
 	 * Deletes a Wad's entry and its contents. The overhead for multiple deletions may be expensive I/O-wise.
 	 * 
-	 * @param n the index of the entry to delete.
-	 * @throws ArrayIndexOutOfBoundsException if n &lt; 0 or &gt;= size.
+	 * @param index the index of the entry to delete.
+	 * @throws IndexOutOfBoundsException if index &lt; 0 or &gt;= size.
 	 * @throws IOException if the file cannot be altered in such a manner.
 	 */
-	WadEntry deleteEntry(int n) throws IOException;
+	WadEntry deleteEntry(int index) throws IOException;
 
 	/**
 	 * Retrieves a contiguous set of entries from this Wad, starting from a desired index. If the amount of entries

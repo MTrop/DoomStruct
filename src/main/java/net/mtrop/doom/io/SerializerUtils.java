@@ -32,13 +32,13 @@ public final class SerializerUtils
 	 * @param b				the bytes to convert.
 	 * @param endianMode	the endian mode of the bytes.
 	 */
-	public static short bytesToShort(byte[] b, boolean endianMode)
+	public static short bytesToShort(byte[] b, int offset, boolean endianMode)
 	{
 		short out = 0;
 	
 		int stop = Math.min(b.length,SIZEOF_SHORT);
 		for (int x = 0; x < stop; x++)
-			out |= (b[x]&0xFF) << Byte.SIZE*(endianMode ? x : SIZEOF_SHORT-1-x);
+			out |= (b[offset + x]&0xFF) << Byte.SIZE*(endianMode ? x : SIZEOF_SHORT-1-x);
 	
 		return out;
 	}
@@ -48,13 +48,13 @@ public final class SerializerUtils
 	 * @param b				the bytes to convert.
 	 * @param endianMode	the endian mode of the bytes.
 	 */
-	public static int bytesToInt(byte[] b, boolean endianMode)
+	public static int bytesToInt(byte[] b, int offset, boolean endianMode)
 	{
 		int out = 0;
 	
 		int stop = Math.min(b.length,SIZEOF_INT);
 		for (int x = 0; x < stop; x++)
-			out |= (b[x]&0xFF) << Byte.SIZE*(endianMode ? x : SIZEOF_INT-1-x);
+			out |= (b[offset + x]&0xFF) << Byte.SIZE*(endianMode ? x : SIZEOF_INT-1-x);
 	
 		return out;
 	}
@@ -64,13 +64,13 @@ public final class SerializerUtils
 	 * @param b				the bytes to convert.
 	 * @param endianMode	the endian mode of the bytes.
 	 */
-	public static long bytesToLong(byte[] b, boolean endianMode)
+	public static long bytesToLong(byte[] b, int offset, boolean endianMode)
 	{
 		long out = 0;
 	
 		int stop = Math.min(b.length,SIZEOF_LONG);
 		for (int x = 0; x < stop; x++)
-			out |= (long)(b[x]&0xFFL) << (long)(Byte.SIZE*(endianMode ? x : SIZEOF_LONG-1-x));
+			out |= (long)(b[offset + x]&0xFFL) << (long)(Byte.SIZE*(endianMode ? x : SIZEOF_LONG-1-x));
 	
 		return out;
 	}
@@ -80,9 +80,9 @@ public final class SerializerUtils
 	 * @param b				the bytes to convert.
 	 * @param endianMode	the endian mode of the bytes.
 	 */
-	public static float bytesToFloat(byte[] b, boolean endianMode)
+	public static float bytesToFloat(byte[] b, int offset, boolean endianMode)
 	{
-	    return Float.intBitsToFloat(bytesToInt(b, endianMode));
+	    return Float.intBitsToFloat(bytesToInt(b, offset, endianMode));
 	}
 
 	/**
@@ -90,9 +90,9 @@ public final class SerializerUtils
 	 * @param b				the bytes to convert.
 	 * @param endianMode	the endian mode of the bytes.
 	 */
-	public static double bytesToDouble(byte[] b, boolean endianMode)
+	public static double bytesToDouble(byte[] b, int offset, boolean endianMode)
 	{
-	    return Double.longBitsToDouble(bytesToLong(b, endianMode));
+	    return Double.longBitsToDouble(bytesToLong(b, offset, endianMode));
 	}
 
 	/**
