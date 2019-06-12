@@ -128,7 +128,7 @@ Open `DOOM2.WAD`, read `DEMO2` and figure out its duration in seconds.
 	wad.close();
 	double duration = demo.getLength();
 
-Open `DOOM2.WAD`, fetch all `TROO*` graphic entries and export them as PNGs.
+Open `DOOM2.WAD`, fetch all `TROO*` (graphic) entries and export them as PNGs.
 
 	WadFile wad = new WadFile("doom2.wad");
 	final Palette pal = wad.getDataAs("playpal", Palette.class);
@@ -140,6 +140,17 @@ Open `DOOM2.WAD`, fetch all `TROO*` graphic entries and export them as PNGs.
 	}
 	wad.close();
 
+Open `DOOM.WAD`, fetch all `DS*` (audio) entries, upsample them to 22kHz (cosine interpolation), and export them as WAVs.
+
+	WadFile wad = new WadFile("doom.wad");
+	for (WadEntry entry : wad) {
+		if (entry.getName().startsWith("DS")) {
+			DMXSound sound = wad.getDataAs(entry, DMXSound.class)
+					.resample(InterpolationType.COSINE, DMXSound.SAMPLERATE_22KHZ);
+			SoundUtils.writeSoundToFile(sound, AudioFileFormat.Type.WAVE, new File(entry.getName() + ".wav"));
+		}
+	}
+	wad.close();
 
 
 ### Compiling with Ant

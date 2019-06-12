@@ -79,6 +79,7 @@ public final class SoundUtils
 	
 	/**
 	 * Writes a DMXSound out to an audio file.
+	 * The destination file will be overwritten!
 	 * @param sound the input DMX Sound.
 	 * @param outFile the output file.
 	 * @throws IOException if an error occurred during the write. 
@@ -96,7 +97,7 @@ public final class SoundUtils
 	 * @throws IOException if an error occurred during the write. 
 	 * @throws UnsupportedAudioFileException if the output type is unsupported.
 	 */
-	public static void writeSoundToFile(DMXSound sound, AudioFileFormat.Type fileType, OutputStream out) throws IOException, UnsupportedAudioFileException
+	public static void writeSoundToOutputStream(DMXSound sound, AudioFileFormat.Type fileType, OutputStream out) throws IOException, UnsupportedAudioFileException
 	{
 		AudioSystem.write(getAudioInputStream(sound), fileType, out);
 	}
