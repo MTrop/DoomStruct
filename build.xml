@@ -35,6 +35,7 @@
 		net.mtrop.doom.map.udmf,
 		net.mtrop.doom.map.udmf.attributes,
 		net.mtrop.doom.map.udmf.listener,
+		net.mtrop.doom.object,
 		net.mtrop.doom.sound,
 		net.mtrop.doom.struct,
 		net.mtrop.doom.struct.map,

@@ -12,7 +12,7 @@ import java.io.OutputStream;
 public final class IOUtils
 {
 	/** The relay buffer size, used by relay(). */
-	private static int RELAY_BUFFER_SIZE = 8192;
+	private static int RELAY_BUFFER_SIZE = 16384;
 
 	private IOUtils() {}
 

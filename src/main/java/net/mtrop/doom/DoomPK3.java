@@ -7,11 +7,15 @@
  ******************************************************************************/
 package net.mtrop.doom;
 
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.Reader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -142,30 +146,30 @@ public class DoomPK3 extends ZipFile
 
 	/**
 	 * Gets the data in one entry in the PK3 by entry name (path and all).
-	 * @param entry the entry to extract and return as a byte array.
-	 * @return a byte array of the entry's data, or null if no corresponding entry.
+	 * @param entryName the entry to extract and return as a byte array.
+	 * @return a byte array of the entry's data, or null if the entry doesn't exist.
 	 * @throws IOException if a read error occurs.
 	 * @throws ZipException if a ZIP format error has occurred
 	 * @throws IllegalStateException if the zip file has been closed 
 	 */
-	public byte[] getData(String entry) throws IOException
+	public byte[] getData(String entryName) throws IOException
 	{
-		ZipEntry zentry = getEntry(entry);
+		ZipEntry zentry = getEntry(entryName);
 		return zentry != null ? getData(zentry) : null;
 	}
 
 	/**
 	 * Gets the data in one entry in the PK3.
-	 * @param entry the entry to extract and return as a byte array.
+	 * @param entryName the entry to extract and return as a byte array.
 	 * @return a byte array of the entry's data.
 	 * @throws IOException if a read error occurs.
 	 * @throws ZipException if a ZIP format error has occurred
 	 * @throws IllegalStateException if the zip file has been closed 
 	 */
-	private byte[] getData(ZipEntry entry) throws IOException
+	private byte[] getData(ZipEntry entryName) throws IOException
 	{
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		InputStream in = getInputStream(entry);
+		InputStream in = getInputStream(entryName);
 		IOUtils.relay(in, bos);
 		IOUtils.close(in);
 		return bos.toByteArray();
@@ -174,8 +178,10 @@ public class DoomPK3 extends ZipFile
 	/**
 	 * Gets the data in one entry in the PK3 as an input stream by entry name (path and all).
 	 * @param entry the entry to extract and return as a byte array.
-	 * @return an InputStream of the entry's data.
+	 * @return an InputStream of the entry's data, or null if the entry doesn't exist.
 	 * @throws IOException if a read error occurs. 
+	 * @throws ZipException if a ZIP format error has occurred
+	 * @throws IllegalStateException if the zip file has been closed 
 	 */
 	public InputStream getInputStream(String entry) throws IOException
 	{
@@ -184,12 +190,39 @@ public class DoomPK3 extends ZipFile
 	}
 	
 	/**
+	 * Gets the data in one entry in the PK3 and extracts it to a file.
+	 * If the target file exists, it is overwritten.
+	 * @param entryName the entry to extract and return as a byte array.
+	 * @param outFilePath the destination file path for the data.
+	 * @return a reference to the file created, or null if the entry doesn't exist.
+	 * @throws IOException if a read error occurs.
+	 * @throws FileNotFoundException if the target file is a directory.
+	 * @throws SecurityException if the file could not be created due to system permission.
+	 * @throws ZipException if a ZIP format error has occurred
+	 * @throws IllegalStateException if the zip file has been closed
+	 */
+	public File getFile(String entryName, String outFilePath) throws IOException
+	{
+		InputStream in = getInputStream(entryName);
+		if (in == null)
+			return null;
+		File outFile = new File(outFilePath);
+		OutputStream out = new BufferedOutputStream(new FileOutputStream(outFile));
+		IOUtils.relay(in, out);
+		IOUtils.close(in);
+		IOUtils.close(out);
+		return outFile;
+	}
+
+	/**
 	 * Retrieves the data for a particular entry as a decoded string of characters.
 	 * <p>The name is case-insensitive.
 	 * @param entryName the name of the entry to find.
 	 * @param charset the source charset.
 	 * @return the data, decoded, or null if the entry doesn't exist.
 	 * @throws IOException if the data couldn't be retrieved.
+	 * @throws ZipException if a ZIP format error has occurred
+	 * @throws IllegalStateException if the zip file has been closed 
 	 * @throws NullPointerException if <code>entryName</code> is <code>null</code>.
 	 * @see BinaryObject#create(Class, byte[])
 	 */
@@ -206,6 +239,8 @@ public class DoomPK3 extends ZipFile
 	 * @param charset the source charset.
 	 * @return a Reader for reading the character stream, or null if the entry doesn't exist.
 	 * @throws IOException if the data couldn't be retrieved.
+	 * @throws ZipException if a ZIP format error has occurred
+	 * @throws IllegalStateException if the zip file has been closed 
 	 * @throws NullPointerException if <code>entryName</code> is <code>null</code>.
 	 * @see BinaryObject#create(Class, byte[])
 	 */
@@ -224,6 +259,8 @@ public class DoomPK3 extends ZipFile
 	 * @param type the object type to convert the text data to.
 	 * @return the data, decoded, or null if the entry doesn't exist.
 	 * @throws IOException if the data couldn't be retrieved or the entry's offsets breach the file extents.
+	 * @throws ZipException if a ZIP format error has occurred
+	 * @throws IllegalStateException if the zip file has been closed 
 	 * @throws NullPointerException if <code>entryName</code> is <code>null</code>.
 	 * @see TextObject#read(Class, Reader)
 	 */
@@ -241,6 +278,8 @@ public class DoomPK3 extends ZipFile
 	 * @param type the class type to deserialize into.
 	 * @return the data, deserialized, or null if the entry doesn't exist.
 	 * @throws IOException if the data couldn't be retrieved.
+	 * @throws ZipException if a ZIP format error has occurred
+	 * @throws IllegalStateException if the zip file has been closed 
 	 * @throws NullPointerException if <code>entryName</code> is <code>null</code>.
 	 * @see BinaryObject#create(Class, byte[])
 	 */
@@ -259,6 +298,8 @@ public class DoomPK3 extends ZipFile
 	 * @param objectLength the length of each individual object in bytes.
 	 * @return the data, deserialized, or null if the entry doesn't exist.
 	 * @throws IOException if the data couldn't be retrieved.
+	 * @throws ZipException if a ZIP format error has occurred
+	 * @throws IllegalStateException if the zip file has been closed 
 	 * @throws NullPointerException if <code>entryName</code> is <code>null</code>.
 	 * @see BinaryObject#create(Class, byte[])
 	 */
@@ -277,6 +318,8 @@ public class DoomPK3 extends ZipFile
 	 * @param objectLength the length of each individual object in bytes.
 	 * @return the data, deserialized, or null if the entry doesn't exist.
 	 * @throws IOException if the data couldn't be retrieved.
+	 * @throws ZipException if a ZIP format error has occurred
+	 * @throws IllegalStateException if the zip file has been closed 
 	 * @throws NullPointerException if <code>entryName</code> is <code>null</code>.
 	 * @see BinaryObject#create(Class, byte[])
 	 */
@@ -292,6 +335,8 @@ public class DoomPK3 extends ZipFile
 	 * @param entryName the name of the entry to find.
 	 * @return a WadMap representing the contents of the entry, or null if the entry doesn't exist.
 	 * @throws IOException if the data couldn't be retrieved.
+	 * @throws ZipException if a ZIP format error has occurred
+	 * @throws IllegalStateException if the zip file has been closed 
 	 * @throws NullPointerException if <code>entryName</code> is <code>null</code>.
 	 */
 	public WadMap getDataAsWadMap(String entryName) throws IOException
@@ -301,11 +346,40 @@ public class DoomPK3 extends ZipFile
 	}
 
 	/**
+	 * Retrieves the data for a particular entry, extracts it, and, 
+	 * presuming it to be a WAD of some kind, opens it as a WadFile.
+	 * If the target file exists, it is overwritten.
+	 * <p><b>NOTE: The WadFile returned is special: as soon as it is closed, it is deleted!</b>
+	 * @param entryName the entry to extract and return as a byte array.
+	 * @param outFilePath the destination file path for the data.
+	 * @return a reference to the open WAD file created, or null if the entry doesn't exist.
+	 * @throws IOException if a read error occurs.
+	 * @throws FileNotFoundException if the target file is a directory.
+	 * @throws SecurityException if the file could not be created due to system permission.
+	 * @throws ZipException if a ZIP format error has occurred
+	 * @throws IllegalStateException if the zip file has been closed
+	 */
+	public WadFile getDataAsTempWadFile(String entryName, String outFilePath) throws IOException
+	{
+		final File extracted = getFile(entryName, outFilePath);
+		return extracted != null ? new WadFile(extracted) {
+			@Override
+			public void close() throws IOException
+			{
+				super.close();
+				extracted.delete();
+			}
+		} : null;
+	}
+
+	/**
 	 * Retrieves the data for a particular entry, presuming it to be a WAD of some kind,
 	 * and returns it as a fully read WadBuffer. Changing the WadBuffer does NOT change the entry data. 
 	 * @param entryName the name of the entry to find.
 	 * @return a WadBuffer containing the contents of the entry, or null if the entry doesn't exist.
 	 * @throws IOException if the data couldn't be retrieved.
+	 * @throws ZipException if a ZIP format error has occurred
+	 * @throws IllegalStateException if the zip file has been closed 
 	 * @throws NullPointerException if <code>entryName</code> is <code>null</code>.
 	 */
 	public WadBuffer getDataAsWadBuffer(String entryName) throws IOException
@@ -324,6 +398,8 @@ public class DoomPK3 extends ZipFile
 	 * @param objectLength the length of each object in the entry in bytes.
 	 * @return a scanner for the data, or null if the entry can't be found.
 	 * @throws IOException if the data couldn't be retrieved.
+	 * @throws ZipException if a ZIP format error has occurred
+	 * @throws IllegalStateException if the zip file has been closed 
 	 */
 	public <BO extends BinaryObject> BinaryObject.Scanner<BO> getScanner(String entryName, Class<BO> type, int objectLength) throws IOException
 	{
@@ -344,6 +420,8 @@ public class DoomPK3 extends ZipFile
 	 * @param objectLength the length of each object in the entry in bytes.
 	 * @return a scanner for the data, or null if the entry can't be found.
 	 * @throws IOException if the data couldn't be retrieved.
+	 * @throws ZipException if a ZIP format error has occurred
+	 * @throws IllegalStateException if the zip file has been closed 
 	 */
 	public <BO extends BinaryObject> BinaryObject.InlineScanner<BO> getInlineScanner(String entryName, Class<BO> type, int objectLength) throws IOException
 	{
