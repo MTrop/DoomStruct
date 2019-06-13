@@ -9,7 +9,7 @@ package net.mtrop.doom.graphics;
 
 import java.io.*;
 
-import net.mtrop.doom.BinaryObject;
+import net.mtrop.doom.object.BinaryObject;
 import net.mtrop.doom.util.MathUtils;
 
 /**

@@ -228,7 +228,7 @@ public class WadBuffer implements Wad
 	@Override
 	public InputStream getInputStream(WadEntry entry) throws IOException
 	{
-		return new WadBufferInputStream(entry.offset, entry.size);
+		return new WadBufferInputStream(getContentOffset(entry), entry.size);
 	}
 
 	@Override

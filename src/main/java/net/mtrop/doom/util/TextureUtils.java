@@ -10,10 +10,10 @@ package net.mtrop.doom.util;
 import java.io.IOException;
 import java.util.Set;
 
-import net.mtrop.doom.BinaryObject;
 import net.mtrop.doom.Wad;
 import net.mtrop.doom.exception.TextureException;
 import net.mtrop.doom.exception.WadException;
+import net.mtrop.doom.object.BinaryObject;
 import net.mtrop.doom.texture.CommonPatch;
 import net.mtrop.doom.texture.CommonTexture;
 import net.mtrop.doom.texture.CommonTextureList;

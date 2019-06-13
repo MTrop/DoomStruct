@@ -10,9 +10,8 @@ package net.mtrop.doom.map.udmf;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.io.Writer;
-import java.util.Iterator;
+import java.nio.charset.Charset;
 import java.util.Map.Entry;
 
 /**
@@ -28,69 +27,106 @@ public final class UDMFWriter
 	 * Does not close the OutputStream at the end of the write.
 	 * @param table the table to write.
 	 * @param out the OutputStream to write to.
+	 * @param charset the 
 	 * @throws IOException if the output stream cannot be written to.
 	 */
-	public static void writeData(UDMFTable table, OutputStream out) throws IOException
+	public static void writeTable(UDMFTable table, OutputStream out, Charset charset) throws IOException
 	{
-		writeData(table, new OutputStreamWriter(out, "UTF8"));
+		writeTable(table, new OutputStreamWriter(out, "UTF8"));
 	}
 	
 	/**
 	 * Writes UDMF-formatted data into a {@link Writer}.
-	 * Does not close the OutputStream at the end of the write.
 	 * @param table the table to write.
 	 * @param writer the Writer to write to.
 	 * @throws IOException if the output stream cannot be written to.
 	 */
-	public static void writeData(UDMFTable table, Writer writer) throws IOException
+	public static void writeTable(UDMFTable table, Writer writer) throws IOException
 	{
-		PrintWriter pw = new PrintWriter(writer, true);
-		
-		writeFields(table.getGlobalFields(), pw, "");
-
-		for (String strName : table.getAllObjectNames())
+		writeFields(table.getGlobalFields(), writer, "");
+		for (String typeName : table.getAllObjectNames())
 		{
 			int x = 0;
-			for (UDMFObject struct : table.getObjects(strName))
+			for (UDMFObject struct : table.getObjects(typeName))
 			{
-				writeStructStart(strName, pw, x, "");
-				writeFields(struct, pw, "\t");
-				writeStructEnd(strName, pw, x, "");
+				writeObject(struct, writer, typeName, x);
 				x++;
 			}
 		}
 	}
 
 	/**
-	 * Writes the fields out to the stream.
+	 * Writes UDMF-formatted data into a {@link Writer}.
+	 * @param object the object to write.
+	 * @param writer the Writer to write to.
+	 * @param type the object type.
+	 * @param count the index of the written object (can be null - not required).
+	 * @throws IOException if the output stream cannot be written to.
 	 */
-	private static void writeFields(UDMFObject struct, PrintWriter pw, String lineprefix)
+	public static void writeObject(UDMFObject object, Writer writer, String type, int count) throws IOException
 	{
-		Iterator<Entry<String, Object>> it = struct.iterator();
-		while (it.hasNext())
-		{
-			Entry<String, Object> entry = it.next();
-			String fieldName = entry.getKey();
-			pw.println(lineprefix + fieldName + " = " + renderFieldData(entry.getValue())+";");
-		}
+		writeStructStart(type, writer, count, "");
+		writeFields(object, writer, "\t");
+		writeStructEnd(type, writer, count, "");
+	}
+
+	/**
+	 * Writes the fields out to a {@link Writer}.
+	 * @param object the object to write.
+	 * @param writer the Writer to write to.
+	 * @param lineprefix a string to prepend to each line.
+	 * @throws IOException if the output stream cannot be written to.
+	 */
+	public static void writeFields(UDMFObject object, Writer writer, String lineprefix) throws IOException
+	{
+		for (Entry<String, Object> entry : object)
+			writeField(entry.getKey(), entry.getValue(), writer, lineprefix);
+	}
+	
+	/**
+	 * Writes the fields out to a {@link Writer}.
+	 * @param fieldName the field name.
+	 * @param value the field's value.
+	 * @param writer the Writer to write to.
+	 * @param lineprefix a string to prepend to each line.
+	 * @throws IOException if the output stream cannot be written to.
+	 */
+	public static void writeField(String fieldName, Object value, Writer writer, String lineprefix) throws IOException
+	{
+		writer.append(lineprefix)
+			.append(fieldName)
+			.append(" = ")
+			.append(renderFieldData(value))
+			.append(';')
+			.append('\n')
+		;
 	}
 	
 	/**
 	 * Starts the structure.
 	 */
-	private static void writeStructStart(String name, PrintWriter pw, int count, String lineprefix)
+	private static void writeStructStart(String name, Writer writer, int count, String lineprefix) throws IOException
 	{
-		pw.println(lineprefix + name + " // " + count);
-		pw.println(lineprefix + "{");
+		writer.append(lineprefix)
+			.append(name)
+			.append(" // ")
+			.append(String.valueOf(count))
+			.append('\n');
+		writer.append(lineprefix)
+			.append('{')
+			.append('\n')
+		;
 	}
 	
 	/**
 	 * Ends the structure.
 	 */
-	private static void writeStructEnd(String name, PrintWriter pw, int count, String lineprefix)
+	private static void writeStructEnd(String name, Writer writer, int count, String lineprefix) throws IOException
 	{
-		pw.println(lineprefix + "}");
-		pw.println();
+		writer.append(lineprefix)
+			.append('}')
+			.append('\n')
+		;
 	}
 	
 	private static String renderFieldData(Object data)

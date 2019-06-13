@@ -31,7 +31,7 @@ public class UDMFReaderTest
 
 		UDMFTable udmftable = UDMFReader.readData(wad.getInputStream("TEXTMAP"));
 		StringWriter writer = new StringWriter();
-		UDMFWriter.writeData(udmftable, writer);
+		UDMFWriter.writeTable(udmftable, writer);
 		logger.info("\n"+writer.toString());
 		
 		in.close();

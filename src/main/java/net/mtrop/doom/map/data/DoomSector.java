@@ -11,10 +11,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import net.mtrop.doom.BinaryObject;
 import net.mtrop.doom.io.SerialReader;
 import net.mtrop.doom.io.SerialWriter;
 import net.mtrop.doom.map.MapObjectConstants;
+import net.mtrop.doom.object.BinaryObject;
 import net.mtrop.doom.util.NameUtils;
 import net.mtrop.doom.util.RangeUtils;
 

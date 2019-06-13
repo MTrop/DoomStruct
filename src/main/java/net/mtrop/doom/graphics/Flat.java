@@ -11,8 +11,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import net.mtrop.doom.BinaryObject;
-import net.mtrop.doom.GraphicObject;
+import net.mtrop.doom.object.BinaryObject;
+import net.mtrop.doom.object.GraphicObject;
 import net.mtrop.doom.util.RangeUtils;
 
 /**

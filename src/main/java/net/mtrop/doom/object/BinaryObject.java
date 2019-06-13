@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
  ******************************************************************************/
-package net.mtrop.doom;
+package net.mtrop.doom.object;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

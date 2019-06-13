@@ -7,7 +7,7 @@
  ******************************************************************************/
 package net.mtrop.doom.texture;
 
-import net.mtrop.doom.BinaryObject;
+import net.mtrop.doom.object.BinaryObject;
 import net.mtrop.doom.util.RangeUtils;
 
 /**

@@ -12,8 +12,8 @@ import java.io.OutputStream;
 import java.util.Comparator;
 import java.util.Iterator;
 
-import net.mtrop.doom.BinaryObject;
 import net.mtrop.doom.io.SerialWriter;
+import net.mtrop.doom.object.BinaryObject;
 import net.mtrop.doom.struct.Sizable;
 import net.mtrop.doom.struct.vector.AbstractMappedVector;
 import net.mtrop.doom.util.NameUtils;

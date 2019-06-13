@@ -120,7 +120,7 @@ Open `SQUARE1.PK3`, fetch `maps/E1A1.WAD` and read it into a UDMF Map.
 
 	DoomPK3 pk3 = new DoomPK3("square1.pk3");
 	WadBuffer wad = pk3.getDataAsWadBuffer("maps/e1a1.wad");
-	UDMFMap map = MapUtils.createUDMFMap(wad, "e1a1");
+	UDMFMap map = wad.getTextDataAs("textmap", Charset.forName("UTF-8"), UDMFMap.class);
 	pk3.close();
 
 Open `DOOM2.WAD`, read `DEMO2` and figure out its duration in seconds.

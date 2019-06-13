@@ -10,9 +10,9 @@ package net.mtrop.doom.sound;
 import java.io.*;
 import java.util.Arrays;
 
-import net.mtrop.doom.BinaryObject;
 import net.mtrop.doom.io.SerialReader;
 import net.mtrop.doom.io.SerialWriter;
+import net.mtrop.doom.object.BinaryObject;
 import net.mtrop.doom.util.MathUtils;
 import net.mtrop.doom.util.RangeUtils;
 

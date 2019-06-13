@@ -38,6 +38,18 @@ abstract class CommonMap<V, L, S, E, T> implements MapView<V, L, S, E, T>
 	}
 
 	/**
+	 * Clears the contents of this map.
+	 */
+	public void clear()
+	{
+		vertices.clear();
+		linedefs.clear();
+		sidedefs.clear();
+		sectors.clear();
+		things.clear();
+	}
+	
+	/**
 	 * @return the underlying list of vertices.
 	 */
 	public List<V> getVertices()
@@ -66,6 +78,12 @@ abstract class CommonMap<V, L, S, E, T> implements MapView<V, L, S, E, T>
 		vertices.add(vertex);
 	}
 
+	@Override
+	public int getVertexCount()
+	{
+		return vertices.size();
+	}
+	
 	@Override
 	public V getVertex(int i)
 	{
@@ -107,6 +125,12 @@ abstract class CommonMap<V, L, S, E, T> implements MapView<V, L, S, E, T>
 		return linedefs.get(i);
 	}
 	
+	@Override
+	public int getLinedefCount()
+	{
+		return linedefs.size();
+	}
+	
 	/**
 	 * @return the underlying list of sidedefs.
 	 */
@@ -140,6 +164,12 @@ abstract class CommonMap<V, L, S, E, T> implements MapView<V, L, S, E, T>
 	public S getSidedef(int i)
 	{
 		return sidedefs.get(i);
+	}
+	
+	@Override
+	public int getSidedefCount()
+	{
+		return sidedefs.size();
 	}
 	
 	/**
@@ -177,6 +207,12 @@ abstract class CommonMap<V, L, S, E, T> implements MapView<V, L, S, E, T>
 		return sectors.get(i);
 	}
 	
+	@Override
+	public int getSectorCount()
+	{
+		return sectors.size();
+	}
+	
 	/**
 	 * @return the underlying list of things.
 	 */
@@ -210,6 +246,12 @@ abstract class CommonMap<V, L, S, E, T> implements MapView<V, L, S, E, T>
 	public T getThing(int i)
 	{
 		return things.get(i);
+	}
+	
+	@Override
+	public int getThingCount()
+	{
+		return things.size();
 	}
 	
 }

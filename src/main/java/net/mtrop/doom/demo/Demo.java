@@ -16,10 +16,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.mtrop.doom.BinaryObject;
 import net.mtrop.doom.io.IOUtils;
 import net.mtrop.doom.io.SerialReader;
 import net.mtrop.doom.io.SerialWriter;
+import net.mtrop.doom.object.BinaryObject;
 import net.mtrop.doom.util.RangeUtils;
 
 /**

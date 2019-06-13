@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.mtrop.doom.BinaryObject;
+import net.mtrop.doom.object.BinaryObject;
 import net.mtrop.doom.util.NameUtils;
 import net.mtrop.doom.util.RangeUtils;
 

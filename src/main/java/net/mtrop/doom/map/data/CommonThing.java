@@ -7,12 +7,12 @@
  ******************************************************************************/
 package net.mtrop.doom.map.data;
 
-import net.mtrop.doom.BinaryObject;
 import net.mtrop.doom.map.data.flags.BoomLinedefFlags;
 import net.mtrop.doom.map.data.flags.DoomLinedefFlags;
 import net.mtrop.doom.map.data.flags.HexenLinedefFlags;
 import net.mtrop.doom.map.data.flags.StrifeLinedefFlags;
 import net.mtrop.doom.map.data.flags.ZDoomLinedefFlags;
+import net.mtrop.doom.object.BinaryObject;
 import net.mtrop.doom.util.RangeUtils;
 
 /**

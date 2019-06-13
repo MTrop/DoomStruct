@@ -18,10 +18,20 @@ public interface MapView<V, L, S, E, T>
 	public V getVertex(int i);
 
 	/**
+	 * @return the amount of vertices in this map.
+	 */
+	public int getVertexCount();
+
+	/**
 	 * Gets the linedef at a specific index.
 	 * @return the linedef at the index, or null if the index is out of range.
 	 */
 	public L getLinedef(int i);
+
+	/**
+	 * @return the amount of linedefs in this map.
+	 */
+	public int getLinedefCount();
 
 	/**
 	 * Gets the sidedef at a specific index.
@@ -30,15 +40,30 @@ public interface MapView<V, L, S, E, T>
 	public S getSidedef(int i);
 
 	/**
+	 * @return the amount of sidedefs in this map.
+	 */
+	public int getSidedefCount();
+
+	/**
 	 * Gets the sector at a specific index.
 	 * @return the sector at the index, or null if the index is out of range.
 	 */
 	public E getSector(int i);
 
 	/**
+	 * @return the amount of sectors in this map.
+	 */
+	public int getSectorCount();
+
+	/**
 	 * Gets the thing at a specific index.
 	 * @return the thing at the index, or null if the index is out of range.
 	 */
 	public T getThing(int i);
+
+	/**
+	 * @return the amount of things in this map.
+	 */
+	public int getThingCount();
 
 }

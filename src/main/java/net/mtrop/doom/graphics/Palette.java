@@ -14,7 +14,7 @@ import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Comparator;
 
-import net.mtrop.doom.BinaryObject;
+import net.mtrop.doom.object.BinaryObject;
 
 /**
  * The palette that makes up the Doom Engine's color palette.

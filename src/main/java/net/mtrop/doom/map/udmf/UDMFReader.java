@@ -96,7 +96,6 @@ public final class UDMFReader
 	 * This will read until the end of the stream is reached.
 	 * @param data the String to read from.
 	 * @param listener the listener to use for listening to parsed structure events.
-	 * @throws UDMFParseException if a parsing error occurs.
 	 * @throws IOException if the data can't be read.
 	 */
 	public static void readData(String data, UDMFParserListener listener) throws IOException
@@ -146,18 +145,16 @@ public final class UDMFReader
 		
 		/**
 		 * Reads in UDMF text and returns a UDMFTable representing the structure.
-		 * @throws UDMFParseException if a parsing error occurs.
 		 */
 		public void read()
 		{
-			UDMFTable udmfTable = new UDMFTable();
 			nextToken();
 			listener.onStart();
-			while (currentToken() != null && StructureList(udmfTable));
+			while (currentToken() != null && StructureList());
 			listener.onEnd();
 		}
 
-		private boolean StructureList(UDMFTable table)
+		private boolean StructureList()
 		{
 			if (currentType(ULexerKernel.TYPE_IDENTIFIER))
 			{

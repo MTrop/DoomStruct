@@ -14,9 +14,9 @@ import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 
-import net.mtrop.doom.BinaryObject;
 import net.mtrop.doom.io.SerialReader;
 import net.mtrop.doom.io.SerialWriter;
+import net.mtrop.doom.object.BinaryObject;
 
 /**
  * Abstraction of the ENDOOM and other similarly-formatted lumps for the Doom Engine.

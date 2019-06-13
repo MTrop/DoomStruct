@@ -7,7 +7,6 @@
  ******************************************************************************/
 package net.mtrop.doom;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -24,6 +23,8 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 import net.mtrop.doom.io.IOUtils;
+import net.mtrop.doom.object.BinaryObject;
+import net.mtrop.doom.object.TextObject;
 import net.mtrop.doom.struct.trie.CaseInsensitiveTrieMap;
 
 /**
@@ -161,7 +162,7 @@ public class DoomPK3 extends ZipFile
 	 * @throws ZipException if a ZIP format error has occurred
 	 * @throws IllegalStateException if the zip file has been closed 
 	 */
-	public byte[] getData(ZipEntry entry) throws IOException
+	private byte[] getData(ZipEntry entry) throws IOException
 	{
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		InputStream in = getInputStream(entry);
@@ -211,7 +212,25 @@ public class DoomPK3 extends ZipFile
 	public Reader getReader(String entryName, Charset charset) throws IOException
 	{
 		InputStream in = getInputStream(entryName);
-		return in != null ? new BufferedReader(new InputStreamReader(in, charset)) : null;
+		return in != null ? new InputStreamReader(in, charset) : null;
+	}
+
+	/**
+	 * Retrieves the data of the first occurrence of a particular entry as an interpreted text-originating object.
+	 * <p>The name is case-insensitive.
+	 * @param <TO> the result type.
+	 * @param entryName the name of the entry to find.
+	 * @param charset the source charset encoding.
+	 * @param type the object type to convert the text data to.
+	 * @return the data, decoded, or null if the entry doesn't exist.
+	 * @throws IOException if the data couldn't be retrieved or the entry's offsets breach the file extents.
+	 * @throws NullPointerException if <code>entryName</code> is <code>null</code>.
+	 * @see TextObject#read(Class, Reader)
+	 */
+	public <TO extends TextObject> TO getTextDataAs(String entryName, Charset charset, Class<TO> type) throws IOException
+	{
+		Reader reader = getReader(entryName, charset);
+		return reader != null ? TextObject.read(type, reader) : null;
 	}
 
 	/**
@@ -347,5 +366,5 @@ public class DoomPK3 extends ZipFile
 		else
 			return name.substring(pindex);
 	}
-	
+
 }

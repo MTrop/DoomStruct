@@ -14,6 +14,7 @@ import java.io.OutputStream;
 
 import net.mtrop.doom.io.SerialReader;
 import net.mtrop.doom.io.SerialWriter;
+import net.mtrop.doom.object.BinaryObject;
 import net.mtrop.doom.util.NameUtils;
 
 /**

@@ -34,10 +34,6 @@ import net.mtrop.doom.map.data.DoomThing;
 import net.mtrop.doom.map.data.DoomVertex;
 import net.mtrop.doom.map.data.HexenLinedef;
 import net.mtrop.doom.map.data.HexenThing;
-import net.mtrop.doom.map.udmf.UDMFObject;
-import net.mtrop.doom.map.udmf.UDMFReader;
-import net.mtrop.doom.map.udmf.attributes.UDMFGlobalAttributes;
-import net.mtrop.doom.map.udmf.listener.UDMFTypeListener;
 
 /**
  * Map utility methods and functions.
@@ -300,50 +296,8 @@ public final class MapUtils
 			switch (name)
 			{
 				case LUMP_TEXTMAP:
-				{
-					final String[] parseError = new String[1];
-					UDMFReader.readData(wad.getTextData(entry, Charset.forName("UTF-8")), new UDMFTypeListener()
-					{
-						@Override
-						public void onParseError(String error)
-						{
-							parseError[0] = error;
-						}
-						
-						@Override
-						public void onGlobalAttribute(String name, Object value)
-						{
-							if (name.equalsIgnoreCase(UDMFGlobalAttributes.ATTRIB_NAMESPACE))
-								map.setNamespace(String.valueOf(value));
-						}
-
-						@Override
-						public void onType(String type, UDMFObject object)
-						{
-							switch (type)
-							{
-								case UDMFMap.VERTEX:
-									map.addVertex(object);
-									break;
-								case UDMFMap.LINEDEF:
-									map.addLinedef(object);
-									break;
-								case UDMFMap.SIDEDEF:
-									map.addSidedef(object);
-									break;
-								case UDMFMap.SECTOR:
-									map.addSector(object);
-									break;
-								case UDMFMap.THING:
-									map.addThing(object);
-									break;
-							}
-						}
-					});
-					if (parseError[0] != null)
-						throw new MapException("UDMF parse error: " + parseError[0]);
-				}
-				break;
+					map = wad.getTextDataAs(entry, Charset.forName("UTF-8"), UDMFMap.class);
+					break;
 			}
 		}
 		

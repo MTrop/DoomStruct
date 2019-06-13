@@ -12,9 +12,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
 
-import net.mtrop.doom.BinaryObject;
 import net.mtrop.doom.io.SerialReader;
 import net.mtrop.doom.io.SerialWriter;
+import net.mtrop.doom.object.BinaryObject;
 import net.mtrop.doom.util.RangeUtils;
 
 /**
