@@ -77,19 +77,9 @@ public abstract class CommonTextureList<T extends CommonTexture<?>> implements B
 	 * @param name the name of the texture.
 	 * @return a valid index if found, or -1 if not.
 	 */
-	public int getIndexOf(String name)
+	public int indexOf(String name)
 	{
 		return list.getIndexUsingKey(name);
-	}
-	
-	/**
-	 * Gets a texture in this list by its name.
-	 * @param name the name of the texture.
-	 * @return a valid index if found, or -1 if not.
-	 */
-	public T getTextureByName(String name)
-	{
-		return list.getUsingKey(name);
 	}
 	
 	/**
@@ -101,6 +91,16 @@ public abstract class CommonTextureList<T extends CommonTexture<?>> implements B
 	{
 		return list.get(index);
 	}
+
+	/**
+	 * Gets a texture in this list by its name.
+	 * @param name the name of the texture.
+	 * @return a valid index if found, or -1 if not.
+	 */
+	public T getTextureByName(String name)
+	{
+		return list.getUsingKey(name);
+	}
 	
 	/**
 	 * Attempts to remove a texture entry by its name.
@@ -108,7 +108,7 @@ public abstract class CommonTextureList<T extends CommonTexture<?>> implements B
 	 * @param name the name of the entry.
 	 * @return true if removed, false if not.
 	 */
-	public T removeEntry(String name)
+	public T remove(String name)
 	{
 		return list.removeUsingKey(name);
 	}
@@ -119,7 +119,7 @@ public abstract class CommonTextureList<T extends CommonTexture<?>> implements B
 	 * @param index the index to use. 
 	 * @return the entry removed, or <code>null</code> if no entry at that index.
 	 */
-	public T removeEntryByIndex(int index)
+	public T removeIndex(int index)
 	{
 		return list.removeIndex(index);
 	}

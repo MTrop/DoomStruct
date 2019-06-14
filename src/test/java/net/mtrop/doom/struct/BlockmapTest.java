@@ -10,9 +10,9 @@ package net.mtrop.doom.struct;
 import java.io.IOException;
 
 import net.mtrop.doom.WadFile;
-import net.mtrop.doom.map.bsp.BSPBlockmap;
 import net.mtrop.doom.LoggingFactory;
 import net.mtrop.doom.LoggingFactory.Logger;
+import net.mtrop.doom.map.data.Blockmap;
 
 
 public final class BlockmapTest
@@ -21,7 +21,7 @@ public final class BlockmapTest
 	{
 		Logger logger = LoggingFactory.createConsoleLoggerFor(BlockmapTest.class);
 		WadFile wad = new WadFile(args[0]);
-		BSPBlockmap blockmap = wad.getDataAs("BLOCKMAP", BSPBlockmap.class);
+		Blockmap blockmap = wad.getDataAs("BLOCKMAP", Blockmap.class);
 		logger.info(blockmap.toBytes());
 		wad.close();
 	}

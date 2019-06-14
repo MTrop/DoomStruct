@@ -21,6 +21,7 @@ import net.mtrop.doom.util.NameUtils;
 
 /**
  * A list of names of available patch entries for texture composition.
+ * Texture patches use indices that reference this list.
  * @author Matthew Tropiano
  */
 public class PatchNames implements BinaryObject, Iterable<String>, Sizable
@@ -58,7 +59,7 @@ public class PatchNames implements BinaryObject, Iterable<String>, Sizable
 	 * @throws IllegalArgumentException if the provided name is not a valid entry name.
 	 * @see NameUtils#isValidEntryName(String) 
 	 */
-	public int addEntry(String name)
+	public int add(String name)
 	{
 		NameUtils.checkValidEntryName(name);
 		if (nameList.contains(name))
@@ -74,7 +75,7 @@ public class PatchNames implements BinaryObject, Iterable<String>, Sizable
 	 * @param index the index to look up.
 	 * @return the corresponding index or <code>null</code> if no corresponding entry. 
 	 */
-	public String getEntry(int index)
+	public String get(int index)
 	{
 		return nameList.get(index);
 	}
@@ -85,7 +86,7 @@ public class PatchNames implements BinaryObject, Iterable<String>, Sizable
 	 * @param name the name of the patch.
 	 * @return a valid index if found, or -1 if not.
 	 */
-	public int getIndexOfEntry(String name)
+	public int indexOf(String name)
 	{
 		return nameList.getIndexOf(name);
 	}
@@ -96,7 +97,7 @@ public class PatchNames implements BinaryObject, Iterable<String>, Sizable
 	 * @param name the name of the entry.
 	 * @return true if removed, false if not.
 	 */
-	public boolean removeEntry(String name)
+	public boolean remove(String name)
 	{
 		return nameList.remove(name);
 	}
@@ -107,7 +108,7 @@ public class PatchNames implements BinaryObject, Iterable<String>, Sizable
 	 * @param index the index to use. 
 	 * @return the entry removed, or <code>null</code> if no entry at that index.
 	 */
-	public String removeEntryByIndex(int index)
+	public String removeIndex(int index)
 	{
 		return nameList.removeIndex(index);
 	}
@@ -119,7 +120,7 @@ public class PatchNames implements BinaryObject, Iterable<String>, Sizable
 		SerialReader sr = new SerialReader(SerialReader.LITTLE_ENDIAN);
 		int n = sr.readInt(in);
 		while (n-- > 0)
-			addEntry(NameUtils.toValidEntryName(NameUtils.nullTrim(new String(sr.readBytes(in, 8), "ASCII"))));
+			add(NameUtils.toValidEntryName(NameUtils.nullTrim(new String(sr.readBytes(in, 8), "ASCII"))));
 	}
 
 	@Override

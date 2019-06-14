@@ -13,6 +13,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.Set;
 
 import net.mtrop.doom.exception.TextureException;
 import net.mtrop.doom.struct.Sizable;
@@ -59,7 +60,7 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 				for (int j = 0; j < t.getPatchCount(); j++)
 				{
 					CommonPatch p = t.getPatch(j);
-					String patchName = pnames.getEntry(p.getPatchIndex());
+					String patchName = pnames.get(p.getNameIndex());
 					if (patchName == null)
 						throw new TextureException("Index "+j+" in PNAMES does not exist!");
 					Patch newpatch = newtex.createPatch(patchName);
@@ -81,20 +82,25 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 	}
 	
 	/**
-	 * Returns an entry for a texture by name.
-	 * @param textureName the texture name to search for.
-	 * @return a texture with the composite information, or <code>null</code> if the texture could not be found.
+	 * Adds a texture.
+	 * The texture being added is deep-copied, such that altering 
+	 * the texture being added will not affect the one in this set.
+	 * @param texture the texture to add.
+	 * @throws IllegalArgumentException if the texture to add is null. 
 	 */
-	public Texture getTextureByName(String textureName)
+	public void addTexture(Texture texture)
 	{
-		return textureList.getUsingKey(textureName);
+		if (texture == null)
+			throw new IllegalArgumentException("texture cannot be null");
+		textureList.add(texture);
 	}
-	
+
 	/**
 	 * Creates a new entry for a texture, already added.
 	 * @param textureName the name of the texture to add.
 	 * @return a new, empty texture.
 	 * @throws IllegalArgumentException if the texture name is empty or not a valid texture name.
+	 * @see NameUtils#isValidTextureName(String)
 	 */
 	public Texture createTexture(String textureName)
 	{
@@ -104,6 +110,26 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 		return out;
 	}
 
+	/**
+	 * Returns a texture at a particular index.
+	 * @param index the index of the texture to get.
+	 * @return the corresponding removed texture, or <code>null</code> if not removed.
+	 */
+	public Texture getTexture(int index)
+	{
+		return textureList.get(index);
+	}
+
+	/**
+	 * Returns an entry for a texture by name.
+	 * @param textureName the texture name to search for.
+	 * @return a texture with the composite information, or <code>null</code> if the texture could not be found.
+	 */
+	public Texture getTextureByName(String textureName)
+	{
+		return textureList.getUsingKey(textureName);
+	}
+	
 	/**
 	 * Returns a sequence of texture names. Order and list of entries
 	 * are dependent on the order of all of the textures in this set.
@@ -158,16 +184,6 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 	}
 
 	/**
-	 * Returns a texture at a particular index.
-	 * @param index the index of the texture to get.
-	 * @return the corresponding removed texture, or <code>null</code> if not removed.
-	 */
-	public Texture getTexture(int index)
-	{
-		return textureList.get(index);
-	}
-
-	/**
 	 * Shifts the ordering of a texture.
 	 * @param index the old index.
 	 * @param newIndex the new index.
@@ -193,6 +209,74 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 	public void sort(Comparator<Texture> comparator)
 	{
 		textureList.sort(comparator);
+	}
+
+	/**
+	 * Exports this {@link TextureSet}'s contents into a PNAMES and TEXTUREx lump.
+	 * This looks up patch indices as it exports - if a patch name does not exist in <code>pnames</code>,
+	 * it is added.
+	 * <p>
+	 * In the end, <code>pnames</code> and <code>texture1</code> will be the objects whose contents will change.
+	 * @param <P> the inferred patch type of the provided TextureLists.
+	 * @param <T> the inferred texture type of the provided TextureLists.
+	 * @param pnames the patch names lump to add names to.
+	 * @param texture1 the first texture list to write to.
+	 */
+	public <P extends CommonPatch, T extends CommonTexture<P>> void export(PatchNames pnames, CommonTextureList<T> texture1)
+	{
+		export(pnames, texture1, null, null);
+	}
+
+	/**
+	 * Exports this {@link TextureSet}'s contents into a PNAMES and TEXTUREx lump.
+	 * This looks up patch indices as it exports - if a patch name does not exist in <code>pnames</code>,
+	 * it is added.
+	 * <p>
+	 * In the end, <code>pnames</code> and <code>texture1</code>/<code>texture2</code> will be the objects whose contents will change.
+	 * @param <P> the inferred patch type of the provided TextureLists.
+	 * @param <T> the inferred texture type of the provided TextureLists.
+	 * @param pnames the patch names lump to add names to.
+	 * @param texture1 the first texture list to write to.
+	 * @param texture2 the second texture list to write to. Can be null.
+	 * @param texture1NameSet the set of texture names that will be written to the first texture list. Can be null (exports all names to <code>texture1</code>).
+	 */
+	public <P extends CommonPatch, T extends CommonTexture<P>> void export(PatchNames pnames, CommonTextureList<T> texture1, CommonTextureList<T> texture2, Set<String> texture1NameSet)
+	{
+		for (Texture texture : this)
+		{
+			CommonTexture<P> ndt;
+			
+			String tname = texture.getName();
+			
+			if (texture1NameSet == null || texture1NameSet.contains(tname))
+				ndt = texture1.createTexture(tname);
+			else
+				ndt = texture2.createTexture(tname);
+	
+			ndt.setWidth(texture.getWidth());
+			ndt.setHeight(texture.getHeight());
+			
+			int index = -1;
+			for (int i = 0; i < texture.getPatchCount(); i++)
+			{
+				Patch patch = texture.getPatch(i);
+				
+				String pname = patch.getName();
+				
+				index = pnames.indexOf(pname);
+				if (index == -1)
+				{
+					pnames.add(pname);
+					index = pnames.indexOf(pname);
+				}	
+				
+				P ndtp = ndt.createPatch();
+				ndtp.setOriginX(patch.getOriginX());
+				ndtp.setOriginY(patch.getOriginY());
+				ndtp.setNameIndex(index);
+			}
+	
+		}
 	}
 
 	@Override
@@ -234,6 +318,16 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 			width = 0;
 			height = 0;
 			patches = new ArrayList<TextureSet.Patch>(2);
+		}
+		
+		private Texture(Texture texture)
+		{
+			this.name = texture.name;
+			width = texture.width;
+			height = texture.height;
+			patches = new ArrayList<TextureSet.Patch>(texture.getPatchCount());
+			for (Patch p : texture.patches)
+				patches.add(new Patch(p));
 		}
 		
 		/** 
@@ -385,10 +479,17 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 		private Patch(String name)
 		{
 			this.name = name;
-			originX = 0;
-			originY = 0;
+			this.originX = 0;
+			this.originY = 0;
 		}
-		
+
+		private Patch(Patch patch)
+		{
+			this.name = patch.name;
+			this.originX = patch.originX;
+			this.originY = patch.originY;
+		}
+
 		/** @return the patch name. */
 		public String getName()
 		{
@@ -426,4 +527,5 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 		}
 		
 	}
+	
 }

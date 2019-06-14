@@ -377,7 +377,7 @@ public class WadFile implements Wad, AutoCloseable
 		file.seek(entryListOffset);
 		file.write(data);
 		entryListOffset += data.length;
-		if (noFlush)
+		if (!noFlush)
 			flushEntries();
 		return entry;
 	}
@@ -417,7 +417,7 @@ public class WadFile implements Wad, AutoCloseable
 		file.seek(entryListOffset);
 		file.write(data);
 		entryListOffset += data.length;
-		if (noFlush)
+		if (!noFlush)
 			flushEntries();
 		return entry;
 	}

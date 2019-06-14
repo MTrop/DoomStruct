@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.mtrop.doom.io.IOUtils;
 import net.mtrop.doom.io.SerialReader;
 import net.mtrop.doom.io.SerialWriter;
 import net.mtrop.doom.object.BinaryObject;
@@ -821,7 +820,7 @@ public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 	 * Sets the player viewpoint index that this demo is being played back from.
 	 * Zero is player 1.
 	 * @param viewpoint the new viewpoint index.
-	 * @throws IllegalArgumentException if episode is outside the range 0 to 255.
+	 * @throws IllegalArgumentException if viewpoint is outside the range 0 to 255.
 	 */
 	public void setViewpoint(int viewpoint)
 	{
@@ -935,22 +934,6 @@ public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 	public Iterator<Tic[]> iterator()
 	{
 		return gameTics.iterator();
-	}
-
-	@Override
-	public byte[] toBytes()
-	{
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		try { writeBytes(bos); } catch (IOException e) { /* Shouldn't happen. */ }
-		return bos.toByteArray();
-	}
-
-	@Override
-	public void fromBytes(byte[] data) throws IOException
-	{
-		ByteArrayInputStream bin = new ByteArrayInputStream(data);
-		readBytes(bin);
-		IOUtils.close(bin);
 	}
 
 	@Override

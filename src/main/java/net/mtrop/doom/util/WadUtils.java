@@ -16,7 +16,6 @@ import java.util.regex.Pattern;
 import net.mtrop.doom.Wad;
 import net.mtrop.doom.WadEntry;
 import net.mtrop.doom.WadFile;
-import net.mtrop.doom.io.SerializerUtils;
 
 /**
  * WAD utility methods and functions.
@@ -77,10 +76,10 @@ public final class WadUtils
 	{
 		List<WadEntry> entryList = new ArrayList<WadEntry>(100);
 		
-		int start = wad.getIndexOf(prefix+"_START");
+		int start = wad.indexOf(prefix+"_START");
 		if (start > 0)
 		{
-			int end = wad.getIndexOf(prefix+"_END");
+			int end = wad.indexOf(prefix+"_END");
 			if (end > 0)
 			{
 				for (int i = start + 1; i < end; i++)
@@ -96,53 +95,6 @@ public final class WadUtils
 		WadEntry[] entry = new WadEntry[entryList.size()];
 		entryList.toArray(entry);
 		return entry;
-	}
-
-	/**
-	 * Scans through texture lump data in order to detect whether it is for Strife or not.
-	 * @param b the texture lump data.
-	 * @return true if it is Strife texture data, false if not.
-	 */
-	public static boolean isStrifeTextureData(byte[] b)
-	{
-		int ptr = 0;
-		byte[] buf = new byte[4];
-	
-		System.arraycopy(b, ptr, buf, 0, 4);
-		int textureCount = SerializerUtils.bytesToInt(buf, 0, SerializerUtils.LITTLE_ENDIAN);
-		ptr = (textureCount * 4) + 20;
-		
-		boolean good = true;
-		while (ptr < b.length && good)
-		{
-			System.arraycopy(b, ptr, buf, 0, 4);
-			
-			// test for unused texture data.
-			if (SerializerUtils.bytesToInt(buf, 0, SerializerUtils.LITTLE_ENDIAN) != 0)
-				good = false;
-	
-			// test for unused patch data.
-			else
-			{
-				ptr += 4;
-				System.arraycopy(b, ptr, buf, 0, 2);
-				int patches = SerializerUtils.bytesToInt(buf, 0, SerializerUtils.LITTLE_ENDIAN);
-				ptr += 2;
-				while (patches > 0)
-				{
-					ptr += 6;
-					System.arraycopy(b, ptr, buf, 0, 4);
-					int x = SerializerUtils.bytesToInt(buf, 0, SerializerUtils.LITTLE_ENDIAN);
-					if (x > 1 || x < 0)
-						good = false;
-					ptr += 4;
-					patches--;
-				}
-				ptr += 16;
-			}
-		}
-		
-		return !good;
 	}
 
 }

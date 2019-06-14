@@ -119,7 +119,7 @@ public interface Wad extends Iterable<WadEntry>
 	 */
 	default WadEntry getEntry(String entryName, String startEntryName)
 	{
-		int start = getIndexOf(startEntryName);
+		int start = indexOf(startEntryName);
 		return start >= 0 ? getEntry(entryName, start) : null;
 	}
 
@@ -230,7 +230,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @param entryName the name of the entry to find.
 	 * @return the index of the entry in this file, or -1 if not found.
 	 */
-	default int getIndexOf(String entryName)
+	default int indexOf(String entryName)
 	{
 		return getIndexOf(entryName, 0);
 	}
@@ -262,7 +262,7 @@ public interface Wad extends Iterable<WadEntry>
 	 */
 	default int getIndexOf(String entryName, String startEntryName)
 	{
-		int start = getIndexOf(startEntryName);
+		int start = indexOf(startEntryName);
 		return start >= 0 ? getIndexOf(entryName, start) : -1;
 	}
 
@@ -372,7 +372,7 @@ public interface Wad extends Iterable<WadEntry>
 	 */
 	default InputStream getInputStream(String entryName) throws IOException
 	{
-		int index = getIndexOf(entryName);
+		int index = indexOf(entryName);
 		return index >= 0 ? getInputStream(index) : null;
 	}
 

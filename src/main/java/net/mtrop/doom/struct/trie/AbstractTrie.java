@@ -411,7 +411,6 @@ public abstract class AbstractTrie<V extends Object, S extends Object> implement
 	{
 		private AbstractTrie<V, S> self;
 		private Queue<Node<V, S>> edgeQueue;
-		private V next;
 		
 		private TrieIterator(AbstractTrie<V, S> trie)
 		{
@@ -432,17 +431,11 @@ public abstract class AbstractTrie<V extends Object, S extends Object> implement
 			{
 				Node<V, S> node = seekForQueue();
 				if (node.value != null)
-					return next = node.value;
+					return node.value;
 			}
 			return null;
 		}
 	
-		@Override
-		public void remove()
-		{
-			self.remove(next);
-		}
-
 		/**
 		 * Resets this iterator.
 		 */

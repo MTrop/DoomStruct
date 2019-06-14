@@ -18,15 +18,15 @@ import java.util.Set;
 
 import net.mtrop.doom.Wad;
 import net.mtrop.doom.WadEntry;
+import net.mtrop.doom.bsp.BSPTree;
+import net.mtrop.doom.bsp.data.BSPNode;
+import net.mtrop.doom.bsp.data.BSPSegment;
+import net.mtrop.doom.bsp.data.BSPSubsector;
 import net.mtrop.doom.exception.MapException;
 import net.mtrop.doom.map.DoomMap;
 import net.mtrop.doom.map.HexenMap;
 import net.mtrop.doom.map.MapFormat;
 import net.mtrop.doom.map.UDMFMap;
-import net.mtrop.doom.map.bsp.BSPNode;
-import net.mtrop.doom.map.bsp.BSPSegment;
-import net.mtrop.doom.map.bsp.BSPSubsector;
-import net.mtrop.doom.map.bsp.BSPTree;
 import net.mtrop.doom.map.data.DoomLinedef;
 import net.mtrop.doom.map.data.DoomSector;
 import net.mtrop.doom.map.data.DoomSidedef;
@@ -478,7 +478,7 @@ public final class MapUtils
 	 */
 	public static int getMapEntryCount(Wad wad, String headerName)
 	{
-		int start = wad.getIndexOf(headerName);
+		int start = wad.indexOf(headerName);
 		if (start < 0)
 			return 0;
 		else

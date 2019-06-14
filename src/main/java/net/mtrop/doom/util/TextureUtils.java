@@ -8,21 +8,17 @@
 package net.mtrop.doom.util;
 
 import java.io.IOException;
-import java.util.Set;
 
 import net.mtrop.doom.Wad;
 import net.mtrop.doom.exception.TextureException;
 import net.mtrop.doom.exception.WadException;
+import net.mtrop.doom.io.SerializerUtils;
 import net.mtrop.doom.object.BinaryObject;
-import net.mtrop.doom.texture.CommonPatch;
-import net.mtrop.doom.texture.CommonTexture;
 import net.mtrop.doom.texture.CommonTextureList;
 import net.mtrop.doom.texture.DoomTextureList;
 import net.mtrop.doom.texture.PatchNames;
 import net.mtrop.doom.texture.StrifeTextureList;
 import net.mtrop.doom.texture.TextureSet;
-import net.mtrop.doom.texture.TextureSet.Texture;
-import net.mtrop.doom.texture.TextureSet.Patch;
 
 /**
  * Graphics utility methods for image types.
@@ -55,7 +51,7 @@ public final class TextureUtils
 		boolean isStrife = false;
 		
 		// figure out if Strife or Doom Texture Lump.
-		if (WadUtils.isStrifeTextureData(textureData))
+		if (TextureUtils.isStrifeTextureData(textureData))
 		{
 			textureList1 = BinaryObject.create(StrifeTextureList.class, textureData);
 			isStrife = true;
@@ -91,63 +87,52 @@ public final class TextureUtils
 
 		return out;
 	}
-	
+
 	/**
-	 * Exports a {@link TextureSet}'s contents into a PNAMES and TEXTUREx lump.
-	 * This looks up patch indices as it exports - if a patch name does not exist in <code>pnames</code>,
-	 * it is added.
-	 * <p>
-	 * In the end, <code>pnames</code> and <code>texture1</code>/<code>texture2</code> will be the objects whose contents will change.
-	 * @param <P> the inferred patch type of the provided TextureLists.
-	 * @param <T> the inferred texture type of the provided TextureLists.
-	 * @param textureSet the set of textures to export.
-	 * @param pnames the patch names lump.
-	 * @param texture1 the first texture list to write to.
-	 * @param texture2 the second texture list to write to. Can be null.
-	 * @param texture1NameSet the set of texture names that will be written to the first texture list. Can be null (exports all names to <code>texture1</code>).
+	 * Scans through texture lump data in order to detect whether it is for Strife or not.
+	 * @param b the texture lump data.
+	 * @return true if it is Strife texture data, false if not.
 	 */
-	public static <P extends CommonPatch, T extends CommonTexture<P>> void exportTextureSet(
-			TextureSet textureSet, 
-			PatchNames pnames, 
-			CommonTextureList<T> texture1, 
-			CommonTextureList<T> texture2, 
-			Set<String> texture1NameSet
-	){
-		for (Texture texture : textureSet)
-		{
-			CommonTexture<P> ndt;
-			
-			String tname = texture.getName();
-			
-			if (texture1NameSet == null || texture1NameSet.contains(tname))
-				ndt = texture1.createTexture(tname);
-			else
-				ndt = texture2.createTexture(tname);
-
-			ndt.setWidth(texture.getWidth());
-			ndt.setHeight(texture.getHeight());
-			
-			int index = -1;
-			for (int i = 0; i < texture.getPatchCount(); i++)
-			{
-				Patch patch = texture.getPatch(i);
-				
-				String pname = patch.getName();
-				
-				index = pnames.getIndexOfEntry(pname);
-				if (index == -1)
-				{
-					pnames.addEntry(pname);
-					index = pnames.getIndexOfEntry(pname);
-				}	
-				
-				P ndtp = ndt.createPatch();
-				ndtp.setOriginX(patch.getOriginX());
-				ndtp.setOriginY(patch.getOriginY());
-				ndtp.setPatchIndex(index);
-			}
-
-		}
-	}
+	public static boolean isStrifeTextureData(byte[] b)
+	{
+		int ptr = 0;
+		byte[] buf = new byte[4];
+	
+		System.arraycopy(b, ptr, buf, 0, 4);
+		int textureCount = SerializerUtils.bytesToInt(buf, 0, SerializerUtils.LITTLE_ENDIAN);
+		ptr = (textureCount * 4) + 20;
 		
+		boolean good = true;
+		while (ptr < b.length && good)
+		{
+			System.arraycopy(b, ptr, buf, 0, 4);
+			
+			// test for unused texture data.
+			if (SerializerUtils.bytesToInt(buf, 0, SerializerUtils.LITTLE_ENDIAN) != 0)
+				good = false;
+	
+			// test for unused patch data.
+			else
+			{
+				ptr += 4;
+				System.arraycopy(b, ptr, buf, 0, 2);
+				int patches = SerializerUtils.bytesToInt(buf, 0, SerializerUtils.LITTLE_ENDIAN);
+				ptr += 2;
+				while (patches > 0)
+				{
+					ptr += 6;
+					System.arraycopy(b, ptr, buf, 0, 4);
+					int x = SerializerUtils.bytesToInt(buf, 0, SerializerUtils.LITTLE_ENDIAN);
+					if (x > 1 || x < 0)
+						good = false;
+					ptr += 4;
+					patches--;
+				}
+				ptr += 16;
+			}
+		}
+		
+		return !good;
+	}
+
 }

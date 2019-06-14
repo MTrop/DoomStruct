@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
  ******************************************************************************/
-package net.mtrop.doom.map.bsp;
+package net.mtrop.doom.map.data;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,7 +22,7 @@ import net.mtrop.doom.object.BinaryObject;
  * "see" other sectors on the map used for thing sight algorithms. 
  * @author Matthew Tropiano
  */
-public class BSPReject implements BinaryObject
+public class Reject implements BinaryObject
 {
 	private static final byte[] BITMASK = {0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, (byte)0x80};
 	
@@ -33,7 +33,7 @@ public class BSPReject implements BinaryObject
 	 * Creates a new blank reject grid.
 	 * @param sectors the number of sectors.
 	 */
-	public BSPReject(int sectors)
+	public Reject(int sectors)
 	{
 		grid = new boolean[sectors][sectors];
 	}

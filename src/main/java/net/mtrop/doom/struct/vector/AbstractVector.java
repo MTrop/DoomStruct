@@ -453,18 +453,13 @@ public abstract class AbstractVector<T extends Object> extends AbstractArrayStor
 		
 		public boolean hasNext()
 		{
-			while (currIndex < storageArray.length && get(currIndex) == null)
-				currIndex++;
-				
-			return currIndex != storageArray.length;
+			return currIndex < size();
 		}
 	
 		public T next()
 		{
-			T out = get(currIndex);
-			do {currIndex++;} while (currIndex < storageArray.length && get(currIndex) == null);
 			removeCalled = false;
-			return out;
+			return get(currIndex++);
 		}
 	
 		public void remove()
@@ -472,7 +467,8 @@ public abstract class AbstractVector<T extends Object> extends AbstractArrayStor
 			if (removeCalled)
 				throw new IllegalStateException("remove() called before next()");
 			
-			removeIndex(currIndex-1);
+			removeIndex(currIndex - 1);
+			currIndex--;
 			removeCalled = true;
 		}
 

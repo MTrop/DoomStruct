@@ -15,6 +15,7 @@ import java.awt.image.BufferedImage;
 import net.mtrop.doom.graphics.Colormap;
 import net.mtrop.doom.graphics.EndDoom;
 import net.mtrop.doom.graphics.Flat;
+import net.mtrop.doom.graphics.PNGPicture;
 import net.mtrop.doom.graphics.Palette;
 import net.mtrop.doom.graphics.Picture;
 
@@ -195,6 +196,30 @@ public final class GraphicUtils
 				}
 			}
 		
+		return out;
+	}
+
+	/**
+	 * Creates a {@link PNGPicture} from a {@link Picture}.
+	 * @param picture the Picture to convert.
+	 * @param palette the palette to use as a color source.
+	 * @return a full color image of the indexed-color Flat. 
+	 */
+	public static PNGPicture createPNGImage(Picture picture, Palette palette)
+	{
+		return createPNGImage(picture, palette, null);	
+	}
+
+	/**
+	 * Creates a {@link PNGPicture} from a {@link Picture}.
+	 * @param picture the Picture to convert.
+	 * @param palette the palette to use as a color source.
+	 * @param colormap the colormap for palette translation, if any. Can be null for no translation.
+	 * @return a full color image of the indexed-color Flat. 
+	 */
+	public static PNGPicture createPNGImage(Picture picture, Palette palette, Colormap colormap)
+	{
+		PNGPicture out = new PNGPicture(createImage(picture, palette, colormap));
 		return out;
 	}
 

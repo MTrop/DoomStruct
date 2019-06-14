@@ -70,7 +70,7 @@ public abstract class CommonPatch implements BinaryObject
 	/** 
 	 * @return the patch's index into the patch name lump. 
 	 */
-	public int getPatchIndex()
+	public int getNameIndex()
 	{
 		return patchIndex;
 	}
@@ -79,8 +79,9 @@ public abstract class CommonPatch implements BinaryObject
 	 * Sets the patch's index into the patch name lump.
 	 * @param patchIndex the patch index. 
 	 * @throws IllegalArgumentException if <code>patchIndex</code> is less than 0 or more than 65535.
+	 * @see PatchNames
 	 */
-	public void setPatchIndex(int patchIndex)
+	public void setNameIndex(int patchIndex)
 	{
 		RangeUtils.checkShortUnsigned("Patch Index", patchIndex);
 		this.patchIndex = patchIndex;
@@ -90,7 +91,7 @@ public abstract class CommonPatch implements BinaryObject
 	public String toString()
 	{
 		StringBuilder sb = new StringBuilder();
-		sb.append("Patch ");
+		sb.append("Patch Name #");
 		sb.append(patchIndex);
 		sb.append(" (");
 		sb.append(originX);

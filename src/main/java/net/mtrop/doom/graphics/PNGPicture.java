@@ -26,11 +26,11 @@ import net.mtrop.doom.object.BinaryObject;
 import net.mtrop.doom.object.GraphicObject;
 
 /**
- * Represents PNG-formatted data.
- * The export functions write this data back as PNG.
+ * Represents PNG-formatted data as a decompressed image, preserving offset information (grAb).
+ * The export functions write this data back as PNG with offset information.
  * @author Matthew Tropiano
  */
-public class PNGImage implements BinaryObject, GraphicObject
+public class PNGPicture implements BinaryObject, GraphicObject
 {
 	private static final String PNG_OFFSET_CHUNK = "grAb";
 	
@@ -44,7 +44,7 @@ public class PNGImage implements BinaryObject, GraphicObject
 	/**
 	 * Creates a new image with dimensions (1, 1).
 	 */
-	public PNGImage()
+	public PNGPicture()
 	{
 		this(1, 1);
 	}
@@ -54,7 +54,7 @@ public class PNGImage implements BinaryObject, GraphicObject
 	 * @param width	the width of the patch in pixels.
 	 * @param height the height of the patch in pixels.
 	 */
-	public PNGImage(int width, int height)
+	public PNGPicture(int width, int height)
 	{
 		this.image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		this.offsetX = 0;
@@ -65,7 +65,7 @@ public class PNGImage implements BinaryObject, GraphicObject
 	 * Creates a new PNG data image from another image.
 	 * @param image	the source image.
 	 */
-	public PNGImage(BufferedImage image)
+	public PNGPicture(BufferedImage image)
 	{
 		this(image.getWidth(), image.getHeight());
 		setImage(image);

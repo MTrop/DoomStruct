@@ -123,12 +123,15 @@ Open `SQUARE1.PK3`, fetch `maps/E1A1.WAD` and read it into a UDMF Map.
 	UDMFMap map = wad.getTextDataAs("textmap", Charset.forName("UTF-8"), UDMFMap.class);
 	pk3.close();
 
-Open `DOOM2.WAD`, read `DEMO2` and figure out its duration in seconds.
+Open `DOOM2.WAD`, read `DEMO2` and figure out how many tics that player 1 was pushing "fire".
 
 	WadFile wad = new WadFile("doom2.wad");
 	Demo demo = wad.getDataAs("demo2", Demo.class);
+	int tics = 0;
+	for (int i = 0; i < demo.getTicCount(); i++) {
+		tics += (demo.getTic(i).getAction() & ACTION_FIRE) != 0 ? 1 : 0;
+	}
 	wad.close();
-	double duration = demo.getLength();
 
 Open `DOOM2.WAD`, fetch all `TROO*` (graphic) entries and export them as PNGs.
 
@@ -153,6 +156,31 @@ Open `DOOM.WAD`, fetch all `DS*` (audio) entries, upsample them to 22kHz (cosine
 		}
 	}
 	wad.close();
+
+Open `DOOM2.WAD`, assemble a TextureSet, remove every texture that begins with `R`, and write it to a new WAD.
+
+	WadFile wad = new WadFile("doom2.wad");
+	TextureSet textureSet = new TextureSet(
+		wad.getDataAs("pnames", PatchNames.class),
+		wad.getDataAs("texture1", DoomTextureList.class)
+	);
+	wad.close();
+	
+	Iterator<TextureSet.Texture> it = textureSet.iterator();
+	while (it.hasNext()) {
+		TextureSet.Texture t = it.next();
+		if (t.getName().startsWith("R"))
+			it.remove();
+	}
+	PatchNames pout = new PatchNames();
+	DoomTextureList tout = new DoomTextureList();
+	textureSet.export(pout, tout);
+	
+	WadFile newwad = WadFile.createWadFile("new.wad");
+	newwad.addData("PNAMES", pout.toBytes());
+	newwad.addData("TEXTURE1", tout.toBytes());
+	newwad.close();
+
 
 
 ### Compiling with Ant

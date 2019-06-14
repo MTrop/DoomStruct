@@ -116,7 +116,7 @@ public class Animated implements BinaryObject, Iterable<Animated.Entry>, Sizable
 	 * @return the corresponding entry, or <code>null</code> if no corresponding entry for that index.
 	 * @throws IndexOutOfBoundsException if the index is out of range (less than 0 or greater than or equal to getFlatCount()).
 	 */
-	public Entry getEntry(int i)
+	public Entry get(int i)
 	{
 		return entryList.get(i);
 	}

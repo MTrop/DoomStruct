@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
  ******************************************************************************/
-package net.mtrop.doom.map.bsp;
+package net.mtrop.doom.map.data;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,7 +27,7 @@ import net.mtrop.doom.util.RangeUtils;
  * This aids in collision detection for linedefs.
  * @author Matthew Tropiano
  */
-public class BSPBlockmap implements BinaryObject
+public class Blockmap implements BinaryObject
 {
 	private static final Queue<Integer> EMPTY_QUEUE = new LinkedList<>();
 	
@@ -42,7 +42,7 @@ public class BSPBlockmap implements BinaryObject
 	/**
 	 * Creates a new Blockmap, startX and startY set to 0.
 	 */
-	public BSPBlockmap()
+	public Blockmap()
 	{
 		this(0, 0);
 	}
@@ -53,7 +53,7 @@ public class BSPBlockmap implements BinaryObject
 	 * @param startY the grid lower-left start position (y-axis).
 	 * @throws IllegalArgumentException if <code>startX</code> or <code>startY</code> is outside the range of -32768 to 32767.
 	 */
-	public BSPBlockmap(int startX, int startY)
+	public Blockmap(int startX, int startY)
 	{
 		RangeUtils.checkShort("Grid start X", startX);
 		RangeUtils.checkShort("Grid start Y", startY);

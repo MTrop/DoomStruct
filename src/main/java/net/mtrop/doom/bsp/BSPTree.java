@@ -5,10 +5,14 @@
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
  ******************************************************************************/
-package net.mtrop.doom.map.bsp;
+package net.mtrop.doom.bsp;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import net.mtrop.doom.bsp.data.BSPNode;
+import net.mtrop.doom.bsp.data.BSPSegment;
+import net.mtrop.doom.bsp.data.BSPSubsector;
 
 /**
  * BSP Tree Abstraction.

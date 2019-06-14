@@ -61,11 +61,13 @@ public class Colormap implements BinaryObject
 	/**
 	 * Resets the color map to where each color is mapped to its own index
 	 * (index 0 is palette color 0 ... index 255 is palette color 255).
+	 * @return itself, to chain colormap calls.
 	 */
-	public void setIdentity()
+	public Colormap setIdentity()
 	{
 		for (int i = 0; i < NUM_INDICES; i++)
 			indices[i] = i;
+		return this;
 	}
 
 	/**
@@ -74,8 +76,9 @@ public class Colormap implements BinaryObject
 	 * @param endIndex the ending replacement index.
 	 * @param startValue the starting replacement value.
 	 * @param endValue the ending replacement value.
+	 * @return itself, to chain colormap calls.
 	 */
-	public void setTranslation(int startIndex, int endIndex, int startValue, int endValue)
+	public Colormap setTranslation(int startIndex, int endIndex, int startValue, int endValue)
 	{
 		int min = Math.min(startIndex, endIndex);
 		int max = Math.max(startIndex, endIndex);
@@ -84,6 +87,16 @@ public class Colormap implements BinaryObject
 		
 		for (int i = min; i <= max; i++)
 			indices[i] = (int)MathUtils.linearInterpolate((i - min) / len, startValue, endValue);
+		return this;
+	}
+	
+	/**
+	 * Creates a new colormap by copying the contents of this one.
+	 * @return itself, to chain colormap calls.
+	 */
+	public Colormap copy()
+	{
+		return new Colormap(this);
 	}
 	
 	/**
@@ -104,12 +117,12 @@ public class Colormap implements BinaryObject
 	 * @throws ArrayIndexOutOfBoundsException if index is greater than 255 or less than 0.
 	 * @throws IllegalArgumentException if paletteIndex is less than 0 or greater than 255.
 	 */
-	public void setPaletteIndex(int index, int paletteIndex)
+	public Colormap setPaletteIndex(int index, int paletteIndex)
 	{
 		if (paletteIndex < 0 || paletteIndex > 255)
 			throw new IllegalArgumentException("Palette index is out of range. Must be from 0 to 255.");
-		
 		indices[index] = paletteIndex;
+		return this;
 	}
 	
 	@Override
@@ -136,7 +149,5 @@ public class Colormap implements BinaryObject
 	{
 		return "Colormap " + java.util.Arrays.toString(indices);
 	}
-	
-	
 	
 }
