@@ -12,13 +12,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import net.mtrop.doom.io.SerialReader;
 import net.mtrop.doom.io.SerialWriter;
 import net.mtrop.doom.object.BinaryObject;
-import net.mtrop.doom.struct.vector.SortedList;
 import net.mtrop.doom.util.MathUtils;
 
 /**
@@ -449,14 +450,17 @@ public class MUS implements BinaryObject, Iterable<MUS.Event>
 		ByteArrayOutputStream ebos = new ByteArrayOutputStream();
 		SerialWriter esw = new SerialWriter(SerialWriter.LITTLE_ENDIAN);
 		
-		SortedList<Integer> channels = new SortedList<Integer>(4);
-		SortedList<Integer> instruments = new SortedList<Integer>(4);
+		Set<Integer> primaryChannels = new HashSet<Integer>(4);
+		Set<Integer> secondaryChannels = new HashSet<Integer>(4);
+		Set<Integer> instruments = new HashSet<Integer>(4);
 		
 		for (Event event : eventList)
 		{
 			int channel = event.channel;
-			if (!channels.contains(channel))
-				channels.add(channel);
+			if (channel >= 10 && channel <= 14 && !secondaryChannels.contains(channel))
+				secondaryChannels.add(channel);
+			else if (channel < 10 && !primaryChannels.contains(channel))
+				primaryChannels.add(channel);
 
 			switch (event.getType())
 			{
@@ -513,8 +517,8 @@ public class MUS implements BinaryObject, Iterable<MUS.Event>
 		sw.writeBytes(out, MUS_ID);
 		sw.writeUnsignedShort(out, data.length);
 		sw.writeUnsignedShort(out, 4 + (2*(6+instruments.size())));
-		sw.writeUnsignedShort(out, channels.size()-1);
-		sw.writeUnsignedShort(out, 0);
+		sw.writeUnsignedShort(out, primaryChannels.size());
+		sw.writeUnsignedShort(out, secondaryChannels.size());
 		sw.writeUnsignedShort(out, instruments.size());
 		sw.writeUnsignedShort(out, 0);
 		for (Integer i : instruments)
