@@ -5,25 +5,22 @@
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
  ******************************************************************************/
-package net.mtrop.doom.struct;
+package net.mtrop.doom.map.data;
 
 import java.io.IOException;
 
 import net.mtrop.doom.WadFile;
-import net.mtrop.doom.texture.Animated;
-import net.mtrop.doom.LoggingFactory;
-import net.mtrop.doom.LoggingFactory.Logger;
+import net.mtrop.doom.map.data.DoomSector;
+import net.mtrop.doom.map.data.Reject;
 
-
-public final class AnimatedTest
+public final class RejectTest
 {
 	public static void main(String[] args) throws IOException
 	{
-		Logger logger = LoggingFactory.createConsoleLoggerFor(AnimatedTest.class);
-		
 		WadFile wad = new WadFile(args[0]);
-		for (Animated.Entry entry : wad.getDataAs("ANIMATED", Animated.class))
-			logger.info(entry);
+		DoomSector[] sectors = wad.getDataAs("SECTORS", DoomSector.class, DoomSector.LENGTH);
+		Reject reject = new Reject(sectors.length);
+		reject.fromBytes(wad.getData("REJECT"));
 		
 		wad.close();
 	}

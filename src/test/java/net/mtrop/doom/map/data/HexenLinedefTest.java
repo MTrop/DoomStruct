@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
  ******************************************************************************/
-package net.mtrop.doom.map.binary;
+package net.mtrop.doom.map.data;
 
 import java.io.IOException;
 
@@ -13,17 +13,17 @@ import net.mtrop.doom.WadFile;
 import net.mtrop.doom.LoggingFactory;
 import net.mtrop.doom.LoggingFactory.Logger;
 
-import net.mtrop.doom.map.data.DoomThing;
+import net.mtrop.doom.map.data.HexenLinedef;
 
-public class DoomThingTest
+public class HexenLinedefTest
 {
 	public static void main(String[] args) throws IOException
 	{
-		Logger logger = LoggingFactory.createConsoleLoggerFor(DoomThingTest.class);
+		Logger logger = LoggingFactory.createConsoleLoggerFor(HexenLinedefTest.class);
 		
 		WadFile wad = new WadFile(args[0]);
 		int i = 0;
-		for (DoomThing object : wad.getDataAs("THINGS", DoomThing.class, DoomThing.LENGTH))
+		for (HexenLinedef object : wad.getDataAs("LINEDEFS", HexenLinedef.class, HexenLinedef.LENGTH))
 			logger.info((i++) + " " + object);
 		wad.close();
 	}

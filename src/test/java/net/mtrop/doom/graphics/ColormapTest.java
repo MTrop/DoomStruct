@@ -5,24 +5,24 @@
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
  ******************************************************************************/
-package net.mtrop.doom.struct;
+package net.mtrop.doom.graphics;
 
 import java.io.IOException;
 
 import net.mtrop.doom.WadFile;
+import net.mtrop.doom.graphics.Colormap;
+
 import net.mtrop.doom.LoggingFactory;
 import net.mtrop.doom.LoggingFactory.Logger;
-import net.mtrop.doom.map.data.Blockmap;
 
-
-public final class BlockmapTest
+public final class ColormapTest
 {
 	public static void main(String[] args) throws IOException
 	{
-		Logger logger = LoggingFactory.createConsoleLoggerFor(BlockmapTest.class);
+		Logger logger = LoggingFactory.createConsoleLoggerFor(ColormapTest.class);
 		WadFile wad = new WadFile(args[0]);
-		Blockmap blockmap = wad.getDataAs("BLOCKMAP", Blockmap.class);
-		logger.info(blockmap.toBytes());
+		for (Colormap colormap : wad.getDataAs("COLORMAP", Colormap.class, Colormap.LENGTH))
+			logger.info(colormap);
 		wad.close();
 	}
 }

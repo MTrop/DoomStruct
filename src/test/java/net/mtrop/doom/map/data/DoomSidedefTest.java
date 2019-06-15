@@ -5,24 +5,26 @@
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
  ******************************************************************************/
-package net.mtrop.doom.struct;
+package net.mtrop.doom.map.data;
 
 import java.io.IOException;
 
 import net.mtrop.doom.WadFile;
-import net.mtrop.doom.sound.DMXMUS;
 import net.mtrop.doom.LoggingFactory;
 import net.mtrop.doom.LoggingFactory.Logger;
 
+import net.mtrop.doom.map.data.DoomSidedef;
 
-public final class MUSTest
+public class DoomSidedefTest
 {
 	public static void main(String[] args) throws IOException
 	{
-		Logger logger = LoggingFactory.createConsoleLoggerFor(MUSTest.class);
+		Logger logger = LoggingFactory.createConsoleLoggerFor(DoomSidedefTest.class);
+		
 		WadFile wad = new WadFile(args[0]);
-		for (DMXMUS.Event event : wad.getDataAs("D_RUNNIN", DMXMUS.class))
-			logger.info(event);
+		int i = 0;
+		for (DoomSidedef object : wad.getDataAs("SIDEDEFS", DoomSidedef.class, DoomSidedef.LENGTH))
+			logger.info((i++) + " " + object);
 		wad.close();
 	}
 }

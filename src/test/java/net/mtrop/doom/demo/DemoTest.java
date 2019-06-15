@@ -5,23 +5,28 @@
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
  ******************************************************************************/
-package net.mtrop.doom.struct;
+package net.mtrop.doom.demo;
 
 import java.io.IOException;
 
 import net.mtrop.doom.WadFile;
-import net.mtrop.doom.map.data.DoomSector;
-import net.mtrop.doom.map.data.Reject;
+import net.mtrop.doom.demo.Demo;
 
-public final class RejectTest
+import net.mtrop.doom.LoggingFactory;
+import net.mtrop.doom.LoggingFactory.Logger;
+
+public final class DemoTest
 {
 	public static void main(String[] args) throws IOException
 	{
-		WadFile wad = new WadFile(args[0]);
-		DoomSector[] sectors = wad.getDataAs("SECTORS", DoomSector.class, DoomSector.LENGTH);
-		Reject reject = new Reject(sectors.length);
-		reject.fromBytes(wad.getData("REJECT"));
+		Logger logger = LoggingFactory.createConsoleLoggerFor(DemoTest.class);
 		
+		WadFile wad = new WadFile(args[0]);
+		Demo demo = wad.getDataAs("DEMO1", Demo.class);
+		logger.info(demo);
+		for (Demo.Tic[] tics : demo)
+			for (Demo.Tic tic : tics)
+				logger.info(tic);
 		wad.close();
 	}
 }

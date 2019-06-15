@@ -5,36 +5,26 @@
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
  ******************************************************************************/
-package net.mtrop.doom.map.struct;
+package net.mtrop.doom.graphics;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
 
 import net.mtrop.doom.WadFile;
-import net.mtrop.doom.map.udmf.UDMFReader;
-import net.mtrop.doom.map.udmf.UDMFTable;
-import net.mtrop.doom.map.udmf.UDMFWriter;
-
+import net.mtrop.doom.texture.Animated;
 import net.mtrop.doom.LoggingFactory;
 import net.mtrop.doom.LoggingFactory.Logger;
 
 
-public class UDMFReaderTest
+public final class AnimatedTest
 {
 	public static void main(String[] args) throws IOException
 	{
-		Logger logger = LoggingFactory.createConsoleLoggerFor(UDMFReaderTest.class);
+		Logger logger = LoggingFactory.createConsoleLoggerFor(AnimatedTest.class);
 		
 		WadFile wad = new WadFile(args[0]);
-		InputStream in = wad.getInputStream("TEXTMAP");
-
-		UDMFTable udmftable = UDMFReader.readData(wad.getInputStream("TEXTMAP"));
-		StringWriter writer = new StringWriter();
-		UDMFWriter.writeTable(udmftable, writer);
-		logger.info("\n"+writer.toString());
+		for (Animated.Entry entry : wad.getDataAs("ANIMATED", Animated.class))
+			logger.info(entry);
 		
-		in.close();
 		wad.close();
 	}
 }

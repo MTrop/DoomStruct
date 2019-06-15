@@ -5,24 +5,26 @@
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
  ******************************************************************************/
-package net.mtrop.doom.struct;
+package net.mtrop.doom.map.data;
 
 import java.io.IOException;
 
 import net.mtrop.doom.WadFile;
-import net.mtrop.doom.sound.DMXSound;
-import net.mtrop.doom.sound.DMXSound.InterpolationType;
+import net.mtrop.doom.LoggingFactory;
+import net.mtrop.doom.LoggingFactory.Logger;
 
+import net.mtrop.doom.map.data.HexenThing;
 
-public final class SoundTest
+public class HexenThingTest
 {
 	public static void main(String[] args) throws IOException
 	{
+		Logger logger = LoggingFactory.createConsoleLoggerFor(HexenThingTest.class);
+		
 		WadFile wad = new WadFile(args[0]);
-		DMXSound sound = wad.getDataAs("DSRLAUNC", DMXSound.class)
-				.resample(InterpolationType.CUBIC, DMXSound.SAMPLERATE_22KHZ);
-		for (int i = 0 ; i < sound.getSampleCount(); i++)
-			System.out.println(sound.getSample(i));
+		int i = 0;
+		for (HexenThing object : wad.getDataAs("THINGS", HexenThing.class, HexenThing.LENGTH))
+			logger.info((i++) + " " + object);
 		wad.close();
 	}
 }
