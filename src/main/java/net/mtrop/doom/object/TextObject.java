@@ -46,14 +46,14 @@ public interface TextObject
 
 	/**
 	 * Reads from an {@link Reader} and sets this object's fields. 
-	 * @param in the {@link Reader} to read from. 
+	 * @param reader the {@link Reader} to read from. 
 	 * @throws IOException if a read error occurs.
 	 */
 	void readText(Reader reader) throws IOException;
 
 	/**
 	 * Writes this object to a {@link Writer}.
-	 * @param out the {@link Writer} to write to.
+	 * @param writer the {@link Writer} to write to.
 	 * @throws IOException if a write error occurs.
 	 */
 	void writeText(Writer writer) throws IOException;

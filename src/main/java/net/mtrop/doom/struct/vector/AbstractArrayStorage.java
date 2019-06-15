@@ -11,6 +11,7 @@ package net.mtrop.doom.struct.vector;
  * This class contains the base for all data structures 
  * that make use of a contiguous memory structure.
  * @author Matthew Tropiano
+ * @param <T> the value type that this contains.
  */
 public abstract class AbstractArrayStorage<T extends Object>
 {

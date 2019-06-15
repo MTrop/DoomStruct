@@ -114,6 +114,7 @@ public class Colormap implements BinaryObject
 	 * Sets the palette index of a specific index in the map.
 	 * @param index	the index number of the entry.
 	 * @param paletteIndex the new index.
+	 * @return itself, to chain colormap calls.
 	 * @throws ArrayIndexOutOfBoundsException if index is greater than 255 or less than 0.
 	 * @throws IllegalArgumentException if paletteIndex is less than 0 or greater than 255.
 	 */

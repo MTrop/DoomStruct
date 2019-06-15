@@ -406,6 +406,8 @@ public abstract class AbstractTrie<V extends Object, S extends Object> implement
 
 	/**
 	 * Iterator for this Trie.
+	 * @param <V> the value type that this holds.
+	 * @param <S> the type of the split segments used for searching.
 	 */
 	protected static class TrieIterator<V, S> implements Iterator<V>
 	{
@@ -458,6 +460,8 @@ public abstract class AbstractTrie<V extends Object, S extends Object> implement
 
 	/**
 	 * A result of a passive search on a trie.
+	 * @param <V> the value type that this holds.
+	 * @param <S> the type of the split segments used for searching.
 	 */
 	protected static class Result<V, S>
 	{
@@ -541,6 +545,8 @@ public abstract class AbstractTrie<V extends Object, S extends Object> implement
 
 	/**
 	 * A single node in the Trie.
+	 * @param <V> the value type that this holds.
+	 * @param <S> the type of the split segments used for searching.
 	 */
 	protected static class Node<V, S>
 	{

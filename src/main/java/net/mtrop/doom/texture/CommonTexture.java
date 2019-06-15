@@ -18,6 +18,7 @@ import net.mtrop.doom.util.RangeUtils;
 /**
  * Common contents of texture definitions.
  * @author Matthew Tropiano
+ * @param <P> the contained CommonPatch type.
  */
 public abstract class CommonTexture<P extends CommonPatch> implements BinaryObject, Iterable<P>, Comparable<CommonTexture<?>>
 {

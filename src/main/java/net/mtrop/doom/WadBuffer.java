@@ -202,7 +202,7 @@ public class WadBuffer implements Wad
 	}
 
 	@Override
-	public int getSize()
+	public int getEntryCount()
 	{
 		return entries.size();
 	}
@@ -302,6 +302,14 @@ public class WadBuffer implements Wad
 		entries.clear();
 		for (WadEntry WadEntry : entryList)
 			entries.add(WadEntry);
+	}
+
+	@Override
+	public WadEntry addEntry(String entryName, int offset, int length) throws IOException
+	{
+		WadEntry entry = WadEntry.create(entryName, offset, length);
+		entries.add(entry);
+		return entry;
 	}
 
 	@Override

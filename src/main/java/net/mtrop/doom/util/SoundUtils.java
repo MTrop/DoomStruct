@@ -40,6 +40,7 @@ public final class SoundUtils
 	 * If the input has multiple channels, they are lazily muxed into a single channel.
 	 * <p>NOTE: DMX Sounds are stored as mono, 8-bit PCM waveforms. Some sound information will be lost on conversion!
 	 * @param file the input audio stream.
+	 * @return the resultant DMX Sound object.
 	 * @throws IOException if an error occurs on write.
 	 * @throws UnsupportedAudioFileException if the file is an unrecognized audio type.
 	 */
@@ -84,6 +85,7 @@ public final class SoundUtils
 	 * Writes a DMXSound out to an audio file.
 	 * The destination file will be overwritten!
 	 * @param sound the input DMX Sound.
+	 * @param fileType the file format type.
 	 * @param outFile the output file.
 	 * @throws IOException if an error occurred during the write. 
 	 * @throws UnsupportedAudioFileException if the output type is unsupported.
@@ -96,6 +98,7 @@ public final class SoundUtils
 	/**
 	 * Writes a DMXSound out to an output stream.
 	 * @param sound the input DMX Sound.
+	 * @param fileType the file format type.
 	 * @param out the output stream.
 	 * @throws IOException if an error occurred during the write. 
 	 * @throws UnsupportedAudioFileException if the output type is unsupported.

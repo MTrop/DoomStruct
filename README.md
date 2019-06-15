@@ -1,4 +1,4 @@
-# Doom Struct
+# Doom Struct 2.0.0
 
 Copyright (c) 2015 - 2019 Matt Tropiano  
 
@@ -26,8 +26,6 @@ NONE
 
 The MASTER branch contains stable code (I hope). The DEVELOP branch's contents may always
 shift. 
-
-The library will be in flux until version 2.0. 
 
 ### Introduction
 
@@ -69,9 +67,10 @@ extent.
 
 ### In the Future...
 
-* Better ENDOOM rendering options.
+* Reading/converting PC Speaker effects.
+* Supporting additional BSP node types.
 * Stuff for drawing maps more easily.
-* Inline lump content editing (not just reading).
+* Better ENDOOM rendering options.
 
 ### Library
 
@@ -131,6 +130,15 @@ Open `DOOM2.WAD`, read `DEMO2` and figure out how many tics that player 1 was pu
 	for (int i = 0; i < demo.getTicCount(); i++) {
 		tics += (demo.getTic(i).getAction() & ACTION_FIRE) != 0 ? 1 : 0;
 	}
+	wad.close();
+
+Open `DOOM.WAD` and get MD5 hashes of each entry.
+
+	WadFile wad = new WadFile("doom.wad");
+	byte[][] hashes = new byte[wad.getEntryCount()][];
+	int i = 0;
+	for (WadEntry entry : wad)
+		hashes[i++] = MessageDigest.getInstance("MD5").digest(wad.getData(entry));
 	wad.close();
 
 Open `DOOM2.WAD`, fetch all `TROO*` (graphic) entries and export them as PNGs.

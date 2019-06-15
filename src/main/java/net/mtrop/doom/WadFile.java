@@ -212,6 +212,14 @@ public class WadFile implements Wad, AutoCloseable
 		return fileAbsolutePath;
 	}
 
+	/**
+	 * @return the starting byte offset of the entry list (where the content ends). 
+	 */
+	public final int getEntryListOffset()
+	{
+		return entryListOffset;
+	}
+	
 	@Override
 	public boolean isIWAD()
 	{
@@ -225,7 +233,7 @@ public class WadFile implements Wad, AutoCloseable
 	}
 	
 	@Override
-	public int getSize()
+	public int getEntryCount()
 	{
 		return entries.size();
 	}
@@ -345,9 +353,18 @@ public class WadFile implements Wad, AutoCloseable
 	public void setEntries(WadEntry... entryList) throws IOException
 	{
 		entries.clear();
-		for (WadEntry WadEntry : entryList)
-			entries.add(WadEntry);
+		for (WadEntry entry : entryList)
+			entries.add(entry);
 		flushEntries();
+	}
+
+	@Override
+	public WadEntry addEntry(String entryName, int offset, int length) throws IOException
+	{
+		WadEntry entry = WadEntry.create(entryName, offset, length);
+		entries.add(entry);
+		flushEntries();
+		return entry;
 	}
 
 	@Override

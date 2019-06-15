@@ -10,6 +10,7 @@ package net.mtrop.doom.struct.trie;
 /**
  * An implementation of a Trie that stores strings, case-insensitively.
  * @author Matthew Tropiano
+ * @param <V> the value type.
  */
 public class CaseInsensitiveTrieMap<V extends Object> extends StringTrieMap<V>
 {

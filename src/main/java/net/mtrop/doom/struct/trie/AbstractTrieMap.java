@@ -15,6 +15,7 @@ import java.util.Map;
  * of objects derived from the key. This structure is not thread-safe - wrap calls
  * with synchronized blocks if necessary.
  * @author Matthew Tropiano
+ * @param <K> the key type.
  * @param <V> the value type that this holds.
  * @param <S> the type of the split segments used for searching.
  */

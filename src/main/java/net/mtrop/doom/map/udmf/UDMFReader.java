@@ -129,10 +129,7 @@ public final class UDMFReader
 	{
 		private UDMFParserListener listener;
 		
-		/**
-		 * Creates a new instance of a UDMF Reader.
-		 */
-		public UParser(ULexer lexer, UDMFParserListener listener)
+		private UParser(ULexer lexer, UDMFParserListener listener)
 		{
 			super(lexer);
 			this.listener = listener;

@@ -49,6 +49,7 @@ public class SerialWriter
 	/**
 	 * Writes a String.
 	 * @param out the output stream.
+	 * @param s the String to write.
 	 * @throws IOException if an error occurred during the write.
 	 */
 	public void writeString(OutputStream out, String s) throws IOException
@@ -61,6 +62,7 @@ public class SerialWriter
 	 * @param out the output stream.
 	 * @param s	the String to write.
 	 * @param encodingType the encoding type name.
+	 * @throws IOException if an error occurred during the write.
 	 */
 	public void writeString(OutputStream out, String s, String encodingType) throws IOException
 	{
@@ -72,6 +74,7 @@ public class SerialWriter
 	 * @param out the output stream.
 	 * @param s	the String to write.
 	 * @param charset the encoding charset.
+	 * @throws IOException if an error occurred during the write.
 	 */
 	public void writeString(OutputStream out, String s, Charset charset) throws IOException
 	{
@@ -82,6 +85,7 @@ public class SerialWriter
 	 * Writes an array of Strings,
 	 * which is the length of the array as an integer plus each String.
 	 * @param out the output stream.
+	 * @param s the array to write.
 	 * @throws IOException if an error occurred during the write.
 	 */
 	public void writeStringArray(OutputStream out, String[] s) throws IOException
@@ -94,6 +98,7 @@ public class SerialWriter
 	/**
 	 * Writes a byte.
 	 * @param out the output stream.
+	 * @param b the value to write.
 	 * @throws IOException if an error occurred during the write.
 	 */
 	public void writeByte(OutputStream out, byte b) throws IOException
@@ -104,16 +109,18 @@ public class SerialWriter
 	/**
 	 * Writes a short that is less than 256 to a byte.
 	 * @param out the output stream.
+	 * @param s the value to write.
 	 * @throws IOException if an error occurred during the write.
 	 */
-	public void writeUnsignedByte(OutputStream out, short b) throws IOException
+	public void writeUnsignedByte(OutputStream out, short s) throws IOException
 	{
-		writeByte(out, (byte)(b & 0x0ff));
+		writeByte(out, (byte)(s & 0x0ff));
 	}
 
 	/**
 	 * Writes an int that is less than 256 to a byte.
 	 * @param out the output stream.
+	 * @param b the value to write.
 	 * @throws IOException if an error occurred during the write.
 	 */
 	public void writeUnsignedByte(OutputStream out, int b) throws IOException
@@ -124,6 +131,7 @@ public class SerialWriter
 	/**
 	 * Writes a series of bytes.
 	 * @param out the output stream.
+	 * @param b the array to write.
 	 * @throws IOException if an error occurred during the write.
 	 */
 	public void writeBytes(OutputStream out, byte[] b) throws IOException
@@ -135,6 +143,7 @@ public class SerialWriter
 	 * Writes an array of bytes,
 	 * which is the length of the array as an integer plus each byte.
 	 * @param out the output stream.
+	 * @param b the array to write.
 	 * @throws IOException if an error occurred during the write.
 	 */
 	public void writeByteArray(OutputStream out, byte[] b) throws IOException
@@ -146,6 +155,7 @@ public class SerialWriter
 	/**
 	 * Writes a boolean as a byte.
 	 * @param out the output stream.
+	 * @param b the array to write.
 	 * @throws IOException if an error occurred during the write.
 	 */
 	public void writeBoolean(OutputStream out, boolean b) throws IOException
@@ -156,6 +166,7 @@ public class SerialWriter
 	/**
 	 * Writes a long that is less than 2^32 to an integer.
 	 * @param out the output stream.
+	 * @param l the value to write.
 	 * @throws IOException if an error occurred during the write.
 	 */
 	public void writeUnsignedInteger(OutputStream out, long l) throws IOException
@@ -166,6 +177,7 @@ public class SerialWriter
 	/**
 	 * Writes an integer.
 	 * @param out the output stream.
+	 * @param i the value to write.
 	 * @throws IOException if an error occurred during the write.
 	 */
 	public void writeInt(OutputStream out, int i) throws IOException
@@ -182,6 +194,7 @@ public class SerialWriter
 	 * @param out the output stream.
 	 * @param i	the int to convert.
 	 * @throws IllegalArgumentException	if the int value to convert is above 0x0fffffff.
+	 * @throws IOException if an error occurred during the write.
 	 */
 	public void writeVariableLengthInt(OutputStream out, int i) throws IOException
 	{
@@ -213,6 +226,7 @@ public class SerialWriter
 	 * @param out the output stream.
 	 * @param i	the long to convert.
 	 * @throws IllegalArgumentException	if the long value to convert is above 0x7fffffffffffffffL.
+	 * @throws IOException if an error occurred during the write.
 	 */
 	public void writeVariableLengthLong(OutputStream out, long i) throws IOException
 	{
@@ -243,6 +257,7 @@ public class SerialWriter
 	 * Writes an integer array,
 	 * which is the length of the array as an integer plus each integer.
 	 * @param out the output stream.
+	 * @param i the array to write.
 	 * @throws IOException if an error occurred during the write.
 	 */
 	public void writeIntArray(OutputStream out, int[] i) throws IOException
@@ -255,6 +270,7 @@ public class SerialWriter
 	/**
 	 * Writes a long.
 	 * @param out the output stream.
+	 * @param l the value to write.
 	 * @throws IOException if an error occurred during the write.
 	 */
 	public void writeLong(OutputStream out, long l) throws IOException
@@ -268,6 +284,7 @@ public class SerialWriter
 	 * Writes an array of longs,
 	 * which is the length of the array as an integer plus each long.
 	 * @param out the output stream.
+	 * @param l the array to write.
 	 * @throws IOException if an error occurred during the write.
 	 */
 	public void writeLongArray(OutputStream out, long[] l) throws IOException
@@ -281,6 +298,7 @@ public class SerialWriter
 	 * Writes an array of 32-bit floats,
 	 * which is the length of the array as an integer plus each float.
 	 * @param out the output stream.
+	 * @param f the array to write.
 	 * @throws IOException if an error occurred during the write.
 	 */
 	public void writeFloatArray(OutputStream out, float[] f) throws IOException
@@ -293,6 +311,7 @@ public class SerialWriter
 	/**
 	 * Writes a 32-bit float.
 	 * @param out the output stream.
+	 * @param f the value to write.
 	 * @throws IOException if an error occurred during the write.
 	 */
 	public void writeFloat(OutputStream out, float f) throws IOException
@@ -303,6 +322,7 @@ public class SerialWriter
 	/**
 	 * Writes a 64-bit float.
 	 * @param out the output stream.
+	 * @param d the value to write.
 	 * @throws IOException if an error occurred during the write.
 	 */
 	public void writeDouble(OutputStream out, double d) throws IOException
@@ -314,6 +334,7 @@ public class SerialWriter
 	 * Writes an array of 64-bit floats,
 	 * which is the length of the array as an integer plus each double.
 	 * @param out the output stream.
+	 * @param d the array to write.
 	 * @throws IOException if an error occurred during the write.
 	 */
 	public void writeDoubleArray(OutputStream out, double[] d) throws IOException
@@ -326,6 +347,7 @@ public class SerialWriter
 	/**
 	 * Writes a short.
 	 * @param out the output stream.
+	 * @param s the value to write.
 	 * @throws IOException if an error occurred during the write.
 	 */
 	public void writeShort(OutputStream out, short s) throws IOException
@@ -338,6 +360,7 @@ public class SerialWriter
 	/**
 	 * Writes an integer, less than 65536, as a short.
 	 * @param out the output stream.
+	 * @param s the value to write.
 	 * @throws IOException if an error occurred during the write.
 	 */
 	public void writeUnsignedShort(OutputStream out, int s) throws IOException
@@ -349,6 +372,7 @@ public class SerialWriter
 	 * Writes an array of shorts,
 	 * which is the length of the array as an integer plus each short.
 	 * @param out the output stream.
+	 * @param s the array to write.
 	 * @throws IOException if an error occurred during the write.
 	 */
 	public void writeShortArray(OutputStream out, short[] s) throws IOException
@@ -361,6 +385,7 @@ public class SerialWriter
 	/**
 	 * Writes a character.
 	 * @param out the output stream.
+	 * @param c the value to write.
 	 * @throws IOException if an error occurred during the write.
 	 */
 	public void writeChar(OutputStream out, char c) throws IOException
@@ -372,6 +397,7 @@ public class SerialWriter
 	 * Writes a character array,
 	 * which is the length of the array as an integer plus each character.
 	 * @param out the output stream.
+	 * @param c the array to write.
 	 * @throws IOException if an error occurred during the write.
 	 */
 	public void writeCharArray(OutputStream out, char[] c) throws IOException
@@ -385,6 +411,7 @@ public class SerialWriter
 	 * Writes a boolean array,
 	 * which is the length of the array as an integer plus each boolean grouped into integer bits.
 	 * @param out the output stream.
+	 * @param b the array to write.
 	 * @throws IOException if an error occurred during the write.
 	 */
 	public void writeBooleanArray(OutputStream out, boolean ... b) throws IOException

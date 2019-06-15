@@ -16,6 +16,7 @@ import java.util.Queue;
  * Be advised that the {@link #get(int, int)} method may return null if no objects
  * are queued at that particular spot.
  * @author Matthew Tropiano
+ * @param <T> the value type.
  */
 public class SparseQueueGridIndex<T extends Object> extends SparseGridIndex<Queue<T>>
 {

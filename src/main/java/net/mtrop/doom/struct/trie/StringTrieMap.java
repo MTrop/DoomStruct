@@ -10,6 +10,7 @@ package net.mtrop.doom.struct.trie;
 /**
  * An implementation of a Trie that stores strings mapped to values.
  * @author Matthew Tropiano
+ * @param <V> the value type.
  */
 public class StringTrieMap<V extends Object> extends AbstractTrieMap<String, V, Character>
 {

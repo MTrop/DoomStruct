@@ -75,6 +75,7 @@ public class JSPISoundHandle
 
 	/**
 	 * @return a {@link Decoder} that can decode this data into PCM data.
+	 * @throws IOException if a decoder could not be opened.
 	 */
 	public Decoder getDecoder() throws IOException
 	{
@@ -86,7 +87,7 @@ public class JSPISoundHandle
 	}
 	
 	/**
-	 * Returns the name of this handle.
+	 * @return the name of this handle.
 	 */
 	public String getName()	
 	{
@@ -201,7 +202,7 @@ public class JSPISoundHandle
 		
 		/**
 		 * Closes the decoder.
-		 * @throws IOException
+		 * @throws IOException if an error occurred during close.
 		 */
 		public void close() throws IOException
 		{

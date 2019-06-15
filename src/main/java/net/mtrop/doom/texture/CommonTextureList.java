@@ -23,6 +23,7 @@ import net.mtrop.doom.util.NameUtils;
  * All textures are stored in here, usually named TEXTURE1 or TEXTURE2 in a WAD.
  * Most creation methods in this object are factory-style, due to the diversity of implemented texture formats.
  * @author Matthew Tropiano
+ * @param <T> the contained CommonTexture type.
  */
 public abstract class CommonTextureList<T extends CommonTexture<?>> implements BinaryObject, Iterable<T>, Sizable
 {

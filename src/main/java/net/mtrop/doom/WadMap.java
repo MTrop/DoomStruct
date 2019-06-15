@@ -135,81 +135,87 @@ public class WadMap implements Wad
 	}
 
 	@Override
-	public int getSize()
+	public int getEntryCount()
 	{
 		return entries.size();
 	}
 
 	@Override
+	public WadEntry addEntry(String entryName, int offset, int length) throws IOException
+	{
+		throw new UnsupportedOperationException("WadMap does not support addEntry()");
+	}
+
+	@Override
 	public WadEntry addData(String entryName, byte[] data) throws IOException
 	{
-		throw new UnsupportedOperationException("This class does not support addData()");
+		throw new UnsupportedOperationException("WadMap does not support addData()");
 	}
 
 	@Override
 	public WadEntry addDataAt(int index, String entryName, byte[] data) throws IOException
 	{
-		throw new UnsupportedOperationException("This class does not support addDataAt()");
+		throw new UnsupportedOperationException("WadMap does not support addDataAt()");
 	}
 
 	@Override
 	public WadEntry[] addAllData(String[] entryNames, byte[][] data) throws IOException
 	{
-		throw new UnsupportedOperationException("This class does not support addAllData()");
+		throw new UnsupportedOperationException("WadMap does not support addAllData()");
 	}
 
 	@Override
 	public WadEntry[] addAllDataAt(int index, String[] entryNames, byte[][] data) throws IOException
 	{
-		throw new UnsupportedOperationException("This class does not support addAllDataAt()");
+		throw new UnsupportedOperationException("WadMap does not support addAllDataAt()");
 	}
 
 	@Override
 	public WadEntry deleteEntry(int n) throws IOException
 	{
-		throw new UnsupportedOperationException("This class does not support deleteEntry()");
+		throw new UnsupportedOperationException("WadMap does not support deleteEntry()");
 	}
 
 	@Override
 	public WadEntry removeEntry(int n) throws IOException
 	{
-		throw new UnsupportedOperationException("This class does not support removeEntry()");
+		throw new UnsupportedOperationException("WadMap does not support removeEntry()");
 	}
 
 	@Override
 	public void renameEntry(int index, String newName) throws IOException
 	{
-		throw new UnsupportedOperationException("This class does not support renameEntry()");
+		throw new UnsupportedOperationException("WadMap does not support renameEntry()");
 	}
 
 	@Override
 	public void replaceEntry(int index, byte[] data) throws IOException
 	{
-		throw new UnsupportedOperationException("This class does not support replaceEntry()");
+		throw new UnsupportedOperationException("WadMap does not support replaceEntry()");
 	}
 
 	@Override
 	public void unmapEntries(int startIndex, WadEntry... entryList) throws IOException
 	{
-		throw new UnsupportedOperationException("This class does not support unmapEntries()");
+		throw new UnsupportedOperationException("WadMap does not support unmapEntries()");
 	}
 
 	@Override
 	public void setEntries(WadEntry... entryList) throws IOException
 	{
-		throw new UnsupportedOperationException("This class does not support setEntries()");
+		throw new UnsupportedOperationException("WadMap does not support setEntries()");
 	}
 
 	@Override	
 	public byte[] getData(WadEntry entry) throws IOException
 	{
-		throw new UnsupportedOperationException("This class does not support getData()");
+		throw new UnsupportedOperationException("WadMap does not support getData()");
 	}
 
 	@Override	
 	public InputStream getInputStream(WadEntry entry) throws IOException
 	{
-		throw new UnsupportedOperationException("This class does not support getInputStream()");
+		throw new UnsupportedOperationException("WadMap does not support getInputStream()");
 	}
 
 	@Override	

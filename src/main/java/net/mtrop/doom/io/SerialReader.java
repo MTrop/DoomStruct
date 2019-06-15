@@ -52,6 +52,7 @@ public class SerialReader
 	 * Reads a byte from the bound stream.
 	 * @param in the input stream to read from.
 	 * @return the byte read or -1 if the end of the stream is reached.
+	 * @throws IOException if a read error occurs.
 	 */
 	protected synchronized int byteRead(InputStream in) throws IOException
 	{
@@ -65,6 +66,7 @@ public class SerialReader
 	 * @param b the target array to fill with bytes.
 	 * @return the amount of bytes read or -1 if the end of the stream 
 	 * 		is reached before a single byte is read.
+	 * @throws IOException if a read error occurs.
 	 */
 	protected int byteRead(InputStream in, byte[] b) throws IOException
 	{
@@ -79,6 +81,7 @@ public class SerialReader
 	 * @param maxlen the maximum amount of bytes to read.
 	 * @return the amount of bytes read or -1 if the end of the stream 
 	 * 		is reached before a single byte is read.
+	 * @throws IOException if a read error occurs.
 	 */
 	protected synchronized int byteRead(InputStream in, byte[] b, int maxlen) throws IOException
 	{
@@ -93,9 +96,10 @@ public class SerialReader
 
 	/**
 	 * Keeps reading until it hits a specific byte pattern.
-	 * Returns true if the pattern is found, returns false if the end of the stream
-	 * is reached before the pattern is matched.
 	 * @param in the input stream to read from.
+	 * @param b the pattern to search for.
+	 * @return true if the pattern is found, returns false if the end of the stream is reached before the pattern is matched.
+	 * @throws IOException if a read error occurs.
 	 */
 	public boolean seekToPattern(InputStream in, byte[] b) throws IOException
 	{
@@ -122,6 +126,7 @@ public class SerialReader
 	 * @param in the input stream to read from.
 	 * @param b	the input byte string.
 	 * @return true if the bytes read equal the the same bytes in the input array.
+	 * @throws IOException if a read error occurs.
 	 */
 	public boolean readFor(InputStream in, byte[] b) throws IOException
 	{
@@ -166,6 +171,7 @@ public class SerialReader
 	 * in a particular encoding.
 	 * @param in the input stream to read from.
 	 * @param encoding	the name of the encoding scheme.
+	 * @return the decoded string.
 	 * @throws IOException if an I/O error occurs.
 	 */
 	public String readString(InputStream in, String encoding) throws IOException
@@ -178,6 +184,7 @@ public class SerialReader
 	 * in a particular encoding.
 	 * @param in the input stream to read from.
 	 * @param charset the name of the charset to use.
+	 * @return the decoded string.
 	 * @throws IOException if an I/O error occurs.
 	 */
 	public String readString(InputStream in, Charset charset) throws IOException
@@ -191,6 +198,7 @@ public class SerialReader
 	 * @param in the input stream to read from.
 	 * @param bytes the amount of bytes to read.
 	 * @param encoding	the name of the encoding scheme.
+	 * @return the decoded string.
 	 * @throws IOException if an I/O error occurs.
 	 */
 	public String readString(InputStream in, int bytes, String encoding) throws IOException
@@ -204,6 +212,7 @@ public class SerialReader
 	 * @param in the input stream to read from.
 	 * @param bytes the amount of bytes to read.
 	 * @param charset the name of the charset to use.
+	 * @return the decoded string.
 	 * @throws IOException if an I/O error occurs.
 	 */
 	public String readString(InputStream in, int bytes, Charset charset) throws IOException
@@ -215,6 +224,7 @@ public class SerialReader
 	 * Reads in an array of strings.
 	 * Basically reads an integer length which is the length of the array and then reads that many strings.
 	 * @param in the input stream to read from.
+	 * @return the decoded string array.
 	 * @throws IOException if an error occurred during the read.
 	 */
 	public String[] readStringArray(InputStream in) throws IOException
@@ -242,6 +252,7 @@ public class SerialReader
 	 * in an integer at a time scanning bits for the boolean values.
 	 * @param in the input stream to read from.
 	 * @throws IOException if an error occurred during the read.
+	 * @return the boolean array.
 	 */
 	public boolean[] readBooleanArray(InputStream in) throws IOException
 	{
@@ -261,6 +272,7 @@ public class SerialReader
 	/**
 	 * Reads in a long value.
 	 * @param in the input stream to read from.
+	 * @return the decoded value.
 	 * @throws IOException if an error occurred during the read.
 	 */
 	public long readLong(InputStream in) throws IOException
@@ -275,6 +287,8 @@ public class SerialReader
 	/**
 	 * Reads in an amount of long values specified by the user.
 	 * @param in the input stream to read from.
+	 * @param n the amount of long integers to read.
+	 * @return the decoded value.
 	 * @throws IOException if an error occurred during the read.
 	 */
 	public long[] readLongs(InputStream in, int n) throws IOException
@@ -289,6 +303,7 @@ public class SerialReader
 	 * Reads in an array of long values.
 	 * Basically reads an integer length which is the length of the array and then reads that many longs.
 	 * @param in the input stream to read from.
+	 * @return the decoded value.
 	 * @throws IOException if an error occurred during the read.
 	 */
 	public long[] readLongArray(InputStream in) throws IOException
@@ -299,6 +314,7 @@ public class SerialReader
 	/**
 	 * Reads in a single byte.
 	 * @param in the input stream to read from.
+	 * @return the decoded value.
 	 * @throws IOException if an error occurred during the read.
 	 */
 	public byte readByte(InputStream in) throws IOException
@@ -314,6 +330,7 @@ public class SerialReader
 	/**
 	 * Reads in a single byte, cast to a short to eliminate sign.
 	 * @param in the input stream to read from.
+	 * @return the decoded value.
 	 * @throws IOException if an error occurred during the read.
 	 */
 	public short readUnsignedByte(InputStream in) throws IOException
@@ -328,6 +345,7 @@ public class SerialReader
 	 * @param b the target array to fill with bytes.
 	 * @return	the amount of bytes read or END_OF_STREAM if the end of the stream 
 	 * 			is reached before a single byte is read.
+	 * @throws IOException if an error occurred during the read.
 	 */
 	public int readBytes(InputStream in, byte[] b) throws IOException
 	{
@@ -342,6 +360,7 @@ public class SerialReader
 	 * @param maxlen the maximum amount of bytes to read.
 	 * @return	the amount of bytes read or END_OF_STREAM if the end of the stream 
 	 * 			is reached before a single byte is read.
+	 * @throws IOException if an error occurred during the read.
 	 */
 	public int readBytes(InputStream in, byte[] b, int maxlen) throws IOException
 	{
@@ -351,6 +370,8 @@ public class SerialReader
 	/**
 	 * Reads in a specified amount of bytes, returned as an array.
 	 * @param in the input stream to read from.
+	 * @param n the amount of bytes to read.
+	 * @return the decoded value.
 	 * @throws IOException if an error occurred during the read.
 	 */
 	public byte[] readBytes(InputStream in, int n) throws IOException
@@ -365,6 +386,7 @@ public class SerialReader
 	/**
 	 * Reads in a integer, cast to a long, discarding sign.
 	 * @param in the input stream to read from.
+	 * @return the decoded value.
 	 * @throws IOException if an error occurred during the read.
 	 */
 	public long readUnsignedInt(InputStream in) throws IOException
@@ -375,6 +397,7 @@ public class SerialReader
 	/**
 	 * Reads in an integer.
 	 * @param in the input stream to read from.
+	 * @return the decoded value.
 	 * @throws IOException if an error occurred during the read.
 	 */
 	public int readInt(InputStream in) throws IOException
@@ -389,6 +412,7 @@ public class SerialReader
 	/**
 	 * Reads in a 24-bit integer.
 	 * @param in the input stream to read from.
+	 * @return the decoded value.
 	 * @throws IOException if an error occurred during the read.
 	 */
 	public int read24BitInt(InputStream in) throws IOException
@@ -409,6 +433,8 @@ public class SerialReader
 	/**
 	 * Reads in a specified amount of integers.
 	 * @param in the input stream to read from.
+	 * @param n the amount of integers to read.
+	 * @return the decoded value.
 	 * @throws IOException if an error occurred during the read.
 	 */
 	public int[] readInts(InputStream in, int n) throws IOException
@@ -423,6 +449,7 @@ public class SerialReader
 	 * Reads in an array of integers.
 	 * Basically reads an integer length which is the length of the array and then reads that many integers.
 	 * @param in the input stream to read from.
+	 * @return the decoded value.
 	 * @throws IOException if an error occurred during the read.
 	 */
 	public int[] readIntArray(InputStream in) throws IOException
@@ -433,6 +460,7 @@ public class SerialReader
 	/**
 	 * Reads in a 32-bit float.
 	 * @param in the input stream to read from.
+	 * @return the decoded value.
 	 * @throws IOException if an error occurred during the read.
 	 */
 	public float readFloat(InputStream in) throws IOException
@@ -447,6 +475,8 @@ public class SerialReader
 	/**
 	 * Reads in a specified amount of 32-bit floats.
 	 * @param in the input stream to read from.
+	 * @param n the amount of floats to read.
+	 * @return the decoded value.
 	 * @throws IOException if an error occurred during the read.
 	 */
 	public float[] readFloats(InputStream in, int n) throws IOException
@@ -461,6 +491,7 @@ public class SerialReader
 	 * Reads in an array 32-bit floats.
 	 * Basically reads an integer length which is the length of the array and then reads that many floats.
 	 * @param in the input stream to read from.
+	 * @return the decoded value.
 	 * @throws IOException if an error occurred during the read.
 	 */
 	public float[] readFloatArray(InputStream in) throws IOException
@@ -471,6 +502,7 @@ public class SerialReader
 	/**
 	 * Reads in a 64-bit float.
 	 * @param in the input stream to read from.
+	 * @return the decoded value.
 	 * @throws IOException if an error occurred during the read.
 	 */
 	public double readDouble(InputStream in) throws IOException
@@ -485,6 +517,8 @@ public class SerialReader
 	/**
 	 * Reads in a specified amount of 64-bit floats.
 	 * @param in the input stream to read from.
+	 * @param n the amount of doubles to read.
+	 * @return the decoded value.
 	 * @throws IOException if an error occurred during the read.
 	 */
 	public double[] readDoubles(InputStream in, int n) throws IOException
@@ -499,6 +533,7 @@ public class SerialReader
 	 * Reads in an array 64-bit floats.
 	 * Basically reads an integer length which is the length of the array and then reads that many doubles.
 	 * @param in the input stream to read from.
+	 * @return the decoded value.
 	 * @throws IOException if an error occurred during the read.
 	 */
 	public double[] readDoubleArray(InputStream in) throws IOException
@@ -509,6 +544,7 @@ public class SerialReader
 	/**
 	 * Reads in a short.
 	 * @param in the input stream to read from.
+	 * @return the decoded value.
 	 * @throws IOException if an error occurred during the read.
 	 */
 	public short readShort(InputStream in) throws IOException
@@ -523,6 +559,7 @@ public class SerialReader
 	/**
 	 * Reads in a short, cast to an integer, discarding sign.
 	 * @param in the input stream to read from.
+	 * @return the decoded value.
 	 * @throws IOException if an error occurred during the read.
 	 */
 	public int readUnsignedShort(InputStream in) throws IOException
@@ -533,6 +570,8 @@ public class SerialReader
 	/**
 	 * Reads in a specified amount of shorts.
 	 * @param in the input stream to read from.
+	 * @param n the amount of shorts to read.
+	 * @return the decoded value.
 	 * @throws IOException if an error occurred during the read.
 	 */
 	public short[] readShorts(InputStream in, int n) throws IOException
@@ -547,6 +586,7 @@ public class SerialReader
 	 * Reads in an array of shorts.
 	 * Basically reads an integer length which is the length of the array and then reads that many shorts.
 	 * @param in the input stream to read from.
+	 * @return the decoded value.
 	 * @throws IOException if an error occurred during the read.
 	 */
 	public short[] readShortArray(InputStream in) throws IOException
@@ -557,6 +597,7 @@ public class SerialReader
 	/**
 	 * Reads in a character.
 	 * @param in the input stream to read from.
+	 * @return the decoded value.
 	 * @throws IOException if an error occurred during the read.
 	 */
 	public char readChar(InputStream in) throws IOException
@@ -567,6 +608,8 @@ public class SerialReader
 	/**
 	 * Reads in a specific amount of characters.
 	 * @param in the input stream to read from.
+	 * @param n the amount of characters to read (16-bit).
+	 * @return the decoded value.
 	 * @throws IOException if an error occurred during the read.
 	 */
 	public char[] readChars(InputStream in, int n) throws IOException
@@ -581,6 +624,7 @@ public class SerialReader
 	 * Reads in an array of characters.
 	 * Basically reads an integer length which is the length of the array and then reads that many characters.
 	 * @param in the input stream to read from.
+	 * @return the decoded value.
 	 * @throws IOException if an error occurred during the read.
 	 */
 	public char[] readCharArray(InputStream in) throws IOException

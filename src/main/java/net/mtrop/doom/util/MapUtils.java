@@ -171,7 +171,7 @@ public final class MapUtils
 	 */
 	public static DoomMap createDoomMap(Wad wad, String headerName) throws MapException, IOException
 	{
-		int index = wad.getLastIndexOf(headerName);
+		int index = wad.lastIndexOf(headerName);
 		if (index < 0)
 			throw new MapException("Cannot find map by header name "+headerName);
 		
@@ -251,7 +251,7 @@ public final class MapUtils
 	 */
 	public static HexenMap createHexenMap(Wad wad, String headerName) throws MapException, IOException
 	{
-		int index = wad.getLastIndexOf(headerName);
+		int index = wad.lastIndexOf(headerName);
 		if (index < 0)
 			throw new MapException("Cannot find map by header name "+headerName);
 		
@@ -316,7 +316,7 @@ public final class MapUtils
 	 */
 	public static UDMFMap createUDMFMap(Wad wad, String headerName) throws MapException, IOException
 	{
-		int index = wad.getLastIndexOf(headerName);
+		int index = wad.lastIndexOf(headerName);
 		if (index < 0)
 			throw new MapException("Cannot find map by header name "+headerName);
 		
@@ -335,7 +335,7 @@ public final class MapUtils
 	 */
 	public static BSPTree createBSPTree(Wad wad, String headerName) throws MapException, IOException
 	{
-		int index = wad.getLastIndexOf(headerName);
+		int index = wad.lastIndexOf(headerName);
 		if (index < 0)
 			throw new MapException("Cannot find map by header name "+headerName);
 		
@@ -463,7 +463,7 @@ public final class MapUtils
 	 */
 	public static MapFormat getMapFormat(Wad wad, String headerName)
 	{
-		int index = wad.getLastIndexOf(headerName);
+		int index = wad.lastIndexOf(headerName);
 		if (index < 0)
 			return null;
 	
@@ -495,19 +495,19 @@ public final class MapUtils
 	{
 		int end = 0;
 		
-		if (startIndex + 1 == wad.getSize())
+		if (startIndex + 1 == wad.getEntryCount())
 			return 1;
 		else if (wad.getEntry(startIndex + 1).getName().equalsIgnoreCase(LUMP_TEXTMAP))
 		{
 			end = startIndex + 1;
-			while (end < wad.getSize() && !wad.getEntry(end).getName().equalsIgnoreCase(LUMP_ENDMAP))
+			while (end < wad.getEntryCount() && !wad.getEntry(end).getName().equalsIgnoreCase(LUMP_ENDMAP))
 				end++;
 			end++;
 		}
 		else
 		{
 			end = startIndex + 1;
-			while (end < wad.getSize() && isMapDataLump(wad.getEntry(end).getName()))
+			while (end < wad.getEntryCount() && isMapDataLump(wad.getEntry(end).getName()))
 				end++;
 		}
 		

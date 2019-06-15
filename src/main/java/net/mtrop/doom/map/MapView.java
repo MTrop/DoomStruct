@@ -13,6 +13,7 @@ public interface MapView<V, L, S, E, T>
 {
 	/**
 	 * Gets the vertex at a specific index.
+	 * @param i the desired index.
 	 * @return the vertex at the index, or null if the index is out of range.
 	 */
 	public V getVertex(int i);
@@ -24,6 +25,7 @@ public interface MapView<V, L, S, E, T>
 
 	/**
 	 * Gets the linedef at a specific index.
+	 * @param i the desired index.
 	 * @return the linedef at the index, or null if the index is out of range.
 	 */
 	public L getLinedef(int i);
@@ -35,6 +37,7 @@ public interface MapView<V, L, S, E, T>
 
 	/**
 	 * Gets the sidedef at a specific index.
+	 * @param i the desired index.
 	 * @return the sidedef at the index, or null if the index is out of range.
 	 */
 	public S getSidedef(int i);
@@ -46,6 +49,7 @@ public interface MapView<V, L, S, E, T>
 
 	/**
 	 * Gets the sector at a specific index.
+	 * @param i the desired index.
 	 * @return the sector at the index, or null if the index is out of range.
 	 */
 	public E getSector(int i);
@@ -57,6 +61,7 @@ public interface MapView<V, L, S, E, T>
 
 	/**
 	 * Gets the thing at a specific index.
+	 * @param i the desired index.
 	 * @return the thing at the index, or null if the index is out of range.
 	 */
 	public T getThing(int i);
