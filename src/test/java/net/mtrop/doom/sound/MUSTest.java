@@ -10,7 +10,7 @@ package net.mtrop.doom.sound;
 import java.io.IOException;
 
 import net.mtrop.doom.WadFile;
-import net.mtrop.doom.sound.DMXMUS;
+import net.mtrop.doom.sound.MUS;
 import net.mtrop.doom.LoggingFactory;
 import net.mtrop.doom.LoggingFactory.Logger;
 
@@ -21,7 +21,7 @@ public final class MUSTest
 	{
 		Logger logger = LoggingFactory.createConsoleLoggerFor(MUSTest.class);
 		WadFile wad = new WadFile(args[0]);
-		for (DMXMUS.Event event : wad.getDataAs("D_RUNNIN", DMXMUS.class))
+		for (MUS.Event event : wad.getDataAs("D_RUNNIN", MUS.class))
 			logger.info(event);
 		wad.close();
 	}

@@ -10,7 +10,6 @@ package net.mtrop.doom.util;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -135,23 +134,23 @@ public final class MapUtils
 			switch (name)
 			{
 				case LUMP_THINGS:
-					map.setThings(Arrays.asList(wad.getDataAs(entry, DoomThing.class, DoomThing.LENGTH)));
+					map.setThings(wad.getDataAsList(entry, DoomThing.class, DoomThing.LENGTH));
 					break;
 
 				case LUMP_SECTORS:
-					map.setSectors(Arrays.asList(wad.getDataAs(entry, DoomSector.class, DoomSector.LENGTH)));
+					map.setSectors(wad.getDataAsList(entry, DoomSector.class, DoomSector.LENGTH));
 					break;
 
 				case LUMP_VERTICES:
-					map.setVertices(Arrays.asList(wad.getDataAs(entry, DoomVertex.class, DoomVertex.LENGTH)));
+					map.setVertices(wad.getDataAsList(entry, DoomVertex.class, DoomVertex.LENGTH));
 					break;
 
 				case LUMP_SIDEDEFS:
-					map.setSidedefs(Arrays.asList(wad.getDataAs(entry, DoomSidedef.class, DoomSidedef.LENGTH)));
+					map.setSidedefs(wad.getDataAsList(entry, DoomSidedef.class, DoomSidedef.LENGTH));
 					break;
 
 				case LUMP_LINEDEFS:
-					map.setLinedefs(Arrays.asList(wad.getDataAs(entry, DoomLinedef.class, DoomLinedef.LENGTH)));
+					map.setLinedefs(wad.getDataAsList(entry, DoomLinedef.class, DoomLinedef.LENGTH));
 					break;
 			}
 		}
@@ -215,23 +214,23 @@ public final class MapUtils
 			switch (name)
 			{
 				case LUMP_THINGS:
-					map.setThings(Arrays.asList(wad.getDataAs(entry, HexenThing.class, HexenThing.LENGTH)));
+					map.setThings(wad.getDataAsList(entry, HexenThing.class, HexenThing.LENGTH));
 					break;
 	
 				case LUMP_SECTORS:
-					map.setSectors(Arrays.asList(wad.getDataAs(entry, DoomSector.class, DoomSector.LENGTH)));
+					map.setSectors(wad.getDataAsList(entry, DoomSector.class, DoomSector.LENGTH));
 					break;
 	
 				case LUMP_VERTICES:
-					map.setVertices(Arrays.asList(wad.getDataAs(entry, DoomVertex.class, DoomVertex.LENGTH)));
+					map.setVertices(wad.getDataAsList(entry, DoomVertex.class, DoomVertex.LENGTH));
 					break;
 	
 				case LUMP_SIDEDEFS:
-					map.setSidedefs(Arrays.asList(wad.getDataAs(entry, DoomSidedef.class, DoomSidedef.LENGTH)));
+					map.setSidedefs(wad.getDataAsList(entry, DoomSidedef.class, DoomSidedef.LENGTH));
 					break;
 	
 				case LUMP_LINEDEFS:
-					map.setLinedefs(Arrays.asList(wad.getDataAs(entry, HexenLinedef.class, HexenLinedef.LENGTH)));
+					map.setLinedefs(wad.getDataAsList(entry, HexenLinedef.class, HexenLinedef.LENGTH));
 					break;
 			}
 		}
@@ -365,9 +364,9 @@ public final class MapUtils
 			throw new MapException("BSP Tree information is incomplete. Missing NODES.");
 		
 		BSPTree out = new BSPTree();
-		out.setSegs(wad.getDataAs(segs, BSPSegment.class, BSPSegment.LENGTH));
-		out.setSubsectors(wad.getDataAs(ssectors, BSPSubsector.class, BSPSubsector.LENGTH));
-		out.setNodes(wad.getDataAs(nodes, BSPNode.class, BSPNode.LENGTH));
+		out.setSegments(wad.getDataAsList(segs, BSPSegment.class, BSPSegment.LENGTH));
+		out.setSubsectors(wad.getDataAsList(ssectors, BSPSubsector.class, BSPSubsector.LENGTH));
+		out.setNodes(wad.getDataAsList(nodes, BSPNode.class, BSPNode.LENGTH));
 		
 		return out;
 	}

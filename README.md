@@ -69,7 +69,8 @@ extent.
 
 * Reading/converting PC Speaker effects.
 * Supporting additional BSP node types.
-* Stuff for drawing maps more easily.
+* Stuff for drawing maps more easily (graphic-wise).
+* Better out-of-the-box palette and colormap functions like fade/tinting and the like.
 * Better ENDOOM rendering options.
 
 ### Library
