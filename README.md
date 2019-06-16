@@ -24,8 +24,7 @@ NONE
 
 ### Source
 
-The MASTER branch contains stable code (I hope). The DEVELOP branch's contents may always
-shift. 
+The `master` branch contains stable code (I hope). Until a release is cut, the `master` branch will be shifting. 
 
 ### Introduction
 
