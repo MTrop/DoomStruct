@@ -75,6 +75,11 @@ public interface Wad extends Iterable<WadEntry>
 	int getEntryCount();
 
 	/**
+	 * @return the amount of content data in this Wad in bytes.
+	 */
+	int getContentLength();
+
+	/**
 	 * Gets the WadEntry at index n.
 	 * 
 	 * @param n the index of the entry in the entry list.

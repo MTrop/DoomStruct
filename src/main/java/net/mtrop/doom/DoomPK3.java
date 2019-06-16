@@ -203,10 +203,26 @@ public class DoomPK3 extends ZipFile
 	 */
 	public File getFile(String entryName, String outFilePath) throws IOException
 	{
+		return getFile(entryName, new File(outFilePath));
+	}
+
+	/**
+	 * Gets the data in one entry in the PK3 and extracts it to a file.
+	 * If the target file exists, it is overwritten.
+	 * @param entryName the entry to extract and return as a byte array.
+	 * @param outFile the destination file for the data.
+	 * @return a reference to the file created, or null if the entry doesn't exist.
+	 * @throws IOException if a read error occurs.
+	 * @throws FileNotFoundException if the target file is a directory.
+	 * @throws SecurityException if the file could not be created due to system permission.
+	 * @throws ZipException if a ZIP format error has occurred
+	 * @throws IllegalStateException if the zip file has been closed
+	 */
+	public File getFile(String entryName, File outFile) throws IOException
+	{
 		InputStream in = getInputStream(entryName);
 		if (in == null)
 			return null;
-		File outFile = new File(outFilePath);
 		OutputStream out = new BufferedOutputStream(new FileOutputStream(outFile));
 		IOUtils.relay(in, out);
 		IOUtils.close(in);
@@ -361,7 +377,26 @@ public class DoomPK3 extends ZipFile
 	 */
 	public WadFile getDataAsTempWadFile(String entryName, String outFilePath) throws IOException
 	{
-		final File extracted = getFile(entryName, outFilePath);
+		return getDataAsTempWadFile(entryName, new File(outFilePath));
+	}
+
+	/**
+	 * Retrieves the data for a particular entry, extracts it, and, 
+	 * presuming it to be a WAD of some kind, opens it as a WadFile.
+	 * If the target file exists, it is overwritten.
+	 * <p><b>NOTE: The WadFile returned is special: as soon as it is closed, it is deleted!</b>
+	 * @param entryName the entry to extract and return as a byte array.
+	 * @param outFile the destination file for the data.
+	 * @return a reference to the open WAD file created, or null if the entry doesn't exist.
+	 * @throws IOException if a read error occurs.
+	 * @throws FileNotFoundException if the target file is a directory.
+	 * @throws SecurityException if the file could not be created due to system permission.
+	 * @throws ZipException if a ZIP format error has occurred
+	 * @throws IllegalStateException if the zip file has been closed
+	 */
+	public WadFile getDataAsTempWadFile(String entryName, File outFile) throws IOException
+	{
+		final File extracted = getFile(entryName, outFile);
 		return extracted != null ? new WadFile(extracted) {
 			@Override
 			public void close() throws IOException

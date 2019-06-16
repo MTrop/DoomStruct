@@ -41,11 +41,15 @@ public class WadMap implements Wad
 	/** Type of Wad File (IWAD or PWAD). */
 	private Type type;
 	/** The list of entries. */
-	protected List<WadEntry> entries;
+	private List<WadEntry> entries;
+	/** Content size. */
+	private int contentLength;
 
 	private WadMap()
 	{
+		this.type = null;
 		this.entries = new ArrayList<WadEntry>();
+		this.contentLength = 0;
 	}
 	
 	/**
@@ -107,10 +111,10 @@ public class WadMap implements Wad
 			throw new WadException("Not a WAD file.");
 		}
 		int entryCount = sr.readInt(in);
-		int contentsize = sr.readInt(in) - 12;
+		contentLength = sr.readInt(in) - 12;
 		
 		// skip content.
-		in.skip(contentsize);
+		in.skip(contentLength);
 		
 		byte[] entrybuffer = new byte[16];
 		for (int x = 0; x < entryCount; x++)
@@ -139,6 +143,12 @@ public class WadMap implements Wad
 		return entries.size();
 	}
 
+	@Override
+	public int getContentLength()
+	{
+		return contentLength;
+	}
+	
 	@Override
 	public WadEntry addEntry(String entryName, int offset, int length) throws IOException
 	{

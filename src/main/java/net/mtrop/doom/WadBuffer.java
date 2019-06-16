@@ -190,6 +190,12 @@ public class WadBuffer implements Wad
 	}
 	
 	@Override
+	public int getContentLength()
+	{
+		return content.size();
+	}
+	
+	@Override
 	public boolean isIWAD()
 	{
 		return getType() == Type.IWAD;

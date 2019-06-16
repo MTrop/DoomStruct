@@ -221,6 +221,12 @@ public class WadFile implements Wad, AutoCloseable
 	}
 	
 	@Override
+	public int getContentLength()
+	{
+		return entryListOffset - 12;
+	}
+	
+	@Override
 	public boolean isIWAD()
 	{
 		return type == Type.IWAD;

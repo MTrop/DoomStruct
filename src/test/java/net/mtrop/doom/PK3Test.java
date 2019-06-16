@@ -9,6 +9,8 @@ package net.mtrop.doom;
 
 import java.io.File;
 import java.io.InputStream;
+import java.io.Reader;
+import java.nio.charset.Charset;
 import java.util.List;
 
 import net.mtrop.doom.TestUtils.AfterAllTests;
@@ -16,6 +18,7 @@ import net.mtrop.doom.TestUtils.AfterEachTest;
 import net.mtrop.doom.TestUtils.BeforeAllTests;
 import net.mtrop.doom.TestUtils.BeforeEachTest;
 import net.mtrop.doom.TestUtils.Test;
+import net.mtrop.doom.sound.DMXSound;
 
 import static net.mtrop.doom.TestUtils.assertEqual;
 
@@ -99,6 +102,50 @@ public final class PK3Test
 	}
 
 	@Test
+	public void getDataAs() throws Exception
+	{
+		pk3.getDataAs("sounds/dsflamst.lmp", DMXSound.class);
+	}
+
+	@Test
+	public void getDataAsWadMap() throws Exception
+	{
+		WadMap wad = pk3.getDataAsWadMap("maps/map01.wad");
+		assertEqual(wad.getEntryCount(), 13);
+		wad.close();
+	}
+
+	@Test
+	public void getDataAsTempWadFile() throws Exception
+	{
+		File tempFile = new File("test/tempwad.wad");
+		WadFile wad = pk3.getDataAsTempWadFile("maps/map01.wad", tempFile);
+		assertEqual(tempFile.exists(), true);
+		assertEqual(wad.getEntryCount(), 13);
+		wad.close();
+		assertEqual(tempFile.exists(), false);
+	}
+
+	@Test
+	public void getDataAsWadBuffer() throws Exception
+	{
+		WadBuffer wad = pk3.getDataAsWadBuffer("maps/map01.wad");
+		assertEqual(wad.getEntryCount(), 13);
+		assertEqual(wad.getContentLength(), 442359);
+		wad.close();
+	}
+
+	@Test
+	public void getFile() throws Exception
+	{
+		File tempFile = new File("test/tempwad.wad");
+		File file = pk3.getFile("maps/map01.wad", tempFile);
+		assertEqual(file.exists(), true);
+		file.delete();
+		assertEqual(file.exists(), false);
+	}
+
+	@Test
 	public void getInputStream() throws Exception
 	{
 		InputStream in = pk3.getInputStream("maps/map02.wad");
@@ -111,18 +158,23 @@ public final class PK3Test
 		assertEqual(out, 250034);
 	}
 
-	/*
-	getDataAs(String, Class<BO>)
-	getDataAs(String, Class<BO>, int)
-	getDataAsList(String, Class<BO>, int)
-	getDataAsWadMap(String)
-	getDataAsTempWadFile(String, String)
-	getDataAsWadBuffer(String)
-	getFile(String, String)
-	getTextData(String, Charset)
-	getTextDataAs(String, Charset, Class<TO>)
-	getReader(String, Charset)
-	getScanner(String, Class<BO>, int)
-	getInlineScanner(String, Class<BO>, int)
-	 */
+	@Test
+	public void getTextData() throws Exception
+	{
+		pk3.getTextData("decorate.txt", Charset.forName("ASCII"));
+	}
+
+	@Test
+	public void getReader() throws Exception
+	{
+		int c = 0;
+		char[] buf = new char[1024];
+		
+		Reader r = pk3.getReader("decorate.txt", Charset.forName("ASCII"));
+		StringBuilder sb = new StringBuilder();
+		while ((c = r.read(buf)) > 0)
+			sb.append(buf, 0, c);
+		assertEqual(sb.toString(), pk3.getTextData("decorate.txt", Charset.forName("ASCII")));
+	}
+
 }
