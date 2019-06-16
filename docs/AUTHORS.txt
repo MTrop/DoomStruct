@@ -1,2 +1,6 @@
 Matt Tropiano <mtropiano@gmail.com>
 	- API and implementation
+	- doommap.wad (CC3 MAP07)
+	- hexenmap.wad (Scourge of Viscerus MAP01)
+	- udmfmap.wad (SQUARE DM01)
+	- viscerus.pk3 (Scourge of Viscerus)

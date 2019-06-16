@@ -35,8 +35,13 @@
 	<!-- Filesets -->
 	
 	<patternset id="pattern.documents">
-		<include name="README.*" />
+		<include name="AUTHORS.txt" />
+		<include name="CHANGELOG.md" />
+		<include name="CONTRIBUTING.md" />
 		<include name="LICENSE.txt" />
+		<include name="PHILOSOPHY.md" />
+		<include name="README.md" />
+		<include name="VERSIONING.md" />
 		<include name="docs/*.*" />
 	</patternset>
 	

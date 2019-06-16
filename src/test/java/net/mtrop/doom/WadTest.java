@@ -7,20 +7,29 @@
  ******************************************************************************/
 package net.mtrop.doom;
 
-import net.mtrop.doom.LoggingFactory.Logger;
+import net.mtrop.doom.TestUtils.Test;
 
-
-public final class PK3FileTest
+public final class WadTest
 {
-	private static final Logger out = LoggingFactory.createConsoleLoggerFor(PK3FileTest.class); 
-	
-	public static void main(String[] args) throws Exception
+	@Test
+	public void openWadMap() throws Exception
 	{
-		DoomPK3 pk3 = new DoomPK3(args[0]);
-		for (String path : pk3.getEntriesStartingWith("sprites/"))
-			out.info(path);
-		
-		pk3.close();
+		WadMap wad = new WadMap("src/test/resources/doommap.wad");
+		wad.close();
+	}
+
+	@Test
+	public void openWadFile() throws Exception
+	{
+		WadFile wad = new WadFile("src/test/resources/doommap.wad");
+		wad.close();
+	}
+
+	@Test
+	public void openWadBuffer() throws Exception
+	{
+		WadBuffer wad = new WadBuffer("src/test/resources/doommap.wad");
+		wad.close();
 	}
 
 }
