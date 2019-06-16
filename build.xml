@@ -43,8 +43,7 @@
 		net.mtrop.doom.struct.trie,
 		net.mtrop.doom.struct.vector,
 		net.mtrop.doom.texture,
-		net.mtrop.doom.util,
-		net.mtrop.doom.util.resource
+		net.mtrop.doom.util
 		"
 	/>
 	
