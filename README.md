@@ -102,6 +102,14 @@ Open `DOOM2.WAD` and fetch all sectors in `MAP29` with the `BLOOD1` floor textur
 		.collect(Collectors.toSet());
 	wad.close();
 
+Open `DOOM.WAD` and fetch all things in `E1M1` that appear in multiplayer.
+
+	WadFile wad = new WadFile("doom.wad");
+	Set<DoomThing> set = wad.getDataAsList("things", "e1m1", DoomThing.class, DoomThing.LENGTH).stream()
+		.filter((thing) -> thing.isFlagSet(DoomThingFlags.NOT_SINGLEPLAYER))
+		.collect(Collectors.toSet());
+	wad.close();
+
 Open `HEXEN.WAD` and fetch all things in `MAP01` that have a special.
 
 	WadFile wad = new WadFile("hexen.wad");

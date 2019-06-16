@@ -7,11 +7,12 @@
  ******************************************************************************/
 package net.mtrop.doom.map.data;
 
-import net.mtrop.doom.map.data.flags.BoomLinedefFlags;
-import net.mtrop.doom.map.data.flags.DoomLinedefFlags;
-import net.mtrop.doom.map.data.flags.HexenLinedefFlags;
-import net.mtrop.doom.map.data.flags.StrifeLinedefFlags;
-import net.mtrop.doom.map.data.flags.ZDoomLinedefFlags;
+import net.mtrop.doom.map.data.flags.BoomThingFlags;
+import net.mtrop.doom.map.data.flags.DoomThingFlags;
+import net.mtrop.doom.map.data.flags.HexenThingFlags;
+import net.mtrop.doom.map.data.flags.MBFThingFlags;
+import net.mtrop.doom.map.data.flags.StrifeThingFlags;
+import net.mtrop.doom.map.data.flags.ZDoomThingFlags;
 import net.mtrop.doom.object.BinaryObject;
 import net.mtrop.doom.util.RangeUtils;
 
@@ -153,11 +154,12 @@ abstract class CommonThing implements BinaryObject
 	 * Check's if a flag bit is set.
 	 * @param flagType the flag type (constant).
 	 * @return true if set, false if not.
-	 * @see DoomLinedefFlags
-	 * @see BoomLinedefFlags
-	 * @see HexenLinedefFlags
-	 * @see StrifeLinedefFlags
-	 * @see ZDoomLinedefFlags
+	 * @see DoomThingFlags
+	 * @see BoomThingFlags
+	 * @see MBFThingFlags
+	 * @see HexenThingFlags
+	 * @see StrifeThingFlags
+	 * @see ZDoomThingFlags
 	 */
 	public boolean isFlagSet(int flagType)
 	{
@@ -168,11 +170,12 @@ abstract class CommonThing implements BinaryObject
 	 * Sets/clears a bit flag.
 	 * @param flagType the flag type (constant).
 	 * @param set if true, set the bit. If false, clear it.
-	 * @see DoomLinedefFlags
-	 * @see BoomLinedefFlags
-	 * @see HexenLinedefFlags
-	 * @see StrifeLinedefFlags
-	 * @see ZDoomLinedefFlags
+	 * @see DoomThingFlags
+	 * @see BoomThingFlags
+	 * @see MBFThingFlags
+	 * @see HexenThingFlags
+	 * @see StrifeThingFlags
+	 * @see ZDoomThingFlags
 	 */
 	public void setFlag(int flagType, boolean set)
 	{
