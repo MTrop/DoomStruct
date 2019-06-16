@@ -135,7 +135,7 @@ public class DMXSound implements BinaryObject
 	public void setSample(int index, double sample)
 	{
 		if (index < 0 || index >= sampleCount)
-			throw new IndexOutOfBoundsException(index);
+			throw new IndexOutOfBoundsException("Index out of range: " + index);
 		samples[index] = Math.max(Math.min(sample, 1.0), -1.0);
 	}
 
@@ -230,7 +230,7 @@ public class DMXSound implements BinaryObject
 	public double getSample(int index)
 	{
 		if (index < 0 || index >= sampleCount)
-			throw new IndexOutOfBoundsException(index);
+			throw new IndexOutOfBoundsException("Index out of range: " + index);
 		return samples[index];
 	}
 	

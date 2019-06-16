@@ -80,7 +80,8 @@
 
 	<target name="javadoc" depends="init.docs" description="Builds the documentation.">
         <javadoc access="protected" 
-        	additionalparam="-J-Xmx512m  " author="true" 
+        	additionalparam="-J-Xmx512m  " 
+        	author="true" 
         	classpath="${project.classpath}${path.separator}${bin.dir}" 
         	doctitle="${project.javadoc.title}" 
         	sourcepath="${src.dir}" 
@@ -123,6 +124,9 @@
 	<target name="compile.src" if="src.dir.available">
 		<javac 
 			source="1.8"
+			target="1.8"
+			compiler="javac1.8"
+			bootclasspath="${project.compiler.bootclasspath}"
 			srcdir="${src.dir}" 
 			destdir="${bin.dir}"
             includeAntRuntime="false"
@@ -145,6 +149,9 @@
 	<target name="compile.test.src" depends="compile" if="test.src.dir.available">
 		<javac 
 			source="1.8"
+			target="1.8"
+			compiler="javac1.8"
+			bootclasspath="${project.compiler.bootclasspath}"
 			srcdir="${test.src.dir}" 
 			destdir="${bin.dir}"
             includeAntRuntime="false"
@@ -160,14 +167,6 @@
 	</target>
 
 	<target name="compile.test" depends="compile, compile.test.src, compile.test.resources" description="Compiles the project." if="test.src.dir.available">
-		<javac 
-			source="1.8"
-			srcdir="${test.src.dir}" 
-			destdir="${bin.dir}"
-            includeAntRuntime="false"
-			classpath="${project.classpath}"
-			debug="off" 
-			/>
 		<copy todir="${bin.dir}" failonerror="false">
 			<fileset dir="${test.resource.dir}" />
 		</copy>
