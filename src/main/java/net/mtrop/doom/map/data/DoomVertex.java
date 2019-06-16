@@ -16,6 +16,10 @@ import net.mtrop.doom.io.SerialWriter;
 import net.mtrop.doom.object.BinaryObject;
 import net.mtrop.doom.util.RangeUtils;
 
+/**
+ * The 4-byte representation of a vertex.
+ * @author Matthew Tropiano
+ */
 public class DoomVertex implements BinaryObject
 {
 	/** Byte length of this object. */
