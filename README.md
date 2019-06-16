@@ -81,6 +81,8 @@ Contained in this release is a series of libraries that allow reading, writing,
 and extracting data in Doom Engine structures, found in the **net.mtrop.doom** 
 packages. 
 
+Unless otherwise specified, assume that all methods are not thread-safe.
+
 ### Examples
 
 Open a WAD file (and close it).
