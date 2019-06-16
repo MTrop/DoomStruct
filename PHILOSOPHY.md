@@ -8,6 +8,14 @@ And if, down the line, a better approach is proposed, at least there's a paper t
 the decisions already made so that more *educated* decisions can be made.
 
 
+### What is the primary goal of this project?
+
+To read Doom Engine data structures and allow the users of the library to use that data 
+to create or manipulate other Doom-related data. Features that ease "map editing" or 
+advanced graphics or sound manipulation or other decision-making logic layers are not considered 
+to be within the scope of this project.
+
+
 ### Lots of things are somewhat "low-level." Why?
 
 Personal API philosophy. Assuming the intent of the user of an API will limit its design and
