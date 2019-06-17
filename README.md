@@ -86,14 +86,18 @@ Unless otherwise specified, assume that all methods are not thread-safe.
 
 Open a WAD file (and close it).
 
-	WadFile wad = new WadFile("doom2.wad");
-	wad.close();
+```java
+WadFile wad = new WadFile("doom2.wad");
+wad.close();
+```
 
 Open `DOOM2.WAD` and read `MAP01` into a Doom Map.
 
-	WadFile wad = new WadFile("doom2.wad");
-	DoomMap map = MapUtils.createDoomMap(wad, "map01");
-	wad.close();
+```java
+WadFile wad = new WadFile("doom2.wad");
+DoomMap map = MapUtils.createDoomMap(wad, "map01");
+wad.close();
+```
 
 Open `DOOM2.WAD` and fetch all sectors in `MAP29` with the `BLOOD1` floor texture.
 
@@ -105,103 +109,119 @@ Open `DOOM2.WAD` and fetch all sectors in `MAP29` with the `BLOOD1` floor textur
 
 Open `DOOM.WAD` and fetch all things in `E1M1` that appear in multiplayer.
 
-	WadFile wad = new WadFile("doom.wad");
-	Set<DoomThing> set = wad.getDataAsList("things", "e1m1", DoomThing.class, DoomThing.LENGTH).stream()
-		.filter((thing) -> thing.isFlagSet(DoomThingFlags.NOT_SINGLEPLAYER))
-		.collect(Collectors.toSet());
-	wad.close();
+```java
+WadFile wad = new WadFile("doom.wad");
+Set<DoomThing> set = wad.getDataAsList("things", "e1m1", DoomThing.class, DoomThing.LENGTH).stream()
+	.filter((thing) -> thing.isFlagSet(DoomThingFlags.NOT_SINGLEPLAYER))
+	.collect(Collectors.toSet());
+wad.close();
+```
 
 Open `HEXEN.WAD` and fetch all things in `MAP01` that have a special.
 
-	WadFile wad = new WadFile("hexen.wad");
-	Set<HexenThing> set = wad.getDataAsList("things", "map01", HexenThing.class, HexenThing.LENGTH).stream()
-		.filter((thing) -> thing.getSpecial() > 0)
-		.collect(Collectors.toSet());
-	wad.close();
+```java
+WadFile wad = new WadFile("hexen.wad");
+Set<HexenThing> set = wad.getDataAsList("things", "map01", HexenThing.class, HexenThing.LENGTH).stream()
+	.filter((thing) -> thing.getSpecial() > 0)
+	.collect(Collectors.toSet());
+wad.close();
+```
 
 Open `DOOM.WAD` and fetch all maps that have less than 1000 linedefs.
 
-	final WadFile wad = new WadFile("doom.wad");
-	Set<String> set = Arrays.asList(MapUtils.getAllMapHeaders(wad)).stream()
-		.filter((header) -> wad.getEntry("linedefs", header).getSize() / DoomLinedef.LENGTH < 1000)
-		.collect(Collectors.toSet());
-	wad.close();
+```java
+final WadFile wad = new WadFile("doom.wad");
+Set<String> set = Arrays.asList(MapUtils.getAllMapHeaders(wad)).stream()
+	.filter((header) -> wad.getEntry("linedefs", header).getSize() / DoomLinedef.LENGTH < 1000)
+	.collect(Collectors.toSet());
+wad.close();
+```
 
 Open `SQUARE1.PK3`, fetch `maps/E1A1.WAD` and read it into a UDMF Map.
 
-	DoomPK3 pk3 = new DoomPK3("square1.pk3");
-	WadBuffer wad = pk3.getDataAsWadBuffer("maps/e1a1.wad");
-	UDMFMap map = wad.getTextDataAs("textmap", Charset.forName("UTF-8"), UDMFMap.class);
-	pk3.close();
+```java
+DoomPK3 pk3 = new DoomPK3("square1.pk3");
+WadBuffer wad = pk3.getDataAsWadBuffer("maps/e1a1.wad");
+UDMFMap map = wad.getTextDataAs("textmap", Charset.forName("UTF-8"), UDMFMap.class);
+pk3.close();
+```
 
 Open `DOOM2.WAD`, read `DEMO2` and figure out how many tics that player 1 was pushing "fire".
 
-	WadFile wad = new WadFile("doom2.wad");
-	Demo demo = wad.getDataAs("demo2", Demo.class);
-	int tics = 0;
-	for (int i = 0; i < demo.getTicCount(); i++) {
-		tics += (demo.getTic(i).getAction() & Demo.Tic.ACTION_FIRE) != 0 ? 1 : 0;
-	}
-	wad.close();
+```java
+WadFile wad = new WadFile("doom2.wad");
+Demo demo = wad.getDataAs("demo2", Demo.class);
+int tics = 0;
+for (int i = 0; i < demo.getTicCount(); i++) {
+	tics += (demo.getTic(i).getAction() & Demo.Tic.ACTION_FIRE) != 0 ? 1 : 0;
+}
+wad.close();
+```
 
 Open `DOOM.WAD` and get MD5 hashes of each entry.
 
-	WadFile wad = new WadFile("doom.wad");
-	byte[][] hashes = new byte[wad.getEntryCount()][];
-	int i = 0;
-	for (WadEntry entry : wad)
-		hashes[i++] = MessageDigest.getInstance("MD5").digest(wad.getData(entry));
-	wad.close();
+```java
+WadFile wad = new WadFile("doom.wad");
+byte[][] hashes = new byte[wad.getEntryCount()][];
+int i = 0;
+for (WadEntry entry : wad)
+	hashes[i++] = MessageDigest.getInstance("MD5").digest(wad.getData(entry));
+wad.close();
+```
 
 Open `DOOM2.WAD`, fetch all `TROO*` (graphic) entries and export them as PNGs.
 
-	WadFile wad = new WadFile("doom2.wad");
-	final Palette pal = wad.getDataAs("playpal", Palette.class);
-	for (WadEntry entry : wad) {
-		if (entry.getName().startsWith("TROO")) {
-			Picture p = wad.getDataAs(entry, Picture.class);
-			ImageIO.write(GraphicUtils.createImage(p, pal), "PNG", new File(entry.getName()+".png"));
-		}
+```java
+WadFile wad = new WadFile("doom2.wad");
+final Palette pal = wad.getDataAs("playpal", Palette.class);
+for (WadEntry entry : wad) {
+	if (entry.getName().startsWith("TROO")) {
+		Picture p = wad.getDataAs(entry, Picture.class);
+		ImageIO.write(GraphicUtils.createImage(p, pal), "PNG", new File(entry.getName()+".png"));
 	}
-	wad.close();
+}
+wad.close();
+```
 
 Open `DOOM.WAD`, fetch all `DS*` (audio) entries, upsample them to 22kHz (cosine interpolation), and export them as WAVs.
 
-	WadFile wad = new WadFile("doom.wad");
-	for (WadEntry entry : wad) {
-		if (entry.getName().startsWith("DS")) {
-			DMXSound sound = wad.getDataAs(entry, DMXSound.class)
-					.resample(InterpolationType.COSINE, DMXSound.SAMPLERATE_22KHZ);
-			SoundUtils.writeSoundToFile(sound, AudioFileFormat.Type.WAVE, new File(entry.getName() + ".wav"));
-		}
+```java
+WadFile wad = new WadFile("doom.wad");
+for (WadEntry entry : wad) {
+	if (entry.getName().startsWith("DS")) {
+		DMXSound sound = wad.getDataAs(entry, DMXSound.class)
+				.resample(InterpolationType.COSINE, DMXSound.SAMPLERATE_22KHZ);
+		SoundUtils.writeSoundToFile(sound, AudioFileFormat.Type.WAVE, new File(entry.getName() + ".wav"));
 	}
-	wad.close();
+}
+wad.close();
+```
 
 Open `DOOM2.WAD`, assemble a TextureSet, remove every texture that begins with `R`, and write it to a new WAD.
 
-	WadFile wad = new WadFile("doom2.wad");
-	TextureSet textureSet = new TextureSet(
-		wad.getDataAs("pnames", PatchNames.class),
-		wad.getDataAs("texture1", DoomTextureList.class)
-	);
-	wad.close();
-	
-	Iterator<TextureSet.Texture> it = textureSet.iterator();
-	while (it.hasNext()) {
-		TextureSet.Texture t = it.next();
-		if (t.getName().startsWith("R"))
-			it.remove();
-	}
-	PatchNames pout = new PatchNames();
-	DoomTextureList tout = new DoomTextureList();
-	textureSet.export(pout, tout);
-	
-	WadFile newwad = WadFile.createWadFile("new.wad");
-	newwad.addData("PNAMES", pout.toBytes());
-	newwad.addData("TEXTURE1", tout.toBytes());
-	newwad.close();
+```java
+WadFile wad = new WadFile("doom2.wad");
+TextureSet textureSet = new TextureSet(
+	wad.getDataAs("pnames", PatchNames.class),
+	wad.getDataAs("texture1", DoomTextureList.class)
+);
+wad.close();
 
+Iterator<TextureSet.Texture> it = textureSet.iterator();
+while (it.hasNext()) {
+	TextureSet.Texture t = it.next();
+	if (t.getName().startsWith("R"))
+		it.remove();
+}
+PatchNames pout = new PatchNames();
+DoomTextureList tout = new DoomTextureList();
+textureSet.export(pout, tout);
 
+WadFile newwad = WadFile.createWadFile("new.wad");
+newwad.addData("PNAMES", pout.toBytes());
+newwad.addData("TEXTURE1", tout.toBytes());
+newwad.close();
+```
 
 ### Compiling with Ant
 
