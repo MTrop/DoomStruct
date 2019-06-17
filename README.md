@@ -140,7 +140,7 @@ Open `DOOM2.WAD`, read `DEMO2` and figure out how many tics that player 1 was pu
 	Demo demo = wad.getDataAs("demo2", Demo.class);
 	int tics = 0;
 	for (int i = 0; i < demo.getTicCount(); i++) {
-		tics += (demo.getTic(i).getAction() & ACTION_FIRE) != 0 ? 1 : 0;
+		tics += (demo.getTic(i).getAction() & Demo.Tic.ACTION_FIRE) != 0 ? 1 : 0;
 	}
 	wad.close();
 
