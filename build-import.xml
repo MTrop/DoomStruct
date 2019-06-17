@@ -24,9 +24,9 @@
 	<property name="docs.dir" value="${build.dir}/docs" />
 	<property name="zip.dir" value="${build.dir}/zip" />
 
-	<property name="jar.filename" value="${project.archive}-${build.version}.jar" />
-	<property name="jar.sources.filename" value="${project.archive}-${build.version}-sources.jar" />
-	<property name="jar.javadoc.filename" value="${project.archive}-${build.version}-javadoc.jar" />
+	<property name="jar.filename" value="${project.archive}-${build.version.number}.jar" />
+	<property name="jar.sources.filename" value="${project.archive}-${build.version.number}-sources.jar" />
+	<property name="jar.javadoc.filename" value="${project.archive}-${build.version.number}-javadoc.jar" />
 
 	<property name="zip.filename" value="${project.archive}-bin-${build.version}.zip" />
 	<property name="zip.sources.filename" value="${project.archive}-src-${build.version}.zip" />
