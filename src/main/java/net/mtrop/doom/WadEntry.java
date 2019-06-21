@@ -7,6 +7,7 @@
  ******************************************************************************/
 package net.mtrop.doom;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,7 +15,6 @@ import java.io.OutputStream;
 
 import net.mtrop.doom.io.SerialReader;
 import net.mtrop.doom.io.SerialWriter;
-import net.mtrop.doom.object.BinaryObject;
 import net.mtrop.doom.util.NameUtils;
 
 /**
@@ -22,17 +22,17 @@ import net.mtrop.doom.util.NameUtils;
  * This entry contains NO DATA - this is a descriptor for the data in the originating WAD.
  * @author Matthew Tropiano
  */
-public class WadEntry implements BinaryObject
+public class WadEntry
 {
 	/** Byte length of this object. */
 	public static final int LENGTH = 16;
 
 	/** The name of the entry. */
-	String name;
+	private String name;
 	/** The offset into the original WAD for the start of the data. */
-	int offset;
+	private int offset;
 	/** The size of the entry content in bytes. */
-	int size;
+	private int size;
 	
 	private WadEntry()
 	{
@@ -77,6 +77,47 @@ public class WadEntry implements BinaryObject
 		WadEntry out = new WadEntry();
 		out.fromBytes(b);
 		return out; 
+	}
+
+	/**
+	 * Makes a copy of this entry with a new name.
+	 * @param name the new name.
+	 * @return the new entry.
+	 * @throws IllegalArgumentException if the name is invalid.
+	 * @since NOW
+	 */
+	public WadEntry withNewName(String name)
+	{
+		NameUtils.checkValidEntryName(name);
+		return new WadEntry(name, offset, size); 
+	}
+	
+	/**
+	 * Makes a copy of this entry with a new offset.
+	 * @param offset the new offset.
+	 * @return the new entry.
+	 * @throws IllegalArgumentException if the offset is negative.
+	 * @since NOW
+	 */
+	public WadEntry withNewOffset(int offset)
+	{
+		if (offset < 0)
+			throw new IllegalArgumentException("Entry offset is negative.");
+		return new WadEntry(name, offset, size); 
+	}
+	
+	/**
+	 * Makes a copy of this entry with a new size.
+	 * @param size the new offset.
+	 * @return the new entry.
+	 * @throws IllegalArgumentException if the size is negative.
+	 * @since NOW
+	 */
+	public WadEntry withNewSize(int size)
+	{
+		if (size < 0)
+			throw new IllegalArgumentException("Entry size is negative.");
+		return new WadEntry(name, offset, size); 
 	}
 	
 	/**
@@ -133,8 +174,34 @@ public class WadEntry implements BinaryObject
 		return bos.toByteArray();
 	}
 
-	@Override
-	public void readBytes(InputStream in) throws IOException
+	/**
+	 * Gets the byte representation of this object. 
+	 * @return this object as a series of bytes.
+	 */
+	byte[] toBytes()
+	{
+		ByteArrayOutputStream bos = new ByteArrayOutputStream(128);
+		try { writeBytes(bos); } catch (IOException e) { /* Shouldn't happen. */ }
+		return bos.toByteArray();
+	}
+
+	/**
+	 * Reads in the byte representation of this object and sets its fields.
+	 * @param data the byte array to read from. 
+	 * @throws IOException if a read error occurs.
+	 */
+	void fromBytes(byte[] data) throws IOException
+	{
+		ByteArrayInputStream bin = new ByteArrayInputStream(data);
+		readBytes(bin);
+	}
+
+	/**
+	 * Reads from an {@link InputStream} and sets this object's fields. 
+	 * @param in the {@link InputStream} to read from. 
+	 * @throws IOException if a read error occurs.
+	 */
+	void readBytes(InputStream in) throws IOException
 	{
 		SerialReader sr = new SerialReader(SerialReader.LITTLE_ENDIAN);
 		offset = sr.readInt(in);
@@ -142,8 +209,12 @@ public class WadEntry implements BinaryObject
 		name = NameUtils.nullTrim(sr.readString(in, 8, "ASCII"));
 	}
 
-	@Override
-	public void writeBytes(OutputStream out) throws IOException
+	/**
+	 * Writes this object to an {@link OutputStream}.
+	 * @param out the {@link OutputStream} to write to.
+	 * @throws IOException if a write error occurs.
+	 */
+	void writeBytes(OutputStream out) throws IOException
 	{
 		SerialWriter sw = new SerialWriter(SerialWriter.LITTLE_ENDIAN);
 		sw.writeInt(out, offset);

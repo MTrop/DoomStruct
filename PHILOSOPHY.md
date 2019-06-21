@@ -24,6 +24,12 @@ structures, rather than ease-of-use first, then down to bits and bytes. Then, yo
 flexibility as well as convenience. 
 
 
+### Why are WadEntries immutable?
+
+WadEntries are immutable because they can be used by other Wads - changing an entry could
+pollute use of an entry whose reference is used in many places.
+
+
 ### Why Doom/Hexen/UDMF Linedef/Thing objects? Why not a single object for all things/linedefs?
 
 Those object types are first and foremost abstractions of data representation in Doom, 

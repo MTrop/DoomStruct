@@ -299,11 +299,11 @@ public class WadFile implements Wad, AutoCloseable
 			entryListOffset = dataOffset;
 		
 			// adjust offsets.
-			if (entry.size > 0) for (int i = 0; i < entries.size(); i++)
+			for (int i = 0; i < entries.size(); i++)
 			{
 				WadEntry e = entries.get(i);
-				if (e.offset > entry.offset)
-					e.offset -= entry.size;
+				if (e.getOffset() > entry.getOffset())
+					entries.set(i, e.withNewOffset(e.getOffset() - entry.getSize()));
 			}
 		}
 	
@@ -320,7 +320,7 @@ public class WadFile implements Wad, AutoCloseable
 		
 		NameUtils.checkValidEntryName(newName);
 		
-		entry.name = newName;
+		entries.set(index, entry.withNewName(newName));
 	
 		// update in file.
 		file.seek(entryListOffset + (16 * index) + 8);
@@ -334,7 +334,7 @@ public class WadFile implements Wad, AutoCloseable
 		if (entry == null)
 			throw new IOException("Index is out of range.");
 		
-		if (data.length != entry.size)
+		if (data.length != entry.getSize())
 		{
 			deleteEntry(index);
 			String name = entry.getName();
@@ -342,7 +342,7 @@ public class WadFile implements Wad, AutoCloseable
 		}
 		else
 		{
-			file.seek(entry.offset);
+			file.seek(entry.getOffset());
 			file.write(data);
 		}
 	}

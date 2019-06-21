@@ -234,7 +234,7 @@ public class WadBuffer implements Wad
 	@Override
 	public InputStream getInputStream(WadEntry entry) throws IOException
 	{
-		return new WadBufferInputStream(getContentOffset(entry), entry.size);
+		return new WadBufferInputStream(getContentOffset(entry), entry.getSize());
 	}
 
 	@Override
@@ -247,33 +247,36 @@ public class WadBuffer implements Wad
 	public WadEntry deleteEntry(int n) throws IOException
 	{
 		// get removed WadEntry.
-		WadEntry wfe = removeEntry(n);
-		if (wfe == null)
+		WadEntry entry = removeEntry(n);
+		if (entry == null)
 			throw new IOException("Index is out of range.");
 	
-		int cofs = getContentOffset(wfe);
-	
-		content.delete(cofs, wfe.getSize());
-		
-		// adjust offsets from last WadEntry.
-		for (int i = n; i < entries.size(); i++)
+		if (entry.getSize() > 0)
 		{
-			WadEntry e = entries.get(i);
-			e.offset -= wfe.getSize();
+			content.delete(getContentOffset(entry), entry.getSize());
+			
+			// adjust offsets.
+			for (int i = 0; i < entries.size(); i++)
+			{
+				WadEntry e = entries.get(i);
+				if (e.getOffset() > entry.getOffset())
+					entries.set(i, e.withNewOffset(e.getOffset() - entry.getSize()));
+			}
 		}
-		return wfe;
+		
+		return entry;
 	}
 
 	@Override
 	public void renameEntry(int index, String newName) throws IOException
 	{
-		WadEntry entry = (WadEntry)getEntry(index);
+		WadEntry entry = getEntry(index);
 		if (entry == null)
 			throw new IOException("Index is out of range.");
 		
 		NameUtils.checkValidEntryName(newName);
 		
-		entry.name = newName;
+		entries.set(index, entry.withNewName(newName));
 	}
 
 	@Override
@@ -283,7 +286,7 @@ public class WadBuffer implements Wad
 		if (entry == null)
 			throw new IOException("Index is out of range.");
 		
-		if (data.length != entry.size)
+		if (data.length != entry.getSize())
 		{
 			deleteEntry(index);
 			String name = entry.getName();
@@ -291,7 +294,7 @@ public class WadBuffer implements Wad
 		}
 		else
 		{
-			content.setData(entry.offset, data);
+			content.setData(entry.getOffset(), data);
 		}
 	}
 
