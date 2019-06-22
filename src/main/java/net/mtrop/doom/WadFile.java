@@ -120,35 +120,6 @@ public class WadFile implements Wad, AutoCloseable
 	}
 
 	/**
-	 * Writes the header and the entry list out to the Wad file.
-	 * @throws IOException if the header/entry list cannot be written.
-	 */
-	public void flushEntries() throws IOException
-	{
-		writeHeader();
-		writeEntryList();
-	}
-
-	private void writeHeader() throws IOException
-	{
-		file.seek(4);
-		byte[] b = new byte[4];
-		SerializerUtils.intToBytes(entries.size(), SerializerUtils.LITTLE_ENDIAN, b, 0);
-		file.write(b);
-		SerializerUtils.intToBytes(entryListOffset, SerializerUtils.LITTLE_ENDIAN, b, 0);
-		file.write(b);
-	}
-
-	private void writeEntryList() throws IOException
-	{
-		file.seek(entryListOffset);
-		for (WadEntry wfe : entries)
-			file.write(wfe.toBytes());
-		if (file.getFilePointer() < file.length())
-			file.setLength(file.getFilePointer());
-	}
-
-	/**
 	 * Creates a new, empty WadFile and returns a reference to it.
 	 * @param path	the path of the new file in the form of a String.
 	 * @return		a reference to the newly created WadFile, already open.
@@ -181,13 +152,98 @@ public class WadFile implements Wad, AutoCloseable
 			throw new RuntimeException("INTERNAL ERROR.");
 		}
 	}
-	
+
+	/**
+	 * Creates a new WadFile from a subset of entries (and their data) from another Wad.
+	 * <p>Entry extraction is sequential - if you have memory to spare, you may be better off
+	 * using {@link WadBuffer#extract(Wad, int, int)} since it will have far less overhead. 
+	 * @param targetFile the file to create.
+	 * @param source the the source Wad.
+	 * @param startIndex the starting entry index.
+	 * @param maxLength the maximum amount of entries from the starting index to copy.
+	 * @return a new WadBuffer that only contains the desired entries, plus their data.
+	 * @throws IOException if an error occurs on read from the source Wad.
+	 * @since NOW
+	 */
+	public static WadFile extract(File targetFile, Wad source, int startIndex, int maxLength) throws IOException
+	{
+		return extract(targetFile, source, source.mapEntries(startIndex, maxLength));
+	}
+
+	/**
+	 * Creates a new WadFile from a subset of entries (and their data) from another Wad.
+	 * <p>Entry extraction is sequential - if you have memory to spare, you may be better off
+	 * using {@link WadBuffer#extract(Wad, WadEntry...)} since it will have far less overhead. 
+	 * @param targetFile the file to create.
+	 * @param source the the source Wad.
+	 * @param entries the entries to copy over.
+	 * @return a new WadBuffer that only contains the desired entries, plus their data.
+	 * @throws IOException if an error occurs on read from the source Wad.
+	 * @since NOW
+	 */
+	public static WadFile extract(File targetFile, Wad source, WadEntry ... entries) throws IOException
+	{
+		WadFile out = WadFile.createWadFile(targetFile);
+		for (int i = 0; i < entries.length; i++)
+			out.addData(entries[i].getName(), source.getData(entries[i]));
+		return out;
+	}
+
+	private void writeHeader() throws IOException
+	{
+		file.seek(4);
+		byte[] b = new byte[4];
+		SerializerUtils.intToBytes(entries.size(), SerializerUtils.LITTLE_ENDIAN, b, 0);
+		file.write(b);
+		SerializerUtils.intToBytes(entryListOffset, SerializerUtils.LITTLE_ENDIAN, b, 0);
+		file.write(b);
+	}
+
+	private void writeEntryList() throws IOException
+	{
+		file.seek(entryListOffset);
+		for (WadEntry wfe : entries)
+			file.write(wfe.toBytes());
+		if (file.getFilePointer() < file.length())
+			file.setLength(file.getFilePointer());
+	}
+
+	/**
+	 * Writes the header and the entry list out to the Wad file.
+	 * @throws IOException if the header/entry list cannot be written.
+	 */
+	public final void flushEntries() throws IOException
+	{
+		writeHeader();
+		writeEntryList();
+	}
+
+	/**
+	 * Sets the type of WAD that this is.
+	 * @param type the WAD type.
+	 * @throws IOException if the header could not be written.
+	 */
+	public final void setType(Type type) throws IOException
+	{
+		this.type = type;
+		writeHeader();
+	}
+
+	/**
+	 * Gets the type of WAD that this is.
+	 * @return the WAD type.
+	 */
+	public final Type getType()
+	{
+		return type;
+	}
+
 	/**
 	 * Returns this Wad's file name. 
 	 * @return this file's name (and just the name).
 	 * @see File#getName()
 	 */
-	public String getFileName()
+	public final String getFileName()
 	{
 		return fileName;
 	}
@@ -495,15 +551,6 @@ public class WadFile implements Wad, AutoCloseable
 
 		flushEntries();
 		return out;
-	}
-
-	/**
-	 * Gets the type of WAD that this is.
-	 * @return the WAD type.
-	 */
-	public Type getType()
-	{
-		return type;
 	}
 
 	@Override

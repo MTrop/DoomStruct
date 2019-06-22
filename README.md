@@ -199,6 +199,19 @@ for (WadEntry entry : wad) {
 wad.close();
 ```
 
+Open `DOOM.WAD`, fetch all map headers, and extract those maps' entries to separate WADs.
+
+```java
+WadFile wad = new WadFile("doom.wad");
+for (int headerIndex : MapUtils.getAllMapIndices(wad)) {
+	String headerName = wad.getEntry(headerIndex).getName();
+	WadBuffer.extract(wad, MapUtils.getMapEntries(wad, headerName))
+			.writeToFile(new File(headerName + ".wad"));
+}
+wad.close();
+```
+
+
 Open `DOOM2.WAD`, assemble a TextureSet, remove every texture that begins with `R`, and write it to a new WAD.
 
 ```java

@@ -40,6 +40,8 @@ import net.mtrop.doom.map.data.HexenThing;
  */
 public final class MapUtils
 {
+	private static final WadEntry[] NO_ENTRIES = new WadEntry[0];
+
 	public static final String LUMP_THINGS = "THINGS";
 	public static final String LUMP_SECTORS = "SECTORS";
 	public static final String LUMP_VERTICES = "VERTEXES";
@@ -492,25 +494,37 @@ public final class MapUtils
 	 */
 	public static int getMapEntryCount(Wad wad, int startIndex)
 	{
-		int end = 0;
-		
-		if (startIndex + 1 == wad.getEntryCount())
-			return 1;
-		else if (wad.getEntry(startIndex + 1).getName().equalsIgnoreCase(LUMP_TEXTMAP))
-		{
-			end = startIndex + 1;
-			while (end < wad.getEntryCount() && !wad.getEntry(end).getName().equalsIgnoreCase(LUMP_ENDMAP))
-				end++;
-			end++;
-		}
-		else
-		{
-			end = startIndex + 1;
-			while (end < wad.getEntryCount() && isMapDataLump(wad.getEntry(end).getName()))
-				end++;
-		}
-		
-		return end - startIndex;
+		int i = startIndex + 1;
+		while (i < wad.getEntryCount() && isMapDataLump(wad.getEntry(i).getName()))
+			i++;
+		return i - startIndex;
+	}
+	
+	/**
+	 * Returns the entries in a map, including the header.
+	 * The entry at the index is assumed to be the header.
+	 * @param wad the WAD to inspect.
+	 * @param startIndex the starting index.
+	 * @return the length, in entries, of the contiguous map data.
+	 * @since NOW
+	 */
+	public static WadEntry[] getMapEntries(Wad wad, int startIndex)
+	{
+		return wad.mapEntries(startIndex, getMapEntryCount(wad, startIndex));
+	}
+	
+	/**
+	 * Returns the entries in a map, including the header, if the map is found.
+	 * If there is more than one header in the WAD that matches the provided header, the last one is found.
+	 * @param wad the WAD to inspect.
+	 * @param header the starting entry name to find.
+	 * @return the length, in entries, of the contiguous map data.
+	 * @since NOW
+	 */
+	public static WadEntry[] getMapEntries(Wad wad, String header)
+	{
+		int index = wad.lastIndexOf(header);
+		return index >= 0 ? wad.mapEntries(index, getMapEntryCount(wad, index)) : NO_ENTRIES;
 	}
 	
 	/**

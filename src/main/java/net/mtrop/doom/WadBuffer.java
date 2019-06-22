@@ -104,6 +104,36 @@ public class WadBuffer implements Wad
 	}
 
 	/**
+	 * Creates a new WadBuffer from a subset of entries (and their data) from another Wad.
+	 * @param source the the source Wad.
+	 * @param startIndex the starting entry index.
+	 * @param maxLength the maximum amount of entries from the starting index to copy.
+	 * @return a new WadBuffer that only contains the desired entries, plus their data.
+	 * @throws IOException if an error occurs on read from the source Wad.
+	 * @since NOW
+	 */
+	public static WadBuffer extract(Wad source, int startIndex, int maxLength) throws IOException
+	{
+		return extract(source, source.mapEntries(startIndex, maxLength));
+	}
+
+	/**
+	 * Creates a new WadBuffer from a subset of entries (and their data) from another Wad. 
+	 * @param source the the source Wad.
+	 * @param entries the entries to copy over.
+	 * @return a new WadBuffer that only contains the desired entries, plus their data.
+	 * @throws IOException if an error occurs on read from the source Wad.
+	 * @since NOW
+	 */
+	public static WadBuffer extract(Wad source, WadEntry ... entries) throws IOException
+	{
+		WadBuffer out = new WadBuffer(Type.PWAD);
+		for (int i = 0; i < entries.length; i++)
+			out.addData(entries[i].getName(), source.getData(entries[i]));
+		return out;
+	}
+
+	/**
 	 * Reads in a wad from an InputStream.
 	 * @param in the input stream.
 	 */
@@ -157,13 +187,31 @@ public class WadBuffer implements Wad
 	}
 	
 	/**
+	 * Sets the type of WAD that this is.
+	 * @param type the new type.
+	 */
+	public final void setType(Type type)
+	{
+		this.type = type;
+	}
+
+	/**
+	 * Gets the type of WAD that this is.
+	 * @return the wad type.
+	 */
+	public final Type getType()
+	{
+		return type;
+	}
+
+	/**
 	 * Writes the contents of this buffer out to an output stream in Wad format.
 	 * Does not close the stream.
 	 * @param out the output stream to write to.
 	 * @throws IOException if a problem occurs during the write.
 	 * @throws NullPointerException if <code>out</code> is null.
 	 */
-	public void writeToStream(OutputStream out) throws IOException
+	public final void writeToStream(OutputStream out) throws IOException
 	{
 		SerialWriter sw = new SerialWriter(SerialWriter.LITTLE_ENDIAN);
 		sw.writeBytes(out, type.name().getBytes("ASCII"));
@@ -182,7 +230,7 @@ public class WadBuffer implements Wad
 	 * @throws SecurityException if you don't have permission to write the file.
 	 * @throws NullPointerException if <code>out</code> is null.
 	 */
-	public void writeToFile(File f) throws IOException
+	public final void writeToFile(File f) throws IOException
 	{
 		FileOutputStream fos = new FileOutputStream(f);
 		writeToStream(fos);
@@ -356,24 +404,6 @@ public class WadBuffer implements Wad
 		for (int i = 0; i < entryNames.length; i++)
 			out[i] = addDataAt(index + i, entryNames[i], data[i]);
 		return out;
-	}
-
-	/**
-	 * Sets the type of WAD that this is.
-	 * @param type the new type.
-	 */
-	public void setType(Type type)
-	{
-		this.type = type;
-	}
-	
-	/**
-	 * Gets the type of WAD that this is.
-	 * @return the wad type.
-	 */
-	public Type getType()
-	{
-		return type;
 	}
 
 	@Override
