@@ -257,7 +257,7 @@ To clean up everything:
 
 ### Javadocs
 
-Online Javadocs can be found at: [https://mtrop.github.io/DoomStruct/javadoc/](https://mtrop.github.io/Doom/javadoc/)
+Online Javadocs can be found at: [https://mtrop.github.io/DoomStruct/javadoc/](https://mtrop.github.io/DoomStruct/javadoc/)
 
 ### Other
 
