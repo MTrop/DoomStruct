@@ -101,11 +101,13 @@ wad.close();
 
 Open `DOOM2.WAD` and fetch all sectors in `MAP29` with the `BLOOD1` floor texture.
 
-	WadFile wad = new WadFile("doom2.wad");
-	Set<DoomSector> set = wad.getDataAsList("sectors", "map29", DoomSector.class, DoomSector.LENGTH).stream()
-		.filter((sector) -> sector.getFloorTexture().equals("BLOOD1"))
-		.collect(Collectors.toSet());
-	wad.close();
+```java
+WadFile wad = new WadFile("doom2.wad");
+Set<DoomSector> set = wad.getDataAsList("sectors", "map29", DoomSector.class, DoomSector.LENGTH).stream()
+	.filter((sector) -> sector.getFloorTexture().equals("BLOOD1"))
+	.collect(Collectors.toSet());
+wad.close();
+```
 
 Open `DOOM.WAD` and fetch all things in `E1M1` that appear in multiplayer.
 
@@ -255,7 +257,7 @@ To clean up everything:
 
 ### Javadocs
 
-Online Javadocs can be found at: [https://mtrop.github.io/Doom/javadoc/](https://mtrop.github.io/Doom/javadoc/)
+Online Javadocs can be found at: [https://mtrop.github.io/DoomStruct/javadoc/](https://mtrop.github.io/Doom/javadoc/)
 
 ### Other
 
