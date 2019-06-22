@@ -156,6 +156,23 @@ public interface BinaryObject
 	}
 
 	/**
+	 * Transformer interface for transform calls. 
+	 * @param <BO> the BinaryObject type.
+	 */
+	@FunctionalInterface
+	interface Transformer<BO extends BinaryObject>
+	{
+		/**
+		 * Transforms the provided object. 
+		 * The provided object reference may not be distinct each call.
+		 * Do not save the reference passed to this function anywhere.
+		 * @param object the object to transform.
+		 * @param index the sequence index of the object. 
+		 */
+		void transform(BO object, int index);
+	}
+	
+	/**
 	 * A deserializing scanner iterator that returns independent instances of objects.
 	 * @param <BO> the BinaryObject type.
 	 */

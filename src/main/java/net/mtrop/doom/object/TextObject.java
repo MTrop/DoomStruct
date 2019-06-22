@@ -86,6 +86,23 @@ public interface TextObject
 		return out;
 	}
 
+	/**
+	 * Transformer interface for transform calls. 
+	 * @param <TO> the TextObject type.
+	 */
+	@FunctionalInterface
+	interface Transformer<TO extends TextObject>
+	{
+		/**
+		 * Transforms the provided text object. 
+		 * The provided object reference may not be distinct each call.
+		 * Do not save the reference passed to this function anywhere.
+		 * @param object the object to transform.
+		 * @param index the sequence index of the object. 
+		 */
+		void transform(TO object);
+	}
+	
 	static class Reflect
 	{
 		/**
