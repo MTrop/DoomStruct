@@ -98,7 +98,6 @@ public interface TextObject
 		 * The provided object reference may not be distinct each call.
 		 * Do not save the reference passed to this function anywhere.
 		 * @param object the object to transform.
-		 * @param index the sequence index of the object. 
 		 */
 		void transform(TO object);
 	}
