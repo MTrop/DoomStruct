@@ -102,7 +102,7 @@ public class DataList
 	public void setData(int offset, byte[] data)
 	{
 		capacityCheck(offset + data.length);
-		System.arraycopy(buffer, offset, data, 0, data.length);
+		System.arraycopy(data, 0, buffer, offset, data.length);
 	}
 	
 	/**

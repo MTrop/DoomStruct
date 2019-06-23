@@ -342,7 +342,7 @@ public class WadBuffer implements Wad
 		}
 		else
 		{
-			content.setData(entry.getOffset(), data);
+			content.setData(getContentOffset(entry), data);
 		}
 	}
 

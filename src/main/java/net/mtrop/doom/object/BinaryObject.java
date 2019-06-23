@@ -268,7 +268,7 @@ public interface BinaryObject
 		public BO next()
 		{
 			try {
-				outObject.readBytes(in);
+				outObject.fromBytes(buffer);
 				return outObject;
 			} catch (IOException e) {
 				throw new RuntimeException("Could not deserialize " + objClass.getSimpleName(), e);

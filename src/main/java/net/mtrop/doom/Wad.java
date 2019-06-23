@@ -1081,7 +1081,7 @@ public interface Wad extends Iterable<WadEntry>
 		int index = indexOf(entryName);
 		if (index >= 0)
 		{
-			transformData(index, type, transformer);
+			transformData(index, type, objectLength, transformer);
 			return true;
 		}
 		else
@@ -1107,7 +1107,7 @@ public interface Wad extends Iterable<WadEntry>
 		int index = indexOf(entryName, start);
 		if (index >= 0)
 		{
-			transformData(index, type, transformer);
+			transformData(index, type, objectLength, transformer);
 			return true;
 		}
 		else
@@ -1133,7 +1133,7 @@ public interface Wad extends Iterable<WadEntry>
 		int index = indexOf(entryName, startEntryName);
 		if (index >= 0)
 		{
-			transformData(index, type, transformer);
+			transformData(index, type, objectLength, transformer);
 			return true;
 		}
 		else

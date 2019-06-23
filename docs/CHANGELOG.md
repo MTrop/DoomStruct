@@ -3,6 +3,14 @@ Doom Struct (C) 2015-2019
 by Matt Tropiano et al. (see AUTHORS.txt)
 
 
+Changed in 2.1.1
+----------------
+
+- `Fixed` Wad.transformData(..., length, ...) did not scan through all objects.
+- `Fixed` WadBuffer.replaceEntry() did not write data back correctly.
+- `Fixed` BinaryObject.InlineScanner did not read objects properly.
+
+
 Changed in 2.1.0
 ----------------
 

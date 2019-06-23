@@ -1,4 +1,4 @@
-# Doom Struct 2.1.0
+# Doom Struct 2.1.1
 
 Copyright (c) 2015 - 2019 Matt Tropiano  
 
@@ -211,6 +211,18 @@ for (int headerIndex : MapUtils.getAllMapIndices(wad)) {
 wad.close();
 ```
 
+Open `DOOM2.WAD`, extract `MAP01` from it into a file called `MAP01.WAD`, and replace any wall texture that starts with `TEKGREN` to `FIREBLU1`.
+
+```java
+WadFile wad = new WadFile("doom2.wad");
+WadFile temp = WadFile.extract(new File("MAP01.WAD"), wad, MapUtils.getMapEntries(wad, "MAP01"));
+temp.transformData("sidedefs", DoomSidedef.class, DoomSidedef.LENGTH, (sidedef, n) -> {
+	if (sidedef.getTextureMiddle().startsWith("TEKGREN"))
+		sidedef.setTextureMiddle("FIREBLU1");
+});
+temp.close();
+wad.close();
+```
 
 Open `DOOM2.WAD`, assemble a TextureSet, remove every texture that begins with `R`, and write it to a new WAD.
 
