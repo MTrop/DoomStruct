@@ -506,7 +506,7 @@ public final class MapUtils
 	 * @param wad the WAD to inspect.
 	 * @param startIndex the starting index.
 	 * @return the length, in entries, of the contiguous map data.
-	 * @since NOW
+	 * @since 2.1.0
 	 */
 	public static WadEntry[] getMapEntries(Wad wad, int startIndex)
 	{
@@ -519,7 +519,7 @@ public final class MapUtils
 	 * @param wad the WAD to inspect.
 	 * @param header the starting entry name to find.
 	 * @return the length, in entries, of the contiguous map data.
-	 * @since NOW
+	 * @since 2.1.0
 	 */
 	public static WadEntry[] getMapEntries(Wad wad, String header)
 	{

@@ -158,6 +158,7 @@ public interface BinaryObject
 	/**
 	 * Transformer interface for transform calls. 
 	 * @param <BO> the BinaryObject type.
+	 * @since 2.1.0
 	 */
 	@FunctionalInterface
 	interface Transformer<BO extends BinaryObject>

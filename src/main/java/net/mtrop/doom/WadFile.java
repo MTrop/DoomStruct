@@ -163,7 +163,7 @@ public class WadFile implements Wad, AutoCloseable
 	 * @param maxLength the maximum amount of entries from the starting index to copy.
 	 * @return a new WadBuffer that only contains the desired entries, plus their data.
 	 * @throws IOException if an error occurs on read from the source Wad.
-	 * @since NOW
+	 * @since 2.1.0
 	 */
 	public static WadFile extract(File targetFile, Wad source, int startIndex, int maxLength) throws IOException
 	{
@@ -179,7 +179,7 @@ public class WadFile implements Wad, AutoCloseable
 	 * @param entries the entries to copy over.
 	 * @return a new WadBuffer that only contains the desired entries, plus their data.
 	 * @throws IOException if an error occurs on read from the source Wad.
-	 * @since NOW
+	 * @since 2.1.0
 	 */
 	public static WadFile extract(File targetFile, Wad source, WadEntry ... entries) throws IOException
 	{

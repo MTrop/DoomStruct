@@ -89,6 +89,7 @@ public interface TextObject
 	/**
 	 * Transformer interface for transform calls. 
 	 * @param <TO> the TextObject type.
+	 * @since 2.1.0
 	 */
 	@FunctionalInterface
 	interface Transformer<TO extends TextObject>

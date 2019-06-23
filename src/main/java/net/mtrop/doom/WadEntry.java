@@ -84,7 +84,7 @@ public class WadEntry
 	 * @param name the new name.
 	 * @return the new entry.
 	 * @throws IllegalArgumentException if the name is invalid.
-	 * @since NOW
+	 * @since 2.1.0
 	 */
 	public WadEntry withNewName(String name)
 	{
@@ -97,7 +97,7 @@ public class WadEntry
 	 * @param offset the new offset.
 	 * @return the new entry.
 	 * @throws IllegalArgumentException if the offset is negative.
-	 * @since NOW
+	 * @since 2.1.0
 	 */
 	public WadEntry withNewOffset(int offset)
 	{
@@ -111,7 +111,7 @@ public class WadEntry
 	 * @param size the new offset.
 	 * @return the new entry.
 	 * @throws IllegalArgumentException if the size is negative.
-	 * @since NOW
+	 * @since 2.1.0
 	 */
 	public WadEntry withNewSize(int size)
 	{

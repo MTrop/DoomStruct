@@ -954,7 +954,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @param transformer the transformer function to use - called on each object read.
 	 * @throws IOException if the data couldn't be retrieved.
 	 * @throws ArrayIndexOutOfBoundsException if n &lt; 0 or &gt;= size.
-	 * @since NOW
+	 * @since 2.1.0
 	 */
 	default <BO extends BinaryObject> void transformData(int n, Class<BO> type, BinaryObject.Transformer<BO> transformer) throws IOException
 	{
@@ -973,7 +973,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @return true if the entry was found and the transformer, false if not.
 	 * @throws IOException if the data couldn't be retrieved.
 	 * @throws ArrayIndexOutOfBoundsException if n &lt; 0 or &gt;= size.
-	 * @since NOW
+	 * @since 2.1.0
 	 */
 	default <BO extends BinaryObject> boolean transformData(String entryName, Class<BO> type, BinaryObject.Transformer<BO> transformer) throws IOException
 	{
@@ -998,7 +998,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @return true if the entry was found and the transformer, false
 	 * @throws IOException if the data couldn't be retrieved.
 	 * @throws ArrayIndexOutOfBoundsException if n &lt; 0 or &gt;= size.
-	 * @since NOW
+	 * @since 2.1.0
 	 */
 	default <BO extends BinaryObject> boolean transformData(String entryName, int start, Class<BO> type, BinaryObject.Transformer<BO> transformer) throws IOException
 	{
@@ -1023,7 +1023,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @return true if the entry was found and the transformer, false
 	 * @throws IOException if the data couldn't be retrieved.
 	 * @throws ArrayIndexOutOfBoundsException if n &lt; 0 or &gt;= size.
-	 * @since NOW
+	 * @since 2.1.0
 	 */
 	default <BO extends BinaryObject> boolean transformData(String entryName, String startEntryName, Class<BO> type, BinaryObject.Transformer<BO> transformer) throws IOException
 	{
@@ -1047,7 +1047,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @param transformer the transformer function to use - called on each object read.
 	 * @throws IOException if the data couldn't be retrieved.
 	 * @throws ArrayIndexOutOfBoundsException if n &lt; 0 or &gt;= size.
-	 * @since NOW
+	 * @since 2.1.0
 	 */
 	default <BO extends BinaryObject> void transformData(int n, Class<BO> type, int objectLength, BinaryObject.Transformer<BO> transformer) throws IOException
 	{
@@ -1074,7 +1074,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @return true if the entry was found and the transformer, false if not.
 	 * @throws IOException if the data couldn't be retrieved.
 	 * @throws ArrayIndexOutOfBoundsException if n &lt; 0 or &gt;= size.
-	 * @since NOW
+	 * @since 2.1.0
 	 */
 	default <BO extends BinaryObject> boolean transformData(String entryName, Class<BO> type, int objectLength, BinaryObject.Transformer<BO> transformer) throws IOException
 	{
@@ -1100,7 +1100,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @return true if the entry was found and the transformer, false
 	 * @throws IOException if the data couldn't be retrieved.
 	 * @throws ArrayIndexOutOfBoundsException if n &lt; 0 or &gt;= size.
-	 * @since NOW
+	 * @since 2.1.0
 	 */
 	default <BO extends BinaryObject> boolean transformData(String entryName, int start, Class<BO> type, int objectLength, BinaryObject.Transformer<BO> transformer) throws IOException
 	{
@@ -1126,7 +1126,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @return true if the entry was found and the transformer, false
 	 * @throws IOException if the data couldn't be retrieved.
 	 * @throws ArrayIndexOutOfBoundsException if n &lt; 0 or &gt;= size.
-	 * @since NOW
+	 * @since 2.1.0
 	 */
 	default <BO extends BinaryObject> boolean transformData(String entryName, String startEntryName, Class<BO> type, int objectLength, BinaryObject.Transformer<BO> transformer) throws IOException
 	{
@@ -1150,7 +1150,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @param transformer the transformer function to use - called on each object read.
 	 * @throws IOException if the data couldn't be retrieved.
 	 * @throws ArrayIndexOutOfBoundsException if n &lt; 0 or &gt;= size.
-	 * @since NOW
+	 * @since 2.1.0
 	 */
 	default <TO extends TextObject> void transformTextData(int n, Charset charset, Class<TO> type, TextObject.Transformer<TO> transformer) throws IOException
 	{
@@ -1170,7 +1170,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @return true if the entry was found and the transformer, false if not.
 	 * @throws IOException if the data couldn't be retrieved.
 	 * @throws ArrayIndexOutOfBoundsException if n &lt; 0 or &gt;= size.
-	 * @since NOW
+	 * @since 2.1.0
 	 */
 	default <TO extends TextObject> boolean transformTextData(String entryName, Charset charset, Class<TO> type, TextObject.Transformer<TO> transformer) throws IOException
 	{
@@ -1196,7 +1196,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @return true if the entry was found and the transformer, false
 	 * @throws IOException if the data couldn't be retrieved.
 	 * @throws ArrayIndexOutOfBoundsException if n &lt; 0 or &gt;= size.
-	 * @since NOW
+	 * @since 2.1.0
 	 */
 	default <TO extends TextObject> boolean transformTextData(String entryName, int start, Charset charset, Class<TO> type, TextObject.Transformer<TO> transformer) throws IOException
 	{
@@ -1222,7 +1222,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @return true if the entry was found and the transformer, false
 	 * @throws IOException if the data couldn't be retrieved.
 	 * @throws ArrayIndexOutOfBoundsException if n &lt; 0 or &gt;= size.
-	 * @since NOW
+	 * @since 2.1.0
 	 */
 	default <TO extends TextObject> boolean transformTextData(String entryName, String startEntryName, Charset charset, Class<TO> type, TextObject.Transformer<TO> transformer) throws IOException
 	{
