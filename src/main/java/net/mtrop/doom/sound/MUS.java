@@ -372,7 +372,7 @@ public class MUS implements BinaryObject, Iterable<MUS.Event>
 			boolean last = MathUtils.bitIsSet(eventDesc, 0x80);
 			byte channel = (byte)(eventDesc & 0x0f);
 
-			switch ((eventDesc & 0x70) >>> 4)
+			switch ((eventDesc & 0x070) >>> 4)
 			{
 				case Event.TYPE_RELEASE:
 				{
@@ -581,9 +581,9 @@ public class MUS implements BinaryObject, Iterable<MUS.Event>
 					{
 						NotePlayEvent event = (NotePlayEvent)e;
 						if (event.volume != NotePlayEvent.VOLUME_NO_CHANGE)
-							listener.onNotePlayEvent(event.channel, event.note);
-						else
 							listener.onNotePlayEvent(event.channel, event.note, event.volume);
+						else
+							listener.onNotePlayEvent(event.channel, event.note);
 					}
 					break;
 
@@ -925,8 +925,6 @@ public class MUS implements BinaryObject, Iterable<MUS.Event>
 	{
 		public static final int VOLUME_NO_CHANGE = -1;
 		
-		/** The note that will be played. */
-		protected int note;
 		/** The volume that the note will be played. */
 		protected int volume;
 		
