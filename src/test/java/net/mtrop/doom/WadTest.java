@@ -7,7 +7,7 @@
  ******************************************************************************/
 package net.mtrop.doom;
 
-import net.mtrop.doom.TestUtils.Test;
+import net.mtrop.doom.test.TestUtils.Test;
 
 public final class WadTest
 {

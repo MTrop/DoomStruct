@@ -287,6 +287,17 @@ public interface Wad extends Iterable<WadEntry>
 				out = i;
 		return out;
 	}
+	
+	/**
+	 * Gets a series of bytes representing the data at an arbitrary place in the Wad.
+	 * @param offset the offset byte into that data to start at.
+	 * @param length the amount of bytes to return.
+	 * @return a copy of the byte data as an array of bytes.
+	 * @throws IndexOutOfBoundsException if offset plus length will go past the end of the content area.
+	 * @throws IOException if an error occurs during read.
+	 * @since NOW
+	 */
+	byte[] getContent(int offset, int length) throws IOException;
 
 	/**
 	 * Retrieves the data of a particular entry index.
@@ -353,7 +364,10 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws IOException if the data couldn't be retrieved or the entry's offsets breach the file extents.
 	 * @throws NullPointerException if <code>entry</code> is <code>null</code>.
 	 */
-	byte[] getData(WadEntry entry) throws IOException;
+	default byte[] getData(WadEntry entry) throws IOException
+	{
+		return getContent(entry.getOffset(), entry.getSize());
+	}
 
 	/**
 	 * Retrieves the data of a particular entry index and returns it as a stream.

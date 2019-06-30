@@ -7,20 +7,20 @@
  ******************************************************************************/
 package net.mtrop.doom;
 
+import static net.mtrop.doom.test.TestUtils.assertEqual;
+
 import java.io.File;
 import java.io.InputStream;
 import java.io.Reader;
 import java.nio.charset.Charset;
 import java.util.List;
 
-import net.mtrop.doom.TestUtils.AfterAllTests;
-import net.mtrop.doom.TestUtils.AfterEachTest;
-import net.mtrop.doom.TestUtils.BeforeAllTests;
-import net.mtrop.doom.TestUtils.BeforeEachTest;
-import net.mtrop.doom.TestUtils.Test;
 import net.mtrop.doom.sound.DMXSound;
-
-import static net.mtrop.doom.TestUtils.assertEqual;
+import net.mtrop.doom.test.TestUtils.AfterAllTests;
+import net.mtrop.doom.test.TestUtils.AfterEachTest;
+import net.mtrop.doom.test.TestUtils.BeforeAllTests;
+import net.mtrop.doom.test.TestUtils.BeforeEachTest;
+import net.mtrop.doom.test.TestUtils.Test;
 
 public final class PK3Test
 {

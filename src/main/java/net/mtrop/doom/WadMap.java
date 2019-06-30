@@ -215,6 +215,12 @@ public class WadMap implements Wad
 		throw new UnsupportedOperationException("WadMap does not support setEntries()");
 	}
 
+	@Override
+	public byte[] getContent(int offset, int length) throws IOException
+	{
+		throw new UnsupportedOperationException("WadMap does not support getContent()");
+	}
+
 	@Override	
 	public byte[] getData(WadEntry entry) throws IOException
 	{

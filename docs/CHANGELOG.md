@@ -3,6 +3,15 @@ Doom Struct (C) 2015-2019
 by Matt Tropiano et al. (see AUTHORS.txt)
 
 
+Changed in NOW
+--------------
+
+- `Added` SerialWriter.writeBytes(OutputStream out, byte[], int, int).
+- `Added` Wad.getContent(int, int) : byte[]. Implementing classes changed as well.
+- `Changed` Some test refactoring.
+- `Changed` WadBuffer - made some protected fields private and merged the header in with content.
+
+
 Changed in 2.1.1
 ----------------
 

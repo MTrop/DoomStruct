@@ -306,13 +306,13 @@ public class WadFile implements Wad, AutoCloseable
 		return entries.get(n);
 	}
 
-	@Override	
-	public byte[] getData(WadEntry entry) throws IOException
+	@Override
+	public byte[] getContent(int offset, int length) throws IOException
 	{
-		byte[] out = new byte[entry.getSize()];
+		byte[] out = new byte[length];
 		try {
-			file.seek(entry.getOffset());
-			file.read(out, 0, entry.getSize());
+			file.seek(offset);
+			file.read(out, 0, length);
 		} catch (IndexOutOfBoundsException e) {
 			throw new IOException(e);
 		}

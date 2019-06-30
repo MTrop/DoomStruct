@@ -21,8 +21,8 @@
 	<property name="project.javadoc.title" value="Doom Struct" />
 	<property name="project.classpath" value=""/>
 	<property name="project.compiler.bootclasspath" value="" />
-	<property name="project.testclass" value="net.mtrop.doom.TestSuite"/>
-	<property name="project.testclass.main" value="net.mtrop.doom.TestUtils"/>
+	<property name="project.testclass" value="net.mtrop.doom.test.TestSuite"/>
+	<property name="project.testclass.main" value="net.mtrop.doom.test.TestUtils"/>
 	<property name="project.javadoc.packages" value="
 		net.mtrop.doom,
 		net.mtrop.doom.bsp,

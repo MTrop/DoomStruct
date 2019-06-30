@@ -14,6 +14,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -21,7 +24,6 @@ import java.util.List;
 import net.mtrop.doom.exception.WadException;
 import net.mtrop.doom.io.IOUtils;
 import net.mtrop.doom.io.SerialReader;
-import net.mtrop.doom.io.SerialWriter;
 import net.mtrop.doom.struct.DataList;
 import net.mtrop.doom.util.NameUtils;
 
@@ -35,10 +37,12 @@ public class WadBuffer implements Wad
 {
 	/** Type of Wad File (IWAD or PWAD). */
 	private Type type;
-	/** The data itself. */
-	protected DataList content;
+	/** Header buffer. */
+	private ByteBuffer headerBuffer;
+	/** The data itself (including header). */
+	private DataList content;
 	/** The list of entries. */
-	protected List<WadEntry> entries;
+	private List<WadEntry> entries;
 	
 	/**
 	 * Creates an empty WadBuffer (as a PWAD).
@@ -55,8 +59,32 @@ public class WadBuffer implements Wad
 	public WadBuffer(Type type)
 	{
 		this.type = type;
+		this.headerBuffer = ByteBuffer.allocate(12);
+		this.headerBuffer.order(ByteOrder.LITTLE_ENDIAN);
 		this.content = new DataList();
 		this.entries = new ArrayList<WadEntry>();
+		
+		try {
+			headerBuffer.put(type.name().getBytes("ASCII"));
+			headerBuffer.putInt(0);			// no entries.
+			headerBuffer.putInt(12);		// entry list offset (12).
+			content.append(headerBuffer.array());	
+		} catch (UnsupportedEncodingException e) {
+			// ASCII is always supported.
+		}
+	}
+	
+	private void updateHeader()
+	{
+		headerBuffer.rewind();
+		try {
+			headerBuffer.put(type.name().getBytes("ASCII"));
+			headerBuffer.putInt(entries.size());
+			headerBuffer.putInt(content.size());
+			content.setData(0, headerBuffer.array());	
+		} catch (UnsupportedEncodingException e) {
+			// ASCII is always supported.
+		}
 	}
 	
 	/**
@@ -143,6 +171,9 @@ public class WadBuffer implements Wad
 		content.clear();
 		entries.clear();
 
+		// Add offset dummy data - 12 bytes, updated later.
+		content.append(new byte[] {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1});
+		
 		try {
 			type = Type.valueOf(sr.readString(in, 4, "ASCII"));
 		} catch (IllegalArgumentException e) {
@@ -168,22 +199,7 @@ public class WadBuffer implements Wad
 			WadEntry entry = WadEntry.create(entrybuffer);
 			entries.add(entry);
 		}
-	}
-	
-	/**
-	 * Converts a WadEntry offset to the offset into the data vector.
-	 */
-	private int getContentOffset(WadEntry entry)
-	{
-		return entry.getOffset() - 12; 
-	}
-	
-	/**
-	 * Converts a content offset to a WadEntry offset.
-	 */
-	private int toEntryOffset(int contentOffset)
-	{
-		return contentOffset + 12; 
+		updateHeader();
 	}
 	
 	/**
@@ -193,6 +209,7 @@ public class WadBuffer implements Wad
 	public final void setType(Type type)
 	{
 		this.type = type;
+		updateHeader();
 	}
 
 	/**
@@ -213,11 +230,10 @@ public class WadBuffer implements Wad
 	 */
 	public final void writeToStream(OutputStream out) throws IOException
 	{
-		SerialWriter sw = new SerialWriter(SerialWriter.LITTLE_ENDIAN);
-		sw.writeBytes(out, type.name().getBytes("ASCII"));
-		sw.writeInt(out, entries.size());		// number of entries.
-		sw.writeInt(out, 12 + content.size());	// offset to WadEntry list.
-		sw.writeBytes(out, content.toByteArray());
+		// write content (contains header).
+		out.write(content.toByteArray(), 0, content.size());
+
+		// write entry list.
 		for (WadEntry entry : entries)
 			entry.writeBytes(out);
 	}
@@ -240,7 +256,7 @@ public class WadBuffer implements Wad
 	@Override
 	public int getContentLength()
 	{
-		return content.size();
+		return content.size() - 12;
 	}
 	
 	@Override
@@ -267,12 +283,12 @@ public class WadBuffer implements Wad
 		return entries.get(n);
 	}
 
-	@Override	
-	public byte[] getData(WadEntry entry) throws IOException
+	@Override
+	public byte[] getContent(int offset, int length) throws IOException
 	{
-		byte[] out = new byte[entry.getSize()];
+		byte[] out = new byte[length];
 		try {
-			content.getData(getContentOffset(entry), out);
+			content.getData(offset, out);
 		} catch (IndexOutOfBoundsException e) {
 			throw new IOException(e);
 		}
@@ -282,13 +298,15 @@ public class WadBuffer implements Wad
 	@Override
 	public InputStream getInputStream(WadEntry entry) throws IOException
 	{
-		return new WadBufferInputStream(getContentOffset(entry), entry.getSize());
+		return new WadBufferInputStream(entry.getOffset(), entry.getSize());
 	}
 
 	@Override
 	public WadEntry removeEntry(int n) throws IOException
 	{
-		return entries.remove(n);
+		WadEntry out = entries.remove(n);
+		updateHeader();
+		return out;		
 	}
 
 	@Override
@@ -296,12 +314,9 @@ public class WadBuffer implements Wad
 	{
 		// get removed WadEntry.
 		WadEntry entry = removeEntry(n);
-		if (entry == null)
-			throw new IOException("Index is out of range.");
-	
 		if (entry.getSize() > 0)
 		{
-			content.delete(getContentOffset(entry), entry.getSize());
+			content.delete(entry.getOffset(), entry.getSize());
 			
 			// adjust offsets.
 			for (int i = 0; i < entries.size(); i++)
@@ -310,8 +325,8 @@ public class WadBuffer implements Wad
 				if (e.getOffset() > entry.getOffset())
 					entries.set(i, e.withNewOffset(e.getOffset() - entry.getSize()));
 			}
+			updateHeader();
 		}
-		
 		return entry;
 	}
 
@@ -339,10 +354,11 @@ public class WadBuffer implements Wad
 			deleteEntry(index);
 			String name = entry.getName();
 			addDataAt(index, name, data);
+			updateHeader();
 		}
 		else
 		{
-			content.setData(getContentOffset(entry), data);
+			content.setData(entry.getOffset(), data);
 		}
 	}
 
@@ -359,6 +375,7 @@ public class WadBuffer implements Wad
 		entries.clear();
 		for (WadEntry WadEntry : entryList)
 			entries.add(WadEntry);
+		updateHeader();
 	}
 
 	@Override
@@ -366,24 +383,27 @@ public class WadBuffer implements Wad
 	{
 		WadEntry entry = WadEntry.create(entryName, offset, length);
 		entries.add(entry);
+		updateHeader();
 		return entry;
 	}
 
 	@Override
 	public WadEntry addData(String entryName, byte[] data) throws IOException
 	{
-		WadEntry entry = WadEntry.create(entryName, toEntryOffset(content.size()), data.length);
+		WadEntry entry = WadEntry.create(entryName, content.size(), data.length);
 		content.append(data);
 		entries.add(entry);
+		updateHeader();
 		return entry;
 	}
 
 	@Override
 	public WadEntry addDataAt(int index, String entryName, byte[] data) throws IOException
 	{
-		WadEntry entry = WadEntry.create(entryName, toEntryOffset(content.size()), data.length);
+		WadEntry entry = WadEntry.create(entryName, content.size(), data.length);
 		content.append(data);
 		entries.add(index, entry);
+		updateHeader();
 		return entry;
 	}
 	
@@ -393,6 +413,7 @@ public class WadBuffer implements Wad
 		WadEntry[] out = new WadEntry[entryNames.length];
 		for (int i = 0; i < entryNames.length; i++)
 			out[i] = addData(entryNames[i], data[i]);
+		updateHeader();
 		return out;
 	}
 
@@ -403,6 +424,7 @@ public class WadBuffer implements Wad
 		WadEntry[] out = new WadEntry[entryNames.length];
 		for (int i = 0; i < entryNames.length; i++)
 			out[i] = addDataAt(index + i, entryNames[i], data[i]);
+		updateHeader();
 		return out;
 	}
 

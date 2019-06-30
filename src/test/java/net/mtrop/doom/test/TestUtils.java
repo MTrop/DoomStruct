@@ -3,7 +3,7 @@
  * This program and the accompanying materials are made available under 
  * the terms of the MIT License, which accompanies this distribution.
  ******************************************************************************/
-package net.mtrop.doom;
+package net.mtrop.doom.test;
 
 import java.io.PrintStream;
 import java.lang.annotation.ElementType;

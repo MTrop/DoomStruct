@@ -140,6 +140,19 @@ public class SerialWriter
 	}
 
 	/**
+	 * Writes a series of bytes.
+	 * @param out the output stream.
+	 * @param b the array to write.
+	 * @param offset the offset into the array to write from.
+	 * @param length the amount of bytes to write.
+	 * @throws IOException if an error occurred during the write.
+	 */
+	public void writeBytes(OutputStream out, byte[] b, int offset, int length) throws IOException
+	{
+		out.write(b, offset, length);
+	}
+
+	/**
 	 * Writes an array of bytes,
 	 * which is the length of the array as an integer plus each byte.
 	 * @param out the output stream.
