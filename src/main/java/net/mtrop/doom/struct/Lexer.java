@@ -1,9 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2015-2019 Matt Tropiano
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the GNU Lesser Public License v2.1
- * which accompanies this distribution, and is available at
- * http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
+ * Copyright (c) 2019 Black Rook Software
+ * 
+ * This program and the accompanying materials are made available under 
+ * the terms of the MIT License, which accompanies this distribution.
  ******************************************************************************/
 package net.mtrop.doom.struct;
 
@@ -31,7 +30,7 @@ import java.util.Set;
  * <p>
  * Other implementations of this class may manipulate the stack as well (such as ones that do in-language stream inclusion).
  * <p>
- * If the system property <code>com.blackrook.base.Lexer.debug</code> is set to <code>true</code>, this does debugging output to {@link System#out}.
+ * If the system property <code>com.tameif.tame.struct.Lexer.debug</code> is set to <code>true</code>, this does debugging output to {@link System#out}.
  * <p>
  * Lexer functions are NOT thread-safe.
  * @author Matthew Tropiano
@@ -158,10 +157,8 @@ public class Lexer
 	 */
 	public Token nextToken() throws IOException
 	{
-		String streamName = readerStack.getCurrentStreamName();
-		int lineNumber = readerStack.getCurrentLineNumber();
-		int charIndex = readerStack.getCurrentLineCharacterIndex();
-		
+		int lineNumber = -1;
+		int charIndex = 0;
 		boolean breakloop = false;
 		while (!breakloop)
 		{
@@ -187,6 +184,8 @@ public class Lexer
 						if (kernel.willEmitStreamBreak())
 						{
 							setState(Kernel.TYPE_END_OF_STREAM);
+							charIndex = readerStack.getCurrentLineCharacterIndex();
+							lineNumber = readerStack.getCurrentLineNumber();
 							breakloop = true;
 						}
 						close(readerStack.pop());
@@ -196,6 +195,8 @@ public class Lexer
 						if (kernel.willEmitNewlines())
 						{
 							setState(Kernel.TYPE_DELIM_NEWLINE);
+							charIndex = readerStack.getCurrentLineCharacterIndex();
+							lineNumber = readerStack.getCurrentLineNumber();
 							breakloop = true;
 						}
 					}
@@ -204,6 +205,8 @@ public class Lexer
 						if (kernel.willEmitSpaces())
 						{
 							setState(Kernel.TYPE_DELIM_SPACE);
+							charIndex = readerStack.getCurrentLineCharacterIndex();
+							lineNumber = readerStack.getCurrentLineNumber();
 							breakloop = true;
 						}
 					}
@@ -212,6 +215,8 @@ public class Lexer
 						if (kernel.willEmitTabs())
 						{
 							setState(Kernel.TYPE_DELIM_TAB);
+							charIndex = readerStack.getCurrentLineCharacterIndex();
+							lineNumber = readerStack.getCurrentLineNumber();
 							breakloop = true;
 						}
 					}
@@ -221,42 +226,58 @@ public class Lexer
 					else if (isPoint(c) && isDelimiterStart(c))
 					{
 						setState(Kernel.TYPE_POINT);
+						charIndex = readerStack.getCurrentLineCharacterIndex();
+						lineNumber = readerStack.getCurrentLineNumber();
 						saveChar(c);
 					}
 					else if (isPoint(c) && !isDelimiterStart(c))
 					{
 						setState(Kernel.TYPE_FLOAT);
+						charIndex = readerStack.getCurrentLineCharacterIndex();
+						lineNumber = readerStack.getCurrentLineNumber();
 						saveChar(c);
 					}
 					else if (isStringStart(c))
 					{
 						setState(Kernel.TYPE_STRING);
+						charIndex = readerStack.getCurrentLineCharacterIndex();
+						lineNumber = readerStack.getCurrentLineNumber();
 						setStringStartAndEnd(c);
 					}
 					else if (isRawStringStart(c))
 					{
 						setState(Kernel.TYPE_RAWSTRING);
+						charIndex = readerStack.getCurrentLineCharacterIndex();
+						lineNumber = readerStack.getCurrentLineNumber();
 						setMultilineStringStartAndEnd(c);
 					}
 					else if (isDelimiterStart(c))
 					{
 						setState(Kernel.TYPE_DELIMITER);
+						charIndex = readerStack.getCurrentLineCharacterIndex();
+						lineNumber = readerStack.getCurrentLineNumber();
 						saveChar(c);
 					}
 					else if (c == '0')
 					{
 						setState(Kernel.TYPE_HEX_INTEGER0);
+						charIndex = readerStack.getCurrentLineCharacterIndex();
+						lineNumber = readerStack.getCurrentLineNumber();
 						saveChar(c);
 					}
 					else if (isDigit(c))
 					{
 						setState(Kernel.TYPE_NUMBER);
+						charIndex = readerStack.getCurrentLineCharacterIndex();
+						lineNumber = readerStack.getCurrentLineNumber();
 						saveChar(c);
 					}
 					// anything else starts an identifier.
 					else
 					{
 						setState(Kernel.TYPE_IDENTIFIER);
+						charIndex = readerStack.getCurrentLineCharacterIndex();
+						lineNumber = readerStack.getCurrentLineNumber();
 						saveChar(c);
 					}
 					break; // end Kernel.TYPE_START_OF_LEXER
@@ -1048,6 +1069,7 @@ public class Lexer
 					}
 					else if (isStringEnd(c))
 					{
+						setState(Kernel.TYPE_STRING);
 						breakloop = true;
 					}
 					else
@@ -1198,6 +1220,7 @@ public class Lexer
 		Token out = null;
 		if (getState() != Kernel.TYPE_END_OF_LEXER)
 		{
+			String streamName = readerStack.getCurrentStreamName();
 			out = new Token(streamName, type, lexeme, lineNumber, charIndex);
 			modifyType(out);
 			setState(Kernel.TYPE_UNKNOWN);
@@ -1332,33 +1355,13 @@ public class Lexer
 	}
 	
 	/**
-	 * @return if we are in a delimiter break.
-	 */
-	protected boolean isOnDelimBreak()
-	{
-		if (getCurrentStream() != null)
-			return getCurrentStream().isOnDelimBreak();
-		else
-			return false;
-	}
-	
-	/**
-	 * Clears if we are in a delimiter break.
-	 */
-	protected void clearDelimBreak()
-	{
-		if (getCurrentStream() != null)
-			getCurrentStream().clearDelimBreak();
-	}
-	
-	/**
 	 * Sets if we are in a delimiter break.
 	 * @param delimChar the delimiter character that starts the break.
 	 */
 	protected void setDelimBreak(char delimChar)
 	{
 		if (getCurrentStream() != null)
-			getCurrentStream().setDelimBreak(delimChar);
+			getCurrentStream().pushChar(delimChar);
 	}
 	
 	/**
@@ -1787,11 +1790,9 @@ public class Lexer
 			/** Current character index. */
 			private int charIndex;
 	
-			/** If true, we are in a delimiter break. */
-			private boolean delimBreak;
-			/** Saved character for delimiter test. */
-			private int delimBreakChar;
-
+			private int[] charStack;
+			private int charStackPosition;
+			
 			/**
 			 * Creates a new stream.
 			 * @param name the stream name.
@@ -1803,23 +1804,13 @@ public class Lexer
 				this.reader = new BufferedReader(in);
 				this.line = 1;
 				this.charIndex = 0;
+				this.charStackPosition = -1;
+				this.charStack = new int[16];
 			}
 			
-			private boolean isOnDelimBreak()
+			private void pushChar(int breakChar)
 			{
-				return delimBreak;
-			}
-			
-			private void setDelimBreak(int breakChar)
-			{
-				delimBreakChar = breakChar;
-				delimBreak = true;
-			}
-
-			private void clearDelimBreak()
-			{
-				delimBreakChar = -1;
-				delimBreak = false;
+				charStack[++charStackPosition] = breakChar;
 			}
 
 			private String getStreamName()
@@ -1837,26 +1828,45 @@ public class Lexer
 				return charIndex;
 			}
 			
+			private boolean isNewlineChar(int c)
+			{
+				return c == '\r' || c == '\n';
+			}
+			
 			/**
 			 * Reads the next char from the stream.
+			 * Eats all manner of newline combos into '\n'.
 			 * @return the line read.
 			 * @throws IOException if a line cannot be read.
 			 */
 			private int readChar() throws IOException
 			{
 				int c;
-				if (delimBreak)
+				if (charStackPosition >= 0)
 				{
-					c = delimBreakChar;
-					clearDelimBreak();
+					c = charStack[charStackPosition--];
 					return c;
 				}
 				else
-					c = reader.read();
-				
-				if (c == (int)'\n')
 				{
-					line++;
+					c = reader.read();
+					boolean newline = false;
+					while (isNewlineChar(c))
+					{
+						if (c == (int)'\n')
+							line++;
+
+						newline = true;
+						c = reader.read();
+						if (!isNewlineChar(c))
+							pushChar(c);
+					}
+					if (newline)
+						c = (int)NEWLINE;
+				}
+				
+				if (c == (int)NEWLINE)
+				{
 					charIndex = 0;
 				}
 				return c;
@@ -1909,7 +1919,7 @@ public class Lexer
 		/** Reserved token type: Raw String (never returned). */
 		public static final int TYPE_RAWSTRING = 				-16;
 		/** Reserved token type: Delimiter (never returned). */
-		public static final int TYPE_DELIMITER = 				-18;
+		public static final int TYPE_DELIMITER = 				-17;
 		/** Reserved token type: Point state (never returned). */
 		public static final int TYPE_POINT = 					-19;
 		/** Reserved token type: Floating point state (never returned). */
@@ -2049,6 +2059,16 @@ public class Lexer
 			stringDelimTable.put(delimiterStart, delimiterEnd);
 		}
 	
+		/**
+		 * Adds a raw string delimiter to this lexer along with its ending character.
+		 * @param delimiterStart	the starting delimiter.
+		 * @param delimiterEnd		the ending delimiter.
+		 */
+		public void addRawStringDelimiter(char delimiterStart, char delimiterEnd)
+		{
+			rawStringDelimTable.put(delimiterStart, delimiterEnd);
+		}
+
 		/**
 		 * Adds a comment-starting delimiter to this lexer.
 		 * @param delimiter		the delimiter lexeme.
