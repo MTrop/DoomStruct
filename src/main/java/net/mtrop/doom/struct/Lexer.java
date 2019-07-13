@@ -30,7 +30,7 @@ import java.util.Set;
  * <p>
  * Other implementations of this class may manipulate the stack as well (such as ones that do in-language stream inclusion).
  * <p>
- * If the system property <code>com.tameif.tame.struct.Lexer.debug</code> is set to <code>true</code>, this does debugging output to {@link System#out}.
+ * If the system property <code>net.mtrop.doom.struct.Lexer.debug</code> is set to <code>true</code>, this does debugging output to {@link System#out}.
  * <p>
  * Lexer functions are NOT thread-safe.
  * @author Matthew Tropiano
