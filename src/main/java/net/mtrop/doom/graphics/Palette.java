@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 import net.mtrop.doom.object.BinaryObject;
+import net.mtrop.doom.util.MathUtils;
 
 /**
  * The palette that makes up the Doom Engine's color palette.
@@ -165,6 +166,20 @@ public class Palette implements BinaryObject
 	}
 	
 	/**
+	 * Makes a copy of this palette.
+	 * @return a new Palette that is a copy of this one.
+	 * @since NOW
+	 */
+	public Palette copy()
+	{
+		Palette out = new Palette();
+		for (int i = 0; i < NUM_COLORS; i++)
+			System.arraycopy(this.colorPalette[i], 0, out.colorPalette[i], 0, BYTES_PER_COLOR);
+		System.arraycopy(this.colorSort, 0, out.colorSort, 0, NUM_COLORS);
+		return out;
+	}
+	
+	/**
 	 * Returns the Color of a specific index in the palette.
 	 * @param index	the index number of the color.
 	 * @throws ArrayIndexOutOfBoundsException if index is greater than or equal to NUM_COLORS or less than 0.
@@ -189,20 +204,6 @@ public class Palette implements BinaryObject
 		return 0xff000000 | ((c[0] & 0x0ff) << 16) | ((c[1] & 0x0ff) << 8) | (c[2] & 0x0ff);
 	}
 	
-	/**
-	 * Sets the color of a specific index in the Palette.
-	 * @param index	the index number of the color.
-	 * @param red the red component amount (0 to 255).
-	 * @param green the green component amount (0 to 255).
-	 * @param blue the blue component amount (0 to 255).
-	 * @throws ArrayIndexOutOfBoundsException if index is greater than or equal to NUM_COLORS or less than 0.
-	 */
-	public void setColor(int index, int red, int green, int blue)
-	{
-		setColorNoSort(index, red, green, blue);
-		sortIndices();
-	}
-
 	/**
 	 * Returns the index of the color nearest to a color in the palette,
 	 * or -1 if no color is appropriately matchable.
@@ -251,15 +252,259 @@ public class Palette implements BinaryObject
 		else
 			return colorSort[prev];
 	}
-	
-	private double getColorDistance(byte[] color1, byte[] color2)
+
+	/**
+	 * Sets the color of a specific index in the Palette.
+	 * @param index	the index number of the color to change.
+	 * @param red the red component amount (0 to 255, clamped).
+	 * @param green the green component amount (0 to 255, clamped).
+	 * @param blue the blue component amount (0 to 255, clamped).
+	 * @return itself, for chaining calls.
+	 * @throws ArrayIndexOutOfBoundsException if index is greater than or equal to NUM_COLORS or less than 0.
+	 * @since NOW, this returns itself.
+	 */
+	public Palette setColor(int index, int red, int green, int blue)
 	{
-		int dr = color1[0] - color2[0];
-		int dg = color1[1] - color2[1];
-		int db = color1[2] - color2[2];
-		return dr * dr + dg * dg + db * db;
+		setColorNoSort(index, red, green, blue);
+		sortIndices();
+		return this;
 	}
-	
+
+	/**
+	 * Sets the color of a specific index in the Palette by blending it with another color.
+	 * @param index	the index number of the color to change.
+	 * @param scalar the scalar intensity of the blend (0 to 1, 0 is none, 1 is replace).
+	 * @param red the red component amount (0 to 255, clamped).
+	 * @param green the green component amount (0 to 255, clamped).
+	 * @param blue the blue component amount (0 to 255, clamped).
+	 * @return itself, for chaining calls.
+	 * @throws ArrayIndexOutOfBoundsException if index is greater than or equal to NUM_COLORS or less than 0.
+	 * @since NOW
+	 */
+	public Palette mixColor(int index, double scalar, int red, int green, int blue)
+	{
+		if (scalar == 0.0)
+			return this;
+		mixColorNoSort(index, scalar, red, green, blue);
+		sortIndices();
+		return this;
+	}
+
+	/**
+	 * Sets the color of a specific index in the Palette by additively blending it with another color.
+	 * @param index	the index number of the color to change.
+	 * @param scalar the scalar amount of each component to add (0 to 1).
+	 * @param red the red component amount (0 to 255, clamped).
+	 * @param green the green component amount (0 to 255, clamped).
+	 * @param blue the blue component amount (0 to 255, clamped).
+	 * @return itself, for chaining calls.
+	 * @throws ArrayIndexOutOfBoundsException if index is greater than or equal to NUM_COLORS or less than 0.
+	 * @since NOW
+	 */
+	public Palette addColor(int index, double scalar, int red, int green, int blue)
+	{
+		if (scalar == 0.0)
+			return this;
+		addColorNoSort(index, scalar, red, green, blue);
+		sortIndices();
+		return this;
+	}
+
+	/**
+	 * Sets the color of a specific index in the Palette by subtractively blending it with another color.
+	 * @param index	the index number of the color to change.
+	 * @param scalar the scalar amount of each component to subtract (0 to 1).
+	 * @param red the red component amount (0 to 255, clamped).
+	 * @param green the green component amount (0 to 255, clamped).
+	 * @param blue the blue component amount (0 to 255, clamped).
+	 * @return itself, for chaining calls.
+	 * @throws ArrayIndexOutOfBoundsException if index is greater than or equal to NUM_COLORS or less than 0.
+	 * @since NOW
+	 */
+	public Palette subtractColor(int index, double scalar, int red, int green, int blue)
+	{
+		if (scalar == 0.0)
+			return this;
+		subtractColorNoSort(index, scalar, red, green, blue);
+		sortIndices();
+		return this;
+	}
+
+	/**
+	 * Sets the color of a specific index in the Palette by multiplicatively blending it with another color.
+	 * @param index	the index number of the color to change.
+	 * @param scalar the scalar intensity of the blend (0 to 1, 1 is full blend).
+	 * @param red the red component amount (0 to 255, clamped).
+	 * @param green the green component amount (0 to 255, clamped).
+	 * @param blue the blue component amount (0 to 255, clamped).
+	 * @return itself, for chaining calls.
+	 * @throws ArrayIndexOutOfBoundsException if index is greater than or equal to NUM_COLORS or less than 0.
+	 * @since NOW
+	 */
+	public Palette multiplyColor(int index, double scalar, int red, int green, int blue)
+	{
+		if (scalar == 0.0)
+			return this;
+		multiplyColorNoSort(index, scalar, red, green, blue);
+		sortIndices();
+		return this;
+	}
+
+	/**
+	 * Sets the color of a specific index in the Palette by saturating/desaturating it.
+	 * @param index	the index number of the color to change.
+	 * @param scalar the scalar intensity of the final saturation (0 to 1, 0 is desaturated, 1 is no change, higher values saturate).
+	 * @return itself, for chaining calls.
+	 * @throws ArrayIndexOutOfBoundsException if index is greater than or equal to NUM_COLORS or less than 0.
+	 * @since NOW
+	 */
+	public Palette saturateColor(int index, double scalar)
+	{
+		if (scalar == 1.0)
+			return this;
+		saturateColorNoSort(index, scalar);
+		sortIndices();
+		return this;
+	}
+
+	/**
+	 * Sets the color of a range of indices in the Palette.
+	 * @param startIndex the starting index number of the color to change (inclusive).
+	 * @param endIndex the ending index number of the color to change (inclusive).
+	 * @param red the red component amount (0 to 255, clamped).
+	 * @param green the green component amount (0 to 255, clamped).
+	 * @param blue the blue component amount (0 to 255, clamped).
+	 * @return itself, for chaining calls.
+	 * @throws ArrayIndexOutOfBoundsException if startIndex or endIndex is greater than or equal to NUM_COLORS or less than 0.
+	 * @since NOW
+	 */
+	public Palette setColor(int startIndex, int endIndex, int red, int green, int blue)
+	{
+		int min = Math.min(startIndex, endIndex);
+		int max = Math.max(startIndex, endIndex);
+		for (int i = min; i <= max; i++)
+			setColorNoSort(i, red, green, blue);
+		sortIndices();
+		return this;
+	}
+
+	/**
+	 * Sets the color of a range of indices in the Palette by blending it with another color.
+	 * @param startIndex the starting index number of the color to change (inclusive).
+	 * @param endIndex the ending index number of the color to change (inclusive).
+	 * @param scalar the scalar intensity of the blend (0 to 1, 0 is none, 1 is replace).
+	 * @param red the red component amount (0 to 255, clamped).
+	 * @param green the green component amount (0 to 255, clamped).
+	 * @param blue the blue component amount (0 to 255, clamped).
+	 * @return itself, for chaining calls.
+	 * @throws ArrayIndexOutOfBoundsException if startIndex or endIndex is greater than or equal to NUM_COLORS or less than 0.
+	 * @since NOW
+	 */
+	public Palette mixColor(int startIndex, int endIndex, double scalar, int red, int green, int blue)
+	{
+		if (scalar == 0.0)
+			return this;
+		int min = Math.min(startIndex, endIndex);
+		int max = Math.max(startIndex, endIndex);
+		for (int i = min; i <= max; i++)
+			mixColorNoSort(i, scalar, red, green, blue);
+		sortIndices();
+		return this;
+	}
+
+	/**
+	 * Sets the color of a range of indices in the Palette by additively blending it with another color.
+	 * @param startIndex the starting index number of the color to change (inclusive).
+	 * @param endIndex the ending index number of the color to change (inclusive).
+	 * @param scalar the scalar amount of each component to add (0 to 1).
+	 * @param red the red component amount (0 to 255, clamped).
+	 * @param green the green component amount (0 to 255, clamped).
+	 * @param blue the blue component amount (0 to 255, clamped).
+	 * @return itself, for chaining calls.
+	 * @throws ArrayIndexOutOfBoundsException if startIndex or endIndex is greater than or equal to NUM_COLORS or less than 0.
+	 * @since NOW
+	 */
+	public Palette addColor(int startIndex, int endIndex, double scalar, int red, int green, int blue)
+	{
+		if (scalar == 0.0)
+			return this;
+		int min = Math.min(startIndex, endIndex);
+		int max = Math.max(startIndex, endIndex);
+		for (int i = min; i <= max; i++)
+			addColorNoSort(i, scalar, red, green, blue);
+		sortIndices();
+		return this;
+	}
+
+	/**
+	 * Sets the color of a range of indices in the Palette by subtractively blending it with another color.
+	 * @param startIndex the starting index number of the color to change (inclusive).
+	 * @param endIndex the ending index number of the color to change (inclusive).
+	 * @param scalar the scalar amount of each component to subtract (0 to 1).
+	 * @param red the red component amount (0 to 255, clamped).
+	 * @param green the green component amount (0 to 255, clamped).
+	 * @param blue the blue component amount (0 to 255, clamped).
+	 * @return itself, for chaining calls.
+	 * @throws ArrayIndexOutOfBoundsException if startIndex or endIndex is greater than or equal to NUM_COLORS or less than 0.
+	 * @since NOW
+	 */
+	public Palette subtractColor(int startIndex, int endIndex, double scalar, int red, int green, int blue)
+	{
+		if (scalar == 0.0)
+			return this;
+		int min = Math.min(startIndex, endIndex);
+		int max = Math.max(startIndex, endIndex);
+		for (int i = min; i <= max; i++)
+			subtractColorNoSort(i, scalar, red, green, blue);
+		sortIndices();
+		return this;
+	}
+
+	/**
+	 * Sets the color of a range of indices in the Palette by multiplicatively blending it with another color.
+	 * @param startIndex the starting index number of the color to change (inclusive).
+	 * @param endIndex the ending index number of the color to change (inclusive).
+	 * @param scalar the scalar intensity of the blend (0 to 1, 1 is full blend).
+	 * @param red the red component amount (0 to 255, clamped).
+	 * @param green the green component amount (0 to 255, clamped).
+	 * @param blue the blue component amount (0 to 255, clamped).
+	 * @return itself, for chaining calls.
+	 * @throws ArrayIndexOutOfBoundsException if startIndex or endIndex is greater than or equal to NUM_COLORS or less than 0.
+	 * @since NOW
+	 */
+	public Palette multiplyColor(int startIndex, int endIndex, double scalar, int red, int green, int blue)
+	{
+		if (scalar == 0.0)
+			return this;
+		int min = Math.min(startIndex, endIndex);
+		int max = Math.max(startIndex, endIndex);
+		for (int i = min; i <= max; i++)
+			multiplyColorNoSort(i, scalar, red, green, blue);
+		sortIndices();
+		return this;
+	}
+
+	/**
+	 * Sets the color of a range of indices in the Palette by saturating/desaturating it.
+	 * @param startIndex the starting index number of the color to change (inclusive).
+	 * @param endIndex the ending index number of the color to change (inclusive).
+	 * @param scalar the scalar intensity of the final saturation (0 to 1, 0 is desaturated, 1 is no change, higher values saturate).
+	 * @return itself, for chaining calls.
+	 * @throws ArrayIndexOutOfBoundsException if index is greater than or equal to NUM_COLORS or less than 0.
+	 * @since NOW
+	 */
+	public Palette saturateColor(int startIndex, int endIndex, double scalar)
+	{
+		if (scalar == 1.0)
+			return this;
+		int min = Math.min(startIndex, endIndex);
+		int max = Math.max(startIndex, endIndex);
+		for (int i = min; i <= max; i++)
+			saturateColorNoSort(i, scalar);
+		sortIndices();
+		return this;
+	}
+
 	/**
 	 * Sets the color of a specific index in the Palette and doesn't trigger a re-sort.
 	 * @param index	the index number of the color.
@@ -281,6 +526,64 @@ public class Palette implements BinaryObject
 	protected void sortIndices()
 	{
 		Arrays.sort(colorSort, paletteIndexComparator);
+	}
+
+	private void mixColorNoSort(int index, double scalar, int red, int green, int blue)
+	{
+		setColorNoSort(index, 
+			MathUtils.clampValue((int)MathUtils.linearInterpolate(scalar, (0x0ff & colorPalette[index][0]), red), 0, 255), 
+			MathUtils.clampValue((int)MathUtils.linearInterpolate(scalar, (0x0ff & colorPalette[index][1]), green), 0, 255), 
+			MathUtils.clampValue((int)MathUtils.linearInterpolate(scalar, (0x0ff & colorPalette[index][2]), blue), 0, 255)
+		);
+	}
+
+	private void addColorNoSort(int index, double scalar, int red, int green, int blue)
+	{
+		setColorNoSort(index, 
+			MathUtils.clampValue((0x0ff & colorPalette[index][0]) + (int)(scalar * red), 0, 255), 
+			MathUtils.clampValue((0x0ff & colorPalette[index][1]) + (int)(scalar * green), 0, 255), 
+			MathUtils.clampValue((0x0ff & colorPalette[index][2]) + (int)(scalar * blue), 0, 255)
+		);
+	}
+
+	private void subtractColorNoSort(int index, double scalar, int red, int green, int blue)
+	{
+		setColorNoSort(index, 
+			MathUtils.clampValue((0x0ff & colorPalette[index][0]) - (int)(scalar * red), 0, 255), 
+			MathUtils.clampValue((0x0ff & colorPalette[index][1]) - (int)(scalar * green), 0, 255), 
+			MathUtils.clampValue((0x0ff & colorPalette[index][2]) - (int)(scalar * blue), 0, 255)
+		);
+	}
+
+	private void multiplyColorNoSort(int index, double scalar, int red, int green, int blue)
+	{
+		mixColorNoSort(index, scalar, 
+			(0x0ff & colorPalette[index][0]) * red / 255, 
+			(0x0ff & colorPalette[index][1]) * green / 255, 
+			(0x0ff & colorPalette[index][2]) * blue / 255
+		);
+	}
+
+	private void saturateColorNoSort(int index, double scalar)
+	{
+		int lum = (int)(getLuminance(colorPalette[index]) * 255);
+		mixColorNoSort(index, scalar, lum, lum, lum);
+	}
+
+	private static float getLuminance(byte[] color)
+	{
+		float r = (color[0] & 0x0ff) / 255f;
+		float g = (color[1] & 0x0ff) / 255f;
+		float b = (color[2] & 0x0ff) / 255f;
+		return 0.2126f * r + 0.7152f * g + 0.0722f * b;
+	}
+
+	private static double getColorDistance(byte[] color1, byte[] color2)
+	{
+		int dr = color1[0] - color2[0];
+		int dg = color1[1] - color2[1];
+		int db = color1[2] - color2[2];
+		return dr * dr + dg * dg + db * db;
 	}
 
 	@Override

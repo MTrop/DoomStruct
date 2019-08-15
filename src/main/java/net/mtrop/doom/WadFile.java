@@ -15,7 +15,6 @@ import java.util.List;
 import net.mtrop.doom.exception.WadException;
 import net.mtrop.doom.io.SerialWriter;
 import net.mtrop.doom.io.SerializerUtils;
-import net.mtrop.doom.util.MathUtils;
 import net.mtrop.doom.util.NameUtils;
 
 /**
@@ -98,10 +97,10 @@ public class WadFile implements Wad, AutoCloseable
 		this.fileAbsolutePath = f.getAbsolutePath();
 		
 		file.read(buffer);
-		int size = SerializerUtils.bytesToInt(buffer, 0, MathUtils.LITTLE_ENDIAN);
+		int size = SerializerUtils.bytesToInt(buffer, 0, SerializerUtils.LITTLE_ENDIAN);
 
 		file.read(buffer);
-		entryListOffset = SerializerUtils.bytesToInt(buffer, 0, MathUtils.LITTLE_ENDIAN);
+		entryListOffset = SerializerUtils.bytesToInt(buffer, 0, SerializerUtils.LITTLE_ENDIAN);
 		
 		this.entries = new ArrayList<WadEntry>((size + 1) * 2);
 		

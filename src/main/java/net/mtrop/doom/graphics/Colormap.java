@@ -72,10 +72,10 @@ public class Colormap implements BinaryObject
 
 	/**
 	 * Sets a colormap translation by remapping groups of contiguous indices.
-	 * @param startIndex the starting replacement index.
-	 * @param endIndex the ending replacement index.
-	 * @param startValue the starting replacement value.
-	 * @param endValue the ending replacement value.
+	 * @param startIndex the starting replacement index (inclusive).
+	 * @param endIndex the ending replacement index (inclusive).
+	 * @param startValue the starting replacement value (inclusive).
+	 * @param endValue the ending replacement value (inclusive).
 	 * @return itself, to chain colormap calls.
 	 */
 	public Colormap setTranslation(int startIndex, int endIndex, int startValue, int endValue)

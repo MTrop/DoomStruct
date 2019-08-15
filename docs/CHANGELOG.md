@@ -8,6 +8,8 @@ Changed in NOW
 
 - `Added` SerialWriter.writeBytes(OutputStream out, byte[], int, int).
 - `Added` Wad.getContent(int, int) : byte[]. Implementing classes changed as well.
+- `Added` Palette mixing functions plus copying.
+- `Fixed` GraphicUtils.createPicture(...) / GraphicUtils.createFlat(...) handles non-opaque pixels accurately.
 - `Changed` Some test refactoring.
 - `Changed` WadBuffer - made some protected fields private and merged the header in with content.
 

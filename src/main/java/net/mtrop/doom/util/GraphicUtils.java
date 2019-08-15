@@ -1135,7 +1135,7 @@ public final class GraphicUtils
 			for (int x = 0; x < out.getWidth(); x++)
 			{
 				int argb = image.getRGB(x, y);
-				if ((argb & 0xff000000) >> 24 != 0xff000000)
+				if ((argb & 0xff000000) >>> 24 != 0x0ff)
 					argb = 0;
 				int index = palette.getNearestColorIndex((argb & 0x00ff0000) >> 16, (argb & 0x0000ff00) >> 8, (argb & 0x000000ff));
 				index = colormap != null ? colormap.getPaletteIndex(index) : index;
@@ -1175,7 +1175,7 @@ public final class GraphicUtils
 			for (int x = 0; x < out.getWidth(); x++)
 			{
 				int argb = image.getRGB(x, y);
-				if ((argb & 0xff000000) >> 24 != 0xff000000)
+				if ((argb & 0xff000000) >>> 24 != 0x0ff)
 					argb = 0;
 				int index = palette.getNearestColorIndex((argb & 0x00ff0000) >> 16, (argb & 0x0000ff00) >> 8, (argb & 0x000000ff));
 				index = colormap != null ? colormap.getPaletteIndex(index) : index;
