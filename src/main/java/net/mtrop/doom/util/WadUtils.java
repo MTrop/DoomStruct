@@ -37,11 +37,7 @@ public final class WadUtils
 	 */
 	public static void cleanEntries(Wad source, File destination) throws IOException
 	{
-		WadFile wadFile = WadFile.createWadFile(destination);
-		for (WadEntry entry : source)
-			wadFile.addData(entry.getName(), source.getData(entry), true);
-		wadFile.flushEntries();
-		wadFile.close();
+		WadFile.extract(destination, source, 0, source.getEntryCount()).close();
 	}
 
 	/**

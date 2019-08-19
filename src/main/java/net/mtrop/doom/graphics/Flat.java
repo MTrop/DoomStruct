@@ -28,7 +28,7 @@ import net.mtrop.doom.util.RangeUtils;
  * current dimensions of the flat, as this information is not found in the byte data.
  * @author Matthew Tropiano
  */
-public class Flat implements BinaryObject, GraphicObject
+public class Flat implements BinaryObject, GraphicObject, IndexedGraphic
 {
 	/** This flat's width. */
 	private int width;
@@ -116,7 +116,7 @@ public class Flat implements BinaryObject, GraphicObject
 
 	/**
 	 * Sets the dimensions of this flat.
-	 * WARNING: This will clear all of the data in the patch.
+	 * WARNING: This will clear all of the data in the flat.
 	 * @param width	the width of the flat in pixels.
 	 * @param height the height of the flat in pixels.
 	 */
@@ -134,6 +134,7 @@ public class Flat implements BinaryObject, GraphicObject
 	 * @param y	patch y-coordinate.
 	 * @param value	the value to set.
 	 * @throws IllegalArgumentException if the value of the pixel is outside the range 0 to 255.
+	 * @throws ArrayIndexOutOfBoundsException if the provided coordinates is outside the graphic.
 	 */
 	public void setPixel(int x, int y, int value)
 	{
@@ -143,9 +144,10 @@ public class Flat implements BinaryObject, GraphicObject
 	
 	/**
 	 * Gets the pixel data at a location in the flat.
-	 * @param x	patch x-coordinate.
-	 * @param y	patch y-coordinate.
+	 * @param x	flat x-coordinate.
+	 * @param y	flat y-coordinate.
 	 * @return a palette index value from 0 to 255.
+	 * @throws ArrayIndexOutOfBoundsException if the provided coordinates is outside the graphic.
 	 */
 	public int getPixel(int x, int y)
 	{

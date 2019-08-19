@@ -205,8 +205,17 @@ public class Palette implements BinaryObject
 	}
 	
 	/**
-	 * Returns the index of the color nearest to a color in the palette,
-	 * or -1 if no color is appropriately matchable.
+	 * Returns the index of the color nearest to a color in the palette.
+	 * @param argb the ARGB color.
+	 * @return the closest index.
+	 */
+	public int getNearestColorIndex(int argb)
+	{
+		return getNearestColorIndex((0x00ff0000 & argb) >> 16, (0x0000ff00 & argb) >> 8, (0x000000ff & argb));
+	}
+
+	/**
+	 * Returns the index of the color nearest to a color in the palette.
 	 * @param red the red component amount (0 to 255).
 	 * @param green the green component amount (0 to 255).
 	 * @param blue the blue component amount (0 to 255).
@@ -256,6 +265,19 @@ public class Palette implements BinaryObject
 	/**
 	 * Sets the color of a specific index in the Palette.
 	 * @param index	the index number of the color to change.
+	 * @param argb the ARGB color.
+	 * @return itself, for chaining calls.
+	 * @throws ArrayIndexOutOfBoundsException if index is greater than or equal to NUM_COLORS or less than 0.
+	 * @since NOW, this returns itself.
+	 */
+	public Palette setColor(int index, int argb)
+	{
+		return setColor(index, (0x00ff0000 & argb) >> 16, (0x0000ff00 & argb) >> 8, (0x000000ff & argb));
+	}
+
+	/**
+	 * Sets the color of a specific index in the Palette.
+	 * @param index	the index number of the color to change.
 	 * @param red the red component amount (0 to 255, clamped).
 	 * @param green the green component amount (0 to 255, clamped).
 	 * @param blue the blue component amount (0 to 255, clamped).
@@ -268,6 +290,20 @@ public class Palette implements BinaryObject
 		setColorNoSort(index, red, green, blue);
 		sortIndices();
 		return this;
+	}
+
+	/**
+	 * Sets the color of a specific index in the Palette by blending it with another color.
+	 * @param index	the index number of the color to change.
+	 * @param scalar the scalar intensity of the blend (0 to 1, 0 is none, 1 is replace).
+	 * @param argb the ARGB color.
+	 * @return itself, for chaining calls.
+	 * @throws ArrayIndexOutOfBoundsException if index is greater than or equal to NUM_COLORS or less than 0.
+	 * @since NOW
+	 */
+	public Palette mixColor(int index, double scalar, int argb)
+	{
+		return mixColor(index, scalar, (0x00ff0000 & argb) >> 16, (0x0000ff00 & argb) >> 8, (0x000000ff & argb));
 	}
 
 	/**
@@ -294,6 +330,20 @@ public class Palette implements BinaryObject
 	 * Sets the color of a specific index in the Palette by additively blending it with another color.
 	 * @param index	the index number of the color to change.
 	 * @param scalar the scalar amount of each component to add (0 to 1).
+	 * @param argb the ARGB color.
+	 * @return itself, for chaining calls.
+	 * @throws ArrayIndexOutOfBoundsException if index is greater than or equal to NUM_COLORS or less than 0.
+	 * @since NOW
+	 */
+	public Palette addColor(int index, double scalar, int argb)
+	{
+		return addColor(index, scalar, (0x00ff0000 & argb) >> 16, (0x0000ff00 & argb) >> 8, (0x000000ff & argb));
+	}
+
+	/**
+	 * Sets the color of a specific index in the Palette by additively blending it with another color.
+	 * @param index	the index number of the color to change.
+	 * @param scalar the scalar amount of each component to add (0 to 1).
 	 * @param red the red component amount (0 to 255, clamped).
 	 * @param green the green component amount (0 to 255, clamped).
 	 * @param blue the blue component amount (0 to 255, clamped).
@@ -308,6 +358,21 @@ public class Palette implements BinaryObject
 		addColorNoSort(index, scalar, red, green, blue);
 		sortIndices();
 		return this;
+	}
+
+	/**
+	 * Sets the color of a range of indices in the Palette by subtractively blending it with another color.
+	 * @param startIndex the starting index number of the color to change (inclusive).
+	 * @param endIndex the ending index number of the color to change (inclusive).
+	 * @param scalar the scalar amount of each component to subtract (0 to 1).
+	 * @param argb the ARGB color.
+	 * @return itself, for chaining calls.
+	 * @throws ArrayIndexOutOfBoundsException if startIndex or endIndex is greater than or equal to NUM_COLORS or less than 0.
+	 * @since NOW
+	 */
+	public Palette subtractColor(int startIndex, int endIndex, double scalar, int argb)
+	{
+		return subtractColor(startIndex, endIndex, scalar, (0x00ff0000 & argb) >> 16, (0x0000ff00 & argb) >> 8, (0x000000ff & argb));
 	}
 
 	/**
@@ -334,6 +399,20 @@ public class Palette implements BinaryObject
 	 * Sets the color of a specific index in the Palette by multiplicatively blending it with another color.
 	 * @param index	the index number of the color to change.
 	 * @param scalar the scalar intensity of the blend (0 to 1, 1 is full blend).
+	 * @param argb the ARGB color.
+	 * @return itself, for chaining calls.
+	 * @throws ArrayIndexOutOfBoundsException if index is greater than or equal to NUM_COLORS or less than 0.
+	 * @since NOW
+	 */
+	public Palette multiplyColor(int index, double scalar, int argb)
+	{
+		return multiplyColor(index, scalar, (0x00ff0000 & argb) >> 16, (0x0000ff00 & argb) >> 8, (0x000000ff & argb));
+	}
+
+	/**
+	 * Sets the color of a specific index in the Palette by multiplicatively blending it with another color.
+	 * @param index	the index number of the color to change.
+	 * @param scalar the scalar intensity of the blend (0 to 1, 1 is full blend).
 	 * @param red the red component amount (0 to 255, clamped).
 	 * @param green the green component amount (0 to 255, clamped).
 	 * @param blue the blue component amount (0 to 255, clamped).
@@ -351,20 +430,17 @@ public class Palette implements BinaryObject
 	}
 
 	/**
-	 * Sets the color of a specific index in the Palette by saturating/desaturating it.
-	 * @param index	the index number of the color to change.
-	 * @param scalar the scalar intensity of the final saturation (0 to 1, 0 is desaturated, 1 is no change, higher values saturate).
+	 * Sets the color of a range of indices in the Palette.
+	 * @param startIndex the starting index number of the color to change (inclusive).
+	 * @param endIndex the ending index number of the color to change (inclusive).
+	 * @param argb the ARGB color.
 	 * @return itself, for chaining calls.
-	 * @throws ArrayIndexOutOfBoundsException if index is greater than or equal to NUM_COLORS or less than 0.
+	 * @throws ArrayIndexOutOfBoundsException if startIndex or endIndex is greater than or equal to NUM_COLORS or less than 0.
 	 * @since NOW
 	 */
-	public Palette saturateColor(int index, double scalar)
+	public Palette setColor(int startIndex, int endIndex, int argb)
 	{
-		if (scalar == 1.0)
-			return this;
-		saturateColorNoSort(index, scalar);
-		sortIndices();
-		return this;
+		return setColor(startIndex, endIndex, (0x00ff0000 & argb) >> 16, (0x0000ff00 & argb) >> 8, (0x000000ff & argb));
 	}
 
 	/**
@@ -386,6 +462,21 @@ public class Palette implements BinaryObject
 			setColorNoSort(i, red, green, blue);
 		sortIndices();
 		return this;
+	}
+
+	/**
+	 * Sets the color of a range of indices in the Palette by blending it with another color.
+	 * @param startIndex the starting index number of the color to change (inclusive).
+	 * @param endIndex the ending index number of the color to change (inclusive).
+	 * @param scalar the scalar intensity of the blend (0 to 1, 0 is none, 1 is replace).
+	 * @param argb the ARGB color.
+	 * @return itself, for chaining calls.
+	 * @throws ArrayIndexOutOfBoundsException if startIndex or endIndex is greater than or equal to NUM_COLORS or less than 0.
+	 * @since NOW
+	 */
+	public Palette mixColor(int startIndex, int endIndex, double scalar, int argb)
+	{
+		return mixColor(startIndex, endIndex, scalar, (0x00ff0000 & argb) >> 16, (0x0000ff00 & argb) >> 8, (0x000000ff & argb));
 	}
 
 	/**
@@ -417,6 +508,21 @@ public class Palette implements BinaryObject
 	 * @param startIndex the starting index number of the color to change (inclusive).
 	 * @param endIndex the ending index number of the color to change (inclusive).
 	 * @param scalar the scalar amount of each component to add (0 to 1).
+	 * @param argb the ARGB color.
+	 * @return itself, for chaining calls.
+	 * @throws ArrayIndexOutOfBoundsException if startIndex or endIndex is greater than or equal to NUM_COLORS or less than 0.
+	 * @since NOW
+	 */
+	public Palette addColor(int startIndex, int endIndex, double scalar, int argb)
+	{
+		return addColor(startIndex, endIndex, scalar, (0x00ff0000 & argb) >> 16, (0x0000ff00 & argb) >> 8, (0x000000ff & argb));
+	}
+
+	/**
+	 * Sets the color of a range of indices in the Palette by additively blending it with another color.
+	 * @param startIndex the starting index number of the color to change (inclusive).
+	 * @param endIndex the ending index number of the color to change (inclusive).
+	 * @param scalar the scalar amount of each component to add (0 to 1).
 	 * @param red the red component amount (0 to 255, clamped).
 	 * @param green the green component amount (0 to 255, clamped).
 	 * @param blue the blue component amount (0 to 255, clamped).
@@ -434,6 +540,20 @@ public class Palette implements BinaryObject
 			addColorNoSort(i, scalar, red, green, blue);
 		sortIndices();
 		return this;
+	}
+
+	/**
+	 * Sets the color of a specific index in the Palette by subtractively blending it with another color.
+	 * @param index	the index number of the color to change.
+	 * @param scalar the scalar amount of each component to subtract (0 to 1).
+	 * @param argb the ARGB color.
+	 * @return itself, for chaining calls.
+	 * @throws ArrayIndexOutOfBoundsException if index is greater than or equal to NUM_COLORS or less than 0.
+	 * @since NOW
+	 */
+	public Palette subtractColor(int index, double scalar, int argb)
+	{
+		return subtractColor(index, scalar, (0x00ff0000 & argb) >> 16, (0x0000ff00 & argb) >> 8, (0x000000ff & argb));
 	}
 
 	/**
@@ -465,6 +585,21 @@ public class Palette implements BinaryObject
 	 * @param startIndex the starting index number of the color to change (inclusive).
 	 * @param endIndex the ending index number of the color to change (inclusive).
 	 * @param scalar the scalar intensity of the blend (0 to 1, 1 is full blend).
+	 * @param argb the ARGB color.
+	 * @return itself, for chaining calls.
+	 * @throws ArrayIndexOutOfBoundsException if startIndex or endIndex is greater than or equal to NUM_COLORS or less than 0.
+	 * @since NOW
+	 */
+	public Palette multiplyColor(int startIndex, int endIndex, double scalar, int argb)
+	{
+		return multiplyColor(startIndex, endIndex, scalar, (0x00ff0000 & argb) >> 16, (0x0000ff00 & argb) >> 8, (0x000000ff & argb));
+	}
+
+	/**
+	 * Sets the color of a range of indices in the Palette by multiplicatively blending it with another color.
+	 * @param startIndex the starting index number of the color to change (inclusive).
+	 * @param endIndex the ending index number of the color to change (inclusive).
+	 * @param scalar the scalar intensity of the blend (0 to 1, 1 is full blend).
 	 * @param red the red component amount (0 to 255, clamped).
 	 * @param green the green component amount (0 to 255, clamped).
 	 * @param blue the blue component amount (0 to 255, clamped).
@@ -480,6 +615,23 @@ public class Palette implements BinaryObject
 		int max = Math.max(startIndex, endIndex);
 		for (int i = min; i <= max; i++)
 			multiplyColorNoSort(i, scalar, red, green, blue);
+		sortIndices();
+		return this;
+	}
+
+	/**
+	 * Sets the color of a specific index in the Palette by saturating/desaturating it.
+	 * @param index	the index number of the color to change.
+	 * @param scalar the scalar intensity of the final saturation (0 to 1, 0 is desaturated, 1 is no change, higher values saturate).
+	 * @return itself, for chaining calls.
+	 * @throws ArrayIndexOutOfBoundsException if index is greater than or equal to NUM_COLORS or less than 0.
+	 * @since NOW
+	 */
+	public Palette saturateColor(int index, double scalar)
+	{
+		if (scalar == 1.0)
+			return this;
+		saturateColorNoSort(index, scalar);
 		sortIndices();
 		return this;
 	}
@@ -501,6 +653,54 @@ public class Palette implements BinaryObject
 		int max = Math.max(startIndex, endIndex);
 		for (int i = min; i <= max; i++)
 			saturateColorNoSort(i, scalar);
+		sortIndices();
+		return this;
+	}
+
+	/**
+	 * Sets the color of a range of indices in the Palette by creating a linear color gradient.
+	 * @param startIndex the starting index number of the color to change (inclusive).
+	 * @param endIndex the ending index number of the color to change (inclusive).
+	 * @param argb0 the first ARGB color.
+	 * @param argb1 the second ARGB color.
+	 * @return itself, for chaining calls.
+	 * @throws ArrayIndexOutOfBoundsException if index is greater than or equal to NUM_COLORS or less than 0.
+	 * @since NOW
+	 */
+	public Palette setColorGradient(int startIndex, int endIndex, int argb0, int argb1)
+	{
+		return setColorGradient(startIndex, endIndex, 
+			(0x00ff0000 & argb0) >> 16, (0x0000ff00 & argb0) >> 8, (0x000000ff & argb0),
+			(0x00ff0000 & argb1) >> 16, (0x0000ff00 & argb1) >> 8, (0x000000ff & argb1)
+		);
+	}
+
+	/**
+	 * Sets the color of a range of indices in the Palette by creating a linear color gradient.
+	 * @param startIndex the starting index number of the color to change (inclusive).
+	 * @param endIndex the ending index number of the color to change (inclusive).
+	 * @param red0 the first color's red component amount (0 to 255, clamped).
+	 * @param green0 the first color's green component amount (0 to 255, clamped).
+	 * @param blue0 the first color's blue component amount (0 to 255, clamped).
+	 * @param red1 the second color's red component amount (0 to 255, clamped).
+	 * @param green1 the second color's green component amount (0 to 255, clamped).
+	 * @param blue1 the second color's blue component amount (0 to 255, clamped).
+	 * @return itself, for chaining calls.
+	 * @throws ArrayIndexOutOfBoundsException if index is greater than or equal to NUM_COLORS or less than 0.
+	 * @since NOW
+	 */
+	public Palette setColorGradient(int startIndex, int endIndex, int red0, int green0, int blue0, int red1, int green1, int blue1)
+	{
+		int min = Math.min(startIndex, endIndex);
+		int max = Math.max(startIndex, endIndex);
+		int steps = max - min;
+		double scaleStep = 1.0 / (max - min);
+		for (int i = 0; i < steps; i++)
+		{
+			setColorNoSort(i + min, red0, green0, blue0);
+			mixColorNoSort(i + min, scaleStep * i, red1, green1, blue1);
+		}
+		setColorNoSort(max, red1, green1, blue1);
 		sortIndices();
 		return this;
 	}

@@ -24,7 +24,7 @@ import net.mtrop.doom.util.RangeUtils;
  * Useful for editing/displaying graphics.
  * @author Matthew Tropiano
  */
-public class Picture implements BinaryObject, GraphicObject
+public class Picture implements BinaryObject, GraphicObject, IndexedGraphic
 {
 	public static final short PIXEL_TRANSLUCENT = -1;
 	
@@ -133,6 +133,7 @@ public class Picture implements BinaryObject, GraphicObject
 	 * @param y	picture y-coordinate.
 	 * @param value	the value to set.
 	 * @throws IllegalArgumentException if the offset is outside the range -1 to 255.
+	 * @throws ArrayIndexOutOfBoundsException if the provided coordinates is outside the graphic.
 	 */
 	public void setPixel(int x, int y, int value)
 	{
@@ -145,6 +146,7 @@ public class Picture implements BinaryObject, GraphicObject
 	 * @param x	picture x-coordinate.
 	 * @param y	picture y-coordinate.
 	 * @return a palette index value from 0 to 255 or PIXEL_TRANSLUCENT if the pixel is not filled in.
+	 * @throws ArrayIndexOutOfBoundsException if the provided coordinates is outside the graphic.
 	 */
 	public int getPixel(int x, int y)
 	{

@@ -15,6 +15,7 @@ import java.awt.image.BufferedImage;
 import net.mtrop.doom.graphics.Colormap;
 import net.mtrop.doom.graphics.EndDoom;
 import net.mtrop.doom.graphics.Flat;
+import net.mtrop.doom.graphics.IndexedGraphic;
 import net.mtrop.doom.graphics.PNGPicture;
 import net.mtrop.doom.graphics.Palette;
 import net.mtrop.doom.graphics.Picture;
@@ -30,10 +31,10 @@ public final class GraphicUtils
 	 */
 	public static final Palette DOOM = new Palette()
 	{{
-		setColorNoSort(0,  0,  0,  0);
-		setColorNoSort(1,  31,  23,  11);
-		setColorNoSort(2,  23,  15,  7);
-		setColorNoSort(3,  75, 75, 75);
+		setColorNoSort(0, 0, 0, 0);
+		setColorNoSort(1, 31, 23, 11);
+		setColorNoSort(2, 23, 15, 7);
+		setColorNoSort(3, 75, 75, 75);
 		setColorNoSort(4, 255, 255, 255);
 		setColorNoSort(5, 27, 27, 27);
 		setColorNoSort(6, 19, 19, 19);
@@ -1129,7 +1130,6 @@ public final class GraphicUtils
 	 */
 	public static Flat createFlat(BufferedImage image, Palette palette, Colormap colormap)
 	{
-		
 		Flat out = new Flat(image.getWidth(), image.getHeight());
 		for (int y = 0; y < out.getHeight(); y++)
 			for (int x = 0; x < out.getWidth(); x++)
@@ -1169,7 +1169,6 @@ public final class GraphicUtils
 	 */
 	public static Picture createPicture(BufferedImage image, Palette palette, Colormap colormap)
 	{
-		
 		Picture out = new Picture(image.getWidth(), image.getHeight());
 		for (int y = 0; y < out.getHeight(); y++)
 			for (int x = 0; x < out.getWidth(); x++)
@@ -1313,6 +1312,43 @@ public final class GraphicUtils
 					g.drawChars(ch, 0, 1, c*8, r*12+10);
 				}
 			}
+		return out;
+	}
+
+	/**
+	 * Sets the indices of a {@link Colormap} by attempting to match colors in a palette from other colors in a different palette.
+	 * <p>This is a convenience for:
+	 * <pre>
+	 * for (int i = 0; i < Colormap.NUM_INDICES; i++)
+	 *     colormap.setPaletteIndex(i, target.getNearestColorIndex(sampled.getColorARGB(i)))
+	 * </pre>
+	 * @param colormap the colormap to set.  
+	 * @param target the palette to match against.
+	 * @param sampled the palette to sample from for matching.
+	 * @since NOW
+	 */
+	public static void setColormap(Colormap colormap, Palette target, Palette sampled)
+	{
+		for (int i = 0; i < Colormap.NUM_INDICES; i++)
+			colormap.setPaletteIndex(i, target.getNearestColorIndex(sampled.getColorARGB(i)));
+	}
+		
+	/**
+	 * Creates a series of colormaps using a two-dimensional indexed graphic.
+	 * The provided indexed graphic must have a width of at least {@link Colormap#NUM_INDICES}.
+	 * The amount of colormaps returned is equal to the graphic height. Translucent pixels are changed to index 0.
+	 * @param graphic the source graphic to use.
+	 * @return an array of new colormaps.
+	 * @throws NullPointerException if graphic is null.
+	 * @throws ArrayIndexOutOfBoundsException if the provided graphic's width is less than {@link Colormap#NUM_INDICES}.
+	 * @since NOW
+	 */
+	public static Colormap[] createColormapsFromGraphic(IndexedGraphic graphic)
+	{
+		Colormap[] out = new Colormap[graphic.getHeight()];
+		for (int i = 0; i < out.length; i++)
+			for (int x = 0; x < Colormap.NUM_INDICES; x++)
+				out[i].setPaletteIndex(x, Math.max(graphic.getPixel(x, i), 0));
 		return out;
 	}
 		

@@ -184,7 +184,8 @@ public class WadFile implements Wad, AutoCloseable
 	{
 		WadFile out = WadFile.createWadFile(targetFile);
 		for (int i = 0; i < entries.length; i++)
-			out.addData(entries[i].getName(), source.getData(entries[i]));
+			out.addData(entries[i].getName(), source.getData(entries[i]), true);
+		out.flushEntries();
 		return out;
 	}
 
@@ -463,13 +464,7 @@ public class WadFile implements Wad, AutoCloseable
 	@Override
 	public WadEntry addDataAt(int index, String entryName, byte[] data) throws IOException
 	{
-		WadEntry entry = WadEntry.create(entryName, entryListOffset, data.length);
-		entries.add(index, entry);
-		file.seek(entryListOffset);
-		file.write(data);
-		entryListOffset += data.length;
-		flushEntries();
-		return entry;
+		return addDataAt(index, entryName, data, false);
 	}
 
 	/**
@@ -503,6 +498,26 @@ public class WadFile implements Wad, AutoCloseable
 	@Override
 	public WadEntry[] addAllData(String[] entryNames, byte[][] data) throws IOException
 	{
+		return addAllData(entryNames, data, false);
+	}
+	
+	/**
+	 * Adds multiple entries of data to this Wad, using entryNames as the name of the new entry, using the same indices
+	 * in the data array as the corresponding data.
+	 * <p>
+	 * <b>NOTE: If this is called with <code>noFlush</code> being true, you <i>must</i> call {@link #flushEntries()} or
+	 * the Wad file will be in an unreadable state!</b>
+	 * @param entryNames the names of the entries to add.
+	 * @param data the bytes of data to add as each entry's data.
+	 * @param noFlush if true, this will not update the header nor flush the new entries to the file.
+	 * @return an array of WadEntry objects that describe the added data.
+	 * @throws IOException if the data cannot be written.
+	 * @throws ArrayIndexOutOfBoundsException if the lengths of entryNames and data do not match.
+	 * @throws NullPointerException if an object if <code>entryNames</code> or <code>data</code> is <code>null</code>.
+	 * @since NOW
+	 */
+	public WadEntry[] addAllData(String[] entryNames, byte[][] data, boolean noFlush) throws IOException
+	{
 		int curOffs = entryListOffset; 
 		WadEntry[] out = new WadEntry[entryNames.length];
 		for (int i = 0; i < entryNames.length; i++)
@@ -522,12 +537,34 @@ public class WadFile implements Wad, AutoCloseable
 			entryListOffset += data[i].length;
 		}
 
-		flushEntries();
+		if (!noFlush)
+			flushEntries();
 		return out;
 	}
 
 	@Override
 	public WadEntry[] addAllDataAt(int index, String[] entryNames, byte[][] data) throws IOException
+	{
+		return addAllDataAt(index, entryNames, data, false);
+	}
+
+	/**
+	 * Adds multiple entries of data to this Wad at a particular entry offset, using entryNames as the name 
+	 * of the entry, using the same indices in the data array as the corresponding data.
+	 * <p>
+	 * <b>NOTE: If this is called with <code>noFlush</code> being true, you <i>must</i> call {@link #flushEntries()} or
+	 * the Wad file will be in an unreadable state!</b>
+	 * @param index the index to add these entries at.
+	 * @param entryNames the names of the entries to add.
+	 * @param data the bytes of data to add as each entry's data.
+	 * @param noFlush if true, this will not update the header nor flush the new entries to the file.
+	 * @return an array of WadEntry objects that describe the added data.
+	 * @throws IOException if the data cannot be written.
+	 * @throws ArrayIndexOutOfBoundsException if the lengths of entryNames and data do not match.
+	 * @throws NullPointerException if an object if <code>entryNames</code> or <code>data</code> is <code>null</code>.
+	 * @since NOW
+	 */
+	public WadEntry[] addAllDataAt(int index, String[] entryNames, byte[][] data, boolean noFlush) throws IOException
 	{
 		int curOffs = entryListOffset; 
 		WadEntry[] out = new WadEntry[entryNames.length];
@@ -548,7 +585,8 @@ public class WadFile implements Wad, AutoCloseable
 			entryListOffset += data[i].length;
 		}
 
-		flushEntries();
+		if (!noFlush)
+			flushEntries();
 		return out;
 	}
 
@@ -563,5 +601,7 @@ public class WadFile implements Wad, AutoCloseable
 	{
 		file.close();
 	}
+	
+	
 
 }
