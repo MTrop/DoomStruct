@@ -31,9 +31,9 @@ To contribute to this project, you must follow the Code of Conduct and Coding St
 
 3. You must specify what you are adding or fixing. Without context for the PR, it cannot be reviewed adequately, nor ultimately accepted.
 
-4. Refactorings of existing classes/packages are at the discretion of the primary maintainer. Please ask if you are unsure whether or not a feature requires a new package, and accept direction if another or different package (or project) is necessary to accommodate your feature.
+4. Understand that not all contributions are worthy by default - any new features must fill a utilitarian deficit or fix a clear bug ("bug" is this case is defined as an unintended behavior). 
 
-5. Understand that not all contributions are worthy by default - any new features must fill a utilitarian deficit or fix a clear bug ("bug" is this case is defined as an unintended behavior). 
+5. Refactorings of existing classes/packages are at the discretion of the primary maintainer. Please ask if you are unsure whether or not a feature requires a new package, and accept direction if another or different package (or project) is necessary to accommodate your feature.
 
 6. "Bikeshed" features/corrections will not be accepted without adequate justification.
 
