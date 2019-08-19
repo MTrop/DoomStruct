@@ -108,20 +108,4 @@ public final class MathUtils
 		return (p*factor*factor*factor) + (q*factor*factor) + (r*factor) + s;
 	}
 
-	/**
-	 * Coerces an integer to the range bounded by lo and hi.
-	 * <br>Example: clampValue(32,-16,16) returns 16.
-	 * <br>Example: clampValue(4,-16,16) returns 4.
-	 * <br>Example: clampValue(-1000,-16,16) returns -16.
-	 * @param val the integer.
-	 * @param lo the lower bound.
-	 * @param hi the upper bound.
-	 * @return the value after being "forced" into the range.
-	 * @since NOW
-	 */
-	public static int clampValue(int val, int lo, int hi)
-	{
-		return Math.min(Math.max(val,lo),hi);
-	}
-
 }

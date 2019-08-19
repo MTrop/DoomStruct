@@ -26,8 +26,8 @@ flexibility as well as convenience.
 
 ### Why are WadEntries immutable?
 
-WadEntries are immutable because they can be used by other Wads - changing an entry could
-pollute use of an entry whose reference is used in many places.
+WadEntries are immutable because they can be used by other Wads - changing an entry's values
+like offset, length, or name could pollute use of an entry whose reference is used in many places.
 
 
 ### Why Doom/Hexen/UDMF Linedef/Thing objects? Why not a single object for all things/linedefs?
