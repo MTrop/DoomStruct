@@ -23,9 +23,6 @@ To contribute to this project, you must follow the Code of Conduct and Coding St
 
 6. You may not add additional dependencies to this project. Stay in the [java.desktop](https://docs.oracle.com/en/java/javase/11/docs/api/java.desktop/module-summary.html) module (and its child dependencies). However, *removal* of dependencies, if any, are a welcome proposition.
 
-7. Understand that not all contributions are worthy by default - any new features must fill a utilitarian deficit or fix a clear bug ("bug" is this case is defined as an unintended behavior). 
-
-
 ### Pull Requests
 
 1. All Pull Requests are subject to review before acceptance. If your feature or contribution is not accepted, understand that it may be due to it not aligning with the project's philosophy or purpose, coding standards aside. Don't worry - there's no shame in use using this library as a dependency for your toolset!
@@ -36,15 +33,17 @@ To contribute to this project, you must follow the Code of Conduct and Coding St
 
 4. Refactorings of existing classes/packages are at the discretion of the primary maintainer. Please ask if you are unsure whether or not a feature requires a new package, and accept direction if another or different package (or project) is necessary to accommodate your feature.
 
-5. "Bikeshed" features/corrections will not be accepted without adequate justification.
+5. Understand that not all contributions are worthy by default - any new features must fill a utilitarian deficit or fix a clear bug ("bug" is this case is defined as an unintended behavior). 
 
-6. The primary maintainer of this codebase is **not** a believer in "Good or readable code needs no comments." If you are asked to clarify sections of code with plain English, do so or you will risk the rejection of your request.
+6. "Bikeshed" features/corrections will not be accepted without adequate justification.
 
-7. New public/protected methods/classes should contain a `@since NOW` descriptor in the Javadocs, so that when a new release is cut, the "NOW" can be replaced with the next release version.   
+7. The primary maintainer of this codebase is **not** a believer in "Good or readable code needs no comments." If you are asked to clarify sections of code with plain English, do so or you will risk the rejection of your request.
 
-8. Deprecated public/protected/default methods/classes should contain a `@Deprecated` annotation in the source, so that when a new release is cut, the new deprecations can be adequately documented.
+8. New public/protected methods/classes should contain a `@since NOW` descriptor in the Javadocs, so that when a new release is cut, the "NOW" can be replaced with the next release version.   
 
-9. Please amend the CHANGELOG - add a "Next Version" section if it doesn't exist.
+9. Deprecated public/protected/default methods/classes should contain a `@Deprecated` annotation in the source, so that when a new release is cut, the new deprecations can be adequately documented.
 
-10. Your code must be compatible with the license of this project, and be written with the understanding that it will be published under this project's license.  
+10. Please amend the CHANGELOG - add a "Next Version" section if it doesn't exist.
+
+11. Your code must be compatible with the license of this project, and be written with the understanding that it will be published under this project's license.  
 
