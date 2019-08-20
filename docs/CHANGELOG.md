@@ -3,7 +3,7 @@ Doom Struct (C) 2015-2019
 by Matt Tropiano et al. (see AUTHORS.txt)
 
 
-Changed in [NOW]
+Changed in 2.2.0
 ----------------
 
 - `Added` SerialWriter.writeBytes(OutputStream out, byte[], int, int).

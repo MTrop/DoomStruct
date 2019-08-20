@@ -448,7 +448,7 @@ public class WadFile implements Wad, AutoCloseable
 	 * @throws IllegalArgumentException if the provided name is not a valid name.
 	 * @throws IOException if the data cannot be written.
 	 * @throws NullPointerException if <code>entryName</code> or <code>data</code> is <code>null</code>.
-	 * @since [NOW]
+	 * @since 2.2.0
 	 */
 	public WadEntry addData(String entryName, byte[] data, boolean noFlush) throws IOException
 	{
@@ -483,7 +483,7 @@ public class WadFile implements Wad, AutoCloseable
 	 * @throws IllegalArgumentException if the provided name is not a valid name.
 	 * @throws IOException if the data cannot be written.
 	 * @throws NullPointerException if <code>entryName</code> or <code>data</code> is <code>null</code>.
-	 * @since [NOW]
+	 * @since 2.2.0
 	 */
 	public WadEntry addDataAt(int index, String entryName, byte[] data, boolean noFlush) throws IOException
 	{
@@ -516,7 +516,7 @@ public class WadFile implements Wad, AutoCloseable
 	 * @throws IOException if the data cannot be written.
 	 * @throws ArrayIndexOutOfBoundsException if the lengths of entryNames and data do not match.
 	 * @throws NullPointerException if an object if <code>entryNames</code> or <code>data</code> is <code>null</code>.
-	 * @since [NOW]
+	 * @since 2.2.0
 	 */
 	public WadEntry[] addAllData(String[] entryNames, byte[][] data, boolean noFlush) throws IOException
 	{
@@ -564,7 +564,7 @@ public class WadFile implements Wad, AutoCloseable
 	 * @throws IOException if the data cannot be written.
 	 * @throws ArrayIndexOutOfBoundsException if the lengths of entryNames and data do not match.
 	 * @throws NullPointerException if an object if <code>entryNames</code> or <code>data</code> is <code>null</code>.
-	 * @since [NOW]
+	 * @since 2.2.0
 	 */
 	public WadEntry[] addAllDataAt(int index, String[] entryNames, byte[][] data, boolean noFlush) throws IOException
 	{

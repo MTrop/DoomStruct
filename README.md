@@ -1,4 +1,4 @@
-# Doom Struct 2.1.1
+# Doom Struct 2.2.0
 
 Copyright (c) 2015 - 2019 Matt Tropiano  
 

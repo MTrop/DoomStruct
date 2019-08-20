@@ -295,7 +295,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @return a copy of the byte data as an array of bytes.
 	 * @throws IndexOutOfBoundsException if offset plus length will go past the end of the content area.
 	 * @throws IOException if an error occurs during read.
-	 * @since [NOW]
+	 * @since 2.2.0
 	 */
 	byte[] getContent(int offset, int length) throws IOException;
 
@@ -1502,7 +1502,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws IllegalArgumentException if the provided name is not a valid name.
 	 * @throws IOException if the data cannot be written.
 	 * @throws NullPointerException if <code>entryName</code> or <code>data</code> is <code>null</code>.
-	 * @since [NOW]
+	 * @since 2.2.0
 	 */
 	default <BO extends BinaryObject> WadEntry addData(String entryName, BO data) throws IOException
 	{
@@ -1520,7 +1520,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws IllegalArgumentException if the provided name is not a valid name.
 	 * @throws IOException if the data cannot be written.
 	 * @throws NullPointerException if <code>entryName</code> or <code>data</code> is <code>null</code>.
-	 * @since [NOW]
+	 * @since 2.2.0
 	 */
 	default <BO extends BinaryObject> WadEntry addData(String entryName, BO[] data) throws IOException
 	{
@@ -1541,7 +1541,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws IllegalArgumentException if the provided name is not a valid name.
 	 * @throws IOException if the data cannot be written.
 	 * @throws NullPointerException if <code>entryName</code> or <code>data</code> or <code>encoding</code> is <code>null</code>.
-	 * @since [NOW]
+	 * @since 2.2.0
 	 */
 	default <TO extends TextObject> WadEntry addData(String entryName, TO data, Charset encoding) throws IOException
 	{
@@ -1575,7 +1575,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws IllegalArgumentException if the provided name is not a valid name.
 	 * @throws IOException if the data cannot be written.
 	 * @throws NullPointerException if <code>entryName</code> or <code>data</code> is <code>null</code>.
-	 * @since [NOW]
+	 * @since 2.2.0
 	 */
 	default <TO extends BinaryObject> WadEntry addDataAt(int index, String entryName, TO data) throws IOException
 	{
@@ -1595,7 +1595,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws IllegalArgumentException if the provided name is not a valid name.
 	 * @throws IOException if the data cannot be written.
 	 * @throws NullPointerException if <code>entryName</code> or <code>data</code> is <code>null</code>.
-	 * @since [NOW]
+	 * @since 2.2.0
 	 */
 	default <BO extends BinaryObject> WadEntry addDataAt(int index, String entryName, BO[] data) throws IOException
 	{
@@ -1618,7 +1618,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws IllegalArgumentException if the provided name is not a valid name.
 	 * @throws IOException if the data cannot be written.
 	 * @throws NullPointerException if <code>entryName</code> or <code>data</code> is <code>null</code>.
-	 * @since [NOW]
+	 * @since 2.2.0
 	 */
 	default <TO extends TextObject> WadEntry addDataAt(int index, String entryName, TO data, Charset encoding) throws IOException
 	{
@@ -1648,7 +1648,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws IOException if the data cannot be written.
 	 * @throws ArrayIndexOutOfBoundsException if the length of the entryNames array exceeds data's array length.
 	 * @throws NullPointerException if an object if <code>entryNames</code> or <code>data</code> is <code>null</code>.
-	 * @since [NOW]
+	 * @since 2.2.0
 	 */
 	default <BO extends BinaryObject> WadEntry[] addAllData(String[] entryNames, BO[] data) throws IOException
 	{
@@ -1683,7 +1683,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws IOException if the data cannot be written.
 	 * @throws ArrayIndexOutOfBoundsException if the length of the entryNames array exceeds data's array length.
 	 * @throws NullPointerException if an object if <code>entryNames</code> or <code>data</code> is <code>null</code>.
-	 * @since [NOW]
+	 * @since 2.2.0
 	 */
 	default <BO extends BinaryObject> WadEntry[] addAllDataAt(int index, String[] entryNames, BO[] data) throws IOException
 	{

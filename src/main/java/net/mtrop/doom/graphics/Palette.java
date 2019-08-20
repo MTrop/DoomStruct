@@ -169,7 +169,7 @@ public class Palette implements BinaryObject
 	/**
 	 * Makes a copy of this palette.
 	 * @return a new Palette that is a copy of this one.
-	 * @since [NOW]
+	 * @since 2.2.0
 	 */
 	public Palette copy()
 	{
@@ -269,7 +269,7 @@ public class Palette implements BinaryObject
 	 * @param argb the ARGB color.
 	 * @return itself, for chaining calls.
 	 * @throws ArrayIndexOutOfBoundsException if index is greater than or equal to NUM_COLORS or less than 0.
-	 * @since [NOW], this returns itself.
+	 * @since 2.2.0, this returns itself.
 	 */
 	public Palette setColor(int index, int argb)
 	{
@@ -284,7 +284,7 @@ public class Palette implements BinaryObject
 	 * @param blue the blue component amount (0 to 255, clamped).
 	 * @return itself, for chaining calls.
 	 * @throws ArrayIndexOutOfBoundsException if index is greater than or equal to NUM_COLORS or less than 0.
-	 * @since [NOW], this returns itself.
+	 * @since 2.2.0, this returns itself.
 	 */
 	public Palette setColor(int index, int red, int green, int blue)
 	{
@@ -300,7 +300,7 @@ public class Palette implements BinaryObject
 	 * @param argb the ARGB color.
 	 * @return itself, for chaining calls.
 	 * @throws ArrayIndexOutOfBoundsException if index is greater than or equal to NUM_COLORS or less than 0.
-	 * @since [NOW]
+	 * @since 2.2.0
 	 */
 	public Palette mixColor(int index, double scalar, int argb)
 	{
@@ -316,7 +316,7 @@ public class Palette implements BinaryObject
 	 * @param blue the blue component amount (0 to 255, clamped).
 	 * @return itself, for chaining calls.
 	 * @throws ArrayIndexOutOfBoundsException if index is greater than or equal to NUM_COLORS or less than 0.
-	 * @since [NOW]
+	 * @since 2.2.0
 	 */
 	public Palette mixColor(int index, double scalar, int red, int green, int blue)
 	{
@@ -334,7 +334,7 @@ public class Palette implements BinaryObject
 	 * @param argb the ARGB color.
 	 * @return itself, for chaining calls.
 	 * @throws ArrayIndexOutOfBoundsException if index is greater than or equal to NUM_COLORS or less than 0.
-	 * @since [NOW]
+	 * @since 2.2.0
 	 */
 	public Palette addColor(int index, double scalar, int argb)
 	{
@@ -350,7 +350,7 @@ public class Palette implements BinaryObject
 	 * @param blue the blue component amount (0 to 255, clamped).
 	 * @return itself, for chaining calls.
 	 * @throws ArrayIndexOutOfBoundsException if index is greater than or equal to NUM_COLORS or less than 0.
-	 * @since [NOW]
+	 * @since 2.2.0
 	 */
 	public Palette addColor(int index, double scalar, int red, int green, int blue)
 	{
@@ -369,7 +369,7 @@ public class Palette implements BinaryObject
 	 * @param argb the ARGB color.
 	 * @return itself, for chaining calls.
 	 * @throws ArrayIndexOutOfBoundsException if startIndex or endIndex is greater than or equal to NUM_COLORS or less than 0.
-	 * @since [NOW]
+	 * @since 2.2.0
 	 */
 	public Palette subtractColor(int startIndex, int endIndex, double scalar, int argb)
 	{
@@ -385,7 +385,7 @@ public class Palette implements BinaryObject
 	 * @param blue the blue component amount (0 to 255, clamped).
 	 * @return itself, for chaining calls.
 	 * @throws ArrayIndexOutOfBoundsException if index is greater than or equal to NUM_COLORS or less than 0.
-	 * @since [NOW]
+	 * @since 2.2.0
 	 */
 	public Palette subtractColor(int index, double scalar, int red, int green, int blue)
 	{
@@ -403,7 +403,7 @@ public class Palette implements BinaryObject
 	 * @param argb the ARGB color.
 	 * @return itself, for chaining calls.
 	 * @throws ArrayIndexOutOfBoundsException if index is greater than or equal to NUM_COLORS or less than 0.
-	 * @since [NOW]
+	 * @since 2.2.0
 	 */
 	public Palette multiplyColor(int index, double scalar, int argb)
 	{
@@ -419,7 +419,7 @@ public class Palette implements BinaryObject
 	 * @param blue the blue component amount (0 to 255, clamped).
 	 * @return itself, for chaining calls.
 	 * @throws ArrayIndexOutOfBoundsException if index is greater than or equal to NUM_COLORS or less than 0.
-	 * @since [NOW]
+	 * @since 2.2.0
 	 */
 	public Palette multiplyColor(int index, double scalar, int red, int green, int blue)
 	{
@@ -437,7 +437,7 @@ public class Palette implements BinaryObject
 	 * @param argb the ARGB color.
 	 * @return itself, for chaining calls.
 	 * @throws ArrayIndexOutOfBoundsException if startIndex or endIndex is greater than or equal to NUM_COLORS or less than 0.
-	 * @since [NOW]
+	 * @since 2.2.0
 	 */
 	public Palette setColor(int startIndex, int endIndex, int argb)
 	{
@@ -453,7 +453,7 @@ public class Palette implements BinaryObject
 	 * @param blue the blue component amount (0 to 255, clamped).
 	 * @return itself, for chaining calls.
 	 * @throws ArrayIndexOutOfBoundsException if startIndex or endIndex is greater than or equal to NUM_COLORS or less than 0.
-	 * @since [NOW]
+	 * @since 2.2.0
 	 */
 	public Palette setColor(int startIndex, int endIndex, int red, int green, int blue)
 	{
@@ -473,7 +473,7 @@ public class Palette implements BinaryObject
 	 * @param argb the ARGB color.
 	 * @return itself, for chaining calls.
 	 * @throws ArrayIndexOutOfBoundsException if startIndex or endIndex is greater than or equal to NUM_COLORS or less than 0.
-	 * @since [NOW]
+	 * @since 2.2.0
 	 */
 	public Palette mixColor(int startIndex, int endIndex, double scalar, int argb)
 	{
@@ -490,7 +490,7 @@ public class Palette implements BinaryObject
 	 * @param blue the blue component amount (0 to 255, clamped).
 	 * @return itself, for chaining calls.
 	 * @throws ArrayIndexOutOfBoundsException if startIndex or endIndex is greater than or equal to NUM_COLORS or less than 0.
-	 * @since [NOW]
+	 * @since 2.2.0
 	 */
 	public Palette mixColor(int startIndex, int endIndex, double scalar, int red, int green, int blue)
 	{
@@ -512,7 +512,7 @@ public class Palette implements BinaryObject
 	 * @param argb the ARGB color.
 	 * @return itself, for chaining calls.
 	 * @throws ArrayIndexOutOfBoundsException if startIndex or endIndex is greater than or equal to NUM_COLORS or less than 0.
-	 * @since [NOW]
+	 * @since 2.2.0
 	 */
 	public Palette addColor(int startIndex, int endIndex, double scalar, int argb)
 	{
@@ -529,7 +529,7 @@ public class Palette implements BinaryObject
 	 * @param blue the blue component amount (0 to 255, clamped).
 	 * @return itself, for chaining calls.
 	 * @throws ArrayIndexOutOfBoundsException if startIndex or endIndex is greater than or equal to NUM_COLORS or less than 0.
-	 * @since [NOW]
+	 * @since 2.2.0
 	 */
 	public Palette addColor(int startIndex, int endIndex, double scalar, int red, int green, int blue)
 	{
@@ -550,7 +550,7 @@ public class Palette implements BinaryObject
 	 * @param argb the ARGB color.
 	 * @return itself, for chaining calls.
 	 * @throws ArrayIndexOutOfBoundsException if index is greater than or equal to NUM_COLORS or less than 0.
-	 * @since [NOW]
+	 * @since 2.2.0
 	 */
 	public Palette subtractColor(int index, double scalar, int argb)
 	{
@@ -567,7 +567,7 @@ public class Palette implements BinaryObject
 	 * @param blue the blue component amount (0 to 255, clamped).
 	 * @return itself, for chaining calls.
 	 * @throws ArrayIndexOutOfBoundsException if startIndex or endIndex is greater than or equal to NUM_COLORS or less than 0.
-	 * @since [NOW]
+	 * @since 2.2.0
 	 */
 	public Palette subtractColor(int startIndex, int endIndex, double scalar, int red, int green, int blue)
 	{
@@ -589,7 +589,7 @@ public class Palette implements BinaryObject
 	 * @param argb the ARGB color.
 	 * @return itself, for chaining calls.
 	 * @throws ArrayIndexOutOfBoundsException if startIndex or endIndex is greater than or equal to NUM_COLORS or less than 0.
-	 * @since [NOW]
+	 * @since 2.2.0
 	 */
 	public Palette multiplyColor(int startIndex, int endIndex, double scalar, int argb)
 	{
@@ -606,7 +606,7 @@ public class Palette implements BinaryObject
 	 * @param blue the blue component amount (0 to 255, clamped).
 	 * @return itself, for chaining calls.
 	 * @throws ArrayIndexOutOfBoundsException if startIndex or endIndex is greater than or equal to NUM_COLORS or less than 0.
-	 * @since [NOW]
+	 * @since 2.2.0
 	 */
 	public Palette multiplyColor(int startIndex, int endIndex, double scalar, int red, int green, int blue)
 	{
@@ -626,7 +626,7 @@ public class Palette implements BinaryObject
 	 * @param scalar the scalar intensity of the final saturation (0 to 1, 0 is desaturated, 1 is no change, higher values saturate).
 	 * @return itself, for chaining calls.
 	 * @throws ArrayIndexOutOfBoundsException if index is greater than or equal to NUM_COLORS or less than 0.
-	 * @since [NOW]
+	 * @since 2.2.0
 	 */
 	public Palette saturateColor(int index, double scalar)
 	{
@@ -644,7 +644,7 @@ public class Palette implements BinaryObject
 	 * @param scalar the scalar intensity of the final saturation (0 to 1, 0 is desaturated, 1 is no change, higher values saturate).
 	 * @return itself, for chaining calls.
 	 * @throws ArrayIndexOutOfBoundsException if index is greater than or equal to NUM_COLORS or less than 0.
-	 * @since [NOW]
+	 * @since 2.2.0
 	 */
 	public Palette saturateColor(int startIndex, int endIndex, double scalar)
 	{
@@ -666,7 +666,7 @@ public class Palette implements BinaryObject
 	 * @param argb1 the second ARGB color.
 	 * @return itself, for chaining calls.
 	 * @throws ArrayIndexOutOfBoundsException if index is greater than or equal to NUM_COLORS or less than 0.
-	 * @since [NOW]
+	 * @since 2.2.0
 	 */
 	public Palette setColorGradient(int startIndex, int endIndex, int argb0, int argb1)
 	{
@@ -688,7 +688,7 @@ public class Palette implements BinaryObject
 	 * @param blue1 the second color's blue component amount (0 to 255, clamped).
 	 * @return itself, for chaining calls.
 	 * @throws ArrayIndexOutOfBoundsException if index is greater than or equal to NUM_COLORS or less than 0.
-	 * @since [NOW]
+	 * @since 2.2.0
 	 */
 	public Palette setColorGradient(int startIndex, int endIndex, int red0, int green0, int blue0, int red1, int green1, int blue1)
 	{

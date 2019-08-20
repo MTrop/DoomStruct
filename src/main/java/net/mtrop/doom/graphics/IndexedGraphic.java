@@ -10,7 +10,7 @@ package net.mtrop.doom.graphics;
 /**
  * Interface for graphic data with indexed palettes.
  * @author Matthew Tropiano
- * @since [NOW]
+ * @since 2.2.0
  */
 public interface IndexedGraphic
 {
