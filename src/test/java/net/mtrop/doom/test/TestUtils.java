@@ -98,6 +98,98 @@ public final class TestUtils
 	}
 
 	/**
+	 * Full testing result.
+	 */
+	public static class TestResults
+	{
+		private int total;
+		private int passed;
+		private int failed;
+		private int ignored;
+		
+		private TestResults()
+		{
+			this.total = 0;
+			this.passed = 0;
+			this.failed = 0;
+			this.ignored = 0;
+		}
+		
+		private void add(TestResults results)
+		{
+			this.total += results.total;
+			this.passed += results.passed;
+			this.failed += results.failed;
+			this.ignored += results.ignored;
+		}
+		
+		public int getTotal()
+		{
+			return total;
+		}
+		
+		public int getFailed()
+		{
+			return failed;
+		}
+		
+		public int getIgnored()
+		{
+			return ignored;
+		}
+		
+		public int getPassed()
+		{
+			return passed;
+		}
+		
+	}
+	
+	/**
+	 * Generic assertion failure exception.
+	 */
+	public static class AssertionFailureException extends AssertionError
+	{
+		private static final long serialVersionUID = -1613162997554486037L;
+		
+		public AssertionFailureException(String message)
+		{
+			super(message);
+		}
+	
+		public AssertionFailureException(String message, Throwable cause)
+		{
+			super(message, cause);
+		}
+	}
+
+	/**
+	 * Equality assertion failure exception.
+	 */
+	public static class AssertionEqualityFailureException extends AssertionFailureException
+	{
+		private static final long serialVersionUID = 9007166559374438508L;
+	
+		public AssertionEqualityFailureException(Object expected, Object got)
+		{
+			super("Assertion failed. Expected " + String.valueOf(expected) + ", got " + String.valueOf(got));
+		}
+	}
+
+	/**
+	 * Throwable assertion failure exception.
+	 */
+	public static class AssertionCauseException extends AssertionFailureException
+	{
+		private static final long serialVersionUID = -951937796798865772L;
+	
+		public AssertionCauseException(Throwable cause)
+		{
+			super("Assertion failed.", cause);
+		}
+	}
+
+	/**
 	 * Performs tests on a test class.
 	 * @param <C> the class type.
 	 * @param cls the class to test.
@@ -106,16 +198,18 @@ public final class TestUtils
 	 * @param verbose if true, verbose output.
 	 * @return true on failure, false on pass.
 	 */
-	public static <C> boolean performTestOn(Class<C> cls, PrintStream out, PrintStream err, boolean verbose)
+	public static <C> TestResults performTestOn(Class<C> cls, PrintStream out, PrintStream err, boolean verbose)
 	{
 		TestDependsOn anno;
+		TestResults result = new TestResults();
 		if ((anno = cls.getAnnotation(TestDependsOn.class)) != null)
 		{
 			for (Class<?> c : anno.value())
-				performTestOn(c, out, err, verbose);
+				result.add(performTestOn(c, out, err, verbose));
 		}
 		
-		return (new TestClass<>(cls)).call(out, err, verbose);
+		(new TestClass<>(cls)).call(result, out, err, verbose);
+		return result;
 	}
 	
 	/**
@@ -185,50 +279,6 @@ public final class TestUtils
 		}
 	}
 
-	/**
-	 * Generic assertion failure exception.
-	 */
-	public static class AssertionFailureException extends AssertionError
-	{
-		private static final long serialVersionUID = -1613162997554486037L;
-		
-		public AssertionFailureException(String message)
-		{
-			super(message);
-		}
-
-		public AssertionFailureException(String message, Throwable cause)
-		{
-			super(message, cause);
-		}
-	}
-
-	/**
-	 * Equality assertion failure exception.
-	 */
-	public static class AssertionEqualityFailureException extends AssertionFailureException
-	{
-		private static final long serialVersionUID = 9007166559374438508L;
-
-		public AssertionEqualityFailureException(Object expected, Object got)
-		{
-			super("Assertion failed. Expected " + String.valueOf(expected) + ", got " + String.valueOf(got));
-		}
-	}
-	
-	/**
-	 * Throwable assertion failure exception.
-	 */
-	public static class AssertionCauseException extends AssertionFailureException
-	{
-		private static final long serialVersionUID = -951937796798865772L;
-
-		public AssertionCauseException(Throwable cause)
-		{
-			super("Assertion failed.", cause);
-		}
-	}
-	
 	/**
 	 * A test class created by scanning a class for tests.
 	 */
@@ -308,10 +358,13 @@ public final class TestUtils
 				;
 		}
 		
-		private boolean call(PrintStream out, PrintStream err, boolean verbose)
+		private void call(TestResults results, PrintStream out, PrintStream err, boolean verbose)
 		{
 			long millis = System.currentTimeMillis();
 			if (verbose) out.println(name+": Start test.");
+			
+			results.total++;
+			
 			if (beforeAll != null)
 			{
 				long beforeAllTime = System.currentTimeMillis();
@@ -320,7 +373,8 @@ public final class TestUtils
 				{
 					err.println(name+": BeforeAll Exception.");
 					t.printStackTrace(err);
-					return false;
+					results.failed++;
+					return;
 				}
 				if (verbose) out.println(name+": BeforeAll End.");
 				if (verbose) out.println(name+": BeforeAll: " + (System.currentTimeMillis() - beforeAllTime) / 1000.0 + " secs");
@@ -330,7 +384,7 @@ public final class TestUtils
 			if (testMethods.isEmpty())
 				out.println(name+": No tests.");
 			else for (TestMethod tm : testMethods)
-				pass &= tm.call(create(type), out, err, verbose);
+				tm.call(create(type), results, out, err, verbose);
 
 			if (afterAll != null)
 			{
@@ -340,14 +394,20 @@ public final class TestUtils
 				{
 					err.println(name+": AfterAll Exception.");
 					t.printStackTrace(err);
-					return false;
+					results.failed++;
+					return;
 				}
 				if (verbose) out.println(name+": AfterAll End.");
 				if (verbose) out.println(name+": AfterAll: " + (System.currentTimeMillis() - afterAllTime) / 1000.0 + " secs");
 			}
 			
 			out.println(name+": " + (pass?"PASS":"FAIL") + " " + (System.currentTimeMillis() - millis) / 1000.0 + " secs");
-			return pass;
+			
+			if (pass)
+				results.passed++;
+			else
+				results.failed++;
+			return;
 		}
 		
 		/** A single method. */
@@ -377,8 +437,10 @@ public final class TestUtils
 				}
 			}
 			
-			private boolean call(C instance, PrintStream out, PrintStream err, boolean verbose)
+			private void call(C instance, TestResults results, PrintStream out, PrintStream err, boolean verbose)
 			{
+				results.total++;
+				
 				String fullName = name + "/" + testName;
 				if (ignore)
 				{
@@ -386,7 +448,8 @@ public final class TestUtils
 						out.println(fullName + ": Ignored: " + ignoreMessage);
 					else
 						out.println(fullName + ": Ignored");
-					return true;
+					results.ignored++;
+					return;
 				}
 				
 				long millis = System.currentTimeMillis();
@@ -441,7 +504,12 @@ public final class TestUtils
 				if (verbose) out.println(fullName + ": AfterEach End" + " " + (System.currentTimeMillis() - afterTime) / 1000.0 + " secs");
 				
 				out.println(fullName + ": " + (pass?"PASS":"FAIL") + " " + (System.currentTimeMillis() - millis) / 1000.0 + " secs");
-				return pass;
+				
+				if (pass)
+					results.passed++;
+				else
+					results.failed++;
+				return;
 			}
 		}
 	}
@@ -538,13 +606,24 @@ public final class TestUtils
 			return;
 		}
 		
-		boolean pass = performTestOn(
+		long time = System.currentTimeMillis();
+		TestResults results = performTestOn(
 			resolvedClass, 
 			System.out, 
 			System.err, 
 			args.length > 1 ? args[1].equalsIgnoreCase("--verbose") : false
 		);
-		System.exit(pass ? 0 : 1);
+
+		System.out.printf("TESTS DONE. %.3f secs.", (System.currentTimeMillis() - time) / 1000.0);
+		System.out.printf(" %d total,", results.total);
+		if (results.ignored > 0)
+			System.out.printf(" %d ignored,", results.ignored);
+		if (results.failed > 0)
+			System.out.printf(" %d failed,", results.failed);
+		if (results.passed > 0)
+			System.out.printf(" %d passed.", results.passed);
+		System.out.printf("\n");
+		System.exit(results.failed > 0 ? 1 : 0);
 	}
 
 }

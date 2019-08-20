@@ -7,10 +7,30 @@
  ******************************************************************************/
 package net.mtrop.doom;
 
+import static net.mtrop.doom.test.TestUtils.assertEqual;
+
+import java.io.File;
+
+import net.mtrop.doom.test.TestUtils.AfterAllTests;
+import net.mtrop.doom.test.TestUtils.BeforeAllTests;
 import net.mtrop.doom.test.TestUtils.Test;
 
 public final class WadTest
 {
+	private static final File TEST_DIR = new File("testjunk");
+
+	@BeforeAllTests
+	public static void beforeAllTests() throws Exception
+	{
+		assertEqual(TEST_DIR.mkdirs(), true);
+	}
+
+	@AfterAllTests
+	public static void afterAllTests() throws Exception
+	{
+		assertEqual(TEST_DIR.delete(), true);
+	}
+	
 	@Test
 	public void openWadMap() throws Exception
 	{

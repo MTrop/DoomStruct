@@ -3,11 +3,13 @@ Doom Struct (C) 2015-2019
 by Matt Tropiano et al. (see AUTHORS.txt)
 
 
-Changed in NOW
---------------
+Changed in [NOW]
+----------------
 
 - `Added` SerialWriter.writeBytes(OutputStream out, byte[], int, int).
 - `Added` Wad.getContent(int, int) : byte[]. Implementing classes changed as well.
+- `Added` Wad.add[All]Data[At](..., BinaryObject) variants.
+- `Added` Wad.addData[At](..., TextObject, Charset) variants.
 - `Added` Palette mixing functions plus copying.
 - `Added` WadFile.addAllData[At](...) "No Flush" variants.
 - `Added` GraphicUtils.setColormap(...).
@@ -18,6 +20,8 @@ Changed in NOW
 - `Changed` Flat and Picture now extend IndexedGraphic.
 - `Changed` WadUtils.cleanEntries(..) shortened.
 - `Changed` WadUtils.extract(..) made more efficient.
+- `Changed` Increased BinaryObject initial byte buffer size from 128 to 512.
+- `Changed` Default Wad/DoomPK3.getReader(...) implementations return BufferedReaders, now.
 
 
 Changed in 2.1.1

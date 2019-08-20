@@ -29,7 +29,7 @@ public interface BinaryObject
 	 */
 	default byte[] toBytes()
 	{
-		ByteArrayOutputStream bos = new ByteArrayOutputStream(128);
+		ByteArrayOutputStream bos = new ByteArrayOutputStream(512);
 		try { writeBytes(bos); } catch (IOException e) { /* Shouldn't happen. */ }
 		return bos.toByteArray();
 	}

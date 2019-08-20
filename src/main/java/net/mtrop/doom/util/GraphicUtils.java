@@ -1325,7 +1325,7 @@ public final class GraphicUtils
 	 * @param colormap the colormap to set.  
 	 * @param target the palette to match against.
 	 * @param sampled the palette to sample from for matching.
-	 * @since NOW
+	 * @since [NOW]
 	 */
 	public static void setColormap(Colormap colormap, Palette target, Palette sampled)
 	{
@@ -1341,7 +1341,7 @@ public final class GraphicUtils
 	 * @return an array of new colormaps.
 	 * @throws NullPointerException if graphic is null.
 	 * @throws ArrayIndexOutOfBoundsException if the provided graphic's width is less than {@link Colormap#NUM_INDICES}.
-	 * @since NOW
+	 * @since [NOW]
 	 */
 	public static Colormap[] createColormapsFromGraphic(IndexedGraphic graphic)
 	{

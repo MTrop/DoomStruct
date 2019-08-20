@@ -8,6 +8,7 @@
 package net.mtrop.doom;
 
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -263,7 +264,7 @@ public class DoomPK3 extends ZipFile
 	public Reader getReader(String entryName, Charset charset) throws IOException
 	{
 		InputStream in = getInputStream(entryName);
-		return in != null ? new InputStreamReader(in, charset) : null;
+		return in != null ? new BufferedReader(new InputStreamReader(in, charset)) : null;
 	}
 
 	/**

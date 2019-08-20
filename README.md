@@ -69,10 +69,9 @@ extent.
 * Reading/converting PC Speaker effects.
 * Supporting additional BSP node types.
 * Stuff for drawing maps more easily (graphic-wise).
-* Better out-of-the-box palette and colormap functions like fade/tinting and the like.
 * Better ENDOOM rendering options.
 * Turning this project into a Maven Repository Compatible one (currently it's Ant-compatible; it gets the job done).
-* Unit tests (or automatable ones).
+* Better Unit tests (or automatable ones).
 
 ### Library
 

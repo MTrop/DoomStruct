@@ -24,7 +24,7 @@ import net.mtrop.doom.test.TestUtils.Test;
 
 public final class PK3Test
 {
-	private static final File TEST_DIR = new File("test");
+	private static final File TEST_DIR = new File("testjunk");
 	private static final File TEST_PK3 = new File("src/test/resources/viscerus.pk3");
 	
 	private static DoomPK3 pk3;
@@ -118,7 +118,7 @@ public final class PK3Test
 	@Test
 	public void getDataAsTempWadFile() throws Exception
 	{
-		File tempFile = new File("test/tempwad.wad");
+		File tempFile = new File("testjunk/tempwad.wad");
 		WadFile wad = pk3.getDataAsTempWadFile("maps/map01.wad", tempFile);
 		assertEqual(tempFile.exists(), true);
 		assertEqual(wad.getEntryCount(), 13);
@@ -138,7 +138,7 @@ public final class PK3Test
 	@Test
 	public void getFile() throws Exception
 	{
-		File tempFile = new File("test/tempwad.wad");
+		File tempFile = new File("testjunk/tempwad.wad");
 		File file = pk3.getFile("maps/map01.wad", tempFile);
 		assertEqual(file.exists(), true);
 		file.delete();

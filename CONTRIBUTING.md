@@ -39,9 +39,9 @@ To contribute to this project, you must follow the Code of Conduct and Coding St
 
 7. The primary maintainer of this codebase is **not** a believer in "Good or readable code needs no comments." If you are asked to clarify sections of code with plain English, do so or you will risk the rejection of your request.
 
-8. New public/protected methods/classes should contain a `@since NOW` descriptor in the Javadocs, so that when a new release is cut, the "NOW" can be replaced with the next release version.   
+8. New public/protected methods/classes should contain a `@since [NOW]` descriptor in the Javadocs, so that when a new release is cut, the "NOW" can be replaced with the next release version.   
 
-9. Deprecated public/protected/default methods/classes should contain a `@Deprecated` annotation in the source, so that when a new release is cut, the new deprecations can be adequately documented.
+9. Deprecated public/protected/default methods/classes should contain a `@deprecated Since [NOW]` entry in the javadoc comment, so that when a new release is cut, the new deprecations can be adequately documented, and the "NOW" can be replaced with the next release version.
 
 10. Please amend the CHANGELOG - add a "Next Version" section if it doesn't exist.
 

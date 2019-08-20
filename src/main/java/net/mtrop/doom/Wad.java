@@ -295,7 +295,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @return a copy of the byte data as an array of bytes.
 	 * @throws IndexOutOfBoundsException if offset plus length will go past the end of the content area.
 	 * @throws IOException if an error occurs during read.
-	 * @since NOW
+	 * @since [NOW]
 	 */
 	byte[] getContent(int offset, int length) throws IOException;
 
@@ -594,7 +594,7 @@ public interface Wad extends Iterable<WadEntry>
 	 */
 	default Reader getReader(WadEntry entry, Charset charset) throws IOException
 	{
-		return new InputStreamReader(getInputStream(entry), charset);
+		return new BufferedReader(new InputStreamReader(getInputStream(entry), charset));
 	}
 
 	/**
@@ -1480,7 +1480,7 @@ public interface Wad extends Iterable<WadEntry>
 	}
 
 	/**
-	 * Adds data to this Wad, using entryName as the name of the new entry. 
+	 * Adds data to this Wad, using <code>entryName</code> as the name of the new entry. 
 	 * The overhead for multiple additions may be expensive I/O-wise depending on the Wad implementation.
 	 * 
 	 * @param entryName the name of the entry to add this as.
@@ -1493,7 +1493,63 @@ public interface Wad extends Iterable<WadEntry>
 	WadEntry addData(String entryName, byte[] data) throws IOException;
 
 	/**
-	 * Adds data to this Wad at a particular entry offset, using entryName as the name of the entry. 
+	 * Adds data to this Wad, using <code>entryName</code> as the name of the new entry. 
+	 * The overhead for multiple additions may be expensive I/O-wise depending on the Wad implementation.
+	 * 
+	 * @param entryName the name of the entry to add this as.
+	 * @param data the BinaryObject to add as this wad's data (converted via {@link BinaryObject#toBytes()}).
+	 * @return a WadEntry that describes the added data.
+	 * @throws IllegalArgumentException if the provided name is not a valid name.
+	 * @throws IOException if the data cannot be written.
+	 * @throws NullPointerException if <code>entryName</code> or <code>data</code> is <code>null</code>.
+	 * @since [NOW]
+	 */
+	default <BO extends BinaryObject> WadEntry addData(String entryName, BO data) throws IOException
+	{
+		return addData(entryName, data.toBytes());
+	}
+
+	/**
+	 * Adds data to this Wad, using <code>entryName</code> as the name of the new entry.
+	 * The BinaryObjects provided have all of their converted data concatenated together as one blob of contiguous data.
+	 * The overhead for multiple additions may be expensive I/O-wise depending on the Wad implementation.
+	 * 
+	 * @param entryName the name of the entry to add this as.
+	 * @param data the BinaryObjects to add as this wad's data (converted via {@link BinaryObject#toBytes()}).
+	 * @return a WadEntry that describes the added data.
+	 * @throws IllegalArgumentException if the provided name is not a valid name.
+	 * @throws IOException if the data cannot be written.
+	 * @throws NullPointerException if <code>entryName</code> or <code>data</code> is <code>null</code>.
+	 * @since [NOW]
+	 */
+	default <BO extends BinaryObject> WadEntry addData(String entryName, BO[] data) throws IOException
+	{
+		ByteArrayOutputStream bos = new ByteArrayOutputStream(16384);
+		for (BO bo : data)
+			bo.writeBytes(bos);
+		return addData(entryName, bos.toByteArray());
+	}
+
+	/**
+	 * Adds data to this Wad, using <code>entryName</code> as the name of the new entry. 
+	 * The overhead for multiple additions may be expensive I/O-wise depending on the Wad implementation.
+	 * 
+	 * @param entryName the name of the entry to add this as.
+	 * @param data the TextObject to add as this wad's data (converted via {@link TextObject#toText()}, then {@link String#getBytes(Charset)}).
+	 * @param encoding the encoding type for the data written to the Wad.
+	 * @return a WadEntry that describes the added data.
+	 * @throws IllegalArgumentException if the provided name is not a valid name.
+	 * @throws IOException if the data cannot be written.
+	 * @throws NullPointerException if <code>entryName</code> or <code>data</code> or <code>encoding</code> is <code>null</code>.
+	 * @since [NOW]
+	 */
+	default <TO extends TextObject> WadEntry addData(String entryName, TO data, Charset encoding) throws IOException
+	{
+		return addData(entryName, data.toText().getBytes(encoding));
+	}
+
+	/**
+	 * Adds data to this Wad at a particular entry offset, using <code>entryName</code> as the name of the entry. 
 	 * The rest of the entries in the wad are shifted down one index. 
 	 * The overhead for multiple additions may be expensive I/O-wise depending on the Wad implementation.
 	 * 
@@ -1508,31 +1564,134 @@ public interface Wad extends Iterable<WadEntry>
 	WadEntry addDataAt(int index, String entryName, byte[] data) throws IOException;
 
 	/**
-	 * Adds multiple entries of data to this Wad, using entryNames as the name of the new entry, using the same indices
-	 * in the data array as the corresponding data.
+	 * Adds data to this Wad at a particular entry offset, using <code>entryName</code> as the name of the entry. 
+	 * The rest of the entries in the wad are shifted down one index. 
+	 * The overhead for multiple additions may be expensive I/O-wise depending on the Wad implementation.
+	 * 
+	 * @param index the index at which to add the entry.
+	 * @param entryName the name of the entry to add this as.
+	 * @param data the BinaryObject to add as this wad's data (converted via {@link BinaryObject#toBytes()}).
+	 * @return a WadEntry that describes the added data.
+	 * @throws IllegalArgumentException if the provided name is not a valid name.
+	 * @throws IOException if the data cannot be written.
+	 * @throws NullPointerException if <code>entryName</code> or <code>data</code> is <code>null</code>.
+	 * @since [NOW]
+	 */
+	default <TO extends BinaryObject> WadEntry addDataAt(int index, String entryName, TO data) throws IOException
+	{
+		return addDataAt(index, entryName, data.toBytes());
+	}
+
+	/**
+	 * Adds data to this Wad at a particular entry offset, using <code>entryName</code> as the name of the entry. 
+	 * The rest of the entries in the wad are shifted down one index. 
+	 * The BinaryObjects provided have all of their converted data concatenated together as one blob of contiguous data.
+	 * The overhead for multiple additions may be expensive I/O-wise depending on the Wad implementation.
+	 * 
+	 * @param index the index at which to add the entry.
+	 * @param entryName the name of the entry to add this as.
+	 * @param data the BinaryObjects to add as this wad's data (converted via {@link BinaryObject#toBytes()}).
+	 * @return a WadEntry that describes the added data.
+	 * @throws IllegalArgumentException if the provided name is not a valid name.
+	 * @throws IOException if the data cannot be written.
+	 * @throws NullPointerException if <code>entryName</code> or <code>data</code> is <code>null</code>.
+	 * @since [NOW]
+	 */
+	default <BO extends BinaryObject> WadEntry addDataAt(int index, String entryName, BO[] data) throws IOException
+	{
+		ByteArrayOutputStream bos = new ByteArrayOutputStream(16384);
+		for (BO bo : data)
+			bo.writeBytes(bos);
+		return addDataAt(index, entryName, bos.toByteArray());
+	}
+
+	/**
+	 * Adds data to this Wad at a particular entry offset, using <code>entryName</code> as the name of the entry. 
+	 * The rest of the entries in the wad are shifted down one index. 
+	 * The overhead for multiple additions may be expensive I/O-wise depending on the Wad implementation.
+	 * 
+	 * @param index the index at which to add the entry.
+	 * @param entryName the name of the entry to add this as.
+	 * @param data the TextObject to add as this wad's data (converted via {@link TextObject#toText()}, then {@link String#getBytes(Charset)}).
+	 * @param encoding the encoding type for the data written to the Wad.
+	 * @return a WadEntry that describes the added data.
+	 * @throws IllegalArgumentException if the provided name is not a valid name.
+	 * @throws IOException if the data cannot be written.
+	 * @throws NullPointerException if <code>entryName</code> or <code>data</code> is <code>null</code>.
+	 * @since [NOW]
+	 */
+	default <TO extends TextObject> WadEntry addDataAt(int index, String entryName, TO data, Charset encoding) throws IOException
+	{
+		return addDataAt(index, entryName, data.toText().getBytes(encoding));
+	}
+
+	/**
+	 * Adds multiple entries of data to this Wad, using <code>entryNames</code> as the names of the new entries, using the same indices
+	 * in the data arrays as the corresponding data.
 	 * 
 	 * @param entryNames the names of the entries to add.
 	 * @param data the bytes of data to add as each entry's data.
 	 * @return an array of WadEntry objects that describe the added data.
 	 * @throws IOException if the data cannot be written.
-	 * @throws ArrayIndexOutOfBoundsException if the lengths of entryNames and data do not match.
+	 * @throws ArrayIndexOutOfBoundsException if the length of the entryNames array exceeds data's array length.
 	 * @throws NullPointerException if an object if <code>entryNames</code> or <code>data</code> is <code>null</code>.
 	 */
 	WadEntry[] addAllData(String[] entryNames, byte[][] data) throws IOException;
 
 	/**
-	 * Adds multiple entries of data to this Wad at a particular entry offset, using entryNames as the name 
-	 * of the entry, using the same indices in the data array as the corresponding data.
+	 * Adds multiple entries of data to this Wad, using <code>entryNames</code> 
+	 * as the names of the new entries, using the same indices in the data arrays as the corresponding data.
+	 * 
+	 * @param entryNames the names of the entries to add.
+	 * @param data the corresponding BinaryObjects to add as each entry's data (converted via {@link BinaryObject#toBytes()}).
+	 * @return an array of WadEntry objects that describe the added data.
+	 * @throws IOException if the data cannot be written.
+	 * @throws ArrayIndexOutOfBoundsException if the length of the entryNames array exceeds data's array length.
+	 * @throws NullPointerException if an object if <code>entryNames</code> or <code>data</code> is <code>null</code>.
+	 * @since [NOW]
+	 */
+	default <BO extends BinaryObject> WadEntry[] addAllData(String[] entryNames, BO[] data) throws IOException
+	{
+		WadEntry[] out = new WadEntry[entryNames.length];
+		for (int i = 0; i < entryNames.length; i++)
+			out[i] = addData(entryNames[i], data[i]);
+		return out;
+	}
+
+	/**
+	 * Adds multiple entries of data to this Wad at a particular entry offset, using <code>entryNames</code> 
+	 * as the names of the new entries, using the same indices in the data arrays as the corresponding data.
 	 * 
 	 * @param index the index to add these entries at.
 	 * @param entryNames the names of the entries to add.
 	 * @param data the bytes of data to add as each entry's data.
 	 * @return an array of WadEntry objects that describe the added data.
 	 * @throws IOException if the data cannot be written.
-	 * @throws ArrayIndexOutOfBoundsException if the lengths of entryNames and data do not match.
+	 * @throws ArrayIndexOutOfBoundsException if the length of the entryNames array exceeds data's array length.
 	 * @throws NullPointerException if an object if <code>entryNames</code> or <code>data</code> is <code>null</code>.
 	 */
 	WadEntry[] addAllDataAt(int index, String[] entryNames, byte[][] data) throws IOException;
+
+	/**
+	 * Adds multiple entries of data to this Wad at a particular entry offset, using <code>entryNames</code> 
+	 * as the names of the new entries, using the same indices in the data arrays as the corresponding data.
+	 * 
+	 * @param index the index to add these entries at.
+	 * @param entryNames the names of the entries to add.
+	 * @param data the corresponding BinaryObjects to add as each entry's data (converted via {@link BinaryObject#toBytes()}).
+	 * @return an array of WadEntry objects that describe the added data.
+	 * @throws IOException if the data cannot be written.
+	 * @throws ArrayIndexOutOfBoundsException if the length of the entryNames array exceeds data's array length.
+	 * @throws NullPointerException if an object if <code>entryNames</code> or <code>data</code> is <code>null</code>.
+	 * @since [NOW]
+	 */
+	default <BO extends BinaryObject> WadEntry[] addAllDataAt(int index, String[] entryNames, BO[] data) throws IOException
+	{
+		WadEntry[] out = new WadEntry[entryNames.length];
+		for (int i = 0; i < entryNames.length; i++)
+			out[i] = addDataAt(index + i, entryNames[i], data[i]);
+		return out;
+	}
 
 	/**
 	 * Adds a new entry to the Wad, but with an explicit offset and size.
