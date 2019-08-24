@@ -3,6 +3,12 @@ Doom Struct (C) 2015-2019
 by Matt Tropiano et al. (see AUTHORS.txt)
 
 
+Changed in [NOW]
+----------------
+
+- `Added` Wad.isWAD(File).
+
+
 Changed in 2.2.0
 ----------------
 

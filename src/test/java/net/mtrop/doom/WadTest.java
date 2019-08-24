@@ -32,6 +32,17 @@ public final class WadTest
 	}
 	
 	@Test
+	public void isWadTest() throws Exception
+	{
+		assertEqual(Wad.isWAD(new File("src/test/resources/doommap.wad")), true);
+		assertEqual(Wad.isWAD(new File("src/test/resources/hexenmap.wad")), true);
+		assertEqual(Wad.isWAD(new File("src/test/resources/udmfmap.wad")), true);
+		assertEqual(Wad.isWAD(new File("src/test/resources/viscerus.pk3")), false);
+		assertEqual(Wad.isWAD(new File("src/test/resources/does-not-exist.wad")), false);
+		assertEqual(Wad.isWAD(new File("src/test/resources")), false); // is dir
+	}
+
+	@Test
 	public void openWadMap() throws Exception
 	{
 		WadMap wad = new WadMap("src/test/resources/doommap.wad");

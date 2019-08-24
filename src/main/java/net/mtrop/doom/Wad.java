@@ -10,9 +10,11 @@ package net.mtrop.doom;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.RandomAccessFile;
 import java.io.Reader;
 import java.nio.charset.Charset;
 import java.util.Arrays;
@@ -56,6 +58,35 @@ public interface Wad extends Iterable<WadEntry>
 	{
 		PWAD, 
 		IWAD;
+	}
+
+	/**
+	 * Checks if a file is a valid WAD file.
+	 * This opens the provided file for reading only, inspects 
+	 * the first four bytes for a valid header, and then closes it.
+	 * @param file the file to inspect.
+	 * @return true if the file exists, is a file, and is a WAD file, or false otherwise.
+	 * @throws IOException if the file cannot be read.
+	 * @throws SecurityException if you don't have permission to read the file.
+	 * @since [NOW]
+	 */
+	static boolean isWAD(File file) throws IOException
+	{
+		if (!file.exists() || file.isDirectory())
+			return false;
+		
+		byte[] buf = new byte[4];
+		try (RandomAccessFile raf = new RandomAccessFile(file, "r"))
+		{
+			raf.seek(0L);
+			if (raf.read(buf) != 4)
+				return false;
+			String head = new String(buf, "ASCII");
+			if (Type.IWAD.name().equals(head) || Type.PWAD.name().equals(head))
+				return true;
+		}
+		
+		return false;
 	}
 
 	/**
