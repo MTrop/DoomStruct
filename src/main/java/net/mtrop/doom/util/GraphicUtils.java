@@ -1319,7 +1319,7 @@ public final class GraphicUtils
 	 * Sets the indices of a {@link Colormap} by attempting to match colors in a palette from other colors in a different palette.
 	 * <p>This is a convenience for:
 	 * <pre>
-	 * for (int i = 0; i < Colormap.NUM_INDICES; i++)
+	 * for (int i = 0; i &lt; Colormap.NUM_INDICES; i++)
 	 *     colormap.setPaletteIndex(i, target.getNearestColorIndex(sampled.getColorARGB(i)))
 	 * </pre>
 	 * @param colormap the colormap to set.  

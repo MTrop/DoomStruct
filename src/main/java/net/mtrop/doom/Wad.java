@@ -1529,6 +1529,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * 
 	 * @param entryName the name of the entry to add this as.
 	 * @param data the BinaryObject to add as this wad's data (converted via {@link BinaryObject#toBytes()}).
+	 * @param <BO> a BinaryObject type.
 	 * @return a WadEntry that describes the added data.
 	 * @throws IllegalArgumentException if the provided name is not a valid name.
 	 * @throws IOException if the data cannot be written.
@@ -1547,6 +1548,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * 
 	 * @param entryName the name of the entry to add this as.
 	 * @param data the BinaryObjects to add as this wad's data (converted via {@link BinaryObject#toBytes()}).
+	 * @param <BO> a BinaryObject type.
 	 * @return a WadEntry that describes the added data.
 	 * @throws IllegalArgumentException if the provided name is not a valid name.
 	 * @throws IOException if the data cannot be written.
@@ -1568,6 +1570,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @param entryName the name of the entry to add this as.
 	 * @param data the TextObject to add as this wad's data (converted via {@link TextObject#toText()}, then {@link String#getBytes(Charset)}).
 	 * @param encoding the encoding type for the data written to the Wad.
+	 * @param <TO> a TextObject type.
 	 * @return a WadEntry that describes the added data.
 	 * @throws IllegalArgumentException if the provided name is not a valid name.
 	 * @throws IOException if the data cannot be written.
@@ -1602,6 +1605,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @param index the index at which to add the entry.
 	 * @param entryName the name of the entry to add this as.
 	 * @param data the BinaryObject to add as this wad's data (converted via {@link BinaryObject#toBytes()}).
+	 * @param <TO> a TextObject type.
 	 * @return a WadEntry that describes the added data.
 	 * @throws IllegalArgumentException if the provided name is not a valid name.
 	 * @throws IOException if the data cannot be written.
@@ -1622,6 +1626,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @param index the index at which to add the entry.
 	 * @param entryName the name of the entry to add this as.
 	 * @param data the BinaryObjects to add as this wad's data (converted via {@link BinaryObject#toBytes()}).
+	 * @param <BO> a BinaryObject type.
 	 * @return a WadEntry that describes the added data.
 	 * @throws IllegalArgumentException if the provided name is not a valid name.
 	 * @throws IOException if the data cannot be written.
@@ -1645,6 +1650,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @param entryName the name of the entry to add this as.
 	 * @param data the TextObject to add as this wad's data (converted via {@link TextObject#toText()}, then {@link String#getBytes(Charset)}).
 	 * @param encoding the encoding type for the data written to the Wad.
+	 * @param <TO> a TextObject type.
 	 * @return a WadEntry that describes the added data.
 	 * @throws IllegalArgumentException if the provided name is not a valid name.
 	 * @throws IOException if the data cannot be written.
@@ -1675,6 +1681,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * 
 	 * @param entryNames the names of the entries to add.
 	 * @param data the corresponding BinaryObjects to add as each entry's data (converted via {@link BinaryObject#toBytes()}).
+	 * @param <BO> a BinaryObject type.
 	 * @return an array of WadEntry objects that describe the added data.
 	 * @throws IOException if the data cannot be written.
 	 * @throws ArrayIndexOutOfBoundsException if the length of the entryNames array exceeds data's array length.
@@ -1710,6 +1717,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @param index the index to add these entries at.
 	 * @param entryNames the names of the entries to add.
 	 * @param data the corresponding BinaryObjects to add as each entry's data (converted via {@link BinaryObject#toBytes()}).
+	 * @param <BO> a BinaryObject type.
 	 * @return an array of WadEntry objects that describe the added data.
 	 * @throws IOException if the data cannot be written.
 	 * @throws ArrayIndexOutOfBoundsException if the length of the entryNames array exceeds data's array length.
