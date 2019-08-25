@@ -68,7 +68,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @return true if the file exists, is a file, and is a WAD file, or false otherwise.
 	 * @throws IOException if the file cannot be read.
 	 * @throws SecurityException if you don't have permission to read the file.
-	 * @since [NOW]
+	 * @since 2.3.0
 	 */
 	static boolean isWAD(File file) throws IOException
 	{
