@@ -1,6 +1,7 @@
-# Doom Struct 2.2.0
-
+# Doom Struct
 Copyright (c) 2015 - 2019 Matt Tropiano  
+
+[Latest Release](https://github.com/MTrop/DoomStruct/releases/latest)
 
 ### NOTICE
 
