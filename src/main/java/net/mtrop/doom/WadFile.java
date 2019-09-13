@@ -307,16 +307,11 @@ public class WadFile implements Wad, AutoCloseable
 	}
 
 	@Override
-	public byte[] getContent(int offset, int length) throws IOException
+	public void fetchContent(int offset, int length, byte[] dest, int destOffset) throws IOException
 	{
-		byte[] out = new byte[length];
-		try {
-			file.seek(offset);
-			file.read(out, 0, length);
-		} catch (IndexOutOfBoundsException e) {
-			throw new IOException(e);
-		}
-		return out;
+		file.seek(offset);
+		if (file.read(dest, destOffset, length) < length)
+			throw new IndexOutOfBoundsException("length + destination offset exceeds dest length");
 	}
 
 	@Override

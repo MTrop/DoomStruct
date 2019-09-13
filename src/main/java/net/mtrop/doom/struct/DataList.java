@@ -88,9 +88,22 @@ public class DataList
 	 */
 	public void getData(int offset, byte[] out)
 	{
-		if (offset + out.length > size)
+		getData(offset, out, 0, out.length);
+	}
+	
+	/**
+	 * Gets a subset of data from this buffer.
+	 * @param offset the offset into the vector.
+	 * @param out the target array to copy into.
+	 * @param outOffset the offset into the output buffer.
+	 * @param length the amount of bytes to copy.
+	 * @throws IndexOutOfBoundsException if offset plus length exceeds size.
+	 */
+	public void getData(int offset, byte[] out, int outOffset, int length)
+	{
+		if (offset + out.length > size || outOffset + length > out.length)
 			throw new IndexOutOfBoundsException("Offset + out.length exceeds size.");
-		System.arraycopy(buffer, offset, out, 0, out.length);
+		System.arraycopy(buffer, offset, out, outOffset, length);
 	}
 	
 	/**

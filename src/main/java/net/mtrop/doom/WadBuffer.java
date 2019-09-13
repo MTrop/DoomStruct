@@ -284,15 +284,9 @@ public class WadBuffer implements Wad
 	}
 
 	@Override
-	public byte[] getContent(int offset, int length) throws IOException
+	public void fetchContent(int offset, int length, byte[] dest, int destOffset) throws IOException
 	{
-		byte[] out = new byte[length];
-		try {
-			content.getData(offset, out);
-		} catch (IndexOutOfBoundsException e) {
-			throw new IOException(e);
-		}
-		return out;
+		content.getData(offset, dest, destOffset, length);
 	}
 
 	@Override

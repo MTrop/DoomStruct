@@ -63,4 +63,12 @@ public final class WadTest
 		wad.close();
 	}
 
+	@Test
+	public void getFileData() throws Exception
+	{
+		WadFile wad = new WadFile("src/test/resources/doommap.wad");
+		wad.getData("THINGS");
+		wad.close();
+	}
+	
 }

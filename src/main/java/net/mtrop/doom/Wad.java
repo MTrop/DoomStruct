@@ -320,6 +320,122 @@ public interface Wad extends Iterable<WadEntry>
 	}
 	
 	/**
+	 * Fetches a series of bytes from an arbitrary place in the Wad 
+	 * and puts them into a provided array.
+	 * This is will attempt to get the full provided length, throwing an exception if it does not.
+	 * @param offset the offset byte into that data to start at.
+	 * @param length the amount of bytes to fetch.
+	 * @param out the destination array of bytes.
+	 * @param outOffset the offset into the destination array to put the bytes into.
+	 * @throws IndexOutOfBoundsException if offset plus length will go past the end of the content area.
+	 * @throws IOException if an error occurs during read.
+	 * @throws NullPointerException if out is null.
+	 * @since [NOW]
+	 */
+    void fetchContent(int offset, int length, byte[] out, int outOffset) throws IOException;
+
+    /**
+	 * Retrieves the data of a particular entry index and puts it in a provided array
+	 * and puts it in a provided array.
+	 * @param n the index of the entry in the Wad.
+	 * @param out the output array of bytes.
+	 * @param offset the offset into the array to to put the read bytes.
+	 * @return the amount of bytes read.
+	 * @throws ArrayIndexOutOfBoundsException if n &lt; 0 or &gt;= size.
+	 * @throws IndexOutOfBoundsException if offset plus length will go past the end of the content area.
+	 * @throws IOException if an error occurs during read.
+	 * @throws NullPointerException if out is null.
+	 * @since [NOW]
+     */
+    default int fetchData(int n, byte[] out, int offset) throws IOException
+    {
+        WadEntry entry = getEntry(n);
+        return fetchData(entry, out, offset);
+    }
+    
+    /**
+	 * Retrieves the data of the first occurrence of a particular entry
+	 * and puts it in a provided array.
+	 * <p>The name is case-insensitive.
+	 * @param entryName the name of the entry to find.
+	 * @param out the output array of bytes.
+	 * @param offset the offset into the array to to put the read bytes.
+	 * @return the amount of bytes read, or -1 if the entry could not be found.
+	 * @throws IndexOutOfBoundsException if offset plus length will go past the end of the content area.
+	 * @throws IOException if an error occurs during read.
+	 * @throws NullPointerException if out is null.
+	 * @since [NOW]
+     */
+    default int fetchData(String entryName, byte[] out, int offset) throws IOException
+    {
+        WadEntry entry = getEntry(entryName);
+        if (entry == null) 
+        	return -1;
+        return fetchData(entry, out, offset);
+    }
+    
+    /**
+	 * Retrieves the data of the first occurrence of a particular entry from a starting index
+	 * and puts it in a provided array.
+	 * <p>The name is case-insensitive.
+	 * @param entryName the name of the entry to find.
+	 * @param start the index with which to start the search.
+	 * @param out the output array of bytes.
+	 * @param offset the offset into the array to to put the read bytes.
+	 * @return the amount of bytes read, or -1 if the entry could not be found.
+	 * @throws IndexOutOfBoundsException if offset plus length will go past the end of the content area.
+	 * @throws IOException if an error occurs during read.
+	 * @throws NullPointerException if out is null.
+	 * @since [NOW]
+     */
+    default int fetchData(String entryName, int start, byte[] out, int offset) throws IOException
+    {
+        WadEntry entry = getEntry(entryName, start);
+        if (entry == null) 
+        	return -1;
+        return fetchData(entry, out, offset);
+    }
+
+    /**
+	 * Retrieves the data of the first occurrence of a particular entry from a starting entry (by name)
+	 * and puts it in a provided array.
+	 * <p>The names are case-insensitive.
+	 * @param entryName the name of the entry to find.
+	 * @param startEntryName the starting entry (by name) with which to start the search.
+	 * @param out the output array of bytes.
+	 * @param offset the offset into the array to to put the read bytes.
+	 * @return the amount of bytes read, or -1 if the entry could not be found.
+	 * @throws IndexOutOfBoundsException if offset plus length will go past the end of the content area.
+	 * @throws IOException if an error occurs during read.
+	 * @throws NullPointerException if out is null.
+	 * @since [NOW]
+     */
+    default int fetchData(String entryName, String startEntryName, byte[] out, int offset) throws IOException
+    {
+        WadEntry entry = getEntry(entryName, startEntryName);
+        if (entry == null) 
+        	return -1;
+        return fetchData(entry, out, offset);
+    }
+    
+	/**
+	 * Fetches the data of the specified entry and puts it in a provided array.
+	 * @param entry the entry to use.
+	 * @param out the output array of bytes.
+	 * @param offset the offset into the array to to put the read bytes.
+	 * @return the amount of bytes read.
+	 * @throws IndexOutOfBoundsException if offset plus length will go past the end of the content area.
+	 * @throws IOException if an error occurs during read.
+	 * @throws NullPointerException if out is null.
+	 * @since [NOW]
+	 */
+	default int fetchData(WadEntry entry, byte[] out, int offset) throws IOException
+	{
+	    fetchContent(entry.getOffset(), entry.getSize(), out, offset);
+	    return entry.getSize();
+	}
+
+	/**
 	 * Gets a series of bytes representing the data at an arbitrary place in the Wad.
 	 * @param offset the offset byte into that data to start at.
 	 * @param length the amount of bytes to return.
@@ -328,7 +444,12 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws IOException if an error occurs during read.
 	 * @since 2.2.0
 	 */
-	byte[] getContent(int offset, int length) throws IOException;
+	default byte[] getContent(int offset, int length) throws IOException
+	{
+        byte[] out = new byte[length];
+        fetchContent(offset, length, out, 0);
+        return out;
+	}
 
 	/**
 	 * Retrieves the data of a particular entry index.
@@ -1605,14 +1726,14 @@ public interface Wad extends Iterable<WadEntry>
 	 * @param index the index at which to add the entry.
 	 * @param entryName the name of the entry to add this as.
 	 * @param data the BinaryObject to add as this wad's data (converted via {@link BinaryObject#toBytes()}).
-	 * @param <TO> a TextObject type.
+	 * @param <BO> a TextObject type.
 	 * @return a WadEntry that describes the added data.
 	 * @throws IllegalArgumentException if the provided name is not a valid name.
 	 * @throws IOException if the data cannot be written.
 	 * @throws NullPointerException if <code>entryName</code> or <code>data</code> is <code>null</code>.
 	 * @since 2.2.0
 	 */
-	default <TO extends BinaryObject> WadEntry addDataAt(int index, String entryName, TO data) throws IOException
+	default <BO extends BinaryObject> WadEntry addDataAt(int index, String entryName, BO data) throws IOException
 	{
 		return addDataAt(index, entryName, data.toBytes());
 	}

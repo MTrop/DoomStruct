@@ -216,6 +216,12 @@ public class WadMap implements Wad
 	}
 
 	@Override
+	public void fetchContent(int offset, int length, byte[] dest, int destOffset) throws IOException
+	{
+		throw new UnsupportedOperationException("WadMap does not support fetchContent()");
+	}
+
+	@Override
 	public byte[] getContent(int offset, int length) throws IOException
 	{
 		throw new UnsupportedOperationException("WadMap does not support getContent()");
