@@ -1,4 +1,4 @@
-package net.mtrop.doom.io;
+package net.mtrop.doom.struct.io;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

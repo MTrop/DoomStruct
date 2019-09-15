@@ -17,10 +17,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.mtrop.doom.exception.WadException;
-import net.mtrop.doom.io.SerialReader;
 import net.mtrop.doom.map.DoomMap;
 import net.mtrop.doom.map.HexenMap;
 import net.mtrop.doom.map.UDMFMap;
+import net.mtrop.doom.struct.io.SerialReader;
 
 /**
  * This is just a basic mapping of WAD entries to a file.

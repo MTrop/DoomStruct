@@ -17,13 +17,13 @@ import java.io.OutputStream;
 
 import javax.imageio.ImageIO;
 
-import net.mtrop.doom.io.IOUtils;
-import net.mtrop.doom.io.PNGContainerReader;
-import net.mtrop.doom.io.PNGContainerWriter;
-import net.mtrop.doom.io.SerialReader;
-import net.mtrop.doom.io.SerialWriter;
 import net.mtrop.doom.object.BinaryObject;
 import net.mtrop.doom.object.GraphicObject;
+import net.mtrop.doom.struct.io.IOUtils;
+import net.mtrop.doom.struct.io.PNGContainerReader;
+import net.mtrop.doom.struct.io.PNGContainerWriter;
+import net.mtrop.doom.struct.io.SerialReader;
+import net.mtrop.doom.struct.io.SerialWriter;
 
 /**
  * Represents PNG-formatted data as a decompressed image, preserving offset information (grAb).

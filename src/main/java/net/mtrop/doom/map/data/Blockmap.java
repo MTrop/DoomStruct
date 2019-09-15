@@ -14,9 +14,9 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
 
-import net.mtrop.doom.io.SerialReader;
-import net.mtrop.doom.io.SerialWriter;
 import net.mtrop.doom.object.BinaryObject;
+import net.mtrop.doom.struct.io.SerialReader;
+import net.mtrop.doom.struct.io.SerialWriter;
 import net.mtrop.doom.struct.map.HashDequeMap;
 import net.mtrop.doom.struct.map.SparseQueueGridIndex;
 import net.mtrop.doom.struct.map.SparseGridIndex.Pair;

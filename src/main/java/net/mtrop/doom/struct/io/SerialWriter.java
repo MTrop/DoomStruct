@@ -4,7 +4,7 @@
  * This program and the accompanying materials are made available under 
  * the terms of the MIT License, which accompanies this distribution.
  ******************************************************************************/
-package net.mtrop.doom.io;
+package net.mtrop.doom.struct.io;
 
 import java.io.IOException;
 import java.io.OutputStream;

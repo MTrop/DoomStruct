@@ -22,9 +22,9 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.mtrop.doom.exception.WadException;
-import net.mtrop.doom.io.IOUtils;
-import net.mtrop.doom.io.SerialReader;
 import net.mtrop.doom.struct.DataList;
+import net.mtrop.doom.struct.io.IOUtils;
+import net.mtrop.doom.struct.io.SerialReader;
 import net.mtrop.doom.util.NameUtils;
 
 /**

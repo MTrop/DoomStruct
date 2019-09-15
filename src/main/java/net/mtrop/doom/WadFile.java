@@ -13,8 +13,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.mtrop.doom.exception.WadException;
-import net.mtrop.doom.io.SerialWriter;
-import net.mtrop.doom.io.SerializerUtils;
+import net.mtrop.doom.struct.io.SerialWriter;
+import net.mtrop.doom.struct.io.SerializerUtils;
 import net.mtrop.doom.util.NameUtils;
 
 /**

@@ -9,6 +9,7 @@ Changed in [NOW]
 - `Added` Wad.fetchContent(int, int, byte[], int) and all of its implementations.
 - `Added` Wad.fetchData(...).
 - `Changed` WadFile and WadBuffer's implementations of Wad.getContent(...) have been removed (new interface default is used).
+- `Changed` `net.mtrop.doom.io` refactor - this package was moved into `struct`, since it should not be used outside of this library.
 
 
 Changed in 2.3.0

@@ -27,9 +27,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
-import net.mtrop.doom.io.IOUtils;
 import net.mtrop.doom.object.BinaryObject;
 import net.mtrop.doom.object.TextObject;
+import net.mtrop.doom.struct.io.IOUtils;
 import net.mtrop.doom.struct.trie.CaseInsensitiveTrieMap;
 
 /**
