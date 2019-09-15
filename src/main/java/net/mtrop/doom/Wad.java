@@ -49,6 +49,7 @@ import net.mtrop.doom.object.TextObject;
  */
 public interface Wad extends Iterable<WadEntry>
 {
+	static final WadEntry[] NO_ENTRIES = new WadEntry[0];
 	static final byte[] NO_DATA = new byte[0];
 
 	/**
@@ -1112,297 +1113,6 @@ public interface Wad extends Iterable<WadEntry>
 	}
 
 	/**
-	 * Retrieves the deserialized data of a particular entry index, 
-	 * optionally transforms it, then writes it back to the Wad.
-	 * @param <BO> the data type.
-	 * @param n the index of the entry in the Wad.
-	 * @param type the class type to deserialize into.
-	 * @param transformer the transformer function to use - called on each object read.
-	 * @throws IOException if the data couldn't be retrieved.
-	 * @throws ArrayIndexOutOfBoundsException if n &lt; 0 or &gt;= size.
-	 * @since 2.1.0
-	 */
-	default <BO extends BinaryObject> void transformData(int n, Class<BO> type, BinaryObject.Transformer<BO> transformer) throws IOException
-	{
-        BO bo = getDataAs(n, type);
-        transformer.transform(bo, 0);
-        replaceEntry(n, bo.toBytes());
-	}
-
-	/**
-	 * Retrieves the deserialized data of a particular entry, 
-	 * optionally transforms it, then writes it back to the Wad.
-	 * @param <BO> the data type.
-	 * @param entryName the name of the entry to find.
-	 * @param type the class type to deserialize into.
-	 * @param transformer the transformer function to use - called on each object read.
-	 * @return true if the entry was found and the transformer, false if not.
-	 * @throws IOException if the data couldn't be retrieved.
-	 * @throws ArrayIndexOutOfBoundsException if n &lt; 0 or &gt;= size.
-	 * @since 2.1.0
-	 */
-	default <BO extends BinaryObject> boolean transformData(String entryName, Class<BO> type, BinaryObject.Transformer<BO> transformer) throws IOException
-	{
-		int index = indexOf(entryName);
-		if (index >= 0)
-		{
-			transformData(index, type, transformer);
-			return true;
-		}
-		else
-			return false;
-	}
-
-	/**
-	 * Retrieves the deserialized data of a particular entry, 
-	 * optionally transforms it, then writes it back to the Wad.
-	 * @param <BO> the data type.
-	 * @param entryName the name of the entry to find.
-	 * @param start the index with which to start the search.
-	 * @param type the class type to deserialize into.
-	 * @param transformer the transformer function to use - called on each object read.
-	 * @return true if the entry was found and the transformer, false
-	 * @throws IOException if the data couldn't be retrieved.
-	 * @throws ArrayIndexOutOfBoundsException if n &lt; 0 or &gt;= size.
-	 * @since 2.1.0
-	 */
-	default <BO extends BinaryObject> boolean transformData(String entryName, int start, Class<BO> type, BinaryObject.Transformer<BO> transformer) throws IOException
-	{
-		int index = indexOf(entryName, start);
-		if (index >= 0)
-		{
-			transformData(index, type, transformer);
-			return true;
-		}
-		else
-			return false;
-	}
-
-	/**
-	 * Retrieves the deserialized data of a particular entry, 
-	 * optionally transforms it, then writes it back to the Wad.
-	 * @param <BO> the data type.
-	 * @param entryName the name of the entry to find.
-	 * @param startEntryName the starting entry (by name) with which to start the search.
-	 * @param type the class type to deserialize into.
-	 * @param transformer the transformer function to use - called on each object read.
-	 * @return true if the entry was found and the transformer, false
-	 * @throws IOException if the data couldn't be retrieved.
-	 * @throws ArrayIndexOutOfBoundsException if n &lt; 0 or &gt;= size.
-	 * @since 2.1.0
-	 */
-	default <BO extends BinaryObject> boolean transformData(String entryName, String startEntryName, Class<BO> type, BinaryObject.Transformer<BO> transformer) throws IOException
-	{
-		int index = indexOf(entryName, startEntryName);
-		if (index >= 0)
-		{
-			transformData(index, type, transformer);
-			return true;
-		}
-		else
-			return false;
-	}
-
-	/**
-	 * Retrieves the data of a particular entry index as a deserialized lump of multiple objects, 
-	 * optionally transforms it, then writes it back to the Wad.
-	 * @param <BO> the data type.
-	 * @param n the index of the entry in the Wad.
-	 * @param type the class type to deserialize into.
-	 * @param objectLength the length of each object in the entry in bytes.
-	 * @param transformer the transformer function to use - called on each object read.
-	 * @throws IOException if the data couldn't be retrieved.
-	 * @throws ArrayIndexOutOfBoundsException if n &lt; 0 or &gt;= size.
-	 * @since 2.1.0
-	 */
-	default <BO extends BinaryObject> void transformData(int n, Class<BO> type, int objectLength, BinaryObject.Transformer<BO> transformer) throws IOException
-	{
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        BinaryObject.InlineScanner<BO> scanner = getInlineScanner(n, type, objectLength);
-        int i = 0;
-        while (scanner.hasNext())
-        {
-            BO next = scanner.next();
-            transformer.transform(next, i++);
-            next.writeBytes(bos);
-        }
-        replaceEntry(n, bos.toByteArray());
-	}
-
-	/**
-	 * Retrieves the deserialized data of a particular entry, 
-	 * optionally transforms it, then writes it back to the Wad.
-	 * @param <BO> the data type.
-	 * @param entryName the name of the entry to find.
-	 * @param type the class type to deserialize into.
-	 * @param objectLength the length of each object in the entry in bytes.
-	 * @param transformer the transformer function to use - called on each object read.
-	 * @return true if the entry was found and the transformer, false if not.
-	 * @throws IOException if the data couldn't be retrieved.
-	 * @throws ArrayIndexOutOfBoundsException if n &lt; 0 or &gt;= size.
-	 * @since 2.1.0
-	 */
-	default <BO extends BinaryObject> boolean transformData(String entryName, Class<BO> type, int objectLength, BinaryObject.Transformer<BO> transformer) throws IOException
-	{
-		int index = indexOf(entryName);
-		if (index >= 0)
-		{
-			transformData(index, type, objectLength, transformer);
-			return true;
-		}
-		else
-			return false;
-	}
-
-	/**
-	 * Retrieves the deserialized data of a particular entry, 
-	 * optionally transforms it, then writes it back to the Wad.
-	 * @param <BO> the data type.
-	 * @param entryName the name of the entry to find.
-	 * @param start the index with which to start the search.
-	 * @param type the class type to deserialize into.
-	 * @param objectLength the length of each object in the entry in bytes.
-	 * @param transformer the transformer function to use - called on each object read.
-	 * @return true if the entry was found and the transformer, false
-	 * @throws IOException if the data couldn't be retrieved.
-	 * @throws ArrayIndexOutOfBoundsException if n &lt; 0 or &gt;= size.
-	 * @since 2.1.0
-	 */
-	default <BO extends BinaryObject> boolean transformData(String entryName, int start, Class<BO> type, int objectLength, BinaryObject.Transformer<BO> transformer) throws IOException
-	{
-		int index = indexOf(entryName, start);
-		if (index >= 0)
-		{
-			transformData(index, type, objectLength, transformer);
-			return true;
-		}
-		else
-			return false;
-	}
-
-	/**
-	 * Retrieves the deserialized data of a particular entry, 
-	 * optionally transforms it, then writes it back to the Wad.
-	 * @param <BO> the data type.
-	 * @param entryName the name of the entry to find.
-	 * @param startEntryName the starting entry (by name) with which to start the search.
-	 * @param type the class type to deserialize into.
-	 * @param objectLength the length of each object in the entry in bytes.
-	 * @param transformer the transformer function to use - called on each object read.
-	 * @return true if the entry was found and the transformer, false
-	 * @throws IOException if the data couldn't be retrieved.
-	 * @throws ArrayIndexOutOfBoundsException if n &lt; 0 or &gt;= size.
-	 * @since 2.1.0
-	 */
-	default <BO extends BinaryObject> boolean transformData(String entryName, String startEntryName, Class<BO> type, int objectLength, BinaryObject.Transformer<BO> transformer) throws IOException
-	{
-		int index = indexOf(entryName, startEntryName);
-		if (index >= 0)
-		{
-			transformData(index, type, objectLength, transformer);
-			return true;
-		}
-		else
-			return false;
-	}
-
-	/**
-	 * Retrieves the decoded data of a particular entry index, 
-	 * optionally transforms it, then writes it back to the Wad.
-	 * @param <TO> the data type.
-	 * @param n the index of the entry in the Wad.
-	 * @param charset the source charset encoding.
-	 * @param type the class type to deserialize into.
-	 * @param transformer the transformer function to use - called on each object read.
-	 * @throws IOException if the data couldn't be retrieved.
-	 * @throws ArrayIndexOutOfBoundsException if n &lt; 0 or &gt;= size.
-	 * @since 2.1.0
-	 */
-	default <TO extends TextObject> void transformTextData(int n, Charset charset, Class<TO> type, TextObject.Transformer<TO> transformer) throws IOException
-	{
-	    TO to = getTextDataAs(n, charset, type);
-	    transformer.transform(to);
-	    replaceEntry(n, to.toText().getBytes(charset));
-	}
-
-	/**
-	 * Retrieves the decoded data of a particular entry, 
-	 * optionally transforms it, then writes it back to the Wad.
-	 * @param <TO> the data type.
-	 * @param entryName the name of the entry to find.
-	 * @param charset the source charset encoding.
-	 * @param type the class type to deserialize into.
-	 * @param transformer the transformer function to use - called on each object read.
-	 * @return true if the entry was found and the transformer, false if not.
-	 * @throws IOException if the data couldn't be retrieved.
-	 * @throws ArrayIndexOutOfBoundsException if n &lt; 0 or &gt;= size.
-	 * @since 2.1.0
-	 */
-	default <TO extends TextObject> boolean transformTextData(String entryName, Charset charset, Class<TO> type, TextObject.Transformer<TO> transformer) throws IOException
-	{
-		int index = indexOf(entryName);
-		if (index >= 0)
-		{
-			transformTextData(index, charset, type, transformer);
-			return true;
-		}
-		else
-			return false;
-	}
-
-	/**
-	 * Retrieves the decoded data of a particular entry, 
-	 * optionally transforms it, then writes it back to the Wad.
-	 * @param <TO> the data type.
-	 * @param entryName the name of the entry to find.
-	 * @param start the index with which to start the search.
-	 * @param charset the source charset encoding.
-	 * @param type the class type to deserialize into.
-	 * @param transformer the transformer function to use - called on each object read.
-	 * @return true if the entry was found and the transformer, false
-	 * @throws IOException if the data couldn't be retrieved.
-	 * @throws ArrayIndexOutOfBoundsException if n &lt; 0 or &gt;= size.
-	 * @since 2.1.0
-	 */
-	default <TO extends TextObject> boolean transformTextData(String entryName, int start, Charset charset, Class<TO> type, TextObject.Transformer<TO> transformer) throws IOException
-	{
-		int index = indexOf(entryName, start);
-		if (index >= 0)
-		{
-			transformTextData(index, charset, type, transformer);
-			return true;
-		}
-		else
-			return false;
-	}
-
-	/**
-	 * Retrieves the decoded data of a particular entry, 
-	 * optionally transforms it, then writes it back to the Wad.
-	 * @param <TO> the data type.
-	 * @param entryName the name of the entry to find.
-	 * @param startEntryName the starting entry (by name) with which to start the search.
-	 * @param charset the source charset encoding.
-	 * @param type the class type to deserialize into.
-	 * @param transformer the transformer function to use - called on each object read.
-	 * @return true if the entry was found and the transformer, false
-	 * @throws IOException if the data couldn't be retrieved.
-	 * @throws ArrayIndexOutOfBoundsException if n &lt; 0 or &gt;= size.
-	 * @since 2.1.0
-	 */
-	default <TO extends TextObject> boolean transformTextData(String entryName, String startEntryName, Charset charset, Class<TO> type, TextObject.Transformer<TO> transformer) throws IOException
-	{
-		int index = indexOf(entryName, startEntryName);
-		if (index >= 0)
-		{
-			transformTextData(index, charset, type, transformer);
-			return true;
-		}
-		else
-			return false;
-	}
-
-	/**
 	 * Retrieves the data of a particular entry at a specific index and returns it as 
 	 * a deserializing scanner iterator that returns independent instances of objects.
 	 * <p>Use of this to iterate through objects may be preferable when all of them in a lump do not need to be scanned or deserialized.
@@ -1597,6 +1307,297 @@ public interface Wad extends Iterable<WadEntry>
 	}
 
 	/**
+	 * Retrieves the deserialized data of a particular entry index, 
+	 * optionally transforms it, then writes it back to the Wad.
+	 * @param <BO> the data type.
+	 * @param n the index of the entry in the Wad.
+	 * @param type the class type to deserialize into.
+	 * @param transformer the transformer function to use - called on each object read.
+	 * @throws IOException if the data couldn't be retrieved.
+	 * @throws ArrayIndexOutOfBoundsException if n &lt; 0 or &gt;= size.
+	 * @since 2.1.0
+	 */
+	default <BO extends BinaryObject> void transformData(int n, Class<BO> type, BinaryObject.Transformer<BO> transformer) throws IOException
+	{
+	    BO bo = getDataAs(n, type);
+	    transformer.transform(bo, 0);
+	    replaceEntry(n, bo.toBytes());
+	}
+
+	/**
+	 * Retrieves the deserialized data of a particular entry, 
+	 * optionally transforms it, then writes it back to the Wad.
+	 * @param <BO> the data type.
+	 * @param entryName the name of the entry to find.
+	 * @param type the class type to deserialize into.
+	 * @param transformer the transformer function to use - called on each object read.
+	 * @return true if the entry was found and the transformer function was called at least once, false otherwise.
+	 * @throws IOException if the data couldn't be retrieved.
+	 * @throws ArrayIndexOutOfBoundsException if n &lt; 0 or &gt;= size.
+	 * @since 2.1.0
+	 */
+	default <BO extends BinaryObject> boolean transformData(String entryName, Class<BO> type, BinaryObject.Transformer<BO> transformer) throws IOException
+	{
+		int index = indexOf(entryName);
+		if (index >= 0)
+		{
+			transformData(index, type, transformer);
+			return true;
+		}
+		else
+			return false;
+	}
+
+	/**
+	 * Retrieves the deserialized data of a particular entry, 
+	 * optionally transforms it, then writes it back to the Wad.
+	 * @param <BO> the data type.
+	 * @param entryName the name of the entry to find.
+	 * @param start the index with which to start the search.
+	 * @param type the class type to deserialize into.
+	 * @param transformer the transformer function to use - called on each object read.
+	 * @return true if the entry was found and the transformer function was called at least once, false otherwise.
+	 * @throws IOException if the data couldn't be retrieved.
+	 * @throws ArrayIndexOutOfBoundsException if n &lt; 0 or &gt;= size.
+	 * @since 2.1.0
+	 */
+	default <BO extends BinaryObject> boolean transformData(String entryName, int start, Class<BO> type, BinaryObject.Transformer<BO> transformer) throws IOException
+	{
+		int index = indexOf(entryName, start);
+		if (index >= 0)
+		{
+			transformData(index, type, transformer);
+			return true;
+		}
+		else
+			return false;
+	}
+
+	/**
+	 * Retrieves the deserialized data of a particular entry, 
+	 * optionally transforms it, then writes it back to the Wad.
+	 * @param <BO> the data type.
+	 * @param entryName the name of the entry to find.
+	 * @param startEntryName the starting entry (by name) with which to start the search.
+	 * @param type the class type to deserialize into.
+	 * @param transformer the transformer function to use - called on each object read.
+	 * @return true if the entry was found and the transformer function was called at least once, false otherwise.
+	 * @throws IOException if the data couldn't be retrieved.
+	 * @throws ArrayIndexOutOfBoundsException if n &lt; 0 or &gt;= size.
+	 * @since 2.1.0
+	 */
+	default <BO extends BinaryObject> boolean transformData(String entryName, String startEntryName, Class<BO> type, BinaryObject.Transformer<BO> transformer) throws IOException
+	{
+		int index = indexOf(entryName, startEntryName);
+		if (index >= 0)
+		{
+			transformData(index, type, transformer);
+			return true;
+		}
+		else
+			return false;
+	}
+
+	/**
+	 * Retrieves the data of a particular entry index as a deserialized lump of multiple objects, 
+	 * optionally transforms it, then writes it back to the Wad.
+	 * @param <BO> the data type.
+	 * @param n the index of the entry in the Wad.
+	 * @param type the class type to deserialize into.
+	 * @param objectLength the length of each object in the entry in bytes.
+	 * @param transformer the transformer function to use - called on each object read.
+	 * @throws IOException if the data couldn't be retrieved.
+	 * @throws ArrayIndexOutOfBoundsException if n &lt; 0 or &gt;= size.
+	 * @since 2.1.0
+	 */
+	default <BO extends BinaryObject> void transformData(int n, Class<BO> type, int objectLength, BinaryObject.Transformer<BO> transformer) throws IOException
+	{
+	    ByteArrayOutputStream bos = new ByteArrayOutputStream();
+	    BinaryObject.InlineScanner<BO> scanner = getInlineScanner(n, type, objectLength);
+	    int i = 0;
+	    while (scanner.hasNext())
+	    {
+	        BO next = scanner.next();
+	        transformer.transform(next, i++);
+	        next.writeBytes(bos);
+	    }
+	    replaceEntry(n, bos.toByteArray());
+	}
+
+	/**
+	 * Retrieves the deserialized data of a particular entry, 
+	 * optionally transforms it, then writes it back to the Wad.
+	 * @param <BO> the data type.
+	 * @param entryName the name of the entry to find.
+	 * @param type the class type to deserialize into.
+	 * @param objectLength the length of each object in the entry in bytes.
+	 * @param transformer the transformer function to use - called on each object read.
+	 * @return true if the entry was found and the transformer function was called at least once, false otherwise.
+	 * @throws IOException if the data couldn't be retrieved.
+	 * @throws ArrayIndexOutOfBoundsException if n &lt; 0 or &gt;= size.
+	 * @since 2.1.0
+	 */
+	default <BO extends BinaryObject> boolean transformData(String entryName, Class<BO> type, int objectLength, BinaryObject.Transformer<BO> transformer) throws IOException
+	{
+		int index = indexOf(entryName);
+		if (index >= 0)
+		{
+			transformData(index, type, objectLength, transformer);
+			return true;
+		}
+		else
+			return false;
+	}
+
+	/**
+	 * Retrieves the deserialized data of a particular entry, 
+	 * optionally transforms it, then writes it back to the Wad.
+	 * @param <BO> the data type.
+	 * @param entryName the name of the entry to find.
+	 * @param start the index with which to start the search.
+	 * @param type the class type to deserialize into.
+	 * @param objectLength the length of each object in the entry in bytes.
+	 * @param transformer the transformer function to use - called on each object read.
+	 * @return true if the entry was found and the transformer, false
+	 * @throws IOException if the data couldn't be retrieved.
+	 * @throws ArrayIndexOutOfBoundsException if n &lt; 0 or &gt;= size.
+	 * @since 2.1.0
+	 */
+	default <BO extends BinaryObject> boolean transformData(String entryName, int start, Class<BO> type, int objectLength, BinaryObject.Transformer<BO> transformer) throws IOException
+	{
+		int index = indexOf(entryName, start);
+		if (index >= 0)
+		{
+			transformData(index, type, objectLength, transformer);
+			return true;
+		}
+		else
+			return false;
+	}
+
+	/**
+	 * Retrieves the deserialized data of a particular entry, 
+	 * optionally transforms it, then writes it back to the Wad.
+	 * @param <BO> the data type.
+	 * @param entryName the name of the entry to find.
+	 * @param startEntryName the starting entry (by name) with which to start the search.
+	 * @param type the class type to deserialize into.
+	 * @param objectLength the length of each object in the entry in bytes.
+	 * @param transformer the transformer function to use - called on each object read.
+	 * @return true if the entry was found and the transformer, false
+	 * @throws IOException if the data couldn't be retrieved.
+	 * @throws ArrayIndexOutOfBoundsException if n &lt; 0 or &gt;= size.
+	 * @since 2.1.0
+	 */
+	default <BO extends BinaryObject> boolean transformData(String entryName, String startEntryName, Class<BO> type, int objectLength, BinaryObject.Transformer<BO> transformer) throws IOException
+	{
+		int index = indexOf(entryName, startEntryName);
+		if (index >= 0)
+		{
+			transformData(index, type, objectLength, transformer);
+			return true;
+		}
+		else
+			return false;
+	}
+
+	/**
+	 * Retrieves the decoded data of a particular entry index, 
+	 * optionally transforms it, then writes it back to the Wad.
+	 * @param <TO> the data type.
+	 * @param n the index of the entry in the Wad.
+	 * @param charset the source charset encoding.
+	 * @param type the class type to deserialize into.
+	 * @param transformer the transformer function to use - called on each object read.
+	 * @throws IOException if the data couldn't be retrieved.
+	 * @throws ArrayIndexOutOfBoundsException if n &lt; 0 or &gt;= size.
+	 * @since 2.1.0
+	 */
+	default <TO extends TextObject> void transformTextData(int n, Charset charset, Class<TO> type, TextObject.Transformer<TO> transformer) throws IOException
+	{
+	    TO to = getTextDataAs(n, charset, type);
+	    transformer.transform(to);
+	    replaceEntry(n, to.toText().getBytes(charset));
+	}
+
+	/**
+	 * Retrieves the decoded data of a particular entry, 
+	 * optionally transforms it, then writes it back to the Wad.
+	 * @param <TO> the data type.
+	 * @param entryName the name of the entry to find.
+	 * @param charset the source charset encoding.
+	 * @param type the class type to deserialize into.
+	 * @param transformer the transformer function to use - called on each object read.
+	 * @return true if the entry was found and the transformer function was called at least once, false otherwise.
+	 * @throws IOException if the data couldn't be retrieved.
+	 * @throws ArrayIndexOutOfBoundsException if n &lt; 0 or &gt;= size.
+	 * @since 2.1.0
+	 */
+	default <TO extends TextObject> boolean transformTextData(String entryName, Charset charset, Class<TO> type, TextObject.Transformer<TO> transformer) throws IOException
+	{
+		int index = indexOf(entryName);
+		if (index >= 0)
+		{
+			transformTextData(index, charset, type, transformer);
+			return true;
+		}
+		else
+			return false;
+	}
+
+	/**
+	 * Retrieves the decoded data of a particular entry, 
+	 * optionally transforms it, then writes it back to the Wad.
+	 * @param <TO> the data type.
+	 * @param entryName the name of the entry to find.
+	 * @param start the index with which to start the search.
+	 * @param charset the source charset encoding.
+	 * @param type the class type to deserialize into.
+	 * @param transformer the transformer function to use - called on each object read.
+	 * @return true if the entry was found and the transformer function was called at least once, false otherwise.
+	 * @throws IOException if the data couldn't be retrieved.
+	 * @throws ArrayIndexOutOfBoundsException if n &lt; 0 or &gt;= size.
+	 * @since 2.1.0
+	 */
+	default <TO extends TextObject> boolean transformTextData(String entryName, int start, Charset charset, Class<TO> type, TextObject.Transformer<TO> transformer) throws IOException
+	{
+		int index = indexOf(entryName, start);
+		if (index >= 0)
+		{
+			transformTextData(index, charset, type, transformer);
+			return true;
+		}
+		else
+			return false;
+	}
+
+	/**
+	 * Retrieves the decoded data of a particular entry, 
+	 * optionally transforms it, then writes it back to the Wad.
+	 * @param <TO> the data type.
+	 * @param entryName the name of the entry to find.
+	 * @param startEntryName the starting entry (by name) with which to start the search.
+	 * @param charset the source charset encoding.
+	 * @param type the class type to deserialize into.
+	 * @param transformer the transformer function to use - called on each object read.
+	 * @return true if the entry was found and the transformer function was called at least once, false otherwise.
+	 * @throws IOException if the data couldn't be retrieved.
+	 * @throws ArrayIndexOutOfBoundsException if n &lt; 0 or &gt;= size.
+	 * @since 2.1.0
+	 */
+	default <TO extends TextObject> boolean transformTextData(String entryName, String startEntryName, Charset charset, Class<TO> type, TextObject.Transformer<TO> transformer) throws IOException
+	{
+		int index = indexOf(entryName, startEntryName);
+		if (index >= 0)
+		{
+			transformTextData(index, charset, type, transformer);
+			return true;
+		}
+		else
+			return false;
+	}
+
+	/**
 	 * Checks if this Wad contains a particular entry, false otherwise.
 	 * <p>The name is case-insensitive.
 	 * @param entryName the name of the entry.
@@ -1678,10 +1679,7 @@ public interface Wad extends Iterable<WadEntry>
 	 */
 	default <BO extends BinaryObject> WadEntry addData(String entryName, BO[] data) throws IOException
 	{
-		ByteArrayOutputStream bos = new ByteArrayOutputStream(16384);
-		for (BO bo : data)
-			bo.writeBytes(bos);
-		return addData(entryName, bos.toByteArray());
+		return addData(entryName, BinaryObject.toBytes(data));
 	}
 
 	/**
@@ -1726,7 +1724,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @param index the index at which to add the entry.
 	 * @param entryName the name of the entry to add this as.
 	 * @param data the BinaryObject to add as this wad's data (converted via {@link BinaryObject#toBytes()}).
-	 * @param <BO> a TextObject type.
+	 * @param <BO> a BinaryObject type.
 	 * @return a WadEntry that describes the added data.
 	 * @throws IllegalArgumentException if the provided name is not a valid name.
 	 * @throws IOException if the data cannot be written.
@@ -1756,10 +1754,7 @@ public interface Wad extends Iterable<WadEntry>
 	 */
 	default <BO extends BinaryObject> WadEntry addDataAt(int index, String entryName, BO[] data) throws IOException
 	{
-		ByteArrayOutputStream bos = new ByteArrayOutputStream(16384);
-		for (BO bo : data)
-			bo.writeBytes(bos);
-		return addDataAt(index, entryName, bos.toByteArray());
+		return addDataAt(index, entryName, BinaryObject.toBytes(data));
 	}
 
 	/**
@@ -1910,6 +1905,61 @@ public interface Wad extends Iterable<WadEntry>
 	void replaceEntry(int index, byte[] data) throws IOException;
 
 	/**
+	 * Replaces the entry at an index in the Wad.
+	 * If the incoming data is the same size as the entry at the index, 
+	 * this will change the data in-place without deleting and adding.
+	 * 
+	 * @param index the index of the entry to replace.
+	 * @param data the data to replace the entry with.
+	 * @param <BO> the BinaryObject type.
+	 * @throws IndexOutOfBoundsException if index &lt; 0 or &gt;= size.
+	 * @throws IOException if the entry cannot be replaced.
+	 * @throws NullPointerException if <code>data</code> is <code>null</code>.
+	 * @since [NOW]
+	 */
+	default <BO extends BinaryObject> void replaceEntry(int index, BO data) throws IOException
+	{
+		replaceEntry(index, data.toBytes());
+	}
+
+	/**
+	 * Replaces the entry at an index in the Wad.
+	 * If the incoming data is the same size as the entry at the index, 
+	 * this will change the data in-place without deleting and adding.
+	 * 
+	 * @param index the index of the entry to replace.
+	 * @param data the BinaryObjects to replace as this wad's data (converted via {@link BinaryObject#toBytes()}).
+	 * @param <BO> the BinaryObject type.
+	 * @throws IndexOutOfBoundsException if index &lt; 0 or &gt;= size.
+	 * @throws IOException if the entry cannot be replaced.
+	 * @throws NullPointerException if <code>data</code> is <code>null</code>.
+	 * @since [NOW]
+	 */
+	default <BO extends BinaryObject> void replaceEntry(int index, BO[] data) throws IOException
+	{
+		replaceEntry(index, BinaryObject.toBytes(data));
+	}
+
+	/**
+	 * Replaces the entry at an index in the Wad.
+	 * If the incoming data is the same size as the entry at the index, 
+	 * this will change the data in-place without deleting and adding.
+	 * 
+	 * @param index the index of the entry to replace.
+	 * @param data the TextObject to add as this Wad's data (converted via {@link TextObject#toText()}, then {@link String#getBytes(Charset)}).
+	 * @param encoding the encoding type for the data written to the Wad.
+	 * @param <TO> a TextObject type.
+	 * @throws IndexOutOfBoundsException if index &lt; 0 or &gt;= size.
+	 * @throws IOException if the entry cannot be replaced.
+	 * @throws NullPointerException if <code>data</code> is <code>null</code>.
+	 * @since [NOW]
+	 */
+	default <TO extends TextObject> void replaceEntry(int index, TO data, Charset encoding) throws IOException
+	{
+		replaceEntry(index, data.toText().getBytes(encoding));
+	}
+
+	/**
 	 * Renames the entry at an index in the Wad.
 	 * 
 	 * @param index the index of the entry to rename.
@@ -1921,7 +1971,7 @@ public interface Wad extends Iterable<WadEntry>
 
 	/**
 	 * Remove a Wad's entry (but not contents).
-	 * This will leave abandoned, un-adressed data in a Wad file and will not be removed until the data
+	 * This will leave abandoned, un-addressed data in a Wad file and will not be removed until the data
 	 * is purged. 
 	 * 
 	 * @param index the index of the entry to delete.
@@ -1958,7 +2008,7 @@ public interface Wad extends Iterable<WadEntry>
 	
 		int len = Math.min(maxLength, getEntryCount() - startIndex);
 		if (len <= 0)
-			return new WadEntry[0];
+			return NO_ENTRIES;
 		WadEntry[] out = new WadEntry[len];
 		for (int i = 0; i < len; i++)
 			out[i] = getEntry(startIndex + i);
@@ -1972,7 +2022,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * 
 	 * @param startIndex the starting index to replace from (inclusive).
 	 * @param entryList the set of entries to replace (in order) from the starting index.
-	 * @throws IOException if the entries ould not be written.
+	 * @throws IOException if the entries could not be written.
 	 * @throws IllegalArgumentException if startIndex is less than 0.
 	 */
 	void unmapEntries(int startIndex, WadEntry... entryList) throws IOException;
@@ -1981,7 +2031,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * Completely replaces the list of entries in this Wad with a completely different set of entries.
 	 * 
 	 * @param entryList the set of entries that will make up this Wad.
-	 * @throws IOException if the entries ould not be written.
+	 * @throws IOException if the entries could not be written.
 	 * @throws IllegalArgumentException if startIndex is less than 0.
 	 */
 	void setEntries(WadEntry... entryList) throws IOException;

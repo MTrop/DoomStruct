@@ -60,6 +60,22 @@ public interface BinaryObject
 	void writeBytes(OutputStream out) throws IOException;
 
 	/**
+	 * Converts an array of BinaryObjects into bytes.
+	 * @param <BO> the BinaryObject type.
+	 * @param data the objects to convert.
+	 * @return the data bytes.
+	 * @since [NOW]
+	 */
+	static <BO extends BinaryObject> byte[] toBytes(BO[] data)
+	{
+		ByteArrayOutputStream bos = Shared.CONVERSIONBUFFER.get();
+		bos.reset();
+		for (BO bo : data)
+			try {bo.writeBytes(bos);} catch (IOException e) {/* Should not happen. */}
+		return bos.toByteArray();
+	}
+
+	/**
 	 * Creates a single object of a specific class from a serialized byte array.
 	 * @param <BO> the object type, a subtype of {@link BinaryObject}.
 	 * @param boClass the class to create.
@@ -276,6 +292,12 @@ public interface BinaryObject
 		}
 		
 	}
+
+	static class Shared
+	{
+		private static ThreadLocal<ByteArrayOutputStream> CONVERSIONBUFFER = 
+			ThreadLocal.withInitial(()->new ByteArrayOutputStream(16384));
+	}
 	
 	static class Reflect
 	{
@@ -310,7 +332,6 @@ public interface BinaryObject
 			
 			return clazz.cast(out);
 		}
-
 	}
 	
 }

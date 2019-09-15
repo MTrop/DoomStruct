@@ -45,3 +45,10 @@ Again, those object types are first and foremost abstractions of data representa
 The meaning placed on the bitflag section of these objects are *per game or source port* and not according 
 to the data model itself. So, a mechanism for checking these flags is necessary, but not down to the class level,
 where it can mislead those unfamiliar with other engines or ports.
+
+
+### In Wad, why are there no "entry name seeking" variant methods for replaceEntry() / renameEntry() / removeEntry() / deleteEntry()? 
+
+These methods alter data, and require you to be more precise about what you are changing. Most of
+the other methods that do "seeking" are read-only - finding the wrong entry to read has no direct
+permanent impact.

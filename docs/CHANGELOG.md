@@ -8,6 +8,8 @@ Changed in [NOW]
 
 - `Added` Wad.fetchContent(int, int, byte[], int) and all of its implementations.
 - `Added` Wad.fetchData(...).
+- `Added` Wad.replaceEntry(...) variants.
+- `Fixed` Wad.unmapEntries(int, WadEntry...) implementations did not append excess entries.
 - `Changed` WadFile and WadBuffer's implementations of Wad.getContent(...) have been removed (new interface default is used).
 - `Changed` `net.mtrop.doom.io` refactor - this package was moved into `struct`, since it should not be used outside of this library.
 

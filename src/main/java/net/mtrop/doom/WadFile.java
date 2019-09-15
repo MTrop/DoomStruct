@@ -402,7 +402,12 @@ public class WadFile implements Wad, AutoCloseable
 	public void unmapEntries(int startIndex, WadEntry... entryList) throws IOException
 	{
 		for (int i = 0; i < entryList.length; i++)
-			entries.set(startIndex + i, entryList[i]);
+		{
+			if (startIndex + i >= entries.size())
+				entries.add(entryList[i]);
+			else
+				entries.set(startIndex + i, entryList[i]);
+		}
 		flushEntries();
 	}
 
