@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
+import java.util.Iterator;
 
 import net.mtrop.doom.map.udmf.listener.UDMFTypeListener;
 
@@ -21,7 +22,7 @@ import net.mtrop.doom.map.udmf.listener.UDMFTypeListener;
  * @author Matthew Tropiano
  * @since [NOW]
  */
-public final class UDMFScanner
+public final class UDMFScanner implements Iterator<UDMFScanner.Element>
 {
 	/**
 	 * The element type returned on each element scanned.
@@ -45,11 +46,31 @@ public final class UDMFScanner
 		private Object value;
 		
 		/**
+		 * Checks if this element is the provided {@link ElementType}.
+		 * @param type the element type to test.
+		 * @return true if matched, false if not.
+		 */
+		public boolean isType(ElementType type)
+		{
+			return this.type == type;
+		}
+		
+		/**
 		 * @return the element type.
 		 */
 		public ElementType getType()
 		{
 			return type;
+		}
+		
+		/**
+		 * Checks if this element's name / object type is the provided one.
+		 * @param name the name/type to check.
+		 * @return true if matched, false if not.
+		 */
+		public boolean hasName(String name)
+		{
+			return this.name.equals(name);
 		}
 		
 		/**
@@ -76,7 +97,7 @@ public final class UDMFScanner
 		 */
 		public UDMFObject getUDMFObject()
 		{
-			if (type == ElementType.OBJECT)
+			if (isType(ElementType.OBJECT))
 				return (UDMFObject)value;
 			else
 				return null;

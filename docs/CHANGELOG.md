@@ -26,10 +26,10 @@ Changed in 2.2.0
 
 - `Added` SerialWriter.writeBytes(OutputStream out, byte[], int, int).
 - `Added` Wad.getContent(int, int) : byte[]. Implementing classes changed as well.
-- `Added` Wad.add[All]Data[At](..., BinaryObject) variants.
-- `Added` Wad.addData[At](..., TextObject, Charset) variants.
+- `Added` Wad.add[All]Data[At] (..., BinaryObject) variants.
+- `Added` Wad.addData[At] (..., TextObject, Charset) variants.
 - `Added` Palette mixing functions plus copying.
-- `Added` WadFile.addAllData[At](...) "No Flush" variants.
+- `Added` WadFile.addAllData[At] (...) "No Flush" variants.
 - `Added` GraphicUtils.setColormap(...).
 - `Added` GraphicUtils.createColormapsFromGraphic(...).
 - `Fixed` GraphicUtils.createPicture(...) / GraphicUtils.createFlat(...) handles non-opaque pixels accurately.
