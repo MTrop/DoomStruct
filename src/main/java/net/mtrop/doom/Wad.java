@@ -331,7 +331,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws IndexOutOfBoundsException if offset plus length will go past the end of the content area.
 	 * @throws IOException if an error occurs during read.
 	 * @throws NullPointerException if out is null.
-	 * @since [NOW]
+	 * @since 2.4.0
 	 */
     void fetchContent(int offset, int length, byte[] out, int outOffset) throws IOException;
 
@@ -346,7 +346,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws IndexOutOfBoundsException if offset plus length will go past the end of the content area.
 	 * @throws IOException if an error occurs during read.
 	 * @throws NullPointerException if out is null.
-	 * @since [NOW]
+	 * @since 2.4.0
      */
     default int fetchData(int n, byte[] out, int offset) throws IOException
     {
@@ -365,7 +365,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws IndexOutOfBoundsException if offset plus length will go past the end of the content area.
 	 * @throws IOException if an error occurs during read.
 	 * @throws NullPointerException if out is null.
-	 * @since [NOW]
+	 * @since 2.4.0
      */
     default int fetchData(String entryName, byte[] out, int offset) throws IOException
     {
@@ -387,7 +387,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws IndexOutOfBoundsException if offset plus length will go past the end of the content area.
 	 * @throws IOException if an error occurs during read.
 	 * @throws NullPointerException if out is null.
-	 * @since [NOW]
+	 * @since 2.4.0
      */
     default int fetchData(String entryName, int start, byte[] out, int offset) throws IOException
     {
@@ -409,7 +409,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws IndexOutOfBoundsException if offset plus length will go past the end of the content area.
 	 * @throws IOException if an error occurs during read.
 	 * @throws NullPointerException if out is null.
-	 * @since [NOW]
+	 * @since 2.4.0
      */
     default int fetchData(String entryName, String startEntryName, byte[] out, int offset) throws IOException
     {
@@ -428,7 +428,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws IndexOutOfBoundsException if offset plus length will go past the end of the content area.
 	 * @throws IOException if an error occurs during read.
 	 * @throws NullPointerException if out is null.
-	 * @since [NOW]
+	 * @since 2.4.0
 	 */
 	default int fetchData(WadEntry entry, byte[] out, int offset) throws IOException
 	{
@@ -1915,7 +1915,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws IndexOutOfBoundsException if index &lt; 0 or &gt;= size.
 	 * @throws IOException if the entry cannot be replaced.
 	 * @throws NullPointerException if <code>data</code> is <code>null</code>.
-	 * @since [NOW]
+	 * @since 2.4.0
 	 */
 	default <BO extends BinaryObject> void replaceEntry(int index, BO data) throws IOException
 	{
@@ -1933,7 +1933,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws IndexOutOfBoundsException if index &lt; 0 or &gt;= size.
 	 * @throws IOException if the entry cannot be replaced.
 	 * @throws NullPointerException if <code>data</code> is <code>null</code>.
-	 * @since [NOW]
+	 * @since 2.4.0
 	 */
 	default <BO extends BinaryObject> void replaceEntry(int index, BO[] data) throws IOException
 	{
@@ -1952,7 +1952,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws IndexOutOfBoundsException if index &lt; 0 or &gt;= size.
 	 * @throws IOException if the entry cannot be replaced.
 	 * @throws NullPointerException if <code>data</code> is <code>null</code>.
-	 * @since [NOW]
+	 * @since 2.4.0
 	 */
 	default <TO extends TextObject> void replaceEntry(int index, TO data, Charset encoding) throws IOException
 	{

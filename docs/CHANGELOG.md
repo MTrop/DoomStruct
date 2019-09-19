@@ -3,7 +3,7 @@ Doom Struct (C) 2015-2019
 by Matt Tropiano et al. (see AUTHORS.txt)
 
 
-Changed in [NOW]
+Changed in 2.4.0
 ----------------
 
 - `Added` Wad.fetchContent(int, int, byte[], int) and all of its implementations.

@@ -64,7 +64,7 @@ public interface BinaryObject
 	 * @param <BO> the BinaryObject type.
 	 * @param data the objects to convert.
 	 * @return the data bytes.
-	 * @since [NOW]
+	 * @since 2.4.0
 	 */
 	static <BO extends BinaryObject> byte[] toBytes(BO[] data)
 	{

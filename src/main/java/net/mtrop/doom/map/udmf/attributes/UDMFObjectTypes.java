@@ -10,7 +10,7 @@ package net.mtrop.doom.map.udmf.attributes;
 /**
  * Contains common UDMF structure type names.
  * @author Matthew Tropiano
- * @since [NOW]
+ * @since 2.4.0
  */
 public interface UDMFObjectTypes
 {

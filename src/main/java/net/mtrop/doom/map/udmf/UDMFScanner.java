@@ -20,7 +20,7 @@ import net.mtrop.doom.map.udmf.listener.UDMFTypeListener;
  * A mechanism for reading UDMF data, element by element, in a <i>pull-oriented</i> way.
  * compared to {@link UDMFReader}, which is push-oriented.
  * @author Matthew Tropiano
- * @since [NOW]
+ * @since 2.4.0
  */
 public final class UDMFScanner implements Iterator<UDMFScanner.Element>
 {
@@ -37,7 +37,7 @@ public final class UDMFScanner implements Iterator<UDMFScanner.Element>
 	
 	/**
 	 * A single scanned element from the scanner.
-	 * @since [NOW]
+	 * @since 2.4.0
 	 */
 	public static class Element
 	{
