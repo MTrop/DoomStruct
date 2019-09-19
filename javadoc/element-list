@@ -4,7 +4,6 @@ net.mtrop.doom.bsp.data
 net.mtrop.doom.demo
 net.mtrop.doom.exception
 net.mtrop.doom.graphics
-net.mtrop.doom.io
 net.mtrop.doom.map
 net.mtrop.doom.map.data
 net.mtrop.doom.map.data.flags
@@ -14,6 +13,7 @@ net.mtrop.doom.map.udmf.listener
 net.mtrop.doom.object
 net.mtrop.doom.sound
 net.mtrop.doom.struct
+net.mtrop.doom.struct.io
 net.mtrop.doom.struct.map
 net.mtrop.doom.struct.trie
 net.mtrop.doom.struct.vector
