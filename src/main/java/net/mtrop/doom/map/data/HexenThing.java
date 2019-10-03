@@ -30,22 +30,6 @@ public class HexenThing extends CommonThing implements BinaryObject
 	protected int id;
 	/** Thing Z position relative to sector plane. */
 	protected int z;
-
-	/** Flag: Thing is dormant. */
-	protected boolean dormant;
-	/** Flag: Thing appears for fighters. */
-	protected boolean fighter;
-	/** Flag: Thing appears for cleric. */
-	protected boolean cleric;
-	/** Flag: Thing appears for mage. */
-	protected boolean mage;
-	/** Flag: Thing appears for single player. */
-	protected boolean singlePlayer;
-	/** Flag: Thing appears for cooperative. */
-	protected boolean cooperative;
-	/** Flag: Thing appears for deathmatch. */
-	protected boolean deathmatch;
-	
 	/** Thing action special. */
 	protected int special;
 	/** Thing action special arguments. */
@@ -59,15 +43,6 @@ public class HexenThing extends CommonThing implements BinaryObject
 		super();
 		this.id = 0;
 		this.z = 0;
-
-		this.dormant = false;
-		this.fighter = false;
-		this.cleric = false;
-		this.mage = false;
-		this.singlePlayer = false;
-		this.cooperative = false;
-		this.deathmatch = false;
-		
 		this.special = 0;
 		this.arguments = new int[5];
 	}
@@ -110,125 +85,6 @@ public class HexenThing extends CommonThing implements BinaryObject
 		this.id = id;
 	}
 
-	/**
-	 * @return true if this is dormant, false if not.
-	 */
-	public boolean isDormant()
-	{
-		return dormant;
-	}
-
-	/**
-	 * Sets if this is dormant.
-	 * @param dormant true to set, false to clear.
-	 */
-	public void setDormant(boolean dormant)
-	{
-		this.dormant = dormant;
-	}
-
-	/**
-	 * @return true if this appears on single player, false if not.
-	 */
-	public boolean isSinglePlayer()
-	{
-		return singlePlayer;
-	}
-
-	/**
-	 * Sets if this appears on single player.
-	 * @param singlePlayer true to set, false to clear.
-	 */
-	public void setSinglePlayer(boolean singlePlayer)
-	{
-		this.singlePlayer = singlePlayer;
-	}
-
-	/**
-	 * @return true if this appears on cooperative, false if not.
-	 */
-	public boolean isCooperative()
-	{
-		return cooperative;
-	}
-
-	/**
-	 * Sets if this appears on cooperative.
-	 * @param cooperative true to set, false to clear.
-	 */
-	public void setCooperative(boolean cooperative)
-	{
-		this.cooperative = cooperative;
-	}
-
-	/**
-	 * @return true if this appears on deathmatch, false if not.
-	 */
-	public boolean isDeathmatch()
-	{
-		return deathmatch;
-	}
-
-	/**
-	 * Sets if this appears on deathmatch.
-	 * @param deathmatch true to set, false to clear.
-	 */
-	public void setDeathmatch(boolean deathmatch)
-	{
-		this.deathmatch = deathmatch;
-	}
-
-	/**
-	 * @return true if this appears for Fighters, false if not.
-	 */
-	public boolean isFighter()
-	{
-		return fighter;
-	}
-	
-	/**
-	 * Sets if this appears for Fighters.
-	 * @param fighter true to set, false to clear.
-	 */
-	public void setFighter(boolean fighter)
-	{
-		this.fighter = fighter;
-	}
-	
-	/**
-	 * @return true if this appears for Clerics, false if not.
-	 */
-	public boolean isCleric()
-	{
-		return cleric;
-	}
-	
-	/**
-	 * Sets if this appears for Cleric.
-	 * @param cleric true to set, false to clear.
-	 */
-	public void setCleric(boolean cleric)
-	{
-		this.cleric = cleric;
-	}
-	
-	/**
-	 * @return true if this appears for Mages, false if not.
-	 */
-	public boolean isMage()
-	{
-		return mage;
-	}
-	
-	/**
-	 * Sets if this appears for Mages.
-	 * @param mage true to set, false to clear.
-	 */
-	public void setMage(boolean mage)
-	{
-		this.mage = mage;
-	}
-	
 	/**
 	 * @return the special action for this thing.
 	 */

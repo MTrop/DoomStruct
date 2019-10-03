@@ -3,6 +3,13 @@ Doom Struct (C) 2015-2019
 by Matt Tropiano et al. (see AUTHORS.txt)
 
 
+Changed in [NOW]
+----------------
+
+- `Added` MapElementView
+- `Removed` HexenThing "isXXX()" boolean functions. They didn't work, anyway. [Issue 5](https://github.com/MTrop/DoomStruct/issues/5)
+
+
 Changed in 2.4.0
 ----------------
 

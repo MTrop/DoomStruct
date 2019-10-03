@@ -52,3 +52,10 @@ where it can mislead those unfamiliar with other engines or ports.
 These methods alter data, and require you to be more precise about what you are changing. Most of
 the other methods that do "seeking" are read-only - finding the wrong entry to read has no direct
 permanent impact.
+
+### How come MapElementView takes *Ints* instead of Enums for enumerating field types?
+
+Java Enums cannot be extended. If a developer creates a class that is an extension of another MapElementView, the same
+values can be used for the enumerated fields instead of needing to potentially create another full Enum set that
+the new view class would accept. While this approach is a little more error-prone for end-users, this would still enable developers
+to add only what they would need to implement and call the parent implementation for handling an unknown field type.
