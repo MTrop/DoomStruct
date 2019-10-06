@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import net.mtrop.doom.Wad;
+import net.mtrop.doom.WadBuffer;
 import net.mtrop.doom.WadEntry;
 import net.mtrop.doom.WadFile;
 
@@ -24,6 +25,36 @@ import net.mtrop.doom.WadFile;
 public final class WadUtils
 {
 	private WadUtils() {}
+
+	/**
+	 * A functional interface that describes a function that 
+	 * takes a Wad and returns void, without handling any exceptions thrown by it. 
+	 */
+	public static interface WadConsumer
+	{
+		/**
+		 * Calls this function with a Wad file.
+		 * @param wad the provided Wad to operate on.
+		 * @throws Exception if any exception occurs.
+		 */
+		void accept(Wad wad) throws Exception;
+	}
+
+	/**
+	 * A functional interface that describes a function that 
+	 * takes a Wad and returns data, without handling any exceptions thrown by it. 
+	 * @param <R> the return type.
+	 */
+	public static interface WadFunction<R>
+	{
+		/**
+		 * Calls this function with a Wad file.
+		 * @param wad the provided Wad to operate on.
+		 * @return the data returned by the function.
+		 * @throws Exception if any exception occurs.
+		 */
+		R apply(Wad wad) throws Exception;
+	}
 
 	/**
 	 * Creates a new WAD file by copying the contents of an existing WAD to another file,
@@ -50,10 +81,45 @@ public final class WadUtils
 	 * @param prefix the namespace prefix to use (e.g. "F" or "FF" for flats, "P" or "PP" for patches, etc.).
 	 * @param wad the WAD file to scan.
 	 * @return an array of all entries in the namespace, or an empty array if none are found.
+	 * @deprecated (in [NOW]) Parameter ordering not in line with rest of util methods. Will be removed!
 	 */
 	public static WadEntry[] getEntriesInNamespace(String prefix, Wad wad)
 	{
-		return getEntriesInNamespace(prefix, null, wad);
+		return getEntriesInNamespace(wad, prefix);
+	}
+
+	/**
+	 * Finds all entries within a WAD entry namespace.
+	 * A namespace is marked by one or two characters and "_START" or "_END" as a suffix.
+	 * All entries in between are considered part of the "namespace."
+	 * <p>
+	 * The returned entries are valid only to the provided WAD. Using entry information with unassociated WADs
+	 * could create undesired results.
+	 * @param prefix the namespace prefix to use (e.g. "F" or "FF" for flats, "P" or "PP" for texture patches, etc.).
+	 * @param wad the WAD file to scan.
+	 * @param ignorePattern the regex pattern to use for deciding which entries in the namespace to ignore.
+	 * @return an array of all entries in the namespace, or an empty array if none are found.
+	 * @deprecated (in [NOW]) Parameter ordering not in line with rest of util methods. Will be removed!
+	 */
+	public static WadEntry[] getEntriesInNamespace(String prefix, Pattern ignorePattern, Wad wad)
+	{
+		return getEntriesInNamespace(wad, prefix, ignorePattern);
+	}
+
+	/**
+	 * Finds all entries within a WAD entry namespace.
+	 * A namespace is marked by one or two characters and "_START" or "_END" as a suffix.
+	 * All entries in between are considered part of the "namespace."
+	 * <p>
+	 * The returned entries are valid only to the provided WAD. Using entry information with unassociated WADs
+	 * could create undesired results.
+	 * @param prefix the namespace prefix to use (e.g. "F" or "FF" for flats, "P" or "PP" for patches, etc.).
+	 * @param wad the WAD file to scan.
+	 * @return an array of all entries in the namespace, or an empty array if none are found.
+	 */
+	public static WadEntry[] getEntriesInNamespace(Wad wad, String prefix)
+	{
+		return getEntriesInNamespace(wad, prefix, null);
 	}
 
 	/**
@@ -68,7 +134,7 @@ public final class WadUtils
 	 * @param ignorePattern the regex pattern to use for deciding which entries in the namespace to ignore.
 	 * @return an array of all entries in the namespace, or an empty array if none are found.
 	 */
-	public static WadEntry[] getEntriesInNamespace(String prefix, Pattern ignorePattern, Wad wad)
+	public static WadEntry[] getEntriesInNamespace(Wad wad, String prefix, Pattern ignorePattern)
 	{
 		List<WadEntry> entryList = new ArrayList<WadEntry>(100);
 		
@@ -93,4 +159,178 @@ public final class WadUtils
 		return entry;
 	}
 
+	/**
+	 * Opens a WAD file, performs an action on it, and then closes it automatically afterward.
+	 * The opened WAD is passed to the provided {@link WadConsumer}.
+	 * <p>This method is intended for <i>pure convenience</i>, and will throw a {@link RuntimeException}
+	 * if an exception occurs. Do not use this if you intend to handle errors explicitly.
+	 * @param path the path to the WAD file.
+	 * @param wadConsumer a {@link WadConsumer} that takes the opened Wad as its only parameter.
+	 * @throws RuntimeException if an exception occurs (the exception that occurred is the set cause).
+	 * @since [NOW]
+	 */
+	public static void openWadAnd(String path, WadConsumer wadConsumer)
+	{
+	    openWadAnd(new File(path), wadConsumer);
+	}
+	
+	/**
+	 * Opens a WAD file, performs an action on it, and then closes it automatically afterward.
+	 * The opened WAD is passed to the provided {@link WadConsumer}.
+	 * <p>This method is intended for <i>pure convenience</i>, and will throw a {@link RuntimeException}
+	 * if an exception occurs. Do not use this if you intend to handle errors explicitly.
+	 * @param path the path to the WAD file.
+	 * @param wadConsumer a {@link WadConsumer} that takes the opened Wad as its only parameter.
+	 * @throws RuntimeException if an exception occurs (the exception that occurred is the set cause).
+	 * @since [NOW]
+	 */
+	public static void openWadAnd(File path, WadConsumer wadConsumer)
+	{
+	    try (WadFile wad = new WadFile(path)) {
+	        wadConsumer.accept(wad);
+	    } catch (Exception e) {
+	        throw new RuntimeException("WadUtils.openWadAnd() threw an exception.", e);
+	    } // auto-closed
+	}
+	
+	/**
+	 * Opens a WAD file, retrieves information from it, and then closes it automatically afterward.
+	 * The opened WAD is passed to the provided {@link WadFunction}.
+	 * <p>This method is intended for <i>pure convenience</i>, and will throw a {@link RuntimeException}
+	 * if an exception occurs. Do not use this if you intend to handle errors explicitly.
+	 * @param path the path to the WAD file.
+	 * @param wadFunction a {@link WadFunction} that takes the opened Wad as its only parameter.
+	 * @return the data returned from the provided function.
+	 * @throws RuntimeException if an exception occurs (the exception that occurred is the set cause).
+	 * @since [NOW]
+	 */
+	public static <R> R openWadAndGet(String path, WadFunction<R> wadFunction)
+	{
+		return openWadAndGet(new File(path), wadFunction);
+	}
+	
+	/**
+	 * Opens a WAD file, retrieves information from it (which is returned), and then closes it automatically afterward.
+	 * The opened WAD is passed to the provided {@link WadFunction}.
+	 * <p>This method is intended for <i>pure convenience</i>, and will throw a {@link RuntimeException}
+	 * if an exception occurs. Do not use this if you intend to handle errors explicitly.
+	 * @param path the path to the WAD file.
+	 * @param wadFunction a {@link WadFunction} that takes the opened Wad as its only parameter.
+	 * @return the data returned from the provided function.
+	 * @throws RuntimeException if an exception occurs (the exception that occurred is the set cause).
+	 * @since [NOW]
+	 */
+	public static <R> R openWadAndGet(File path, WadFunction<R> wadFunction)
+	{
+	    try (WadFile wad = new WadFile(path)) {
+	        return wadFunction.apply(wad);
+	    } catch (Exception e) {
+	        throw new RuntimeException("WadUtils.openWadAndGet() threw an exception.", e);
+	    } // auto-closed
+	}
+	
+	/**
+	 * Opens a WAD file, exports a list of entries to a new WAD, and then closes both automatically afterward.
+	 * The opened WAD is passed to the provided {@link WadFunction}.
+	 * <p>This method is intended for <i>pure convenience</i>, and will throw a {@link RuntimeException}
+	 * if an exception occurs. Do not use this if you intend to handle errors explicitly.
+	 * @param path the path to the WAD file.
+	 * @param outPath the output path for the new WAD file.
+	 * @param wadFunction a {@link WadFunction} that takes the opened Wad as its only parameter.
+	 * @throws RuntimeException if an exception occurs (the exception that occurred is the set cause).
+	 * @since [NOW]
+	 */
+	public static void openWadAndExtractTo(String path, String outPath, WadFunction<WadEntry[]> wadFunction) 
+	{
+	    openWadAndExtractTo(new File(path), new File(outPath), wadFunction);
+	}
+
+	/**
+	 * Opens a WAD file, exports a list of entries to a new WAD, and then closes both automatically afterward.
+	 * The opened WAD is passed to the provided {@link WadFunction}.
+	 * <p>This method is intended for <i>pure convenience</i>, and will throw a {@link RuntimeException}
+	 * if an exception occurs. Do not use this if you intend to handle errors explicitly.
+	 * @param path the path to the WAD file.
+	 * @param outPath the output path for the new WAD file.
+	 * @param wadFunction a {@link WadFunction} that takes the opened Wad as its only parameter.
+	 * @throws RuntimeException if an exception occurs (the exception that occurred is the set cause).
+	 * @since [NOW]
+	 */
+	public static void openWadAndExtractTo(String path, File outPath, WadFunction<WadEntry[]> wadFunction) 
+	{
+	    openWadAndExtractTo(new File(path), outPath, wadFunction);
+	}
+
+	/**
+	 * Opens a WAD file, exports a list of entries to a new WAD, and then closes both automatically afterward.
+	 * The opened WAD is passed to the provided {@link WadFunction}.
+	 * <p>This method is intended for <i>pure convenience</i>, and will throw a {@link RuntimeException}
+	 * if an exception occurs. Do not use this if you intend to handle errors explicitly.
+	 * @param path the path to the WAD file.
+	 * @param outPath the output path for the new WAD file.
+	 * @param wadFunction a {@link WadFunction} that takes the opened Wad as its only parameter.
+	 * @throws RuntimeException if an exception occurs (the exception that occurred is the set cause).
+	 * @since [NOW]
+	 */
+	public static void openWadAndExtractTo(File path, String outPath, WadFunction<WadEntry[]> wadFunction)
+	{
+	    openWadAndExtractTo(path, new File(outPath), wadFunction);
+	}
+
+	/**
+	 * Opens a WAD file, exports a list of entries to a new WAD, and then closes both automatically afterward.
+	 * The opened WAD is passed to the provided {@link WadFunction}.
+	 * <p>This method is intended for <i>pure convenience</i>, and will throw a {@link RuntimeException}
+	 * if an exception occurs. Do not use this if you intend to handle errors explicitly.
+	 * @param path the path to the WAD file.
+	 * @param outPath the output path for the new WAD file.
+	 * @param wadFunction a {@link WadFunction} that takes the opened Wad as its only parameter.
+	 * @throws RuntimeException if an exception occurs (the exception that occurred is the set cause).
+	 * @since [NOW]
+	 */
+	public static void openWadAndExtractTo(File path, File outPath, WadFunction<WadEntry[]> wadFunction) 
+	{
+	    try (WadFile source = new WadFile(path)) {
+	        WadFile.extract(outPath, source, wadFunction.apply(source)).close();
+	    } catch (Exception e) {
+	        throw new RuntimeException("WadUtils.openWadAndExtractTo() threw an exception.", e);
+	    } // auto-closed
+	}
+
+	/**
+	 * Opens a WAD file, exports a list of entries to a new returned {@link WadBuffer}, and then closes it automatically afterward.
+	 * The opened WAD is passed to the provided {@link WadFunction}.
+	 * <p>This method is intended for <i>pure convenience</i>, and will throw a {@link RuntimeException}
+	 * if an exception occurs. Do not use this if you intend to handle errors explicitly.
+	 * @param path the path to the WAD file.
+	 * @param wadFunction a {@link WadFunction} that takes the opened Wad as its only parameter.
+	 * @return the WadBuffer with the desired entries.
+	 * @throws RuntimeException if an exception occurs (the exception that occurred is the set cause).
+	 * @since [NOW]
+	 */
+	public static WadBuffer openWadAndExtractBuffer(String path, WadFunction<WadEntry[]> wadFunction)
+	{
+	    return openWadAndExtractBuffer(new File(path), wadFunction);
+	}
+
+	/**
+	 * Opens a WAD file, exports a list of entries to a new returned {@link WadBuffer}, and then closes it automatically afterward.
+	 * The opened WAD is passed to the provided {@link WadFunction}.
+	 * <p>This method is intended for <i>pure convenience</i>, and will throw a {@link RuntimeException}
+	 * if an exception occurs. Do not use this if you intend to handle errors explicitly.
+	 * @param path the path to the WAD file.
+	 * @param wadFunction a {@link WadFunction} that takes the opened Wad as its only parameter.
+	 * @return the WadBuffer with the desired entries.
+	 * @throws RuntimeException if an exception occurs (the exception that occurred is the set cause).
+	 * @since [NOW]
+	 */
+	public static WadBuffer openWadAndExtractBuffer(File path, WadFunction<WadEntry[]> wadFunction) 
+	{
+	    try (WadFile source = new WadFile(path)) {
+	        return WadBuffer.extract(source, wadFunction.apply(source));
+	    } catch (Exception e) {
+	        throw new RuntimeException("WadUtils.openWadAndExtractBuffer() threw an exception.", e);
+	    } // auto-closed
+	}
+	
 }
