@@ -17,6 +17,7 @@ import net.mtrop.doom.Wad;
 import net.mtrop.doom.WadBuffer;
 import net.mtrop.doom.WadEntry;
 import net.mtrop.doom.WadFile;
+import net.mtrop.doom.struct.Sizable;
 
 /**
  * WAD utility methods and functions.
@@ -29,21 +30,23 @@ public final class WadUtils
 	/**
 	 * A functional interface that describes a function that 
 	 * takes a Wad and returns void, without handling any exceptions thrown by it. 
+	 * @since [NOW]
 	 */
 	public static interface WadConsumer
 	{
 		/**
 		 * Calls this function with a Wad file.
 		 * @param wad the provided Wad to operate on.
-		 * @throws Exception if any exception occurs.
+		 * @throws IOException if any I/O exception occurs.
 		 */
-		void accept(Wad wad) throws Exception;
+		void accept(Wad wad) throws IOException;
 	}
 
 	/**
 	 * A functional interface that describes a function that 
 	 * takes a Wad and returns data, without handling any exceptions thrown by it. 
 	 * @param <R> the return type.
+	 * @since [NOW]
 	 */
 	public static interface WadFunction<R>
 	{
@@ -51,9 +54,85 @@ public final class WadUtils
 		 * Calls this function with a Wad file.
 		 * @param wad the provided Wad to operate on.
 		 * @return the data returned by the function.
-		 * @throws Exception if any exception occurs.
+		 * @throws IOException if any I/O exception occurs.
 		 */
-		R apply(Wad wad) throws Exception;
+		R apply(Wad wad) throws IOException;
+	}
+
+	/**
+	 * An accumulator for WadEntries.
+	 * @since [NOW]
+	 */
+	public static class WadEntryAccumulator implements Sizable
+	{
+		private List<WadEntry> list;
+		
+		private WadEntryAccumulator(WadEntry ... entries)
+		{
+			this.list = new ArrayList<>(64);
+			if (entries != null)
+				and(entries);
+		}
+		
+		/**
+		 * Adds a single entry to the list.
+		 * If entry is null, this does nothing. 
+		 * @param entry the entry to add. 
+		 * @return itself.
+		 */
+		public WadEntryAccumulator and(WadEntry entry)
+		{
+			list.add(entry);
+			return this;
+		}
+		
+		/**
+		 * Adds a set of entries to the list in the order that they are in the array. 
+		 * If entries is null, this does nothing. 
+		 * @param entries the entries to add. 
+		 * @return itself.
+		 */
+		public WadEntryAccumulator and(WadEntry ... entries)
+		{
+			if (entries != null) for (int i = 0; i < entries.length; i++)
+				list.add(entries[i]);
+			return this;
+		}
+		
+		@Override
+		public int size()
+		{
+			return list.size();
+		}
+		
+		@Override
+		public boolean isEmpty()
+		{
+			return list.isEmpty();
+		}
+
+		/**
+		 * Gets all of the entries in this accumulator, in the order that they were added to it.
+		 * @return an array of all of the entries accumulated so far.
+		 */
+		public WadEntry[] get()
+		{
+			WadEntry[] out = new WadEntry[list.size()];
+			list.toArray(out);
+			return out;
+		}
+		
+	}
+
+	/**
+	 * Creates a WadEntry accumulator with a set of entries.
+	 * @param entries the entries to start the accumulator with.
+	 * @return a new accumulator with the provided entries already added.
+	 * @since [NOW]
+	 */
+	public static WadEntryAccumulator withEntries(WadEntry ... entries)
+	{
+		return new WadEntryAccumulator(entries);
 	}
 
 	/**
@@ -162,14 +241,12 @@ public final class WadUtils
 	/**
 	 * Opens a WAD file, performs an action on it, and then closes it automatically afterward.
 	 * The opened WAD is passed to the provided {@link WadConsumer}.
-	 * <p>This method is intended for <i>pure convenience</i>, and will throw a {@link RuntimeException}
-	 * if an exception occurs. Do not use this if you intend to handle errors explicitly.
 	 * @param path the path to the WAD file.
 	 * @param wadConsumer a {@link WadConsumer} that takes the opened Wad as its only parameter.
-	 * @throws RuntimeException if an exception occurs (the exception that occurred is the set cause).
+	 * @throws IOException if any I/O exception occurs.
 	 * @since [NOW]
 	 */
-	public static void openWadAnd(String path, WadConsumer wadConsumer)
+	public static void openWadAnd(String path, WadConsumer wadConsumer) throws IOException
 	{
 	    openWadAnd(new File(path), wadConsumer);
 	}
@@ -181,10 +258,10 @@ public final class WadUtils
 	 * if an exception occurs. Do not use this if you intend to handle errors explicitly.
 	 * @param path the path to the WAD file.
 	 * @param wadConsumer a {@link WadConsumer} that takes the opened Wad as its only parameter.
-	 * @throws RuntimeException if an exception occurs (the exception that occurred is the set cause).
+	 * @throws IOException if any I/O exception occurs.
 	 * @since [NOW]
 	 */
-	public static void openWadAnd(File path, WadConsumer wadConsumer)
+	public static void openWadAnd(File path, WadConsumer wadConsumer) throws IOException
 	{
 	    try (WadFile wad = new WadFile(path)) {
 	        wadConsumer.accept(wad);
@@ -201,10 +278,10 @@ public final class WadUtils
 	 * @param path the path to the WAD file.
 	 * @param wadFunction a {@link WadFunction} that takes the opened Wad as its only parameter.
 	 * @return the data returned from the provided function.
-	 * @throws RuntimeException if an exception occurs (the exception that occurred is the set cause).
+	 * @throws IOException if any I/O exception occurs.
 	 * @since [NOW]
 	 */
-	public static <R> R openWadAndGet(String path, WadFunction<R> wadFunction)
+	public static <R> R openWadAndGet(String path, WadFunction<R> wadFunction) throws IOException
 	{
 		return openWadAndGet(new File(path), wadFunction);
 	}
@@ -217,10 +294,10 @@ public final class WadUtils
 	 * @param path the path to the WAD file.
 	 * @param wadFunction a {@link WadFunction} that takes the opened Wad as its only parameter.
 	 * @return the data returned from the provided function.
-	 * @throws RuntimeException if an exception occurs (the exception that occurred is the set cause).
+	 * @throws IOException if any I/O exception occurs.
 	 * @since [NOW]
 	 */
-	public static <R> R openWadAndGet(File path, WadFunction<R> wadFunction)
+	public static <R> R openWadAndGet(File path, WadFunction<R> wadFunction) throws IOException
 	{
 	    try (WadFile wad = new WadFile(path)) {
 	        return wadFunction.apply(wad);
@@ -237,10 +314,10 @@ public final class WadUtils
 	 * @param path the path to the WAD file.
 	 * @param outPath the output path for the new WAD file.
 	 * @param wadFunction a {@link WadFunction} that takes the opened Wad as its only parameter.
-	 * @throws RuntimeException if an exception occurs (the exception that occurred is the set cause).
+	 * @throws IOException if any I/O exception occurs.
 	 * @since [NOW]
 	 */
-	public static void openWadAndExtractTo(String path, String outPath, WadFunction<WadEntry[]> wadFunction) 
+	public static void openWadAndExtractTo(String path, String outPath, WadFunction<WadEntry[]> wadFunction) throws IOException
 	{
 	    openWadAndExtractTo(new File(path), new File(outPath), wadFunction);
 	}
@@ -253,10 +330,10 @@ public final class WadUtils
 	 * @param path the path to the WAD file.
 	 * @param outPath the output path for the new WAD file.
 	 * @param wadFunction a {@link WadFunction} that takes the opened Wad as its only parameter.
-	 * @throws RuntimeException if an exception occurs (the exception that occurred is the set cause).
+	 * @throws IOException if any I/O exception occurs.
 	 * @since [NOW]
 	 */
-	public static void openWadAndExtractTo(String path, File outPath, WadFunction<WadEntry[]> wadFunction) 
+	public static void openWadAndExtractTo(String path, File outPath, WadFunction<WadEntry[]> wadFunction) throws IOException
 	{
 	    openWadAndExtractTo(new File(path), outPath, wadFunction);
 	}
@@ -269,10 +346,10 @@ public final class WadUtils
 	 * @param path the path to the WAD file.
 	 * @param outPath the output path for the new WAD file.
 	 * @param wadFunction a {@link WadFunction} that takes the opened Wad as its only parameter.
-	 * @throws RuntimeException if an exception occurs (the exception that occurred is the set cause).
+	 * @throws IOException if any I/O exception occurs.
 	 * @since [NOW]
 	 */
-	public static void openWadAndExtractTo(File path, String outPath, WadFunction<WadEntry[]> wadFunction)
+	public static void openWadAndExtractTo(File path, String outPath, WadFunction<WadEntry[]> wadFunction) throws IOException
 	{
 	    openWadAndExtractTo(path, new File(outPath), wadFunction);
 	}
@@ -285,10 +362,10 @@ public final class WadUtils
 	 * @param path the path to the WAD file.
 	 * @param outPath the output path for the new WAD file.
 	 * @param wadFunction a {@link WadFunction} that takes the opened Wad as its only parameter.
-	 * @throws RuntimeException if an exception occurs (the exception that occurred is the set cause).
+	 * @throws IOException if any I/O exception occurs.
 	 * @since [NOW]
 	 */
-	public static void openWadAndExtractTo(File path, File outPath, WadFunction<WadEntry[]> wadFunction) 
+	public static void openWadAndExtractTo(File path, File outPath, WadFunction<WadEntry[]> wadFunction) throws IOException 
 	{
 	    try (WadFile source = new WadFile(path)) {
 	        WadFile.extract(outPath, source, wadFunction.apply(source)).close();
@@ -305,10 +382,10 @@ public final class WadUtils
 	 * @param path the path to the WAD file.
 	 * @param wadFunction a {@link WadFunction} that takes the opened Wad as its only parameter.
 	 * @return the WadBuffer with the desired entries.
-	 * @throws RuntimeException if an exception occurs (the exception that occurred is the set cause).
+	 * @throws IOException if any I/O exception occurs.
 	 * @since [NOW]
 	 */
-	public static WadBuffer openWadAndExtractBuffer(String path, WadFunction<WadEntry[]> wadFunction)
+	public static WadBuffer openWadAndExtractBuffer(String path, WadFunction<WadEntry[]> wadFunction) throws IOException
 	{
 	    return openWadAndExtractBuffer(new File(path), wadFunction);
 	}
@@ -321,10 +398,10 @@ public final class WadUtils
 	 * @param path the path to the WAD file.
 	 * @param wadFunction a {@link WadFunction} that takes the opened Wad as its only parameter.
 	 * @return the WadBuffer with the desired entries.
-	 * @throws RuntimeException if an exception occurs (the exception that occurred is the set cause).
+	 * @throws IOException if any I/O exception occurs.
 	 * @since [NOW]
 	 */
-	public static WadBuffer openWadAndExtractBuffer(File path, WadFunction<WadEntry[]> wadFunction) 
+	public static WadBuffer openWadAndExtractBuffer(File path, WadFunction<WadEntry[]> wadFunction) throws IOException
 	{
 	    try (WadFile source = new WadFile(path)) {
 	        return WadBuffer.extract(source, wadFunction.apply(source));

@@ -250,6 +250,19 @@ newwad.addData("TEXTURE1", tout.toBytes());
 newwad.close();
 ```
 
+Open `DOOM.WAD`, get the first map of each episode and write it to a new WAD and close both (with one statement!).
+
+```java
+WadUtils.openWadAndExtractTo("DOOM.WAD", "OUT.wad", (wad)->
+	WadUtils.withEntries(MapUtils.getMapEntries(wad, "E1M1"))
+		.and(MapUtils.getMapEntries(wad, "E2M1"))
+		.and(MapUtils.getMapEntries(wad, "E3M1"))
+		.and(MapUtils.getMapEntries(wad, "E4M1"))
+	.get()
+);
+```
+
+
 ### Compiling with Ant
 
 To compile this library with Apache Ant, type:
