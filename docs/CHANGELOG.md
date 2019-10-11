@@ -7,6 +7,7 @@ Changed in [NOW]
 ----------------
 
 - `Added` MapElementView
+- `Added` To Wad: addFrom(...), addFromAt(...)
 - `Added` To WadUtils: openWadAnd(...), openWadAndGet(...), openWadAndExtractTo(...), openWadAndExtractBuffer(...)
 - `Removed` HexenThing "isXXX()" boolean functions. They didn't work, anyway. [Issue 5](https://github.com/MTrop/DoomStruct/issues/5)
 

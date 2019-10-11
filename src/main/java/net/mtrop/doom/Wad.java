@@ -1892,6 +1892,60 @@ public interface Wad extends Iterable<WadEntry>
 	}
 
 	/**
+	 * Takes entries and their data from another Wad and adds it to this one.
+	 * @param source the the source Wad.
+	 * @param startIndex the starting entry index.
+	 * @param maxLength the maximum amount of entries from the starting index to copy.
+	 * @throws IOException if an error occurs on read from the source Wad or write to this Wad.
+	 * @since [NOW]
+	 */
+	default void addFrom(Wad source, int startIndex, int maxLength) throws IOException
+	{
+		addFrom(source, source.mapEntries(startIndex, maxLength));
+	}
+	
+	/**
+	 * Takes entries and their data from another Wad and adds it to this one.
+	 * @param source the the source Wad.
+	 * @param entries the entries to copy over.
+	 * @throws IOException if an error occurs on read from the source Wad or write to this Wad.
+	 * @since [NOW]
+	 */
+	default void addFrom(Wad source, WadEntry ... entries) throws IOException
+	{
+		for (int i = 0; i < entries.length; i++)
+			addData(entries[i].getName(), source.getData(entries[i]));
+	}
+	
+	/**
+	 * Takes entries and their data from another Wad and adds it to this one at a specific index.
+	 * @param destIndex the index at which to add the entries.
+	 * @param source the the source Wad.
+	 * @param startIndex the starting entry index.
+	 * @param maxLength the maximum amount of entries from the starting index to copy.
+	 * @throws IOException if an error occurs on read from the source Wad or write to this Wad.
+	 * @since [NOW]
+	 */
+	default void addFromAt(int destIndex, Wad source, int startIndex, int maxLength) throws IOException
+	{
+		addFromAt(destIndex, source, source.mapEntries(startIndex, maxLength));
+	}
+	
+	/**
+	 * Takes entries and their data from another Wad and adds it to this one at a specific index.
+	 * @param destIndex the index at which to add the entries.
+	 * @param source the the source Wad.
+	 * @param entries the entries to copy over.
+	 * @throws IOException if an error occurs on read from the source Wad or write to this Wad.
+	 * @since [NOW]
+	 */
+	default void addFromAt(int destIndex, Wad source, WadEntry ... entries) throws IOException
+	{
+		for (int i = 0; i < entries.length; i++)
+			addDataAt(destIndex + i, entries[i].getName(), source.getData(entries[i]));
+	}
+	
+	/**
 	 * Replaces the entry at an index in the Wad.
 	 * If the incoming data is the same size as the entry at the index, 
 	 * this will change the data in-place without deleting and adding.
