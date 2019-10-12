@@ -275,6 +275,7 @@ public final class WadUtils
 	 * The opened WAD is passed to the provided {@link WadFunction}.
 	 * <p>This method is intended for <i>pure convenience</i>, and will throw a {@link RuntimeException}
 	 * if an exception occurs. Do not use this if you intend to handle errors explicitly.
+	 * @param <R> the return type.
 	 * @param path the path to the WAD file.
 	 * @param wadFunction a {@link WadFunction} that takes the opened Wad as its only parameter.
 	 * @return the data returned from the provided function.
@@ -291,6 +292,7 @@ public final class WadUtils
 	 * The opened WAD is passed to the provided {@link WadFunction}.
 	 * <p>This method is intended for <i>pure convenience</i>, and will throw a {@link RuntimeException}
 	 * if an exception occurs. Do not use this if you intend to handle errors explicitly.
+	 * @param <R> the return type.
 	 * @param path the path to the WAD file.
 	 * @param wadFunction a {@link WadFunction} that takes the opened Wad as its only parameter.
 	 * @return the data returned from the provided function.
