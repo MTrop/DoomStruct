@@ -6,7 +6,6 @@ by Matt Tropiano et al. (see AUTHORS.txt)
 Changed in [NOW]
 ----------------
 
-- `Added` MapElementView
 - `Added` To Wad: addFrom(...), addFromAt(...)
 - `Added` To WadUtils: openWadAnd(...), openWadAndGet(...), openWadAndExtractTo(...), openWadAndExtractBuffer(...)
 - `Changed` Moved MathUtils from `util` to `struct` since it is not meant to be used outside of the library.
