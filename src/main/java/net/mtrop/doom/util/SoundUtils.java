@@ -19,6 +19,7 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
 import net.mtrop.doom.sound.DMXSound;
+import net.mtrop.doom.struct.MathUtils;
 import net.mtrop.doom.struct.io.IOUtils;
 import net.mtrop.doom.struct.io.JSPISoundHandle;
 import net.mtrop.doom.struct.io.SerializerUtils;

@@ -15,7 +15,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 import net.mtrop.doom.object.BinaryObject;
-import net.mtrop.doom.util.MathUtils;
+import net.mtrop.doom.struct.MathUtils;
 import net.mtrop.doom.util.RangeUtils;
 
 /**

@@ -10,7 +10,7 @@ package net.mtrop.doom.graphics;
 import java.io.*;
 
 import net.mtrop.doom.object.BinaryObject;
-import net.mtrop.doom.util.MathUtils;
+import net.mtrop.doom.struct.MathUtils;
 
 /**
  * This is a single entry that indexes the palette indices for color lookup.

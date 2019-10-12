@@ -1,3 +1,9 @@
+/*******************************************************************************
+ * Copyright (c) 2019 Black Rook Software
+ * 
+ * This program and the accompanying materials are made available under 
+ * the terms of the MIT License, which accompanies this distribution.
+ ******************************************************************************/
 package net.mtrop.doom.struct.io;
 
 import java.io.ByteArrayOutputStream;

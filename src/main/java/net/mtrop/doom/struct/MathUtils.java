@@ -1,6 +1,14 @@
-package net.mtrop.doom.util;
+/*******************************************************************************
+ * Copyright (c) 2019 Black Rook Software
+ * 
+ * This program and the accompanying materials are made available under 
+ * the terms of the MIT License, which accompanies this distribution.
+ ******************************************************************************/
+package net.mtrop.doom.struct;
 
 import java.util.Random;
+
+import net.mtrop.doom.util.RangeUtils;
 
 /**
  * Math utils.

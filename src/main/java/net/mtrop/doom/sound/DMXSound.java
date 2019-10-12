@@ -11,9 +11,9 @@ import java.io.*;
 import java.util.Arrays;
 
 import net.mtrop.doom.object.BinaryObject;
+import net.mtrop.doom.struct.MathUtils;
 import net.mtrop.doom.struct.io.SerialReader;
 import net.mtrop.doom.struct.io.SerialWriter;
-import net.mtrop.doom.util.MathUtils;
 import net.mtrop.doom.util.RangeUtils;
 
 /**
