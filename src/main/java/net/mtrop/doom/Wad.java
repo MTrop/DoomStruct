@@ -91,7 +91,7 @@ public interface Wad extends Iterable<WadEntry>
 	}
 
 	/**
-	 * Checks if this WAD is an Information WAD.
+	 * Checks if this WAD is an Internal WAD.
 	 * @return true if so, false if not.
 	 */
 	boolean isIWAD();
