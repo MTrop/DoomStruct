@@ -1897,7 +1897,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @param startIndex the starting entry index.
 	 * @param maxLength the maximum amount of entries from the starting index to copy.
 	 * @throws IOException if an error occurs on read from the source Wad or write to this Wad.
-	 * @since [NOW]
+	 * @since 2.5.0
 	 */
 	default void addFrom(Wad source, int startIndex, int maxLength) throws IOException
 	{
@@ -1909,7 +1909,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @param source the the source Wad.
 	 * @param entries the entries to copy over.
 	 * @throws IOException if an error occurs on read from the source Wad or write to this Wad.
-	 * @since [NOW]
+	 * @since 2.5.0
 	 */
 	default void addFrom(Wad source, WadEntry ... entries) throws IOException
 	{
@@ -1924,7 +1924,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @param startIndex the starting entry index.
 	 * @param maxLength the maximum amount of entries from the starting index to copy.
 	 * @throws IOException if an error occurs on read from the source Wad or write to this Wad.
-	 * @since [NOW]
+	 * @since 2.5.0
 	 */
 	default void addFromAt(int destIndex, Wad source, int startIndex, int maxLength) throws IOException
 	{
@@ -1937,7 +1937,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @param source the the source Wad.
 	 * @param entries the entries to copy over.
 	 * @throws IOException if an error occurs on read from the source Wad or write to this Wad.
-	 * @since [NOW]
+	 * @since 2.5.0
 	 */
 	default void addFromAt(int destIndex, Wad source, WadEntry ... entries) throws IOException
 	{

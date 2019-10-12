@@ -30,7 +30,7 @@ public final class WadUtils
 	/**
 	 * A functional interface that describes a function that 
 	 * takes a Wad and returns void, without handling any exceptions thrown by it. 
-	 * @since [NOW]
+	 * @since 2.5.0
 	 */
 	public static interface WadConsumer
 	{
@@ -46,7 +46,7 @@ public final class WadUtils
 	 * A functional interface that describes a function that 
 	 * takes a Wad and returns data, without handling any exceptions thrown by it. 
 	 * @param <R> the return type.
-	 * @since [NOW]
+	 * @since 2.5.0
 	 */
 	public static interface WadFunction<R>
 	{
@@ -61,7 +61,7 @@ public final class WadUtils
 
 	/**
 	 * An accumulator for WadEntries.
-	 * @since [NOW]
+	 * @since 2.5.0
 	 */
 	public static class WadEntryAccumulator implements Sizable
 	{
@@ -128,7 +128,7 @@ public final class WadUtils
 	 * Creates a WadEntry accumulator with a set of entries.
 	 * @param entries the entries to start the accumulator with.
 	 * @return a new accumulator with the provided entries already added.
-	 * @since [NOW]
+	 * @since 2.5.0
 	 */
 	public static WadEntryAccumulator withEntries(WadEntry ... entries)
 	{
@@ -160,7 +160,7 @@ public final class WadUtils
 	 * @param prefix the namespace prefix to use (e.g. "F" or "FF" for flats, "P" or "PP" for patches, etc.).
 	 * @param wad the WAD file to scan.
 	 * @return an array of all entries in the namespace, or an empty array if none are found.
-	 * @deprecated (in [NOW]) Parameter ordering not in line with rest of util methods. Will be removed!
+	 * @deprecated (in 2.5.0) Parameter ordering not in line with rest of util methods. Will be removed!
 	 */
 	public static WadEntry[] getEntriesInNamespace(String prefix, Wad wad)
 	{
@@ -178,7 +178,7 @@ public final class WadUtils
 	 * @param wad the WAD file to scan.
 	 * @param ignorePattern the regex pattern to use for deciding which entries in the namespace to ignore.
 	 * @return an array of all entries in the namespace, or an empty array if none are found.
-	 * @deprecated (in [NOW]) Parameter ordering not in line with rest of util methods. Will be removed!
+	 * @deprecated (in 2.5.0) Parameter ordering not in line with rest of util methods. Will be removed!
 	 */
 	public static WadEntry[] getEntriesInNamespace(String prefix, Pattern ignorePattern, Wad wad)
 	{
@@ -244,7 +244,7 @@ public final class WadUtils
 	 * @param path the path to the WAD file.
 	 * @param wadConsumer a {@link WadConsumer} that takes the opened Wad as its only parameter.
 	 * @throws IOException if any I/O exception occurs.
-	 * @since [NOW]
+	 * @since 2.5.0
 	 */
 	public static void openWadAnd(String path, WadConsumer wadConsumer) throws IOException
 	{
@@ -259,7 +259,7 @@ public final class WadUtils
 	 * @param path the path to the WAD file.
 	 * @param wadConsumer a {@link WadConsumer} that takes the opened Wad as its only parameter.
 	 * @throws IOException if any I/O exception occurs.
-	 * @since [NOW]
+	 * @since 2.5.0
 	 */
 	public static void openWadAnd(File path, WadConsumer wadConsumer) throws IOException
 	{
@@ -279,7 +279,7 @@ public final class WadUtils
 	 * @param wadFunction a {@link WadFunction} that takes the opened Wad as its only parameter.
 	 * @return the data returned from the provided function.
 	 * @throws IOException if any I/O exception occurs.
-	 * @since [NOW]
+	 * @since 2.5.0
 	 */
 	public static <R> R openWadAndGet(String path, WadFunction<R> wadFunction) throws IOException
 	{
@@ -295,7 +295,7 @@ public final class WadUtils
 	 * @param wadFunction a {@link WadFunction} that takes the opened Wad as its only parameter.
 	 * @return the data returned from the provided function.
 	 * @throws IOException if any I/O exception occurs.
-	 * @since [NOW]
+	 * @since 2.5.0
 	 */
 	public static <R> R openWadAndGet(File path, WadFunction<R> wadFunction) throws IOException
 	{
@@ -315,7 +315,7 @@ public final class WadUtils
 	 * @param outPath the output path for the new WAD file.
 	 * @param wadFunction a {@link WadFunction} that takes the opened Wad as its only parameter.
 	 * @throws IOException if any I/O exception occurs.
-	 * @since [NOW]
+	 * @since 2.5.0
 	 */
 	public static void openWadAndExtractTo(String path, String outPath, WadFunction<WadEntry[]> wadFunction) throws IOException
 	{
@@ -331,7 +331,7 @@ public final class WadUtils
 	 * @param outPath the output path for the new WAD file.
 	 * @param wadFunction a {@link WadFunction} that takes the opened Wad as its only parameter.
 	 * @throws IOException if any I/O exception occurs.
-	 * @since [NOW]
+	 * @since 2.5.0
 	 */
 	public static void openWadAndExtractTo(String path, File outPath, WadFunction<WadEntry[]> wadFunction) throws IOException
 	{
@@ -347,7 +347,7 @@ public final class WadUtils
 	 * @param outPath the output path for the new WAD file.
 	 * @param wadFunction a {@link WadFunction} that takes the opened Wad as its only parameter.
 	 * @throws IOException if any I/O exception occurs.
-	 * @since [NOW]
+	 * @since 2.5.0
 	 */
 	public static void openWadAndExtractTo(File path, String outPath, WadFunction<WadEntry[]> wadFunction) throws IOException
 	{
@@ -363,7 +363,7 @@ public final class WadUtils
 	 * @param outPath the output path for the new WAD file.
 	 * @param wadFunction a {@link WadFunction} that takes the opened Wad as its only parameter.
 	 * @throws IOException if any I/O exception occurs.
-	 * @since [NOW]
+	 * @since 2.5.0
 	 */
 	public static void openWadAndExtractTo(File path, File outPath, WadFunction<WadEntry[]> wadFunction) throws IOException 
 	{
@@ -383,7 +383,7 @@ public final class WadUtils
 	 * @param wadFunction a {@link WadFunction} that takes the opened Wad as its only parameter.
 	 * @return the WadBuffer with the desired entries.
 	 * @throws IOException if any I/O exception occurs.
-	 * @since [NOW]
+	 * @since 2.5.0
 	 */
 	public static WadBuffer openWadAndExtractBuffer(String path, WadFunction<WadEntry[]> wadFunction) throws IOException
 	{
@@ -399,7 +399,7 @@ public final class WadUtils
 	 * @param wadFunction a {@link WadFunction} that takes the opened Wad as its only parameter.
 	 * @return the WadBuffer with the desired entries.
 	 * @throws IOException if any I/O exception occurs.
-	 * @since [NOW]
+	 * @since 2.5.0
 	 */
 	public static WadBuffer openWadAndExtractBuffer(File path, WadFunction<WadEntry[]> wadFunction) throws IOException
 	{
