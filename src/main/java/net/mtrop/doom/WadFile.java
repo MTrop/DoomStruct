@@ -155,7 +155,8 @@ public class WadFile implements Wad, AutoCloseable
 	/**
 	 * Creates a new WadFile from a subset of entries (and their data) from another Wad.
 	 * <p>Entry extraction is sequential - if you have memory to spare, you may be better off
-	 * using {@link WadBuffer#extract(Wad, int, int)} since it will have far less overhead. 
+	 * using {@link WadBuffer#extract(Wad, int, int)} since it will have far less overhead.
+	 * <p><b>NOTE: This will overwrite the destination file, if it exists!</b>
 	 * @param targetFile the file to create.
 	 * @param source the the source Wad.
 	 * @param startIndex the starting entry index.
@@ -173,6 +174,7 @@ public class WadFile implements Wad, AutoCloseable
 	 * Creates a new WadFile from a subset of entries (and their data) from another Wad.
 	 * <p>Entry extraction is sequential - if you have memory to spare, you may be better off
 	 * using {@link WadBuffer#extract(Wad, WadEntry...)} since it will have far less overhead. 
+	 * <p><b>NOTE: This will overwrite the destination file, if it exists!</b>
 	 * @param targetFile the file to create.
 	 * @param source the the source Wad.
 	 * @param entries the entries to copy over.

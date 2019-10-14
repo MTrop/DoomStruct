@@ -239,6 +239,34 @@ public final class WadUtils
 	}
 
 	/**
+	 * Creates a new WAD file, performs an action on it, and then closes it automatically afterward.
+	 * The opened WAD is passed to the provided {@link WadConsumer}.
+	 * @param path the path to the WAD file.
+	 * @param wadConsumer a {@link WadConsumer} that takes the opened Wad as its only parameter.
+	 * @throws IOException if any I/O exception occurs.
+	 * @since [NOW]
+	 */
+	public static void createWadAnd(String path, WadConsumer wadConsumer) throws IOException
+	{
+		createWadAnd(new File(path), wadConsumer);
+	}
+	
+	/**
+	 * Creates a new WAD file, performs an action on it, and then closes it automatically afterward.
+	 * The opened WAD is passed to the provided {@link WadConsumer}.
+	 * @param path the path to the WAD file.
+	 * @param wadConsumer a {@link WadConsumer} that takes the opened Wad as its only parameter.
+	 * @throws IOException if any I/O exception occurs.
+	 * @since [NOW]
+	 */
+	public static void createWadAnd(File path, WadConsumer wadConsumer) throws IOException
+	{
+	    try (WadFile wad = WadFile.createWadFile(path)) {
+	        wadConsumer.accept(wad);
+	    } // auto-closed
+	}
+	
+	/**
 	 * Opens a WAD file, performs an action on it, and then closes it automatically afterward.
 	 * The opened WAD is passed to the provided {@link WadConsumer}.
 	 * @param path the path to the WAD file.
@@ -265,8 +293,6 @@ public final class WadUtils
 	{
 	    try (WadFile wad = new WadFile(path)) {
 	        wadConsumer.accept(wad);
-	    } catch (Exception e) {
-	        throw new RuntimeException("WadUtils.openWadAnd() threw an exception.", e);
 	    } // auto-closed
 	}
 	
@@ -303,8 +329,6 @@ public final class WadUtils
 	{
 	    try (WadFile wad = new WadFile(path)) {
 	        return wadFunction.apply(wad);
-	    } catch (Exception e) {
-	        throw new RuntimeException("WadUtils.openWadAndGet() threw an exception.", e);
 	    } // auto-closed
 	}
 	
@@ -371,8 +395,6 @@ public final class WadUtils
 	{
 	    try (WadFile source = new WadFile(path)) {
 	        WadFile.extract(outPath, source, wadFunction.apply(source)).close();
-	    } catch (Exception e) {
-	        throw new RuntimeException("WadUtils.openWadAndExtractTo() threw an exception.", e);
 	    } // auto-closed
 	}
 
@@ -407,8 +429,6 @@ public final class WadUtils
 	{
 	    try (WadFile source = new WadFile(path)) {
 	        return WadBuffer.extract(source, wadFunction.apply(source));
-	    } catch (Exception e) {
-	        throw new RuntimeException("WadUtils.openWadAndExtractBuffer() threw an exception.", e);
 	    } // auto-closed
 	}
 	

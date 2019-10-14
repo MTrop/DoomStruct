@@ -7,6 +7,11 @@ Changed in [NOW]
 ----------------
 
 - `Added` MapElementView.
+- `Added` To WadUtils: createWadAnd(...)
+- `Added` TextureUtils.createTextureCopier().
+- `Fixed` WadUtils: openWadAnd(...), openWadAndGet(...), openWadAndExtractTo(...), openWadAndExtractBuffer(...) now does not throw RuntimeException.
+- `Fixed` TextureUtils.importTextureSet(...) did not throw TextureException if it did not find TEXTURE1.
+- `Fixed` TextureSet.addTexture(...) did not deep-copy the input texture. Now it does.
 
 
 Changed in 2.5.0

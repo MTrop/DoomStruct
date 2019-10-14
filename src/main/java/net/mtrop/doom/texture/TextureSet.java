@@ -86,13 +86,16 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 	 * The texture being added is deep-copied, such that altering 
 	 * the texture being added will not affect the one in this set.
 	 * @param texture the texture to add.
+	 * @return (since [NOW]) the reference to the copy of the texture added to this set.
 	 * @throws IllegalArgumentException if the texture to add is null. 
 	 */
-	public void addTexture(Texture texture)
+	public Texture addTexture(Texture texture)
 	{
 		if (texture == null)
 			throw new IllegalArgumentException("texture cannot be null");
-		textureList.add(texture);
+		Texture out = texture.copy();
+		textureList.add(out);
+		return out;
 	}
 
 	/**
@@ -328,6 +331,14 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 			patches = new ArrayList<TextureSet.Patch>(texture.getPatchCount());
 			for (Patch p : texture.patches)
 				patches.add(new Patch(p));
+		}
+		
+		/**
+		 * @return a copy of this texture.
+		 */
+		public Texture copy()
+		{
+			return new Texture(this);
 		}
 		
 		/** 

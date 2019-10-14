@@ -241,14 +241,28 @@ public class WadBuffer implements Wad
 	/**
 	 * Writes the contents of this buffer out to a file in Wad format.
 	 * The target file will be overwritten.
-	 * @param f the file to write to.
+	 * @param path the file path to write to.
+	 * @throws IOException if a problem occurs during the write.
+	 * @throws SecurityException if you don't have permission to write the file.
+	 * @throws NullPointerException if <code>out</code> is null.
+	 * @since [NOW]
+	 */
+	public final void writeToFile(String path) throws IOException
+	{
+		writeToFile(new File(path));
+	}
+	
+	/**
+	 * Writes the contents of this buffer out to a file in Wad format.
+	 * The target file will be overwritten.
+	 * @param path the file to write to.
 	 * @throws IOException if a problem occurs during the write.
 	 * @throws SecurityException if you don't have permission to write the file.
 	 * @throws NullPointerException if <code>out</code> is null.
 	 */
-	public final void writeToFile(File f) throws IOException
+	public final void writeToFile(File path) throws IOException
 	{
-		FileOutputStream fos = new FileOutputStream(f);
+		FileOutputStream fos = new FileOutputStream(path);
 		writeToStream(fos);
 		IOUtils.close(fos);
 	}
