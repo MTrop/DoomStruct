@@ -28,6 +28,22 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 {
 	/** The list of textures in this set, sorted. */
 	private AbstractMappedVector<Texture, String> textureList;
+
+	/**
+	 * Creates a new blank TextureSet (no patches, no textures).
+	 * @since [NOW]
+	 */
+	public TextureSet()
+	{
+		this.textureList = new AbstractMappedVector<TextureSet.Texture, String>(256)
+		{
+			@Override
+			protected String getMappingKey(Texture object)
+			{
+				return object.getName();
+			}
+		};		
+	}
 	
 	/**
 	 * Creates a new TextureSet using an existing Patch Name lump and a series of Texture Lumps.
@@ -38,14 +54,7 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 	@SafeVarargs
 	public TextureSet(PatchNames pnames, final CommonTextureList<?> ... textureLists)
 	{
-		this.textureList = new AbstractMappedVector<TextureSet.Texture, String>(textureLists.length * 100)
-		{
-			@Override
-			protected String getMappingKey(Texture object)
-			{
-				return object.getName();
-			}
-		};
+		this();
 		
 		for (CommonTextureList<?> lump : textureLists)
 		{
