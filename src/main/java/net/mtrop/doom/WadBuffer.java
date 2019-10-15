@@ -245,7 +245,7 @@ public class WadBuffer implements Wad
 	 * @throws IOException if a problem occurs during the write.
 	 * @throws SecurityException if you don't have permission to write the file.
 	 * @throws NullPointerException if <code>out</code> is null.
-	 * @since [NOW]
+	 * @since 2.6.0
 	 */
 	public final void writeToFile(String path) throws IOException
 	{

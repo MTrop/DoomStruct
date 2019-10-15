@@ -13,7 +13,7 @@ package net.mtrop.doom.map;
  * should be clear as to what those valid values are.
  * @param <T> the type of element that this handles.
  * @author Matthew Tropiano
- * @since [NOW]
+ * @since 2.6.0
  */
 public interface MapElementView<T>
 {

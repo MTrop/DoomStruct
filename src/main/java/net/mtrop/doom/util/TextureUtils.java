@@ -176,7 +176,7 @@ public final class TextureUtils
 	/**
 	 * A texture copying context for copying one or more textures to another Wad.
 	 * This does the copying of both flats and textures.
-	 * @since [NOW]
+	 * @since 2.6.0
 	 */
 	public static class TextureCopier implements AutoCloseable
 	{

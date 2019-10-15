@@ -31,7 +31,7 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 
 	/**
 	 * Creates a new blank TextureSet (no patches, no textures).
-	 * @since [NOW]
+	 * @since 2.6.0
 	 */
 	public TextureSet()
 	{
@@ -95,7 +95,7 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 	 * The texture being added is deep-copied, such that altering 
 	 * the texture being added will not affect the one in this set.
 	 * @param texture the texture to add.
-	 * @return (since [NOW]) the reference to the copy of the texture added to this set.
+	 * @return (since 2.6.0) the reference to the copy of the texture added to this set.
 	 * @throws IllegalArgumentException if the texture to add is null. 
 	 */
 	public Texture addTexture(Texture texture)

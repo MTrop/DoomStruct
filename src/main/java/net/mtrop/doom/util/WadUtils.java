@@ -244,7 +244,7 @@ public final class WadUtils
 	 * @param path the path to the WAD file.
 	 * @param wadConsumer a {@link WadConsumer} that takes the opened Wad as its only parameter.
 	 * @throws IOException if any I/O exception occurs.
-	 * @since [NOW]
+	 * @since 2.6.0
 	 */
 	public static void createWadAnd(String path, WadConsumer wadConsumer) throws IOException
 	{
@@ -257,7 +257,7 @@ public final class WadUtils
 	 * @param path the path to the WAD file.
 	 * @param wadConsumer a {@link WadConsumer} that takes the opened Wad as its only parameter.
 	 * @throws IOException if any I/O exception occurs.
-	 * @since [NOW]
+	 * @since 2.6.0
 	 */
 	public static void createWadAnd(File path, WadConsumer wadConsumer) throws IOException
 	{
