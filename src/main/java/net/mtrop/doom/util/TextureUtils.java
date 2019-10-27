@@ -348,6 +348,7 @@ public final class TextureUtils
 		 * <code>F_START</code> and <code>F_END</code> if IWAD, <code>FF_START</code> and <code>FF_END</code> if PWAD.
 		 * <p>An error will occur if either Wad is closed (mostly WadFiles) when this is called.
 		 * <p>This does not pay attention to ANIMATED entries! Those will have to be moved separately!
+		 * <p>This is completely equivalent to <code>copyFlat(flatName, false)</code>
 		 * @param flatName the name of the flat to copy over.
 		 * @throws IOException if a read or write error occurs.
 		 * @return true if the flat was copied over, 
@@ -355,10 +356,29 @@ public final class TextureUtils
 		 */
 		public boolean copyFlat(String flatName) throws IOException
 		{
+			return copyFlat(flatName, false);
+		}
+		
+		/**
+		 * Copies one flat from the source Wad to the destination Wad.
+		 * This will not re-copy flats that already exist (by name) in the destination Wad.
+		 * <p>If the flat start/end namespace markers do not exist in the destination Wad, they will be created:
+		 * <code>F_START</code> and <code>F_END</code> if IWAD, <code>FF_START</code> and <code>FF_END</code> if PWAD.
+		 * <p>An error will occur if either Wad is closed (mostly WadFiles) when this is called.
+		 * <p>This does not pay attention to ANIMATED entries! Those will have to be moved separately!
+		 * @param flatName the name of the flat to copy over.
+		 * @param force if true, this will not check for flats that already exist (by name) in the destination Wad, and copy anyway.
+		 * @throws IOException if a read or write error occurs.
+		 * @return true if the flat was copied over, 
+		 * 		false if the flat name was not found in the source, or it already existed in the destination.
+		 * @since [NOW]
+		 */
+		public boolean copyFlat(String flatName, boolean force) throws IOException
+		{
 			if (sourceFlatStartIndex == null)
 				return false;
 
-			if (destinationFlats.contains(flatName))
+			if (!force && destinationFlats.contains(flatName))
 				return false;
 			
 			// if FF_END (and FF_START) does not exist in destination, add them to the destination.
@@ -387,7 +407,6 @@ public final class TextureUtils
 				destinationWad.addDataAt(destinationFlatEndIndex++, flatName, sourceWad.getData(entryIndex));
 				destinationFlats.add(flatName);
 			}
-			
 
 			return true;
 		}
@@ -401,6 +420,7 @@ public final class TextureUtils
 		 * <code>P_START</code> and <code>P_END</code> if IWAD, <code>PP_START</code> and <code>PP_END</code> if PWAD.
 		 * <p>An error will occur if either Wad is closed (mostly WadFiles) when this is called.
 		 * <p>This does not pay attention to ANIMATED or SWITCHES entries! Those will have to be moved separately!
+		 * <p>This is completely equivalent to <code>copyTexture(textureName, false)</code>
 		 * @param textureName the name of the texture to copy over.
 		 * @throws IOException if a read or write error occurs.
 		 * @return true if the texture was copied over, 
@@ -408,10 +428,30 @@ public final class TextureUtils
 		 */
 		public boolean copyTexture(String textureName) throws IOException
 		{
+			return copyTexture(textureName, false);
+		}
+		
+		/**
+		 * Copies one texture from the source Wad to the destination Wad, and copies 
+		 * the associated patch entries from the source Wad to the destination Wad, if they exist in the source.
+		 * <p>If the TEXTUREx/PNAMES entries do not exist in the destination Wad, blank ones will be prepared (and written on close).
+		 * <p>If the patch start/end namespace markers do not exist in the destination Wad, they will be created:
+		 * <code>P_START</code> and <code>P_END</code> if IWAD, <code>PP_START</code> and <code>PP_END</code> if PWAD.
+		 * <p>An error will occur if either Wad is closed (mostly WadFiles) when this is called.
+		 * <p>This does not pay attention to ANIMATED or SWITCHES entries! Those will have to be moved separately!
+		 * @param textureName the name of the texture to copy over.
+		 * @param force if true, this will not check for textures that already exist (by name) in the destination Wad, and copy it and its patches anyway.
+		 * @throws IOException if a read or write error occurs.
+		 * @return true if the texture was copied over, 
+		 * 		false if the texture name was not found in the source, or it already existed in the destination.
+		 * @since [NOW]
+		 */
+		public boolean copyTexture(String textureName, boolean force) throws IOException
+		{
 			if (sourceTextureSet == null)
 				return false;
 			
-			if (!sourceTextureSet.contains(textureName) || (destinationTextureSet != null && destinationTextureSet.contains(textureName)))
+			if (!force && (!sourceTextureSet.contains(textureName) || (destinationTextureSet != null && destinationTextureSet.contains(textureName))))
 				return false;
 
 			// Make blank TEXTUREx/PNAMES if not present (add blank TEXTURE2 if the first has it). 
