@@ -41,15 +41,6 @@
 		</sequential>
 	</macrodef>
 
-	<macrodef name="git-export">
-		<attribute name="repository" />
-		<attribute name="dest" />
-		<sequential>
-			<git-clone repository="@{repository}" dest="@{dest}" />
-			<delete dir="@{dest}/.git" includeemptydirs="true" casesensitive="false" /> 
-		</sequential>
-	</macrodef>
-
 	<macrodef name="git-clone-pull">
 		<attribute name="repository" />
 		<attribute name="dest" />
@@ -59,16 +50,55 @@
 		</sequential>
 	</macrodef>
 
+	<macrodef name="git-clone-shallow">
+		<attribute name="repository" />
+		<attribute name="dest" />
+		<sequential>
+			<git command="clone">
+				<args>
+					<arg value="@{repository}" />
+					<arg value="@{dest}" />
+					<arg value="--depth=1" />
+				</args>
+			</git>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="git-export">
+		<attribute name="repository" />
+		<attribute name="dest" />
+		<sequential>
+			<git-clone-shallow repository="@{repository}" dest="@{dest}" />
+			<delete dir="@{dest}/.git" includeemptydirs="true" casesensitive="false" /> 
+		</sequential>
+	</macrodef>
+
+	<macrodef name="github-dl">
+		<attribute name="repository" />
+		<attribute name="dest" />
+		<attribute name="tag" />
+		<attribute name="file" />
+		<sequential>
+			<echo message="Fetching https://github.com/@{repository}/releases/download/@{tag}/@{file}..." />
+			<get retries="3" src="https://github.com/@{repository}/releases/download/@{tag}/@{file}" dest="@{dest}"/>
+		</sequential>
+	</macrodef>
+
 	<!-- Targets -->
 
-	<target name="clean.dependencies" description="Cleans up the dependencies.">
+	<target name="clean.dependencies">
 		<delete quiet="true" includeemptydirs="true">
 			<fileset dir="${dependencies.dir}" includes="**/*" defaultexcludes="false" />
 		</delete>
 	</target>
 	
-	<target name="init.dependencies" depends="clean.dependencies" description="Initializes the dependencies folders.">
+	<target name="init.dependencies" depends="clean.dependencies">
 		<mkdir dir="${dependencies.dir}" />
 	</target>
 
+	<target name="dependency.properties">
+		<echo message="Writing to build.properties...." />
+		<echo message="dev.base=${dependencies.dir}&#10;" file="build.properties" append="true" />
+	</target>
+	
 </project>

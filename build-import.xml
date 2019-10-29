@@ -35,8 +35,6 @@
 	<!-- Filesets -->
 	
 	<patternset id="pattern.documents">
-		<include name="AUTHORS.txt" />
-		<include name="CHANGELOG.md" />
 		<include name="CONTRIBUTING.md" />
 		<include name="LICENSE.txt" />
 		<include name="PHILOSOPHY.md" />
@@ -167,9 +165,6 @@
 	</target>
 
 	<target name="compile.test" depends="compile, compile.test.src, compile.test.resources" description="Compiles the project." if="test.src.dir.available">
-		<copy todir="${bin.dir}" failonerror="false">
-			<fileset dir="${test.resource.dir}" />
-		</copy>
 	</target>
 
 	<!-- JAR -->
