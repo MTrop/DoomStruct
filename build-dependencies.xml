@@ -84,6 +84,40 @@
 		</sequential>
 	</macrodef>
 
+	<macrodef name="maven-jar-dl">
+		<attribute name="group-path" description="The artifact group with slashes instead of dots." />
+		<attribute name="artifact" />
+		<attribute name="version" />
+		<attribute name="extension" default="" description="What to add after the version in the file." />
+		<attribute name="dest" />
+		<sequential>
+			<local name="download.jar.file.url" />
+			<property name="download.jar.file.url" value="${maven.base.url}/@{group-path}/@{artifact}/@{version}/@{artifact}-@{version}@{extension}.jar" />
+			<echo message="Fetching ${download.jar.file.url}..." />
+			<get retries="3" src="${download.jar.file.url}" dest="@{dest}"/>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="maven-jar-sources-dl">
+		<attribute name="group-path" description="The artifact group with slashes instead of dots." />
+		<attribute name="artifact" />
+		<attribute name="version" />
+		<attribute name="dest" />
+		<sequential>
+			<maven-jar-dl dest="@{dest}" group-path="@{group-path}" artifact="@{artifact}" version="@{version}" extension="-sources" />
+		</sequential>
+	</macrodef>
+
+	<macrodef name="maven-jar-javadoc-dl">
+		<attribute name="group-path" description="The artifact group with slashes instead of dots." />
+		<attribute name="artifact" />
+		<attribute name="version" />
+		<attribute name="dest" />
+		<sequential>
+			<maven-jar-dl dest="@{dest}" group-path="@{group-path}" artifact="@{artifact}" version="@{version}" extension="-javadoc" />
+		</sequential>
+	</macrodef>
+
 	<!-- Targets -->
 
 	<target name="clean.dependencies">
