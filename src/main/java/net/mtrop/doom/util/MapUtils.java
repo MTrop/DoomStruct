@@ -505,7 +505,7 @@ public final class MapUtils
 	 * The entry at the index is assumed to be the header.
 	 * @param wad the WAD to inspect.
 	 * @param startIndex the starting index.
-	 * @return the length, in entries, of the contiguous map data.
+	 * @return the list of map entries for the map data.
 	 * @since 2.1.0
 	 */
 	public static WadEntry[] getMapEntries(Wad wad, int startIndex)
@@ -518,7 +518,7 @@ public final class MapUtils
 	 * If there is more than one header in the WAD that matches the provided header, the last one is found.
 	 * @param wad the WAD to inspect.
 	 * @param header the starting entry name to find.
-	 * @return the length, in entries, of the contiguous map data.
+	 * @return the list of map entries for the map data, or an empty array if the map header is not found.
 	 * @since 2.1.0
 	 */
 	public static WadEntry[] getMapEntries(Wad wad, String header)
