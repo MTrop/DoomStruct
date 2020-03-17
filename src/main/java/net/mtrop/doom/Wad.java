@@ -1643,7 +1643,10 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws IOException if the data cannot be written.
 	 * @throws NullPointerException if <code>entryName</code> or <code>data</code> is <code>null</code>.
 	 */
-	WadEntry addData(String entryName, byte[] data) throws IOException;
+	default WadEntry addData(String entryName, byte[] data) throws IOException
+	{
+		return addDataAt(getEntryCount(), entryName, data);
+	}
 
 	/**
 	 * Adds data to this Wad, using <code>entryName</code> as the name of the new entry. 
@@ -1711,6 +1714,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @param data the bytes of data to add as this wad's data.
 	 * @return a WadEntry that describes the added data.
 	 * @throws IllegalArgumentException if the provided name is not a valid name.
+	 * @throws IndexOutOfBoundsException if the provided index &lt; 0 or &gt; <code>getEntryCount()</code>.
 	 * @throws IOException if the data cannot be written.
 	 * @throws NullPointerException if <code>entryName</code> or <code>data</code> is <code>null</code>.
 	 */
@@ -1727,6 +1731,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @param <BO> a BinaryObject type.
 	 * @return a WadEntry that describes the added data.
 	 * @throws IllegalArgumentException if the provided name is not a valid name.
+	 * @throws IndexOutOfBoundsException if the provided index &lt; 0 or &gt; <code>getEntryCount()</code>.
 	 * @throws IOException if the data cannot be written.
 	 * @throws NullPointerException if <code>entryName</code> or <code>data</code> is <code>null</code>.
 	 * @since 2.2.0
@@ -1748,6 +1753,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @param <BO> a BinaryObject type.
 	 * @return a WadEntry that describes the added data.
 	 * @throws IllegalArgumentException if the provided name is not a valid name.
+	 * @throws IndexOutOfBoundsException if the provided index &lt; 0 or &gt; <code>getEntryCount()</code>.
 	 * @throws IOException if the data cannot be written.
 	 * @throws NullPointerException if <code>entryName</code> or <code>data</code> is <code>null</code>.
 	 * @since 2.2.0
@@ -1769,6 +1775,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @param <TO> a TextObject type.
 	 * @return a WadEntry that describes the added data.
 	 * @throws IllegalArgumentException if the provided name is not a valid name.
+	 * @throws IndexOutOfBoundsException if the provided index &lt; 0 or &gt; <code>getEntryCount()</code>.
 	 * @throws IOException if the data cannot be written.
 	 * @throws NullPointerException if <code>entryName</code> or <code>data</code> is <code>null</code>.
 	 * @since 2.2.0
@@ -1789,7 +1796,10 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws ArrayIndexOutOfBoundsException if the length of the entryNames array exceeds data's array length.
 	 * @throws NullPointerException if an object if <code>entryNames</code> or <code>data</code> is <code>null</code>.
 	 */
-	WadEntry[] addAllData(String[] entryNames, byte[][] data) throws IOException;
+	default WadEntry[] addAllData(String[] entryNames, byte[][] data) throws IOException
+	{
+		return addAllDataAt(getEntryCount(), entryNames, data);
+	}
 
 	/**
 	 * Adds multiple entries of data to this Wad, using <code>entryNames</code> 
@@ -1822,6 +1832,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @return an array of WadEntry objects that describe the added data.
 	 * @throws IOException if the data cannot be written.
 	 * @throws ArrayIndexOutOfBoundsException if the length of the entryNames array exceeds data's array length.
+	 * @throws IndexOutOfBoundsException if the provided index &lt; 0 or &gt; <code>getEntryCount()</code>.
 	 * @throws NullPointerException if an object if <code>entryNames</code> or <code>data</code> is <code>null</code>.
 	 */
 	WadEntry[] addAllDataAt(int index, String[] entryNames, byte[][] data) throws IOException;
@@ -1923,6 +1934,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @param source the the source Wad.
 	 * @param startIndex the starting entry index.
 	 * @param maxLength the maximum amount of entries from the starting index to copy.
+	 * @throws IndexOutOfBoundsException if the provided index &lt; 0 or &gt; <code>getEntryCount()</code>.
 	 * @throws IOException if an error occurs on read from the source Wad or write to this Wad.
 	 * @since 2.5.0
 	 */
@@ -1936,6 +1948,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @param destIndex the index at which to add the entries.
 	 * @param source the the source Wad.
 	 * @param entries the entries to copy over.
+	 * @throws IndexOutOfBoundsException if the provided index &lt; 0 or &gt; <code>getEntryCount()</code>.
 	 * @throws IOException if an error occurs on read from the source Wad or write to this Wad.
 	 * @since 2.5.0
 	 */

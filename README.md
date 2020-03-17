@@ -67,6 +67,7 @@ extent.
 
 ### In the Future...
 
+* The rest of the ZDoom UDMF attributes.
 * Reading/converting PC Speaker effects.
 * Supporting additional BSP node types.
 * Stuff for drawing maps more easily (graphic-wise).

@@ -371,7 +371,7 @@ public final class TextureUtils
 		 * @throws IOException if a read or write error occurs.
 		 * @return true if the flat was copied over, 
 		 * 		false if the flat name was not found in the source, or it already existed in the destination.
-		 * @since [NOW]
+		 * @since 2.6.0
 		 */
 		public boolean copyFlat(String flatName, boolean force) throws IOException
 		{
@@ -444,7 +444,7 @@ public final class TextureUtils
 		 * @throws IOException if a read or write error occurs.
 		 * @return true if the texture was copied over, 
 		 * 		false if the texture name was not found in the source, or it already existed in the destination.
-		 * @since [NOW]
+		 * @since 2.6.0
 		 */
 		public boolean copyTexture(String textureName, boolean force) throws IOException
 		{

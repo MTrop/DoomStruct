@@ -431,12 +431,6 @@ public class WadFile implements Wad, AutoCloseable
 		return entry;
 	}
 
-	@Override
-	public WadEntry addData(String entryName, byte[] data) throws IOException
-	{
-		return addData(entryName, data, false);
-	}
-
 	/**
 	 * Adds data to this Wad, using entryName as the name of the new entry. 
 	 * The overhead for multiple additions may be expensive I/O-wise depending on the Wad implementation.
@@ -454,14 +448,7 @@ public class WadFile implements Wad, AutoCloseable
 	 */
 	public WadEntry addData(String entryName, byte[] data, boolean noFlush) throws IOException
 	{
-		WadEntry entry = WadEntry.create(entryName, entryListOffset, data.length);
-		entries.add(entry);
-		file.seek(entryListOffset);
-		file.write(data);
-		entryListOffset += data.length;
-		if (!noFlush)
-			flushEntries();
-		return entry;
+		return addDataAt(getEntryCount(), entryName, data, false);
 	}
 
 	@Override
@@ -499,12 +486,6 @@ public class WadFile implements Wad, AutoCloseable
 		return entry;
 	}
 
-	@Override
-	public WadEntry[] addAllData(String[] entryNames, byte[][] data) throws IOException
-	{
-		return addAllData(entryNames, data, false);
-	}
-	
 	/**
 	 * Adds multiple entries of data to this Wad, using entryNames as the name of the new entry, using the same indices
 	 * in the data array as the corresponding data.
@@ -522,28 +503,7 @@ public class WadFile implements Wad, AutoCloseable
 	 */
 	public WadEntry[] addAllData(String[] entryNames, byte[][] data, boolean noFlush) throws IOException
 	{
-		int curOffs = entryListOffset; 
-		WadEntry[] out = new WadEntry[entryNames.length];
-		for (int i = 0; i < entryNames.length; i++)
-		{
-			out[i] = WadEntry.create(entryNames[i], curOffs, data[i].length);
-			curOffs += data[i].length;
-		}
-		
-		for (WadEntry we : out)
-			entries.add(we);
-
-		file.seek(entryListOffset);
-		
-		for (int i = 0; i < entryNames.length; i++)
-		{
-			file.write(data[i]);
-			entryListOffset += data[i].length;
-		}
-
-		if (!noFlush)
-			flushEntries();
-		return out;
+		return addAllDataAt(getEntryCount(), entryNames, data, false);
 	}
 
 	@Override

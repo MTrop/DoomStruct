@@ -3,6 +3,13 @@ Doom Struct (C) 2015-2019
 by Matt Tropiano et al. (see AUTHORS.txt)
 
 
+Changed in 2.6.1
+----------------
+
+- `Changed` Wad: Made addData/addAllData methods call addDataAt/addAllDataAt by default.
+- `Changed` Some Javadocs clarifications and fixes.
+
+
 Changed in 2.6.0
 ----------------
 

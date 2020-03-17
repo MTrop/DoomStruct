@@ -401,16 +401,6 @@ public class WadBuffer implements Wad
 	}
 
 	@Override
-	public WadEntry addData(String entryName, byte[] data) throws IOException
-	{
-		WadEntry entry = WadEntry.create(entryName, content.size(), data.length);
-		content.append(data);
-		entries.add(entry);
-		updateHeader();
-		return entry;
-	}
-
-	@Override
 	public WadEntry addDataAt(int index, String entryName, byte[] data) throws IOException
 	{
 		WadEntry entry = WadEntry.create(entryName, content.size(), data.length);
@@ -421,18 +411,7 @@ public class WadBuffer implements Wad
 	}
 	
 	@Override
-	public WadEntry[] addAllData(String[] entryNames, byte[][] data) throws IOException
-	{
-		WadEntry[] out = new WadEntry[entryNames.length];
-		for (int i = 0; i < entryNames.length; i++)
-			out[i] = addData(entryNames[i], data[i]);
-		updateHeader();
-		return out;
-	}
-
-	@Override
-	public WadEntry[] addAllDataAt(int index, String[] entryNames, byte[][] data)
-			throws IOException
+	public WadEntry[] addAllDataAt(int index, String[] entryNames, byte[][] data) throws IOException
 	{
 		WadEntry[] out = new WadEntry[entryNames.length];
 		for (int i = 0; i < entryNames.length; i++)
