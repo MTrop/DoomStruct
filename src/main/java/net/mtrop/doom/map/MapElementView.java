@@ -291,7 +291,6 @@ public interface MapElementView<T>
 	 * If the value is not a String, it will be converted to one.
 	 * @param source the source object.
 	 * @param fieldType the field type to retrieve.
-	 * @param def the default value to return if the field type is not valid.
 	 * @return the corresponding value or <code>null</code> if the field type is not valid.
      */
     default String getString(T source, int fieldType)
