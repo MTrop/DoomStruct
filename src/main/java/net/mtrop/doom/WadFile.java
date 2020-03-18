@@ -458,7 +458,7 @@ public class WadFile implements Wad, AutoCloseable
 	 * @throws IndexOutOfBoundsException if the provided index &lt; 0 or &gt; <code>getEntryCount()</code>.
 	 * @throws IOException if the data cannot be written or the stream could not be read.
 	 * @throws NullPointerException if <code>entryName</code> or <code>data</code> is <code>null</code>.
-	 * @since 2.7.0
+	 * @since [NOW]
 	 */
 	@Override
 	public WadEntry addDataAt(int index, String entryName, InputStream in, int maxLength) throws IOException
@@ -467,7 +467,7 @@ public class WadFile implements Wad, AutoCloseable
 	}
 
 	/**
-	 * @deprecated 2.7.0 - The reason why this method was added in the first place was to have a bulk add operation that incurred hopefully
+	 * @deprecated [NOW] - The reason why this method was added in the first place was to have a bulk add operation that incurred hopefully
 	 * less transaction overhead in implementations. In WadBuffer, the performance overhead was already moot, and WadFile has methods
 	 * that delay the writing of the entry list, which, although less "safe," solves this problem by allowing the user
 	 * to defer the final write via {@link WadFile#flushEntries()}.
@@ -538,7 +538,7 @@ public class WadFile implements Wad, AutoCloseable
 	 * @throws IndexOutOfBoundsException if the provided index &lt; 0 or &gt; <code>getEntryCount()</code>.
 	 * @throws IOException if the data cannot be written or the stream could not be read.
 	 * @throws NullPointerException if <code>entryName</code> or <code>data</code> is <code>null</code>.
-	 * @since 2.7.0
+	 * @since [NOW]
 	 */
 	public WadEntry addDataAt(int index, String entryName, InputStream in, int maxLength, boolean noFlush) throws IOException
 	{
@@ -570,7 +570,7 @@ public class WadFile implements Wad, AutoCloseable
 	 * @throws ArrayIndexOutOfBoundsException if the lengths of entryNames and data do not match.
 	 * @throws NullPointerException if an object if <code>entryNames</code> or <code>data</code> is <code>null</code>.
 	 * @since 2.2.0
-	 * @deprecated 2.7.0 - The reason why this method was added in the first place was to have a bulk add operation that incurred hopefully
+	 * @deprecated [NOW] - The reason why this method was added in the first place was to have a bulk add operation that incurred hopefully
 	 * less transaction overhead in implementations. In WadBuffer, the performance overhead was already moot, and WadFile has methods
 	 * that delay the writing of the entry list, which, although less "safe," solves this problem by allowing the user
 	 * to defer the final write via {@link WadFile#flushEntries()}.
@@ -595,7 +595,7 @@ public class WadFile implements Wad, AutoCloseable
 	 * @throws ArrayIndexOutOfBoundsException if the lengths of entryNames and data do not match.
 	 * @throws NullPointerException if an object if <code>entryNames</code> or <code>data</code> is <code>null</code>.
 	 * @since 2.2.0
-	 * @deprecated 2.7.0 - The reason why this method was added in the first place was to have a bulk add operation that incurred hopefully
+	 * @deprecated [NOW] - The reason why this method was added in the first place was to have a bulk add operation that incurred hopefully
 	 * less transaction overhead in implementations. In WadBuffer, the performance overhead was already moot, and WadFile has methods
 	 * that delay the writing of the entry list, which, although less "safe," solves this problem by allowing the user
 	 * to defer the final write via {@link WadFile#flushEntries()}.

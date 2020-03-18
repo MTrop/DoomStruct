@@ -3,7 +3,7 @@ Doom Struct (C) 2015-2019
 by Matt Tropiano et al. (see AUTHORS.txt)
 
 
-Changed in 2.6.1
+Changed in [NOW]
 ----------------
 
 - `Added` Wad: More addData(...) methods.

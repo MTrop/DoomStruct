@@ -1758,7 +1758,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws IllegalArgumentException if the provided name is not a valid name.
 	 * @throws IOException if the data cannot be written or the stream could not be read.
 	 * @throws NullPointerException if <code>entryName</code> or <code>data</code> or <code>encoding</code> is <code>null</code>.
-	 * @since 2.7.0
+	 * @since [NOW]
 	 */
 	default WadEntry addData(String entryName, InputStream in) throws IOException
 	{
@@ -1777,7 +1777,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws IllegalArgumentException if the provided name is not a valid name.
 	 * @throws IOException if the data cannot be written or the stream could not be read.
 	 * @throws NullPointerException if <code>entryName</code> or <code>data</code> or <code>encoding</code> is <code>null</code>.
-	 * @since 2.7.0
+	 * @since [NOW]
 	 */
 	default WadEntry addData(String entryName, InputStream in, int maxLength) throws IOException
 	{
@@ -1882,7 +1882,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws IndexOutOfBoundsException if the provided index &lt; 0 or &gt; <code>getEntryCount()</code>.
 	 * @throws IOException if the data cannot be written or the stream could not be read.
 	 * @throws NullPointerException if <code>entryName</code> or <code>data</code> is <code>null</code>.
-	 * @since 2.7.0
+	 * @since [NOW]
 	 */
 	default WadEntry addDataAt(int index, String entryName, InputStream in) throws IOException
 	{
@@ -1904,7 +1904,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws IndexOutOfBoundsException if the provided index &lt; 0 or &gt; <code>getEntryCount()</code>.
 	 * @throws IOException if the data cannot be written or the stream could not be read.
 	 * @throws NullPointerException if <code>entryName</code> or <code>data</code> is <code>null</code>.
-	 * @since 2.7.0
+	 * @since [NOW]
 	 */
 	WadEntry addDataAt(int index, String entryName, InputStream in, int maxLength) throws IOException;
 
@@ -1918,7 +1918,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws IOException if the data cannot be written.
 	 * @throws ArrayIndexOutOfBoundsException if the length of the entryNames array exceeds data's array length.
 	 * @throws NullPointerException if an object if <code>entryNames</code> or <code>data</code> is <code>null</code>.
-	 * @deprecated 2.7.0 - The reason why this method was added in the first place was to have a bulk add operation that incurred hopefully
+	 * @deprecated [NOW] - The reason why this method was added in the first place was to have a bulk add operation that incurred hopefully
 	 * less transaction overhead in implementations. In WadBuffer, the performance overhead was already moot, and WadFile has methods
 	 * that delay the writing of the entry list, which, although less "safe," solves this problem by allowing the user
 	 * to defer the final write via {@link WadFile#flushEntries()}.
@@ -1940,7 +1940,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws ArrayIndexOutOfBoundsException if the length of the entryNames array exceeds data's array length.
 	 * @throws NullPointerException if an object if <code>entryNames</code> or <code>data</code> is <code>null</code>.
 	 * @since 2.2.0
-	 * @deprecated 2.7.0 - The reason why this method was added in the first place was to have a bulk add operation that incurred hopefully
+	 * @deprecated [NOW] - The reason why this method was added in the first place was to have a bulk add operation that incurred hopefully
 	 * less transaction overhead in implementations. In WadBuffer, the performance overhead was already moot, and WadFile has methods
 	 * that delay the writing of the entry list, which, although less "safe," solves this problem by allowing the user
 	 * to defer the final write via {@link WadFile#flushEntries()}.
@@ -1965,7 +1965,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws ArrayIndexOutOfBoundsException if the length of the entryNames array exceeds data's array length.
 	 * @throws IndexOutOfBoundsException if the provided index &lt; 0 or &gt; <code>getEntryCount()</code>.
 	 * @throws NullPointerException if an object if <code>entryNames</code> or <code>data</code> is <code>null</code>.
-	 * @deprecated 2.7.0 - The reason why this method was added in the first place was to have a bulk add operation that incurred hopefully
+	 * @deprecated [NOW] - The reason why this method was added in the first place was to have a bulk add operation that incurred hopefully
 	 * less transaction overhead in implementations. In WadBuffer, the performance overhead was already moot, and WadFile has methods
 	 * that delay the writing of the entry list, which, although less "safe," solves this problem by allowing the user
 	 * to defer the final write via {@link WadFile#flushEntries()}.
@@ -1985,7 +1985,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws ArrayIndexOutOfBoundsException if the length of the entryNames array exceeds data's array length.
 	 * @throws NullPointerException if an object if <code>entryNames</code> or <code>data</code> is <code>null</code>.
 	 * @since 2.2.0
-	 * @deprecated 2.7.0 - The reason why this method was added in the first place was to have a bulk add operation that incurred hopefully
+	 * @deprecated [NOW] - The reason why this method was added in the first place was to have a bulk add operation that incurred hopefully
 	 * less transaction overhead in implementations. In WadBuffer, the performance overhead was already moot, and WadFile has methods
 	 * that delay the writing of the entry list, which, although less "safe," solves this problem by allowing the user
 	 * to defer the final write via {@link WadFile#flushEntries()}.
