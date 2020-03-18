@@ -1633,6 +1633,49 @@ public interface Wad extends Iterable<WadEntry>
 	}
 
 	/**
+	 * Adds a new entry to the Wad, but with an explicit offset and size.
+	 * Exercise caution with this method, since you can reference anywhere in the Wad!
+	 *  
+	 * @param entryName the name of the entry.
+	 * @param offset the entry's content start byte.
+	 * @param length the entry's length in bytes.
+	 * @return the entry that was created.
+	 * @throws IllegalArgumentException if the provided name is not a valid name, or the offset/size is negative.
+	 * @throws IOException if the entry cannot be written.
+	 * @throws NullPointerException if <code>name</code> is <code>null</code>.
+	 */
+	WadEntry addEntry(String entryName, int offset, int length) throws IOException;
+
+	/**
+	 * Adds an entry marker to the Wad (entry with 0 size, arbitrary offset).
+	 * 
+	 * @param entryName the name of the entry.
+	 * @return the entry that was added.
+	 * @throws IllegalArgumentException if the provided name is not a valid name.
+	 * @throws IOException if the entry cannot be written.
+	 * @throws NullPointerException if <code>name</code> is <code>null</code>.
+	 */
+	default WadEntry addMarker(String entryName) throws IOException
+	{
+		return addData(entryName, NO_DATA);
+	}
+
+	/**
+	 * Adds an entry marker to the Wad (entry with 0 size, arbitrary offset).
+	 * 
+	 * @param index the index at which to add the marker.
+	 * @param entryName the name of the entry.
+	 * @return the entry that was added.
+	 * @throws IllegalArgumentException if the provided name is not a valid name.
+	 * @throws IOException if the entry cannot be written.
+	 * @throws NullPointerException if <code>name</code> is <code>null</code>.
+	 */
+	default WadEntry addMarkerAt(int index, String entryName) throws IOException
+	{
+		return addDataAt(index, entryName, NO_DATA);
+	}
+
+	/**
 	 * Adds data to this Wad, using <code>entryName</code> as the name of the new entry. 
 	 * The overhead for multiple additions may be expensive I/O-wise depending on the Wad implementation.
 	 * 
@@ -1663,7 +1706,7 @@ public interface Wad extends Iterable<WadEntry>
 	 */
 	default <BO extends BinaryObject> WadEntry addData(String entryName, BO data) throws IOException
 	{
-		return addData(entryName, data.toBytes());
+		return addDataAt(getEntryCount(), entryName, data.toBytes());
 	}
 
 	/**
@@ -1682,7 +1725,7 @@ public interface Wad extends Iterable<WadEntry>
 	 */
 	default <BO extends BinaryObject> WadEntry addData(String entryName, BO[] data) throws IOException
 	{
-		return addData(entryName, BinaryObject.toBytes(data));
+		return addDataAt(getEntryCount(), entryName, BinaryObject.toBytes(data));
 	}
 
 	/**
@@ -1701,7 +1744,44 @@ public interface Wad extends Iterable<WadEntry>
 	 */
 	default <TO extends TextObject> WadEntry addData(String entryName, TO data, Charset encoding) throws IOException
 	{
-		return addData(entryName, data.toText().getBytes(encoding));
+		return addDataAt(getEntryCount(), entryName, data.toText().getBytes(encoding));
+	}
+
+	/**
+	 * Adds data to this Wad, using <code>entryName</code> as the name of the new entry.
+	 * The provided input stream is read until the end of the stream is reached.
+	 * The overhead for multiple additions may be expensive I/O-wise depending on the Wad implementation.
+	 * 
+	 * @param entryName the name of the entry to add this as.
+	 * @param in the input stream to read.
+	 * @return a WadEntry that describes the added data.
+	 * @throws IllegalArgumentException if the provided name is not a valid name.
+	 * @throws IOException if the data cannot be written or the stream could not be read.
+	 * @throws NullPointerException if <code>entryName</code> or <code>data</code> or <code>encoding</code> is <code>null</code>.
+	 * @since 2.7.0
+	 */
+	default WadEntry addData(String entryName, InputStream in) throws IOException
+	{
+		return addDataAt(getEntryCount(), entryName, in, -1);
+	}
+
+	/**
+	 * Adds data to this Wad, using <code>entryName</code> as the name of the new entry.
+	 * The provided input stream is read until the end of the stream is reached or <code>maxLength</code> bytes are read.
+	 * The overhead for multiple additions may be expensive I/O-wise depending on the Wad implementation.
+	 * 
+	 * @param entryName the name of the entry to add this as.
+	 * @param in the input stream to read.
+	 * @param maxLength the maximum amount of bytes to read from the InputStream, or a value &lt; 0 to keep reading until end-of-stream.
+	 * @return a WadEntry that describes the added data.
+	 * @throws IllegalArgumentException if the provided name is not a valid name.
+	 * @throws IOException if the data cannot be written or the stream could not be read.
+	 * @throws NullPointerException if <code>entryName</code> or <code>data</code> or <code>encoding</code> is <code>null</code>.
+	 * @since 2.7.0
+	 */
+	default WadEntry addData(String entryName, InputStream in, int maxLength) throws IOException
+	{
+		return addDataAt(getEntryCount(), entryName, in, maxLength);
 	}
 
 	/**
@@ -1718,7 +1798,10 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws IOException if the data cannot be written.
 	 * @throws NullPointerException if <code>entryName</code> or <code>data</code> is <code>null</code>.
 	 */
-	WadEntry addDataAt(int index, String entryName, byte[] data) throws IOException;
+	default WadEntry addDataAt(int index, String entryName, byte[] data) throws IOException
+	{
+		return addDataAt(index, entryName, new ByteArrayInputStream(data));
+	}
 
 	/**
 	 * Adds data to this Wad at a particular entry offset, using <code>entryName</code> as the name of the entry. 
@@ -1786,6 +1869,46 @@ public interface Wad extends Iterable<WadEntry>
 	}
 
 	/**
+	 * Adds data to this Wad at a particular entry offset, using <code>entryName</code> as the name of the entry. 
+	 * The provided input stream is read until the end of the stream is reached.
+	 * The rest of the entries in the wad are shifted down one index. 
+	 * The overhead for multiple additions may be expensive I/O-wise depending on the Wad implementation.
+	 * 
+	 * @param index the index at which to add the entry.
+	 * @param entryName the name of the entry to add this as.
+	 * @param in the input stream to read.
+	 * @return a WadEntry that describes the added data.
+	 * @throws IllegalArgumentException if the provided name is not a valid name.
+	 * @throws IndexOutOfBoundsException if the provided index &lt; 0 or &gt; <code>getEntryCount()</code>.
+	 * @throws IOException if the data cannot be written or the stream could not be read.
+	 * @throws NullPointerException if <code>entryName</code> or <code>data</code> is <code>null</code>.
+	 * @since 2.7.0
+	 */
+	default WadEntry addDataAt(int index, String entryName, InputStream in) throws IOException
+	{
+		return addDataAt(index, entryName, in, -1);
+	}
+
+	/**
+	 * Adds data to this Wad at a particular entry offset, using <code>entryName</code> as the name of the entry. 
+	 * The provided input stream is read until the end of the stream is reached or <code>maxLength</code> bytes are read.
+	 * The rest of the entries in the wad are shifted down one index. 
+	 * The overhead for multiple additions may be expensive I/O-wise depending on the Wad implementation.
+	 * 
+	 * @param index the index at which to add the entry.
+	 * @param entryName the name of the entry to add this as.
+	 * @param in the input stream to read.
+	 * @param maxLength the maximum amount of bytes to read from the InputStream, or a value &lt; 0 to keep reading until end-of-stream.
+	 * @return a WadEntry that describes the added data.
+	 * @throws IllegalArgumentException if the provided name is not a valid name.
+	 * @throws IndexOutOfBoundsException if the provided index &lt; 0 or &gt; <code>getEntryCount()</code>.
+	 * @throws IOException if the data cannot be written or the stream could not be read.
+	 * @throws NullPointerException if <code>entryName</code> or <code>data</code> is <code>null</code>.
+	 * @since 2.7.0
+	 */
+	WadEntry addDataAt(int index, String entryName, InputStream in, int maxLength) throws IOException;
+
+	/**
 	 * Adds multiple entries of data to this Wad, using <code>entryNames</code> as the names of the new entries, using the same indices
 	 * in the data arrays as the corresponding data.
 	 * 
@@ -1795,6 +1918,10 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws IOException if the data cannot be written.
 	 * @throws ArrayIndexOutOfBoundsException if the length of the entryNames array exceeds data's array length.
 	 * @throws NullPointerException if an object if <code>entryNames</code> or <code>data</code> is <code>null</code>.
+	 * @deprecated 2.7.0 - The reason why this method was added in the first place was to have a bulk add operation that incurred hopefully
+	 * less transaction overhead in implementations. In WadBuffer, the performance overhead was already moot, and WadFile has methods
+	 * that delay the writing of the entry list, which, although less "safe," solves this problem by allowing the user
+	 * to defer the final write via {@link WadFile#flushEntries()}.
 	 */
 	default WadEntry[] addAllData(String[] entryNames, byte[][] data) throws IOException
 	{
@@ -1813,6 +1940,10 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws ArrayIndexOutOfBoundsException if the length of the entryNames array exceeds data's array length.
 	 * @throws NullPointerException if an object if <code>entryNames</code> or <code>data</code> is <code>null</code>.
 	 * @since 2.2.0
+	 * @deprecated 2.7.0 - The reason why this method was added in the first place was to have a bulk add operation that incurred hopefully
+	 * less transaction overhead in implementations. In WadBuffer, the performance overhead was already moot, and WadFile has methods
+	 * that delay the writing of the entry list, which, although less "safe," solves this problem by allowing the user
+	 * to defer the final write via {@link WadFile#flushEntries()}.
 	 */
 	default <BO extends BinaryObject> WadEntry[] addAllData(String[] entryNames, BO[] data) throws IOException
 	{
@@ -1834,6 +1965,10 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws ArrayIndexOutOfBoundsException if the length of the entryNames array exceeds data's array length.
 	 * @throws IndexOutOfBoundsException if the provided index &lt; 0 or &gt; <code>getEntryCount()</code>.
 	 * @throws NullPointerException if an object if <code>entryNames</code> or <code>data</code> is <code>null</code>.
+	 * @deprecated 2.7.0 - The reason why this method was added in the first place was to have a bulk add operation that incurred hopefully
+	 * less transaction overhead in implementations. In WadBuffer, the performance overhead was already moot, and WadFile has methods
+	 * that delay the writing of the entry list, which, although less "safe," solves this problem by allowing the user
+	 * to defer the final write via {@link WadFile#flushEntries()}.
 	 */
 	WadEntry[] addAllDataAt(int index, String[] entryNames, byte[][] data) throws IOException;
 
@@ -1850,6 +1985,10 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws ArrayIndexOutOfBoundsException if the length of the entryNames array exceeds data's array length.
 	 * @throws NullPointerException if an object if <code>entryNames</code> or <code>data</code> is <code>null</code>.
 	 * @since 2.2.0
+	 * @deprecated 2.7.0 - The reason why this method was added in the first place was to have a bulk add operation that incurred hopefully
+	 * less transaction overhead in implementations. In WadBuffer, the performance overhead was already moot, and WadFile has methods
+	 * that delay the writing of the entry list, which, although less "safe," solves this problem by allowing the user
+	 * to defer the final write via {@link WadFile#flushEntries()}.
 	 */
 	default <BO extends BinaryObject> WadEntry[] addAllDataAt(int index, String[] entryNames, BO[] data) throws IOException
 	{
@@ -1857,49 +1996,6 @@ public interface Wad extends Iterable<WadEntry>
 		for (int i = 0; i < entryNames.length; i++)
 			out[i] = addDataAt(index + i, entryNames[i], data[i]);
 		return out;
-	}
-
-	/**
-	 * Adds a new entry to the Wad, but with an explicit offset and size.
-	 * Exercise caution with this method, since you can reference anywhere in the Wad!
-	 *  
-	 * @param entryName the name of the entry.
-	 * @param offset the entry's content start byte.
-	 * @param length the entry's length in bytes.
-	 * @return the entry that was created.
-	 * @throws IllegalArgumentException if the provided name is not a valid name, or the offset/size is negative.
-	 * @throws IOException if the entry cannot be written.
-	 * @throws NullPointerException if <code>name</code> is <code>null</code>.
-	 */
-	WadEntry addEntry(String entryName, int offset, int length) throws IOException;
-
-	/**
-	 * Adds an entry marker to the Wad (entry with 0 size, arbitrary offset).
-	 * 
-	 * @param entryName the name of the entry.
-	 * @return the entry that was added.
-	 * @throws IllegalArgumentException if the provided name is not a valid name.
-	 * @throws IOException if the entry cannot be written.
-	 * @throws NullPointerException if <code>name</code> is <code>null</code>.
-	 */
-	default WadEntry addMarker(String entryName) throws IOException
-	{
-		return addData(entryName, NO_DATA);
-	}
-
-	/**
-	 * Adds an entry marker to the Wad (entry with 0 size, arbitrary offset).
-	 * 
-	 * @param index the index at which to add the marker.
-	 * @param entryName the name of the entry.
-	 * @return the entry that was added.
-	 * @throws IllegalArgumentException if the provided name is not a valid name.
-	 * @throws IOException if the entry cannot be written.
-	 * @throws NullPointerException if <code>name</code> is <code>null</code>.
-	 */
-	default WadEntry addMarkerAt(int index, String entryName) throws IOException
-	{
-		return addDataAt(index, entryName, NO_DATA);
 	}
 
 	/**

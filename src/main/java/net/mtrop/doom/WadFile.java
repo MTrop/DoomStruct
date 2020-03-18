@@ -7,12 +7,19 @@
  ******************************************************************************/
 package net.mtrop.doom;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import net.mtrop.doom.exception.WadException;
+import net.mtrop.doom.struct.io.IOUtils;
 import net.mtrop.doom.struct.io.SerialWriter;
 import net.mtrop.doom.struct.io.SerializerUtils;
 import net.mtrop.doom.util.NameUtils;
@@ -186,7 +193,12 @@ public class WadFile implements Wad, AutoCloseable
 	{
 		WadFile out = WadFile.createWadFile(targetFile);
 		for (int i = 0; i < entries.length; i++)
-			out.addData(entries[i].getName(), source.getData(entries[i]), true);
+		{
+			try (InputStream in = source.getInputStream(entries[i]))
+			{
+				out.addDataAt(out.getEntryCount(), entries[i].getName(), in, -1, true);
+			}
+		}
 		out.flushEntries();
 		return out;
 	}
@@ -432,7 +444,42 @@ public class WadFile implements Wad, AutoCloseable
 	}
 
 	/**
-	 * Adds data to this Wad, using entryName as the name of the new entry. 
+	 * Adds data to this Wad at a particular entry offset, using <code>entryName</code> as the name of the entry. 
+	 * The provided input stream is read until the end of the stream is reached or <code>maxLength</code> bytes are read.
+	 * The rest of the entries in the wad are shifted down one index. 
+	 * The overhead for multiple additions may be expensive I/O-wise depending on the Wad implementation.
+	 * 
+	 * @param index the index at which to add the entry.
+	 * @param entryName the name of the entry to add this as.
+	 * @param in the input stream to read.
+	 * @param maxLength the maximum amount of bytes to read from the InputStream, or a value &lt; 0 to keep reading until end-of-stream.
+	 * @return a WadEntry that describes the added data.
+	 * @throws IllegalArgumentException if the provided name is not a valid name.
+	 * @throws IndexOutOfBoundsException if the provided index &lt; 0 or &gt; <code>getEntryCount()</code>.
+	 * @throws IOException if the data cannot be written or the stream could not be read.
+	 * @throws NullPointerException if <code>entryName</code> or <code>data</code> is <code>null</code>.
+	 * @since 2.7.0
+	 */
+	@Override
+	public WadEntry addDataAt(int index, String entryName, InputStream in, int maxLength) throws IOException
+	{
+		return addDataAt(index, entryName, in, maxLength, false);
+	}
+
+	/**
+	 * @deprecated 2.7.0 - The reason why this method was added in the first place was to have a bulk add operation that incurred hopefully
+	 * less transaction overhead in implementations. In WadBuffer, the performance overhead was already moot, and WadFile has methods
+	 * that delay the writing of the entry list, which, although less "safe," solves this problem by allowing the user
+	 * to defer the final write via {@link WadFile#flushEntries()}.
+	 */
+	@Override
+	public WadEntry[] addAllDataAt(int index, String[] entryNames, byte[][] data) throws IOException
+	{
+		return addAllDataAt(index, entryNames, data, false);
+	}
+
+	/**
+	 * Adds data to this Wad, using <code>entryName</code> as the name of the new entry. 
 	 * The overhead for multiple additions may be expensive I/O-wise depending on the Wad implementation.
 	 * <p>
 	 * <b>NOTE: If this is called with <code>noFlush</code> being true, you <i>must</i> call {@link #flushEntries()} or
@@ -448,17 +495,11 @@ public class WadFile implements Wad, AutoCloseable
 	 */
 	public WadEntry addData(String entryName, byte[] data, boolean noFlush) throws IOException
 	{
-		return addDataAt(getEntryCount(), entryName, data, false);
-	}
-
-	@Override
-	public WadEntry addDataAt(int index, String entryName, byte[] data) throws IOException
-	{
-		return addDataAt(index, entryName, data, false);
+		return addDataAt(getEntryCount(), entryName, new ByteArrayInputStream(data), -1, noFlush);
 	}
 
 	/**
-	 * Adds data to this Wad, using entryName as the name of the new entry. 
+	 * Adds data to this Wad at a particular entry offset, using <code>entryName</code> as the name of the entry. 
 	 * The rest of the entries in the wad are shifted down one index. 
 	 * The overhead for multiple additions may be expensive I/O-wise depending on the Wad implementation.
 	 * <p>
@@ -470,17 +511,46 @@ public class WadFile implements Wad, AutoCloseable
 	 * @param noFlush if true, this will not update the header nor flush the new entries to the file.
 	 * @return a WadEntry that describes the added data.
 	 * @throws IllegalArgumentException if the provided name is not a valid name.
+	 * @throws IndexOutOfBoundsException if the provided index &lt; 0 or &gt; <code>getEntryCount()</code>.
 	 * @throws IOException if the data cannot be written.
 	 * @throws NullPointerException if <code>entryName</code> or <code>data</code> is <code>null</code>.
 	 * @since 2.2.0
 	 */
 	public WadEntry addDataAt(int index, String entryName, byte[] data, boolean noFlush) throws IOException
 	{
-		WadEntry entry = WadEntry.create(entryName, entryListOffset, data.length);
-		entries.add(index, entry);
+		return addDataAt(index, entryName, new ByteArrayInputStream(data), -1, noFlush);
+	}
+
+	/**
+	 * Adds data to this Wad at a particular entry offset, using <code>entryName</code> as the name of the entry. 
+	 * The provided input stream is read until the end of the stream is reached or <code>maxLength</code> bytes are read.
+	 * The rest of the entries in the wad are shifted down one index. 
+	 * The overhead for multiple additions may be expensive I/O-wise depending on the Wad implementation.
+	 * <p>
+	 * <b>NOTE: If this is called with <code>noFlush</code> being true, you <i>must</i> call {@link #flushEntries()} or
+	 * @param index the index at which to add the entry.
+	 * @param entryName the name of the entry to add this as.
+	 * @param in the input stream to read.
+	 * @param maxLength the maximum amount of bytes to read from the InputStream, or a value &lt; 0 to keep reading until end-of-stream.
+	 * @param noFlush if true, this will not update the header nor flush the new entries to the file.
+	 * @return a WadEntry that describes the added data.
+	 * @throws IllegalArgumentException if the provided name is not a valid name.
+	 * @throws IndexOutOfBoundsException if the provided index &lt; 0 or &gt; <code>getEntryCount()</code>.
+	 * @throws IOException if the data cannot be written or the stream could not be read.
+	 * @throws NullPointerException if <code>entryName</code> or <code>data</code> is <code>null</code>.
+	 * @since 2.7.0
+	 */
+	public WadEntry addDataAt(int index, String entryName, InputStream in, int maxLength, boolean noFlush) throws IOException
+	{
+		int offset = entryListOffset;
 		file.seek(entryListOffset);
-		file.write(data);
-		entryListOffset += data.length;
+		
+		int len = IOUtils.relay(in, file, maxLength);
+		entryListOffset += len;
+	
+		WadEntry entry = WadEntry.create(entryName, offset, len);
+		entries.add(index, entry);
+	
 		if (!noFlush)
 			flushEntries();
 		return entry;
@@ -500,16 +570,14 @@ public class WadFile implements Wad, AutoCloseable
 	 * @throws ArrayIndexOutOfBoundsException if the lengths of entryNames and data do not match.
 	 * @throws NullPointerException if an object if <code>entryNames</code> or <code>data</code> is <code>null</code>.
 	 * @since 2.2.0
+	 * @deprecated 2.7.0 - The reason why this method was added in the first place was to have a bulk add operation that incurred hopefully
+	 * less transaction overhead in implementations. In WadBuffer, the performance overhead was already moot, and WadFile has methods
+	 * that delay the writing of the entry list, which, although less "safe," solves this problem by allowing the user
+	 * to defer the final write via {@link WadFile#flushEntries()}.
 	 */
 	public WadEntry[] addAllData(String[] entryNames, byte[][] data, boolean noFlush) throws IOException
 	{
 		return addAllDataAt(getEntryCount(), entryNames, data, false);
-	}
-
-	@Override
-	public WadEntry[] addAllDataAt(int index, String[] entryNames, byte[][] data) throws IOException
-	{
-		return addAllDataAt(index, entryNames, data, false);
 	}
 
 	/**
@@ -527,6 +595,10 @@ public class WadFile implements Wad, AutoCloseable
 	 * @throws ArrayIndexOutOfBoundsException if the lengths of entryNames and data do not match.
 	 * @throws NullPointerException if an object if <code>entryNames</code> or <code>data</code> is <code>null</code>.
 	 * @since 2.2.0
+	 * @deprecated 2.7.0 - The reason why this method was added in the first place was to have a bulk add operation that incurred hopefully
+	 * less transaction overhead in implementations. In WadBuffer, the performance overhead was already moot, and WadFile has methods
+	 * that delay the writing of the entry list, which, although less "safe," solves this problem by allowing the user
+	 * to defer the final write via {@link WadFile#flushEntries()}.
 	 */
 	public WadEntry[] addAllDataAt(int index, String[] entryNames, byte[][] data, boolean noFlush) throws IOException
 	{

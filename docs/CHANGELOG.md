@@ -6,6 +6,13 @@ by Matt Tropiano et al. (see AUTHORS.txt)
 Changed in 2.6.1
 ----------------
 
+- `Added` Wad: More addData(...) methods.
+- `Changed` Deprecated: Wad.addAllData*(...) methods.
+
+
+Changed in 2.6.1
+----------------
+
 - `Changed` Wad: Made addData/addAllData methods call addDataAt/addAllDataAt by default.
 - `Changed` Some Javadocs clarifications and fixes.
 

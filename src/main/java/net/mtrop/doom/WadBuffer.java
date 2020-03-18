@@ -14,9 +14,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -35,6 +35,8 @@ import net.mtrop.doom.util.NameUtils;
  */
 public class WadBuffer implements Wad
 {
+	private static final Charset ASCII = Charset.forName("ASCII");
+	
 	/** Type of Wad File (IWAD or PWAD). */
 	private Type type;
 	/** Header buffer. */
@@ -64,27 +66,19 @@ public class WadBuffer implements Wad
 		this.content = new DataList();
 		this.entries = new ArrayList<WadEntry>();
 		
-		try {
-			headerBuffer.put(type.name().getBytes("ASCII"));
-			headerBuffer.putInt(0);			// no entries.
-			headerBuffer.putInt(12);		// entry list offset (12).
-			content.append(headerBuffer.array());	
-		} catch (UnsupportedEncodingException e) {
-			// ASCII is always supported.
-		}
+		headerBuffer.put(type.name().getBytes(ASCII));
+		headerBuffer.putInt(0);			// no entries.
+		headerBuffer.putInt(12);		// entry list offset (12).
+		content.append(headerBuffer.array());	
 	}
 	
 	private void updateHeader()
 	{
 		headerBuffer.rewind();
-		try {
-			headerBuffer.put(type.name().getBytes("ASCII"));
-			headerBuffer.putInt(entries.size());
-			headerBuffer.putInt(content.size());
-			content.setData(0, headerBuffer.array());	
-		} catch (UnsupportedEncodingException e) {
-			// ASCII is always supported.
-		}
+		headerBuffer.put(type.name().getBytes(ASCII));
+		headerBuffer.putInt(entries.size());
+		headerBuffer.putInt(content.size());
+		content.setData(0, headerBuffer.array());
 	}
 	
 	/**
@@ -157,7 +151,12 @@ public class WadBuffer implements Wad
 	{
 		WadBuffer out = new WadBuffer(Type.PWAD);
 		for (int i = 0; i < entries.length; i++)
-			out.addData(entries[i].getName(), source.getData(entries[i]));
+		{
+			try (InputStream in = source.getInputStream(entries[i]))
+			{
+				out.addDataAt(out.getEntryCount(), entries[i].getName(), in);
+			}
+		}
 		return out;
 	}
 
@@ -401,15 +400,22 @@ public class WadBuffer implements Wad
 	}
 
 	@Override
-	public WadEntry addDataAt(int index, String entryName, byte[] data) throws IOException
+	public WadEntry addDataAt(int index, String entryName, InputStream in, int maxLength) throws IOException
 	{
-		WadEntry entry = WadEntry.create(entryName, content.size(), data.length);
-		content.append(data);
+		int offset = content.size();
+		int len = IOUtils.relay(in, content, maxLength);
+		WadEntry entry = WadEntry.create(entryName, offset, len);
 		entries.add(index, entry);
 		updateHeader();
 		return entry;
 	}
-	
+
+	/**
+	 * @deprecated 2.7.0 - The reason why this method was added in the first place was to have a bulk add operation that incurred hopefully
+	 * less transaction overhead in implementations. In WadBuffer, the performance overhead was already moot, and WadFile has methods
+	 * that delay the writing of the entry list, which, although less "safe," solves this problem by allowing the user
+	 * to defer the final write via {@link WadFile#flushEntries()}.
+	 */
 	@Override
 	public WadEntry[] addAllDataAt(int index, String[] entryNames, byte[][] data) throws IOException
 	{
