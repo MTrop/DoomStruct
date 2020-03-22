@@ -7,10 +7,13 @@
  ******************************************************************************/
 package net.mtrop.doom;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -1644,7 +1647,27 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws IOException if the entry cannot be written.
 	 * @throws NullPointerException if <code>name</code> is <code>null</code>.
 	 */
-	WadEntry addEntry(String entryName, int offset, int length) throws IOException;
+	default WadEntry addEntry(String entryName, int offset, int length) throws IOException
+	{
+		return addEntryAt(getEntryCount(), entryName, offset, length);
+	}
+
+	/**
+	 * Adds a new entry to the Wad at a specific index, but with an explicit offset and size.
+	 * The rest of the entries afterward are shifted an index forward.
+	 * Exercise caution with this method, since you can reference anywhere in the Wad!
+	 * 
+	 * @param index the index at which to add the entry.
+	 * @param entryName the name of the entry.
+	 * @param offset the entry's content start byte.
+	 * @param length the entry's length in bytes.
+	 * @return the entry that was created.
+	 * @throws IllegalArgumentException if the provided name is not a valid name, or the offset/size is negative.
+	 * @throws IOException if the entry cannot be written.
+	 * @throws NullPointerException if <code>name</code> is <code>null</code>.
+	 * @since [NOW]
+	 */
+	WadEntry addEntryAt(int index, String entryName, int offset, int length) throws IOException;
 
 	/**
 	 * Adds an entry marker to the Wad (entry with 0 size, arbitrary offset).
@@ -1677,7 +1700,7 @@ public interface Wad extends Iterable<WadEntry>
 
 	/**
 	 * Adds data to this Wad, using <code>entryName</code> as the name of the new entry. 
-	 * The overhead for multiple additions may be expensive I/O-wise depending on the Wad implementation.
+	 * The overhead for multiple individual additions may be expensive I/O-wise depending on the Wad implementation.
 	 * 
 	 * @param entryName the name of the entry to add this as.
 	 * @param data the bytes of data to add as this wad's data.
@@ -1693,7 +1716,7 @@ public interface Wad extends Iterable<WadEntry>
 
 	/**
 	 * Adds data to this Wad, using <code>entryName</code> as the name of the new entry. 
-	 * The overhead for multiple additions may be expensive I/O-wise depending on the Wad implementation.
+	 * The overhead for multiple individual additions may be expensive I/O-wise depending on the Wad implementation.
 	 * 
 	 * @param entryName the name of the entry to add this as.
 	 * @param data the BinaryObject to add as this wad's data (converted via {@link BinaryObject#toBytes()}).
@@ -1712,7 +1735,7 @@ public interface Wad extends Iterable<WadEntry>
 	/**
 	 * Adds data to this Wad, using <code>entryName</code> as the name of the new entry.
 	 * The BinaryObjects provided have all of their converted data concatenated together as one blob of contiguous data.
-	 * The overhead for multiple additions may be expensive I/O-wise depending on the Wad implementation.
+	 * The overhead for multiple individual additions may be expensive I/O-wise depending on the Wad implementation.
 	 * 
 	 * @param entryName the name of the entry to add this as.
 	 * @param data the BinaryObjects to add as this wad's data (converted via {@link BinaryObject#toBytes()}).
@@ -1730,7 +1753,7 @@ public interface Wad extends Iterable<WadEntry>
 
 	/**
 	 * Adds data to this Wad, using <code>entryName</code> as the name of the new entry. 
-	 * The overhead for multiple additions may be expensive I/O-wise depending on the Wad implementation.
+	 * The overhead for multiple individual additions may be expensive I/O-wise depending on the Wad implementation.
 	 * 
 	 * @param entryName the name of the entry to add this as.
 	 * @param data the TextObject to add as this wad's data (converted via {@link TextObject#toText()}, then {@link String#getBytes(Charset)}).
@@ -1749,8 +1772,28 @@ public interface Wad extends Iterable<WadEntry>
 
 	/**
 	 * Adds data to this Wad, using <code>entryName</code> as the name of the new entry.
+	 * The provided File is read until the end of the file is reached.
+	 * The overhead for multiple individual additions may be expensive I/O-wise depending on the Wad implementation.
+	 * 
+	 * @param entryName the name of the entry to add this as.
+	 * @param fileToAdd the file to add the contents of.
+	 * @return a WadEntry that describes the added data.
+	 * @throws IllegalArgumentException if the provided name is not a valid name.
+	 * @throws FileNotFoundException if the file path refers to a file that is a directory or doesn't exist.
+	 * @throws IOException if the data cannot be written or the stream could not be read.
+	 * @throws NullPointerException if <code>entryName</code> or <code>data</code> or <code>encoding</code> is <code>null</code>.
+	 * @since [NOW]
+	 */
+	default WadEntry addData(String entryName, File fileToAdd) throws IOException
+	{
+		return addDataAt(getEntryCount(), entryName, fileToAdd);
+	}
+
+	/**
+	 * Adds data to this Wad, using <code>entryName</code> as the name of the new entry.
 	 * The provided input stream is read until the end of the stream is reached.
-	 * The overhead for multiple additions may be expensive I/O-wise depending on the Wad implementation.
+	 * The input stream is NOT CLOSED, afterward.
+	 * The overhead for multiple individual additions may be expensive I/O-wise depending on the Wad implementation.
 	 * 
 	 * @param entryName the name of the entry to add this as.
 	 * @param in the input stream to read.
@@ -1768,7 +1811,8 @@ public interface Wad extends Iterable<WadEntry>
 	/**
 	 * Adds data to this Wad, using <code>entryName</code> as the name of the new entry.
 	 * The provided input stream is read until the end of the stream is reached or <code>maxLength</code> bytes are read.
-	 * The overhead for multiple additions may be expensive I/O-wise depending on the Wad implementation.
+	 * The input stream is NOT CLOSED, afterward.
+	 * The overhead for multiple individual additions may be expensive I/O-wise depending on the Wad implementation.
 	 * 
 	 * @param entryName the name of the entry to add this as.
 	 * @param in the input stream to read.
@@ -1787,7 +1831,7 @@ public interface Wad extends Iterable<WadEntry>
 	/**
 	 * Adds data to this Wad at a particular entry offset, using <code>entryName</code> as the name of the entry. 
 	 * The rest of the entries in the wad are shifted down one index. 
-	 * The overhead for multiple additions may be expensive I/O-wise depending on the Wad implementation.
+	 * The overhead for multiple individual additions may be expensive I/O-wise depending on the Wad implementation.
 	 * 
 	 * @param index the index at which to add the entry.
 	 * @param entryName the name of the entry to add this as.
@@ -1806,7 +1850,7 @@ public interface Wad extends Iterable<WadEntry>
 	/**
 	 * Adds data to this Wad at a particular entry offset, using <code>entryName</code> as the name of the entry. 
 	 * The rest of the entries in the wad are shifted down one index. 
-	 * The overhead for multiple additions may be expensive I/O-wise depending on the Wad implementation.
+	 * The overhead for multiple individual additions may be expensive I/O-wise depending on the Wad implementation.
 	 * 
 	 * @param index the index at which to add the entry.
 	 * @param entryName the name of the entry to add this as.
@@ -1828,7 +1872,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * Adds data to this Wad at a particular entry offset, using <code>entryName</code> as the name of the entry. 
 	 * The rest of the entries in the wad are shifted down one index. 
 	 * The BinaryObjects provided have all of their converted data concatenated together as one blob of contiguous data.
-	 * The overhead for multiple additions may be expensive I/O-wise depending on the Wad implementation.
+	 * The overhead for multiple individual additions may be expensive I/O-wise depending on the Wad implementation.
 	 * 
 	 * @param index the index at which to add the entry.
 	 * @param entryName the name of the entry to add this as.
@@ -1849,7 +1893,7 @@ public interface Wad extends Iterable<WadEntry>
 	/**
 	 * Adds data to this Wad at a particular entry offset, using <code>entryName</code> as the name of the entry. 
 	 * The rest of the entries in the wad are shifted down one index. 
-	 * The overhead for multiple additions may be expensive I/O-wise depending on the Wad implementation.
+	 * The overhead for multiple individual additions may be expensive I/O-wise depending on the Wad implementation.
 	 * 
 	 * @param index the index at which to add the entry.
 	 * @param entryName the name of the entry to add this as.
@@ -1869,10 +1913,34 @@ public interface Wad extends Iterable<WadEntry>
 	}
 
 	/**
+	 * Adds data to this Wad, using <code>entryName</code> as the name of the new entry.
+	 * The provided File is read until the end of the file is reached.
+	 * The overhead for multiple individual additions may be expensive I/O-wise depending on the Wad implementation.
+	 * 
+	 * @param index the index at which to add the entry.
+	 * @param entryName the name of the entry to add this as.
+	 * @param fileToAdd the file to add the contents of.
+	 * @return a WadEntry that describes the added data.
+	 * @throws IllegalArgumentException if the provided name is not a valid name.
+	 * @throws FileNotFoundException if the file path refers to a file that is a directory or doesn't exist.
+	 * @throws IOException if the data cannot be written or the stream could not be read.
+	 * @throws NullPointerException if <code>entryName</code> or <code>data</code> or <code>encoding</code> is <code>null</code>.
+	 * @since [NOW]
+	 */
+	default WadEntry addDataAt(int index, String entryName, File fileToAdd) throws IOException
+	{
+		try (InputStream in = new BufferedInputStream(new FileInputStream(fileToAdd), 8192))
+		{
+			return addDataAt(index, entryName, in, -1);
+		}
+	}
+
+	/**
 	 * Adds data to this Wad at a particular entry offset, using <code>entryName</code> as the name of the entry. 
 	 * The provided input stream is read until the end of the stream is reached.
+	 * The input stream is NOT CLOSED, afterward.
 	 * The rest of the entries in the wad are shifted down one index. 
-	 * The overhead for multiple additions may be expensive I/O-wise depending on the Wad implementation.
+	 * The overhead for multiple individual additions may be expensive I/O-wise depending on the Wad implementation.
 	 * 
 	 * @param index the index at which to add the entry.
 	 * @param entryName the name of the entry to add this as.
@@ -1891,9 +1959,10 @@ public interface Wad extends Iterable<WadEntry>
 
 	/**
 	 * Adds data to this Wad at a particular entry offset, using <code>entryName</code> as the name of the entry. 
-	 * The provided input stream is read until the end of the stream is reached or <code>maxLength</code> bytes are read.
+	 * The provided input stream is read until the end of the stream is reached or <code>maxLength</code> bytes are read. 
+	 * The input stream is NOT CLOSED, afterward.
 	 * The rest of the entries in the wad are shifted down one index. 
-	 * The overhead for multiple additions may be expensive I/O-wise depending on the Wad implementation.
+	 * The overhead for multiple individual additions may be expensive I/O-wise depending on the Wad implementation.
 	 * 
 	 * @param index the index at which to add the entry.
 	 * @param entryName the name of the entry to add this as.
@@ -1918,10 +1987,10 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws IOException if the data cannot be written.
 	 * @throws ArrayIndexOutOfBoundsException if the length of the entryNames array exceeds data's array length.
 	 * @throws NullPointerException if an object if <code>entryNames</code> or <code>data</code> is <code>null</code>.
-	 * @deprecated [NOW] - The reason why this method was added in the first place was to have a bulk add operation that incurred hopefully
-	 * less transaction overhead in implementations. In WadBuffer, the performance overhead was already moot, and WadFile has methods
-	 * that delay the writing of the entry list, which, although less "safe," solves this problem by allowing the user
-	 * to defer the final write via {@link WadFile#flushEntries()}.
+	 * @deprecated [NOW] - The reason why this method was added in the first place was to have a bulk add operation 
+	 * that incurred hopefully less transaction overhead in implementations. WadMap, of course, cannot add data. In 
+	 * WadBuffer, the performance overhead was already moot, and WadFile has {@link WadFile#createAdder()} for large 
+	 * add operations to reduce the overhead.
 	 */
 	default WadEntry[] addAllData(String[] entryNames, byte[][] data) throws IOException
 	{
@@ -1940,10 +2009,10 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws ArrayIndexOutOfBoundsException if the length of the entryNames array exceeds data's array length.
 	 * @throws NullPointerException if an object if <code>entryNames</code> or <code>data</code> is <code>null</code>.
 	 * @since 2.2.0
-	 * @deprecated [NOW] - The reason why this method was added in the first place was to have a bulk add operation that incurred hopefully
-	 * less transaction overhead in implementations. In WadBuffer, the performance overhead was already moot, and WadFile has methods
-	 * that delay the writing of the entry list, which, although less "safe," solves this problem by allowing the user
-	 * to defer the final write via {@link WadFile#flushEntries()}.
+	 * @deprecated [NOW] - The reason why this method was added in the first place was to have a bulk add operation 
+	 * that incurred hopefully less transaction overhead in implementations. WadMap, of course, cannot add data. In 
+	 * WadBuffer, the performance overhead was already moot, and WadFile has {@link WadFile#createAdder()} for large 
+	 * add operations to reduce the overhead.
 	 */
 	default <BO extends BinaryObject> WadEntry[] addAllData(String[] entryNames, BO[] data) throws IOException
 	{
@@ -1965,10 +2034,10 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws ArrayIndexOutOfBoundsException if the length of the entryNames array exceeds data's array length.
 	 * @throws IndexOutOfBoundsException if the provided index &lt; 0 or &gt; <code>getEntryCount()</code>.
 	 * @throws NullPointerException if an object if <code>entryNames</code> or <code>data</code> is <code>null</code>.
-	 * @deprecated [NOW] - The reason why this method was added in the first place was to have a bulk add operation that incurred hopefully
-	 * less transaction overhead in implementations. In WadBuffer, the performance overhead was already moot, and WadFile has methods
-	 * that delay the writing of the entry list, which, although less "safe," solves this problem by allowing the user
-	 * to defer the final write via {@link WadFile#flushEntries()}.
+	 * @deprecated [NOW] - The reason why this method was added in the first place was to have a bulk add operation 
+	 * that incurred hopefully less transaction overhead in implementations. WadMap, of course, cannot add data. In 
+	 * WadBuffer, the performance overhead was already moot, and WadFile has {@link WadFile#createAdder()} for large 
+	 * add operations to reduce the overhead.
 	 */
 	WadEntry[] addAllDataAt(int index, String[] entryNames, byte[][] data) throws IOException;
 
@@ -1985,10 +2054,10 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws ArrayIndexOutOfBoundsException if the length of the entryNames array exceeds data's array length.
 	 * @throws NullPointerException if an object if <code>entryNames</code> or <code>data</code> is <code>null</code>.
 	 * @since 2.2.0
-	 * @deprecated [NOW] - The reason why this method was added in the first place was to have a bulk add operation that incurred hopefully
-	 * less transaction overhead in implementations. In WadBuffer, the performance overhead was already moot, and WadFile has methods
-	 * that delay the writing of the entry list, which, although less "safe," solves this problem by allowing the user
-	 * to defer the final write via {@link WadFile#flushEntries()}.
+	 * @deprecated [NOW] - The reason why this method was added in the first place was to have a bulk add operation 
+	 * that incurred hopefully less transaction overhead in implementations. WadMap, of course, cannot add data. In 
+	 * WadBuffer, the performance overhead was already moot, and WadFile has {@link WadFile#createAdder()} for large 
+	 * add operations to reduce the overhead.
 	 */
 	default <BO extends BinaryObject> WadEntry[] addAllDataAt(int index, String[] entryNames, BO[] data) throws IOException
 	{
@@ -2008,7 +2077,7 @@ public interface Wad extends Iterable<WadEntry>
 	 */
 	default void addFrom(Wad source, int startIndex, int maxLength) throws IOException
 	{
-		addFrom(source, source.mapEntries(startIndex, maxLength));
+		addFromAt(getEntryCount(), source, source.mapEntries(startIndex, maxLength));
 	}
 	
 	/**
@@ -2020,8 +2089,7 @@ public interface Wad extends Iterable<WadEntry>
 	 */
 	default void addFrom(Wad source, WadEntry ... entries) throws IOException
 	{
-		for (int i = 0; i < entries.length; i++)
-			addData(entries[i].getName(), source.getData(entries[i]));
+		addFromAt(getEntryCount(), source, entries);
 	}
 	
 	/**

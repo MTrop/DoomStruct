@@ -221,23 +221,6 @@ public class WadBuffer implements Wad
 	}
 
 	/**
-	 * Writes the contents of this buffer out to an output stream in Wad format.
-	 * Does not close the stream.
-	 * @param out the output stream to write to.
-	 * @throws IOException if a problem occurs during the write.
-	 * @throws NullPointerException if <code>out</code> is null.
-	 */
-	public final void writeToStream(OutputStream out) throws IOException
-	{
-		// write content (contains header).
-		out.write(content.toByteArray(), 0, content.size());
-
-		// write entry list.
-		for (WadEntry entry : entries)
-			entry.writeBytes(out);
-	}
-	
-	/**
 	 * Writes the contents of this buffer out to a file in Wad format.
 	 * The target file will be overwritten.
 	 * @param path the file path to write to.
@@ -266,6 +249,23 @@ public class WadBuffer implements Wad
 		IOUtils.close(fos);
 	}
 	
+	/**
+	 * Writes the contents of this buffer out to an output stream in Wad format.
+	 * Does not close the stream.
+	 * @param out the output stream to write to.
+	 * @throws IOException if a problem occurs during the write.
+	 * @throws NullPointerException if <code>out</code> is null.
+	 */
+	public final void writeToStream(OutputStream out) throws IOException
+	{
+		// write content (contains header).
+		out.write(content.toByteArray(), 0, content.size());
+	
+		// write entry list.
+		for (WadEntry entry : entries)
+			entry.writeBytes(out);
+	}
+
 	@Override
 	public int getContentLength()
 	{
@@ -391,10 +391,10 @@ public class WadBuffer implements Wad
 	}
 
 	@Override
-	public WadEntry addEntry(String entryName, int offset, int length) throws IOException
+	public WadEntry addEntryAt(int index, String entryName, int offset, int length) throws IOException
 	{
 		WadEntry entry = WadEntry.create(entryName, offset, length);
-		entries.add(entry);
+		entries.add(index, entry);
 		updateHeader();
 		return entry;
 	}
@@ -411,10 +411,10 @@ public class WadBuffer implements Wad
 	}
 
 	/**
-	 * @deprecated [NOW] - The reason why this method was added in the first place was to have a bulk add operation that incurred hopefully
-	 * less transaction overhead in implementations. In WadBuffer, the performance overhead was already moot, and WadFile has methods
-	 * that delay the writing of the entry list, which, although less "safe," solves this problem by allowing the user
-	 * to defer the final write via {@link WadFile#flushEntries()}.
+	 * @deprecated [NOW] - The reason why this method was added in the first place was to have a bulk add operation 
+	 * that incurred hopefully less transaction overhead in implementations. WadMap, of course, cannot add data. In 
+	 * WadBuffer, the performance overhead was already moot, and WadFile has {@link WadFile#createAdder()} for large 
+	 * add operations to reduce the overhead.
 	 */
 	@Override
 	public WadEntry[] addAllDataAt(int index, String[] entryNames, byte[][] data) throws IOException

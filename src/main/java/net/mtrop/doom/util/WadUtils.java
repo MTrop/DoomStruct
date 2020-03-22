@@ -32,6 +32,7 @@ public final class WadUtils
 	 * takes a Wad and returns void, without handling any exceptions thrown by it. 
 	 * @since 2.5.0
 	 */
+	@FunctionalInterface
 	public static interface WadConsumer
 	{
 		/**
@@ -48,6 +49,7 @@ public final class WadUtils
 	 * @param <R> the return type.
 	 * @since 2.5.0
 	 */
+	@FunctionalInterface
 	public static interface WadFunction<R>
 	{
 		/**

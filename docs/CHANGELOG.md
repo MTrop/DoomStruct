@@ -7,6 +7,7 @@ Changed in [NOW]
 ----------------
 
 - `Added` Wad: More addData(...) methods.
+- `Added` WadFile bulk add methods, deprecated "noFlush" variant methods. 
 - `Changed` Deprecated: Wad.addAllData*(...) methods.
 
 
