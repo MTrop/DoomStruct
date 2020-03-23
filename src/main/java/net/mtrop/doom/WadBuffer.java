@@ -411,7 +411,7 @@ public class WadBuffer implements Wad
 	}
 
 	/**
-	 * @deprecated [NOW] - The reason why this method was added in the first place was to have a bulk add operation 
+	 * @deprecated 2.7.0 - The reason why this method was added in the first place was to have a bulk add operation 
 	 * that incurred hopefully less transaction overhead in implementations. WadMap, of course, cannot add data. In 
 	 * WadBuffer, the performance overhead was already moot, and WadFile has {@link WadFile#createAdder()} for large 
 	 * add operations to reduce the overhead.

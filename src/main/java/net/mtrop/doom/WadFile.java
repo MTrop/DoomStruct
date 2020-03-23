@@ -459,7 +459,7 @@ public class WadFile implements Wad, AutoCloseable
 	}
 
 	/**
-	 * @deprecated [NOW] - The reason why this method was added in the first place was to have a bulk add operation 
+	 * @deprecated 2.7.0 - The reason why this method was added in the first place was to have a bulk add operation 
 	 * that incurred hopefully less transaction overhead in implementations. WadMap, of course, cannot add data. In 
 	 * WadBuffer, the performance overhead was already moot, and WadFile has {@link #createAdder()} for large 
 	 * add operations to reduce the overhead.
@@ -484,7 +484,7 @@ public class WadFile implements Wad, AutoCloseable
 	 * @throws IOException if the data cannot be written.
 	 * @throws NullPointerException if <code>entryName</code> or <code>data</code> is <code>null</code>.
 	 * @since 2.2.0
-	 * @deprecated [NOW] - The reason why this method was added in the first place was to have a bulk add operation 
+	 * @deprecated 2.7.0 - The reason why this method was added in the first place was to have a bulk add operation 
 	 * that incurred hopefully less transaction overhead in implementations. WadMap, of course, cannot add data. In 
 	 * WadBuffer, the performance overhead was already moot, and WadFile has {@link #createAdder()} for large 
 	 * add operations to reduce the overhead.
@@ -511,7 +511,7 @@ public class WadFile implements Wad, AutoCloseable
 	 * @throws IOException if the data cannot be written.
 	 * @throws NullPointerException if <code>entryName</code> or <code>data</code> is <code>null</code>.
 	 * @since 2.2.0
-	 * @deprecated [NOW] - The reason why this method was added in the first place was to have a bulk add operation 
+	 * @deprecated 2.7.0 - The reason why this method was added in the first place was to have a bulk add operation 
 	 * that incurred hopefully less transaction overhead in implementations. WadMap, of course, cannot add data. In 
 	 * WadBuffer, the performance overhead was already moot, and WadFile has {@link #createAdder()} for large 
 	 * add operations to reduce the overhead.
@@ -570,7 +570,7 @@ public class WadFile implements Wad, AutoCloseable
 	 * @throws ArrayIndexOutOfBoundsException if the lengths of entryNames and data do not match.
 	 * @throws NullPointerException if an object if <code>entryNames</code> or <code>data</code> is <code>null</code>.
 	 * @since 2.2.0
-	 * @deprecated [NOW] - The reason why this method was added in the first place was to have a bulk add operation 
+	 * @deprecated 2.7.0 - The reason why this method was added in the first place was to have a bulk add operation 
 	 * that incurred hopefully less transaction overhead in implementations. WadMap, of course, cannot add data. In 
 	 * WadBuffer, the performance overhead was already moot, and WadFile has {@link #createAdder()} for large 
 	 * add operations to reduce the overhead.
@@ -595,7 +595,7 @@ public class WadFile implements Wad, AutoCloseable
 	 * @throws ArrayIndexOutOfBoundsException if the lengths of entryNames and data do not match.
 	 * @throws NullPointerException if an object if <code>entryNames</code> or <code>data</code> is <code>null</code>.
 	 * @since 2.2.0
-	 * @deprecated [NOW] - The reason why this method was added in the first place was to have a bulk add operation 
+	 * @deprecated 2.7.0 - The reason why this method was added in the first place was to have a bulk add operation 
 	 * that incurred hopefully less transaction overhead in implementations. WadMap, of course, cannot add data. In 
 	 * WadBuffer, the performance overhead was already moot, and WadFile has {@link #createAdder()} for large 
 	 * add operations to reduce the overhead.
@@ -678,7 +678,7 @@ public class WadFile implements Wad, AutoCloseable
 	 * ...upon which the entries are committed on close. This will still commit the list
 	 * even on an error occurring during add, unless the the writing of the list results
 	 * in an error as well.
-	 * @since [NOW]
+	 * @since 2.7.0
 	 */
 	public class Adder implements AutoCloseable
 	{
@@ -825,7 +825,7 @@ public class WadFile implements Wad, AutoCloseable
 		 * @throws FileNotFoundException if the file path refers to a file that is a directory or doesn't exist.
 		 * @throws IOException if the data cannot be written or the stream could not be read.
 		 * @throws NullPointerException if <code>entryName</code> or <code>data</code> or <code>encoding</code> is <code>null</code>.
-		 * @since [NOW]
+		 * @since 2.7.0
 		 */
 		public WadEntry addData(String entryName, File fileToAdd) throws IOException
 		{
@@ -961,7 +961,7 @@ public class WadFile implements Wad, AutoCloseable
 		 * @throws FileNotFoundException if the file path refers to a file that is a directory or doesn't exist.
 		 * @throws IOException if the data cannot be written or the stream could not be read.
 		 * @throws NullPointerException if <code>entryName</code> or <code>data</code> or <code>encoding</code> is <code>null</code>.
-		 * @since [NOW]
+		 * @since 2.7.0
 		 */
 		public WadEntry addDataAt(int index, String entryName, File fileToAdd) throws IOException
 		{
