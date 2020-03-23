@@ -633,13 +633,13 @@ public class WadFile implements Wad, AutoCloseable
 	 * All methods on this object manipulate the WadFile it is created from, and
 	 * defers the final writing of the entry list until it is closed. The object 
 	 * returned is meant to be created via a try-with-resources block, like so:
-	 * <code><pre>
+	 * <pre>
 	 * try (WadFile.Adder adder = wad.createAdder())
 	 * {
 	 *     adder.addData(....);
 	 *     ...
 	 * }
-	 * </pre></code> 
+	 * </pre> 
 	 * ...upon which the entries are committed to the file on close (but they are still available
 	 * via {@link #getEntry(int)} and associated methods). 
 	 * This will still commit the list even on an error occurring during add, unless the the 
@@ -668,13 +668,13 @@ public class WadFile implements Wad, AutoCloseable
 	 * All methods on this object manipulate the WadFile it is created from, and
 	 * defers the final writing of the entry list until it is closed. This object is meant
 	 * to be created via a try-with-resources block, like so:
-	 * <code><pre>
+	 * <pre>
 	 * try (WadFile.Adder adder = wad.createAdder())
 	 * {
 	 *     adder.addData(....);
 	 *     ...
 	 * }
-	 * </pre></code> 
+	 * </pre> 
 	 * ...upon which the entries are committed on close. This will still commit the list
 	 * even on an error occurring during add, unless the the writing of the list results
 	 * in an error as well.
