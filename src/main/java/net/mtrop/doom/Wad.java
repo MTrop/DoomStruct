@@ -1781,7 +1781,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws IllegalArgumentException if the provided name is not a valid name.
 	 * @throws FileNotFoundException if the file path refers to a file that is a directory or doesn't exist.
 	 * @throws IOException if the data cannot be written or the stream could not be read.
-	 * @throws NullPointerException if <code>entryName</code> or <code>data</code> or <code>encoding</code> is <code>null</code>.
+	 * @throws NullPointerException if <code>entryName</code> or <code>fileToAdd</code> is <code>null</code>.
 	 * @since 2.7.0
 	 */
 	default WadEntry addData(String entryName, File fileToAdd) throws IOException
@@ -1800,7 +1800,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @return a WadEntry that describes the added data.
 	 * @throws IllegalArgumentException if the provided name is not a valid name.
 	 * @throws IOException if the data cannot be written or the stream could not be read.
-	 * @throws NullPointerException if <code>entryName</code> or <code>data</code> or <code>encoding</code> is <code>null</code>.
+	 * @throws NullPointerException if <code>entryName</code> or <code>in</code> is <code>null</code>.
 	 * @since 2.7.0
 	 */
 	default WadEntry addData(String entryName, InputStream in) throws IOException
@@ -1820,7 +1820,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @return a WadEntry that describes the added data.
 	 * @throws IllegalArgumentException if the provided name is not a valid name.
 	 * @throws IOException if the data cannot be written or the stream could not be read.
-	 * @throws NullPointerException if <code>entryName</code> or <code>data</code> or <code>encoding</code> is <code>null</code>.
+	 * @throws NullPointerException if <code>entryName</code> or <code>in</code> is <code>null</code>.
 	 * @since 2.7.0
 	 */
 	default WadEntry addData(String entryName, InputStream in, int maxLength) throws IOException
@@ -1924,7 +1924,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws IllegalArgumentException if the provided name is not a valid name.
 	 * @throws FileNotFoundException if the file path refers to a file that is a directory or doesn't exist.
 	 * @throws IOException if the data cannot be written or the stream could not be read.
-	 * @throws NullPointerException if <code>entryName</code> or <code>data</code> or <code>encoding</code> is <code>null</code>.
+	 * @throws NullPointerException if <code>entryName</code> or <code>fileToAdd</code> is <code>null</code>.
 	 * @since 2.7.0
 	 */
 	default WadEntry addDataAt(int index, String entryName, File fileToAdd) throws IOException
@@ -1949,7 +1949,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws IllegalArgumentException if the provided name is not a valid name.
 	 * @throws IndexOutOfBoundsException if the provided index &lt; 0 or &gt; <code>getEntryCount()</code>.
 	 * @throws IOException if the data cannot be written or the stream could not be read.
-	 * @throws NullPointerException if <code>entryName</code> or <code>data</code> is <code>null</code>.
+	 * @throws NullPointerException if <code>entryName</code> or <code>in</code> is <code>null</code>.
 	 * @since 2.7.0
 	 */
 	default WadEntry addDataAt(int index, String entryName, InputStream in) throws IOException
@@ -1972,7 +1972,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws IllegalArgumentException if the provided name is not a valid name.
 	 * @throws IndexOutOfBoundsException if the provided index &lt; 0 or &gt; <code>getEntryCount()</code>.
 	 * @throws IOException if the data cannot be written or the stream could not be read.
-	 * @throws NullPointerException if <code>entryName</code> or <code>data</code> is <code>null</code>.
+	 * @throws NullPointerException if <code>entryName</code> or <code>in</code> is <code>null</code>.
 	 * @since 2.7.0
 	 */
 	WadEntry addDataAt(int index, String entryName, InputStream in, int maxLength) throws IOException;
