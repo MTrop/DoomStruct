@@ -3,6 +3,12 @@ Doom Struct (C) 2015-2020
 by Matt Tropiano et al. (see AUTHORS.txt)
 
 
+Changed in 2.8.1
+----------------
+
+- `Added` Additional missing flags and UDMF attributes.
+
+
 Changed in 2.8.0
 ----------------
 

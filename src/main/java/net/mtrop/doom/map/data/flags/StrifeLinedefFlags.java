@@ -18,5 +18,10 @@ public interface StrifeLinedefFlags extends DoomLinedefFlags
 	public static final int RAILING = 9;
 	/** Linedef flag: Line blocks floating actors. */
 	public static final int BLOCK_FLOATERS = 10;
+	/** 
+	 * Linedef flag: Line is translucent.
+	 * @since 2.8.1 
+	 */
+	public static final int TRANSLUCENT = 12;
 	
 }
