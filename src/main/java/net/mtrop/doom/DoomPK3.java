@@ -172,9 +172,10 @@ public class DoomPK3 extends ZipFile
 	private byte[] getData(ZipEntry entryName) throws IOException
 	{
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		InputStream in = getInputStream(entryName);
-		IOUtils.relay(in, bos);
-		IOUtils.close(in);
+		try (InputStream in = getInputStream(entryName))
+		{
+			IOUtils.relay(in, bos);
+		}
 		return bos.toByteArray();
 	}
 
@@ -285,8 +286,13 @@ public class DoomPK3 extends ZipFile
 	 */
 	public <TO extends TextObject> TO getTextDataAs(String entryName, Charset charset, Class<TO> type) throws IOException
 	{
-		Reader reader = getReader(entryName, charset);
-		return reader != null ? TextObject.read(type, reader) : null;
+		if (!contains(entryName))
+			return null;
+		
+		try (Reader reader = getReader(entryName, charset))
+		{
+			return TextObject.read(type, reader);
+		}
 	}
 
 	/**
@@ -360,8 +366,13 @@ public class DoomPK3 extends ZipFile
 	 */
 	public WadMap getDataAsWadMap(String entryName) throws IOException
 	{
-		InputStream in = getInputStream(entryName);
-		return in != null ? new WadMap(in) : null;
+		if (!contains(entryName))
+			return null;
+
+		try (InputStream in = getInputStream(entryName))
+		{
+			return new WadMap(in);
+		}
 	}
 
 	/**
@@ -400,7 +411,8 @@ public class DoomPK3 extends ZipFile
 	public WadFile getDataAsTempWadFile(String entryName, File outFile) throws IOException
 	{
 		final File extracted = getFile(entryName, outFile);
-		return extracted != null ? new WadFile(extracted) {
+		return extracted != null ? new WadFile(extracted) 
+		{
 			@Override
 			public void close() throws IOException
 			{
@@ -422,8 +434,13 @@ public class DoomPK3 extends ZipFile
 	 */
 	public WadBuffer getDataAsWadBuffer(String entryName) throws IOException
 	{
-		InputStream in = getInputStream(entryName);
-		return in != null ? new WadBuffer(in) : null;
+		if (!contains(entryName))
+			return null;
+
+		try (InputStream in = getInputStream(entryName))
+		{
+			return new WadBuffer(in);
+		}
 	}
 
 	/**
@@ -442,8 +459,9 @@ public class DoomPK3 extends ZipFile
 	 */
 	public <BO extends BinaryObject> Scanner<BO> getScanner(String entryName, Class<BO> type, int objectLength) throws IOException
 	{
-		InputStream in = getInputStream(entryName);
-		return in != null ? BinaryObject.scanner(type, in, objectLength) : null;
+		if (!contains(entryName))
+			return null;
+		return BinaryObject.scanner(type, getInputStream(entryName), objectLength);
 	}
 
 	/**
@@ -465,8 +483,9 @@ public class DoomPK3 extends ZipFile
 	 */
 	public <BO extends BinaryObject> BinaryObject.InlineScanner<BO> getInlineScanner(String entryName, Class<BO> type, int objectLength) throws IOException
 	{
-		InputStream in = getInputStream(entryName);
-		return in != null ? BinaryObject.inlineScanner(type, in, objectLength) : null;
+		if (!contains(entryName))
+			return null;
+		return BinaryObject.inlineScanner(type, getInputStream(entryName), objectLength);
 	}
 
 	/**

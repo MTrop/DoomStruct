@@ -7,6 +7,7 @@ Changed in [NOW]
 ----------------
 
 - `Added` More common UDMF attributes.
+- `Fixed` Safer input stream use in DoomPK3.
 - `Changed` Clarified a Strife Thing flag (and deprecated the other). 
 - `Changed` Modified Scanner and InlineScanner to not repeat reads on testing for next.
 - `Changed` HexenLinedef: Removed use of separate field for activation type. 
