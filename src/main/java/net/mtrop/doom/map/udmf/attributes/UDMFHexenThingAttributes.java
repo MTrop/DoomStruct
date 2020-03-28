@@ -10,7 +10,7 @@ package net.mtrop.doom.map.udmf.attributes;
 /**
  * Contains Hexen thing attributes on some UDMF structures.
  * @author Matthew Tropiano
- * @since [NOW]
+ * @since 2.8.0
  */
 public interface UDMFHexenThingAttributes extends UDMFCommonThingAttributes
 {

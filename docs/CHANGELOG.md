@@ -3,7 +3,7 @@ Doom Struct (C) 2015-2020
 by Matt Tropiano et al. (see AUTHORS.txt)
 
 
-Changed in [NOW]
+Changed in 2.8.0
 ----------------
 
 - `Added` More common UDMF attributes.

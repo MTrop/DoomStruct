@@ -197,7 +197,7 @@ public interface BinaryObject
 	/**
 	 * A deserializing scanner iterator that returns independent instances of objects.
 	 * @param <BO> the BinaryObject type.
-	 * @since [NOW], this class implements {@link AutoCloseable}.
+	 * @since 2.8.0, this class implements {@link AutoCloseable}.
 	 */
 	class Scanner<BO extends BinaryObject> implements Iterator<BO>, AutoCloseable
 	{
@@ -266,7 +266,7 @@ public interface BinaryObject
 	/**
 	 * A deserializing scanner iterator that returns the same object instance with its contents changed.
 	 * @param <BO> the BinaryObject type.
-	 * @since [NOW], this class implements {@link AutoCloseable}.
+	 * @since 2.8.0, this class implements {@link AutoCloseable}.
 	 */
 	class InlineScanner<BO extends BinaryObject> implements Iterator<BO>, AutoCloseable
 	{

@@ -10,7 +10,7 @@ package net.mtrop.doom.map.udmf.attributes;
 /**
  * Contains thing attributes for Strife namespaces.
  * @author Matthew Tropiano
- * @since [NOW]
+ * @since 2.8.0
  */
 public interface UDMFStrifeThingAttributes extends UDMFCommonThingAttributes
 {

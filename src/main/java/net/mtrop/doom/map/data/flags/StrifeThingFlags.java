@@ -26,7 +26,7 @@ public interface StrifeThingFlags extends ThingFlags
 	public static final int TRANSLUCENT_25 = 7;
 	/** Thing flag: Is invisible. */
 	public static final int INVISIBLE = 8;
-	/** @deprecated [NOW] INCORRECT NAME / PURPOSE. DO NOT USE. */
+	/** @deprecated 2.8.0 INCORRECT NAME / PURPOSE. DO NOT USE. */
 	public static final int TRANSLUCENT_75 = 8;
 
 }
