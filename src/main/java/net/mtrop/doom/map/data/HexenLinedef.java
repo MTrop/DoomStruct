@@ -60,9 +60,6 @@ public class HexenLinedef extends CommonLinedef
 		0x01800
 	};
 	
-	/** Special activation type. */
-	protected int activationType;
-
 	/** Thing action special arguments. */
 	protected int[] arguments;
 
@@ -72,7 +69,6 @@ public class HexenLinedef extends CommonLinedef
 	public HexenLinedef()
 	{
 		super();
-		this.activationType = ACTIVATION_PLAYER_CROSSES;
 		this.arguments = new int[5];
 	}
 
@@ -82,7 +78,7 @@ public class HexenLinedef extends CommonLinedef
 	 */
 	public int getActivationType() 
 	{
-		return activationType;
+		return (flags & 0x01C00) >> 10;
 	}
 	
 	/**
@@ -94,7 +90,7 @@ public class HexenLinedef extends CommonLinedef
 	public void setActivationType(int activationType) 
 	{
 		RangeUtils.checkRange("Activation Type", ACTIVATION_PLAYER_CROSSES, ACTIVATION_PLAYER_USES_PASSTHRU, activationType);
-		this.activationType = activationType;
+		flags = (flags & ~0x01C00) | ACTIVATION_FLAGS[activationType];
 	}
 	
 	/**
@@ -161,9 +157,7 @@ public class HexenLinedef extends CommonLinedef
 		vertexStartIndex = sr.readUnsignedShort(in);
 		vertexEndIndex = sr.readUnsignedShort(in);
 		
-		int f = sr.readUnsignedShort(in);
-		flags = f & 0x03FF;
-		activationType = (f & 0x01C00) >> 10;
+		flags = 0x0ffff & sr.readUnsignedShort(in);
 		
 		special = sr.readUnsignedByte(in);
 		arguments[0] = sr.readUnsignedByte(in);
@@ -183,9 +177,7 @@ public class HexenLinedef extends CommonLinedef
 		sw.writeUnsignedShort(out, vertexStartIndex);
 		sw.writeUnsignedShort(out, vertexEndIndex);
 		
-		int f = flags;
-		f |= ACTIVATION_FLAGS[activationType];
-		sw.writeUnsignedShort(out, f);
+		sw.writeUnsignedShort(out, flags);
 		
 		sw.writeByte(out, (byte)special);
 		sw.writeByte(out, (byte)arguments[0]);
@@ -209,7 +201,7 @@ public class HexenLinedef extends CommonLinedef
 		sb.append(' ').append("Flags 0x").append(String.format("%016x", flags & 0x0FFFF));
 		sb.append(' ').append("Special ").append(special);
 		sb.append(' ').append("Args ").append(Arrays.toString(arguments));
-		sb.append(' ').append("Activation ").append(ACTIVATION_NAME[activationType]);
+		sb.append(' ').append("Activation ").append(ACTIVATION_NAME[getActivationType()]);
 		return sb.toString();
 	}
 	

@@ -28,6 +28,8 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 import net.mtrop.doom.object.BinaryObject;
+import net.mtrop.doom.object.BinaryObject.Scanner;
+import net.mtrop.doom.object.BinaryObject.InlineScanner;
 import net.mtrop.doom.object.TextObject;
 import net.mtrop.doom.struct.io.IOUtils;
 import net.mtrop.doom.struct.trie.CaseInsensitiveTrieMap;
@@ -46,7 +48,7 @@ public class DoomPK3 extends ZipFile
 	/** File name. */
 	private String fileName;
 	
-	/** Hashtable of PK3 directories and lists of internal files. */
+	/** Map of PK3 directories and lists of internal files. */
 	private CaseInsensitiveTrieMap<ZipEntry> entryTable;
 	
 	/**
@@ -221,13 +223,13 @@ public class DoomPK3 extends ZipFile
 	 */
 	public File getFile(String entryName, File outFile) throws IOException
 	{
-		InputStream in = getInputStream(entryName);
-		if (in == null)
+		if (!contains(entryName))
 			return null;
-		OutputStream out = new BufferedOutputStream(new FileOutputStream(outFile));
-		IOUtils.relay(in, out);
-		IOUtils.close(in);
-		IOUtils.close(out);
+		
+		try (InputStream in = getInputStream(entryName); OutputStream out = new BufferedOutputStream(new FileOutputStream(outFile)))
+		{
+			IOUtils.relay(in, out);
+		}
 		return outFile;
 	}
 
@@ -428,6 +430,7 @@ public class DoomPK3 extends ZipFile
 	 * Retrieves the data for a particular entry and returns it as 
 	 * a deserializing scanner iterator that returns independent instances of objects.
 	 * <p>The name is case-insensitive.
+	 * <p>If you don't intend to read the entirety of the entry via the {@link InlineScanner}, close it after you finish (or use a try-with-resources block)!
 	 * @param <BO> a type that extends BinaryObject.
 	 * @param entryName the name of the entry to find.
 	 * @param type the class type to deserialize into.
@@ -437,7 +440,7 @@ public class DoomPK3 extends ZipFile
 	 * @throws ZipException if a ZIP format error has occurred
 	 * @throws IllegalStateException if the zip file has been closed 
 	 */
-	public <BO extends BinaryObject> BinaryObject.Scanner<BO> getScanner(String entryName, Class<BO> type, int objectLength) throws IOException
+	public <BO extends BinaryObject> Scanner<BO> getScanner(String entryName, Class<BO> type, int objectLength) throws IOException
 	{
 		InputStream in = getInputStream(entryName);
 		return in != null ? BinaryObject.scanner(type, in, objectLength) : null;
@@ -450,6 +453,7 @@ public class DoomPK3 extends ZipFile
 	 * ensuring low memory use. Do NOT store the references returned by <code>next()</code> anywhere as the contents
 	 * of that reference will be changed by the next call to <code>next()</code>.
 	 * <p>The name is case-insensitive.
+	 * <p>If you don't intend to read the entirety of the entry via the {@link InlineScanner}, close it after you finish (or use a try-with-resources block)!
 	 * @param <BO> a type that extends BinaryObject.
 	 * @param entryName the name of the entry to find.
 	 * @param type the class type to deserialize into.

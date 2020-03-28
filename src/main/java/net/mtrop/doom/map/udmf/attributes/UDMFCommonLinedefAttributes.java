@@ -32,6 +32,8 @@ public interface UDMFCommonLinedefAttributes extends UDMFCommonAttributes
 	/** Linedef flag: Already revealed on automap. */
 	public static final String ATTRIB_FLAG_MAPPED = "mapped";
 
+	/** Linedef id. */
+	public static final String ATTRIB_ID = "id";
 	/** Linedef Special type. */
 	public static final String ATTRIB_SPECIAL = "special";
 	/** Linedef first vertex. */

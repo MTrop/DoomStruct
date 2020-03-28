@@ -15,6 +15,9 @@ import java.io.OutputStream;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
+
+import net.mtrop.doom.struct.io.IOUtils;
 
 /**
  * Common elements of all objects that are loaded from binary data.
@@ -142,6 +145,7 @@ public interface BinaryObject
 
 	/**
 	 * Creates a deserializing scanner iterator that returns independent instances of objects.
+	 * <p><b>NOTE:</b> The InputStream is closed after the last object is read.
 	 * @param <BO> the object type, a subtype of {@link BinaryObject}.
 	 * @param boClass the class to create.
 	 * @param in the input stream.
@@ -159,6 +163,7 @@ public interface BinaryObject
 	 * This is useful for when you would want to quickly scan through a set of serialized objects while
 	 * ensuring low memory use. Do NOT store the references returned by <code>next()</code> anywhere as the contents
 	 * of that reference will be changed by the next call to <code>next()</code>.
+	 * <p><b>NOTE:</b> The InputStream is closed after the last object is read.
 	 * @param <BO> the object type, a subtype of {@link BinaryObject}.
 	 * @param boClass the class to create.
 	 * @param in the input stream.
@@ -192,11 +197,16 @@ public interface BinaryObject
 	/**
 	 * A deserializing scanner iterator that returns independent instances of objects.
 	 * @param <BO> the BinaryObject type.
+	 * @since [NOW], this class implements {@link AutoCloseable}.
 	 */
-	class Scanner<BO extends BinaryObject> implements Iterator<BO>
+	class Scanner<BO extends BinaryObject> implements Iterator<BO>, AutoCloseable
 	{
 		/** The input stream. */
 		private InputStream in;
+		/** Read next? */
+		private boolean readNext;
+		/** Has next? */
+		private boolean hasNext;
 		/** The byte buffer. */
 		private byte[] buffer;
 		/** The object class. */
@@ -205,23 +215,26 @@ public interface BinaryObject
 		private Scanner(Class<BO> clz, InputStream in, int len)
 		{
 			this.in = in;
+			this.readNext = false;
+			this.hasNext = false;
 			this.buffer = new byte[len];
 			this.objClass = clz;
+		}
+		
+		private void loadNext() throws IOException
+		{
+			if (readNext)
+				return;
+			hasNext = in.read(buffer) == buffer.length;
+			readNext = true;
 		}
 		
 		@Override
 		public boolean hasNext()
 		{
-	        int b;
 			try {
-				b = in.read(buffer);
-		        if (b < buffer.length)
-		        {
-		        	in.close();
-		            return false;
-		        }
-		        else
-		            return true;
+				loadNext();
+				return hasNext;
 			} catch (IOException e) {
 				throw new RuntimeException("Could not read bytes for " + objClass.getSimpleName(), e);
 			}
@@ -231,10 +244,21 @@ public interface BinaryObject
 		public BO next()
 		{
 			try {
-				return create(objClass, buffer);
+				loadNext();
+				if (!hasNext)
+					throw new NoSuchElementException("No more objects.");
+				BO out = create(objClass, buffer);
+				readNext = false;
+				return out;
 			} catch (IOException e) {
 				throw new RuntimeException("Could not deserialize " + objClass.getSimpleName(), e);
 			}
+		}
+
+		@Override
+		public void close()
+		{
+			IOUtils.close(in);
 		}
 		
 	}
@@ -242,11 +266,16 @@ public interface BinaryObject
 	/**
 	 * A deserializing scanner iterator that returns the same object instance with its contents changed.
 	 * @param <BO> the BinaryObject type.
+	 * @since [NOW], this class implements {@link AutoCloseable}.
 	 */
-	class InlineScanner<BO extends BinaryObject> implements Iterator<BO>
+	class InlineScanner<BO extends BinaryObject> implements Iterator<BO>, AutoCloseable
 	{
 		/** The input stream. */
 		private InputStream in;
+		/** Read next? */
+		private boolean readNext;
+		/** Has next? */
+		private boolean hasNext;
 		/** The byte buffer. */
 		private byte[] buffer;
 		/** The object class. */
@@ -257,24 +286,27 @@ public interface BinaryObject
 		private InlineScanner(Class<BO> clz, InputStream in, int len)
 		{
 			this.in = in;
+			this.readNext = false;
+			this.hasNext = false;
 			this.buffer = new byte[len];
 			this.objClass = clz;
 			this.outObject = Reflect.create(clz);
 		}
 		
+		private void loadNext() throws IOException
+		{
+			if (readNext)
+				return;
+			hasNext = in.read(buffer) == buffer.length;
+			readNext = true;
+		}
+		
 		@Override
 		public boolean hasNext()
 		{
-	        int b;
 			try {
-				b = in.read(buffer);
-		        if (b < buffer.length)
-		        {
-		        	in.close();
-		            return false;
-		        }
-		        else
-		            return true;
+				loadNext();
+				return hasNext;
 			} catch (IOException e) {
 				throw new RuntimeException("Could not read bytes for " + objClass.getSimpleName(), e);
 			}
@@ -284,11 +316,21 @@ public interface BinaryObject
 		public BO next()
 		{
 			try {
+				loadNext();
+				if (!hasNext)
+					throw new NoSuchElementException("No more objects.");
 				outObject.fromBytes(buffer);
+				readNext = false;
 				return outObject;
 			} catch (IOException e) {
 				throw new RuntimeException("Could not deserialize " + objClass.getSimpleName(), e);
 			}
+		}
+		
+		@Override
+		public void close()
+		{
+			IOUtils.close(in);
 		}
 		
 	}

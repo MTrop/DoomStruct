@@ -24,7 +24,9 @@ public interface StrifeThingFlags extends ThingFlags
 	public static final int ALLY = 6;
 	/** Thing flag: Appears at 25% translucency. */
 	public static final int TRANSLUCENT_25 = 7;
-	/** Thing flag: Appears at 75% translucency. */
+	/** Thing flag: Is invisible. */
+	public static final int INVISIBLE = 8;
+	/** @deprecated [NOW] INCORRECT NAME / PURPOSE. DO NOT USE. */
 	public static final int TRANSLUCENT_75 = 8;
 
 }

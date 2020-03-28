@@ -3,6 +3,15 @@ Doom Struct (C) 2015-2020
 by Matt Tropiano et al. (see AUTHORS.txt)
 
 
+Changed in [NOW]
+----------------
+
+- `Added` More common UDMF attributes.
+- `Changed` Clarified a Strife Thing flag (and deprecated the other). 
+- `Changed` Modified Scanner and InlineScanner to not repeat reads on testing for next.
+- `Changed` HexenLinedef: Removed use of separate field for activation type. 
+
+
 Changed in 2.7.0
 ----------------
 
