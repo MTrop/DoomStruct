@@ -29,7 +29,7 @@ public class HexenThing extends CommonThing implements BinaryObject
 	/** Thing ID. */
 	protected int id;
 	/** Thing Z position relative to sector plane. */
-	protected int z;
+	protected int height;
 	/** Thing action special. */
 	protected int special;
 	/** Thing action special arguments. */
@@ -42,28 +42,50 @@ public class HexenThing extends CommonThing implements BinaryObject
 	{
 		super();
 		this.id = 0;
-		this.z = 0;
+		this.height = 0;
 		this.special = 0;
 		this.arguments = new int[5];
 	}
 
 	/**
 	 * @return the Z position relative to sector plane.
+	 * @deprecated [NOW], use {@link #getHeight()}
 	 */
 	public int getZ()
 	{
-		return z;
+		return getHeight();
 	}
 
 	/**
 	 * Sets the Z position relative to sector plane.
 	 * @param z the new Z position.
 	 * @throws IllegalArgumentException if <code>z</code> is not between -32768 and 32767.
+	 * @deprecated [NOW], use {@link #setHeight(int)}
 	 */
 	public void setZ(int z)
 	{
-		RangeUtils.checkShort("Position Z", z);
-		this.z = z;
+		setHeight(z);
+	}
+
+	/**
+	 * @return the Z position relative to sector plane.
+	 * @since [NOW], for naming clarity/uniformity.
+	 */
+	public int getHeight()
+	{
+		return height;
+	}
+
+	/**
+	 * Sets the Z position relative to sector plane.
+	 * @param height the new height.
+	 * @throws IllegalArgumentException if <code>z</code> is not between -32768 and 32767.
+	 * @since [NOW], for naming clarity/uniformity.
+	 */
+	public void setHeight(int height)
+	{
+		RangeUtils.checkShort("Height", height);
+		this.height = height;
 	}
 
 	/**
@@ -156,7 +178,7 @@ public class HexenThing extends CommonThing implements BinaryObject
 		id = sr.readUnsignedShort(in);
 		x = sr.readShort(in);
 		y = sr.readShort(in);
-		z = sr.readShort(in);
+		height = sr.readShort(in);
 		angle = sr.readShort(in);
 		type = sr.readShort(in);
 		flags = sr.readUnsignedShort(in);
@@ -176,7 +198,7 @@ public class HexenThing extends CommonThing implements BinaryObject
 		sw.writeUnsignedShort(out, id);
 		sw.writeShort(out, (short)x);
 		sw.writeShort(out, (short)y);
-		sw.writeShort(out, (short)z);
+		sw.writeShort(out, (short)height);
 		sw.writeShort(out, (short)angle);
 		sw.writeShort(out, (short)type);
 		sw.writeUnsignedShort(out, flags & 0x0FFFF);
@@ -194,7 +216,7 @@ public class HexenThing extends CommonThing implements BinaryObject
 		StringBuilder sb = new StringBuilder();
 		sb.append("Thing");
 		sb.append(" (").append(x).append(", ").append(y).append(")");
-		sb.append(" Z:").append(z);
+		sb.append(" Z:").append(height);
 		sb.append(" Type:").append(type);
 		sb.append(" Angle:").append(angle);
 		sb.append(" ID:").append(id);

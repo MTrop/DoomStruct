@@ -8,13 +8,10 @@
 package net.mtrop.doom.map.udmf.attributes;
 
 /**
- * Contains MBF thing attributes on some UDMF structures.
+ * Contains vertex attributes for Doom namespaces.
  * @author Matthew Tropiano
- * @since 2.8.0
+ * @since [NOW]
  */
-public interface UDMFMBFThingAttributes extends UDMFDoomThingAttributes
+public interface UDMFDoomVertexAttributes extends UDMFCommonVertexAttributes
 {
-	/** Thing flag: Friendly (Marine's Best Friend-style). */
-	public static final String ATTRIB_FLAG_FRIENDLY = "friend";
-	
 }

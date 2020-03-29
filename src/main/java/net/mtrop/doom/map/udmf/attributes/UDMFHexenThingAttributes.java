@@ -12,7 +12,7 @@ package net.mtrop.doom.map.udmf.attributes;
  * @author Matthew Tropiano
  * @since 2.8.0
  */
-public interface UDMFHexenThingAttributes extends UDMFCommonThingAttributes
+public interface UDMFHexenThingAttributes extends UDMFDoomThingAttributes
 {
 	/** Thing position: height. */
 	public static final String ATTRIB_HEIGHT = "height";

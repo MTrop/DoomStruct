@@ -28,29 +28,29 @@ public class DoomSector implements BinaryObject
 	public static final int LENGTH = 26;
 
 	/** Sector Floor height. */
-	private int floorHeight;
+	protected int heightFloor;
 	/** Sector Ceiling height. */
-	private int ceilingHeight;
+	protected int heightCeiling;
 	/** Sector Floor texture. */
-	private String floorTexture;
+	protected String textureFloor;
 	/** Sector Ceiling texture. */
-	private String ceilingTexture;
+	protected String textureCeiling;
 	/** Sector light level. */
-	private int lightLevel;
+	protected int lightLevel;
 	/** Sector special. */
-	private int special;
+	protected int special;
 	/** Sector tag. */
-	private int tag;
+	protected int tag;
 	
 	/**
 	 * Creates a new sector.
 	 */
 	public DoomSector()
 	{
-		this.floorHeight = 0;
-		this.ceilingHeight = 0;
-		this.floorTexture = MapObjectConstants.TEXTURE_BLANK;
-		this.ceilingTexture = MapObjectConstants.TEXTURE_BLANK;
+		this.heightFloor = 0;
+		this.heightCeiling = 0;
+		this.textureFloor = MapObjectConstants.TEXTURE_BLANK;
+		this.textureCeiling = MapObjectConstants.TEXTURE_BLANK;
 		this.lightLevel = 0;
 		this.special = 0;
 		this.tag = 0;
@@ -60,76 +60,162 @@ public class DoomSector implements BinaryObject
 	 * Sets this sector's floor height. 
 	 * @param floorHeight the new height.
 	 * @throws IllegalArgumentException if floorHeight is outside of the range -32768 to 32767.
+	 * @deprecated [NOW], use {@link #setHeightFloor(int)}
 	 */
 	public void setFloorHeight(int floorHeight)
 	{
-		RangeUtils.checkShort("Floor Height", floorHeight);
-		this.floorHeight = floorHeight;
+		setHeightFloor(floorHeight);
 	}
 	
 	/**
 	 * @return the sector's floor height.
+	 * @deprecated [NOW], use {@link #getHeightFloor()}
 	 */
 	public int getFloorHeight()
 	{
-		return floorHeight;
+		return getHeightFloor();
 	}
 
 	/**
 	 * Sets the sector's ceiling height. 
 	 * @param ceilingHeight the new height.
 	 * @throws IllegalArgumentException if floorHeight is outside of the range -32768 to 32767.
+	 * @deprecated [NOW], use {@link #setHeightCeiling(int)}
 	 */
 	public void setCeilingHeight(int ceilingHeight)
 	{
-		RangeUtils.checkShort("Ceiling Height", ceilingHeight);
-		this.ceilingHeight = ceilingHeight;
+		setHeightCeiling(ceilingHeight);
 	}
 	
 	/**
 	 * @return the sector's ceiling height.
+	 * @deprecated [NOW], use {@link #getHeightCeiling()}
 	 */
 	public int getCeilingHeight()
 	{
-		return ceilingHeight;
+		return getHeightCeiling();
 	}
 
 	/**
 	 * Sets the sector's floor texture.
-	 * @param floorTexture the new texture.
+	 * @param textureFloor the new texture.
 	 * @throws IllegalArgumentException if the texture name is invalid. 
+	 * @deprecated [NOW], use {@link #setTextureFloor(String)}
 	 */
-	public void setFloorTexture(String floorTexture)
+	public void setFloorTexture(String textureFloor)
 	{
-		NameUtils.checkValidTextureName(floorTexture);
-		this.floorTexture = floorTexture;
+		NameUtils.checkValidTextureName(textureFloor);
+		this.textureFloor = textureFloor;
 	}
 	
 	/**
 	 * @return the sector's floor texture.
+	 * @deprecated [NOW], use {@link #getTextureFloor()}
 	 */
 	public String getFloorTexture()
 	{
-		return floorTexture;
+		return textureFloor;
 	}
 
 	/**
 	 * Sets the sector's ceiling texture. 
-	 * @param ceilingTexture the new texture.
+	 * @param textureCeiling the new texture.
 	 * @throws IllegalArgumentException if the texture name is invalid. 
+	 * @deprecated [NOW], use {@link #setTextureCeiling(String)}
 	 */
-	public void setCeilingTexture(String ceilingTexture)
+	public void setCeilingTexture(String textureCeiling)
 	{
-		NameUtils.checkValidTextureName(ceilingTexture);
-		this.ceilingTexture = ceilingTexture;
+		NameUtils.checkValidTextureName(textureCeiling);
+		this.textureCeiling = textureCeiling;
 	}
 	
 	/**
 	 * @return the sector's ceiling texture. 
+	 * @deprecated [NOW], use {@link #getTextureCeiling()}
 	 */
 	public String getCeilingTexture()
 	{
-		return ceilingTexture;
+		return textureCeiling;
+	}
+
+	/**
+	 * Sets this sector's floor height. 
+	 * @param heightFloor the new height.
+	 * @throws IllegalArgumentException if floorHeight is outside of the range -32768 to 32767.
+	 * @since [NOW], naming convention change.
+	 */
+	public void setHeightFloor(int heightFloor)
+	{
+		RangeUtils.checkShort("Floor Height", heightFloor);
+		this.heightFloor = heightFloor;
+	}
+
+	/**
+	 * @return the sector's floor height.
+	 * @since [NOW], naming convention change.
+	 */
+	public int getHeightFloor()
+	{
+		return heightFloor;
+	}
+
+	/**
+	 * Sets the sector's ceiling height. 
+	 * @param heightCeiling the new height.
+	 * @throws IllegalArgumentException if floorHeight is outside of the range -32768 to 32767.
+	 * @since [NOW], naming convention change.
+	 */
+	public void setHeightCeiling(int heightCeiling)
+	{
+		RangeUtils.checkShort("Ceiling Height", heightCeiling);
+		this.heightCeiling = heightCeiling;
+	}
+
+	/**
+	 * @return the sector's ceiling height.
+	 * @since [NOW], naming convention change.
+	 */
+	public int getHeightCeiling()
+	{
+		return heightCeiling;
+	}
+
+	/**
+	 * Sets the sector's floor texture.
+	 * @param textureFloor the new texture.
+	 * @throws IllegalArgumentException if the texture name is invalid. 
+	 */
+	public void setTextureFloor(String textureFloor)
+	{
+		NameUtils.checkValidTextureName(textureFloor);
+		this.textureFloor = textureFloor;
+	}
+
+	/**
+	 * @return the sector's floor texture.
+	 */
+	public String getTextureFloor()
+	{
+		return textureFloor;
+	}
+
+	/**
+	 * Sets the sector's ceiling texture. 
+	 * @param textureCeiling the new texture.
+	 * @throws IllegalArgumentException if the texture name is invalid. 
+	 */
+	public void setTextureCeiling(String textureCeiling)
+	{
+		NameUtils.checkValidTextureName(textureCeiling);
+		this.textureCeiling = textureCeiling;
+	}
+
+	/**
+	 * @return the sector's ceiling texture. 
+	 */
+	public String getTextureCeiling()
+	{
+		return textureCeiling;
 	}
 
 	/**
@@ -193,10 +279,10 @@ public class DoomSector implements BinaryObject
 	public void readBytes(InputStream in) throws IOException
 	{
 		SerialReader sr = new SerialReader(SerialReader.LITTLE_ENDIAN);
-		floorHeight = sr.readShort(in);
-		ceilingHeight = sr.readShort(in);
-		floorTexture = NameUtils.nullTrim(sr.readString(in, 8, "ASCII"));
-		ceilingTexture = NameUtils.nullTrim(sr.readString(in, 8, "ASCII"));
+		heightFloor = sr.readShort(in);
+		heightCeiling = sr.readShort(in);
+		textureFloor = NameUtils.nullTrim(sr.readString(in, 8, "ASCII"));
+		textureCeiling = NameUtils.nullTrim(sr.readString(in, 8, "ASCII"));
 		lightLevel = sr.readShort(in);
 		special = sr.readShort(in);
 		tag = sr.readShort(in);
@@ -206,10 +292,10 @@ public class DoomSector implements BinaryObject
 	public void writeBytes(OutputStream out) throws IOException
 	{
 		SerialWriter sw = new SerialWriter(SerialWriter.LITTLE_ENDIAN);
-		sw.writeShort(out, (short)floorHeight);
-		sw.writeShort(out, (short)ceilingHeight);
-		sw.writeBytes(out, NameUtils.toASCIIBytes(floorTexture, 8));
-		sw.writeBytes(out, NameUtils.toASCIIBytes(ceilingTexture, 8));
+		sw.writeShort(out, (short)heightFloor);
+		sw.writeShort(out, (short)heightCeiling);
+		sw.writeBytes(out, NameUtils.toASCIIBytes(textureFloor, 8));
+		sw.writeBytes(out, NameUtils.toASCIIBytes(textureCeiling, 8));
 		sw.writeShort(out, (short)lightLevel);
 		sw.writeShort(out, (short)special);
 		sw.writeShort(out, (short)tag);
@@ -220,8 +306,8 @@ public class DoomSector implements BinaryObject
 	{
 		StringBuilder sb = new StringBuilder();
 		sb.append("Sector");
-		sb.append(' ').append("Ceiling ").append(ceilingHeight).append(" Floor ").append(floorHeight);
-		sb.append(' ').append(String.format("%-8s %-8s", ceilingTexture, floorTexture));
+		sb.append(' ').append("Ceiling ").append(heightCeiling).append(" Floor ").append(heightFloor);
+		sb.append(' ').append(String.format("%-8s %-8s", textureCeiling, textureFloor));
 		sb.append(' ').append("Light ").append(lightLevel);
 		sb.append(' ').append("Special ").append(special);
 		sb.append(' ').append("Tag ").append(tag);

@@ -11,7 +11,7 @@ package net.mtrop.doom.map.udmf.attributes;
  * Contains linedef attributes for Strife namespaces.
  * @author Matthew Tropiano
  */
-public interface UDMFStrifeLinedefAttributes extends UDMFCommonLinedefAttributes
+public interface UDMFStrifeLinedefAttributes extends UDMFDoomLinedefAttributes
 {
 	/** Linedef flag: Linedef is translucent. */
 	public static final String ATTRIB_FLAG_TRANSLUCENT = "translucent";

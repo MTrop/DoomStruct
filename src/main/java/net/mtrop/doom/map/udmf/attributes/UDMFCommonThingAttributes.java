@@ -11,7 +11,7 @@ package net.mtrop.doom.map.udmf.attributes;
  * Contains common thing attributes on some UDMF structures.
  * @author Matthew Tropiano
  */
-public interface UDMFCommonThingAttributes extends UDMFCommonAttributes
+interface UDMFCommonThingAttributes extends UDMFCommonAttributes
 {
 	/** Thing position: x-coordinate. */
 	public static final String ATTRIB_POSITION_X = "x";
@@ -40,8 +40,5 @@ public interface UDMFCommonThingAttributes extends UDMFCommonAttributes
 	public static final String ATTRIB_FLAG_COOPERATIVE = "coop";
 	/** Thing flag: Deathmatch. */
 	public static final String ATTRIB_FLAG_DEATHMATCH = "dm";
-	
-	/** Thing flag: Friendly (Marine's Best Friend-style). */
-	public static final String ATTRIB_FLAG_FRIENDLY = "friend";
 	
 }

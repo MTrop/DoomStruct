@@ -3,6 +3,13 @@ Doom Struct (C) 2015-2020
 by Matt Tropiano et al. (see AUTHORS.txt)
 
 
+Changed in [NOW]
+----------------
+
+- `Fixed` Safer input stream/reader use in Wad default methods.
+- `Changed` Altered lots of map-centric class methods in the name of "naming uniformity."
+
+
 Changed in 2.8.1
 ----------------
 

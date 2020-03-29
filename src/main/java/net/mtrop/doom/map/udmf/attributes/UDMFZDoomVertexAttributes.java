@@ -11,7 +11,7 @@ package net.mtrop.doom.map.udmf.attributes;
  * Contains vertex attributes for ZDoom namespaces.
  * @author Matthew Tropiano
  */
-public interface UDMFZDoomVertexAttributes extends UDMFCommonVertexAttributes
+public interface UDMFZDoomVertexAttributes extends UDMFDoomVertexAttributes
 {
 	/** Vertex Z position (floor height). */
 	public static final String ATTRIB_POSITION_Z_FLOOR = "zfloor";

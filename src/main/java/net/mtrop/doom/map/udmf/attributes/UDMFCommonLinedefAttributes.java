@@ -11,7 +11,7 @@ package net.mtrop.doom.map.udmf.attributes;
  * Contains common linedef attributes on some UDMF structures.
  * @author Matthew Tropiano
  */
-public interface UDMFCommonLinedefAttributes extends UDMFCommonAttributes
+interface UDMFCommonLinedefAttributes extends UDMFCommonAttributes
 {
 	/** Linedef flag: blocks creatures (players/monsters) a.k.a. "Impassable". */
 	public static final String ATTRIB_FLAG_BLOCKING = "blocking";

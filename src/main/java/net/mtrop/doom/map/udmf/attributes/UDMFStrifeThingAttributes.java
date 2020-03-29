@@ -12,7 +12,7 @@ package net.mtrop.doom.map.udmf.attributes;
  * @author Matthew Tropiano
  * @since 2.8.0
  */
-public interface UDMFStrifeThingAttributes extends UDMFCommonThingAttributes
+public interface UDMFStrifeThingAttributes extends UDMFDoomThingAttributes
 {
 	/** Thing flag: Thing is in a standing mode. */
 	public static final String ATTRIB_FLAG_STANDING = "standing";
