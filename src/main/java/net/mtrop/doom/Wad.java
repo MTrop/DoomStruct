@@ -334,7 +334,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @param length the amount of bytes to fetch.
 	 * @param out the destination array of bytes.
 	 * @param outOffset the offset into the destination array to put the bytes into.
-	 * @throws IndexOutOfBoundsException if offset plus length will go past the end of the content area.
+	 * @throws IndexOutOfBoundsException if offset plus length will go past the end of the destination array.
 	 * @throws IOException if an error occurs during read.
 	 * @throws NullPointerException if out is null.
 	 * @since 2.4.0
@@ -1702,6 +1702,21 @@ public interface Wad extends Iterable<WadEntry>
 	}
 
 	/**
+	 * Adds a new entry to the Wad.
+	 * Exercise caution with this method, as this entry is added as-is, and an entry can reference anywhere in the Wad!
+	 *  
+	 * @param entry the entry to add.
+	 * @return the entry added.
+	 * @throws IOException if the entry cannot be written.
+	 * @throws NullPointerException if <code>entry</code> is <code>null</code>.
+	 * @since [NOW]
+	 */
+	default WadEntry addEntry(WadEntry entry) throws IOException
+	{
+		return addEntryAt(getEntryCount(), entry);
+	}
+
+	/**
 	 * Adds a new entry to the Wad at a specific index, but with an explicit offset and size.
 	 * The rest of the entries afterward are shifted an index forward.
 	 * Exercise caution with this method, since you can reference anywhere in the Wad!
@@ -1716,8 +1731,24 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws NullPointerException if <code>name</code> is <code>null</code>.
 	 * @since 2.7.0
 	 */
-	WadEntry addEntryAt(int index, String entryName, int offset, int length) throws IOException;
+	default WadEntry addEntryAt(int index, String entryName, int offset, int length) throws IOException
+	{
+		return addEntryAt(index, WadEntry.create(entryName, offset, length));
+	}
 
+	/**
+	 * Adds a new entry to the Wad.
+	 * Exercise caution with this method, as this entry is added as-is, and an entry can reference anywhere in the Wad!
+	 * 
+	 * @param index the index at which to add the entry.
+	 * @param entry the entry to add.
+	 * @return the entry added.
+	 * @throws IOException if the entry cannot be written.
+	 * @throws NullPointerException if <code>entry</code> is <code>null</code>.
+	 * @since [NOW]
+	 */
+	WadEntry addEntryAt(int index, WadEntry entry) throws IOException;
+	
 	/**
 	 * Adds an entry marker to the Wad (entry with 0 size, arbitrary offset).
 	 * 
@@ -1980,7 +2011,7 @@ public interface Wad extends Iterable<WadEntry>
 	{
 		try (InputStream in = new BufferedInputStream(new FileInputStream(fileToAdd), 8192))
 		{
-			return addDataAt(index, entryName, in, -1);
+			return addDataAt(index, entryName, in, (int)fileToAdd.length());
 		}
 	}
 
@@ -2267,10 +2298,25 @@ public interface Wad extends Iterable<WadEntry>
 	 * @param index the index of the entry to delete.
 	 * @return the entry deleted.
 	 * @throws IndexOutOfBoundsException if index &lt; 0 or &gt;= size.
-	 * @throws IOException if the file cannot be altered in such a manner.
+	 * @throws IOException if the entry cannot be deleted.
 	 */
 	WadEntry deleteEntry(int index) throws IOException;
 
+	/**
+	 * Replaces an entry in the Wad - no content, just descriptor.
+	 * Exercise caution with this method, as this entry is added as-is, and an entry can reference anywhere in the Wad!
+	 * <p>This is equivalent to: <code>unmapEntries(index, entry)</code>.
+	 * @param index the index of the entry to change.
+	 * @param entry the entry to set.
+	 * @throws IndexOutOfBoundsException if index &lt; 0 or &gt;= size.
+	 * @throws IOException if the file cannot be altered in such a manner.
+	 * @see {@link #unmapEntries(int, WadEntry...)}
+	 */
+	default void setEntry(int index, WadEntry entry) throws IOException
+	{
+		unmapEntries(index, entry);
+	}
+	
 	/**
 	 * Retrieves a contiguous set of entries from this Wad, starting from a desired index. If the amount of entries
 	 * desired goes outside the Wad's potential set of entries, this will retrieve up to those entries (for example,

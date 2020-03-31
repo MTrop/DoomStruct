@@ -391,9 +391,8 @@ public class WadBuffer implements Wad
 	}
 
 	@Override
-	public WadEntry addEntryAt(int index, String entryName, int offset, int length) throws IOException
+	public WadEntry addEntryAt(int index, WadEntry entry) throws IOException
 	{
-		WadEntry entry = WadEntry.create(entryName, offset, length);
 		entries.add(index, entry);
 		updateHeader();
 		return entry;

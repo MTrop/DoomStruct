@@ -150,13 +150,13 @@ public class WadMap implements Wad
 	}
 	
 	@Override
-	public WadEntry addEntry(String entryName, int offset, int length) throws IOException
+	public WadEntry addEntry(WadEntry entry) throws IOException
 	{
 		throw new UnsupportedOperationException("WadMap does not support addEntry()");
 	}
 
 	@Override
-	public WadEntry addEntryAt(int index, String entryName, int offset, int length) throws IOException
+	public WadEntry addEntryAt(int index, WadEntry entry) throws IOException 
 	{
 		throw new UnsupportedOperationException("WadMap does not support addEntryAt()");
 	}
@@ -274,4 +274,5 @@ public class WadMap implements Wad
 	{
 		// Do nothing.
 	}
+
 }

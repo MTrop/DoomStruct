@@ -433,9 +433,8 @@ public class WadFile implements Wad, AutoCloseable
 	}
 
 	@Override
-	public WadEntry addEntryAt(int index, String entryName, int offset, int length) throws IOException 
+	public WadEntry addEntryAt(int index, WadEntry entry) throws IOException 
 	{
-		WadEntry entry = WadEntry.create(entryName, offset, length);
 		entries.add(index, entry);
 		flushEntries();
 		return entry;
@@ -967,7 +966,7 @@ public class WadFile implements Wad, AutoCloseable
 		{
 			try (InputStream in = new BufferedInputStream(new FileInputStream(fileToAdd), 8192))
 			{
-				return addDataAt(index, entryName, in, -1);
+				return addDataAt(index, entryName, in, (int)fileToAdd.length());
 			}
 		}
 

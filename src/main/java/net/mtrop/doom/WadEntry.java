@@ -47,6 +47,19 @@ public class WadEntry
 	}
 
 	/**
+	 * Creates an empty WadEntry with an offset of 12 (beginning of content) and size zero.
+	 * These empty entries are called "marker" entries.
+	 * @param name the name of the entry.
+	 * @return the constructed WadEntry.
+	 * @throws IllegalArgumentException if the name is invalid or the offset or size is negative.
+	 * @since [NOW]
+	 */
+	public static WadEntry create(String name)
+	{
+		return create(name, 12, 0); 
+	}
+	
+	/**
 	 * Creates a WadEntry.
 	 * @param name the name of the entry.
 	 * @param offset the offset into the WAD in bytes.
