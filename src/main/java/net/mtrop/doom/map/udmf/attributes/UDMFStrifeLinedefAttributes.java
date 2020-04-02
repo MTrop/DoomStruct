@@ -13,7 +13,7 @@ package net.mtrop.doom.map.udmf.attributes;
  */
 public interface UDMFStrifeLinedefAttributes extends UDMFDoomLinedefAttributes
 {
-	/** Linedef flag: Linedef is translucent. */
+	/** Linedef flag: Linedef is translucent (75% opaque). */
 	public static final String ATTRIB_FLAG_TRANSLUCENT = "translucent";
 	/** Linedef flag: Linedef is a railing that can be jumped over. */
 	public static final String ATTRIB_FLAG_JUMPOVER = "jumpover";

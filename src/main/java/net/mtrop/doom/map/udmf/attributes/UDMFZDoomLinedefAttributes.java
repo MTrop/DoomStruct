@@ -44,6 +44,8 @@ public interface UDMFZDoomLinedefAttributes extends UDMFHexenLinedefAttributes, 
 	public static final String ATTRIB_FLAG_MIDTEX_3D_IMPASSABLE = "midtex3dimpassable";
 	/** Linedef flag: Switch activation checks activator height. */
 	public static final String ATTRIB_FLAG_CHECK_SWITCH_RANGE = "checkswitchrange";
+	/** Linedef flag: Strife Transparent (25% opaque) */
+	public static final String ATTRIB_TRANSPARENT = "transparent";
 
 	/** Linedef special argument 0, string type. */
 	public static final String ATTRIB_ARG0STR = "arg0str";
@@ -54,5 +56,5 @@ public interface UDMFZDoomLinedefAttributes extends UDMFHexenLinedefAttributes, 
 	public static final String ATTRIB_RENDERSTYLE = "renderstyle";
 	/** Linedef special lock type. */
 	public static final String ATTRIB_LOCKNUMBER = "locknumber";
-	
+
 }
