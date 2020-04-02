@@ -25,38 +25,38 @@ public interface UDMFHexenThingAttributes extends UDMFDoomThingAttributes
 	public static final String ATTRIB_FLAG_CLASS3 = "class3";
 
 	/** 
-	 * Linedef id. 
+	 * Thing id. 
 	 * @since 2.8.1
 	 */
 	public static final String ATTRIB_ID = "id";
 	/** 
-	 * Linedef Special type. 
+	 * Thing Special type. 
 	 * @since 2.8.1
 	 */
 	public static final String ATTRIB_SPECIAL = "special";
 
 	/** 
-	 * Linedef special argument 0. 
+	 * Thing special argument 0. 
 	 * @since 2.8.1
 	 */
 	public static final String ATTRIB_ARG0 = "arg0";
 	/** 
-	 * Linedef special argument 1. 
+	 * Thing special argument 1. 
 	 * @since 2.8.1
 	 */
 	public static final String ATTRIB_ARG1 = "arg1";
 	/** 
-	 * Linedef special argument 2. 
+	 * Thing special argument 2. 
 	 * @since 2.8.1
 	 */
 	public static final String ATTRIB_ARG2 = "arg2";
 	/** 
-	 * Linedef special argument 3. 
+	 * Thing special argument 3. 
 	 * @since 2.8.1
 	 */
 	public static final String ATTRIB_ARG3 = "arg3";
 	/** 
-	 * Linedef special argument 4. 
+	 * Thing special argument 4. 
 	 * @since 2.8.1
 	 */
 	public static final String ATTRIB_ARG4 = "arg4";
