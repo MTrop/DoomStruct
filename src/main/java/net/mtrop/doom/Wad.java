@@ -2311,6 +2311,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws IndexOutOfBoundsException if index &lt; 0 or &gt;= size.
 	 * @throws IOException if the file cannot be altered in such a manner.
 	 * @see {@link #unmapEntries(int, WadEntry...)}
+	 * @since [NOW]
 	 */
 	default void setEntry(int index, WadEntry entry) throws IOException
 	{
