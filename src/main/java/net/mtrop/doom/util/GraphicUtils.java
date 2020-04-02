@@ -1102,9 +1102,7 @@ public final class GraphicUtils
 		new Color(255,255,255)	//white
 	};
 
-	private GraphicUtils()
-	{
-	}
+	private GraphicUtils() {}
 	
 	/**
 	 * Creates a {@link Flat} from a {@link BufferedImage}.

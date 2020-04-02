@@ -15,9 +15,7 @@ import java.nio.charset.Charset;
  */
 public final class RangeUtils
 {
-	private RangeUtils()
-	{
-	}
+	private RangeUtils() {}
 
 	/**
 	 * Checks if a value is not null.

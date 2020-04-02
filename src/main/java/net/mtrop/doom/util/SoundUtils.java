@@ -31,9 +31,7 @@ import net.mtrop.doom.struct.io.JSPISoundHandle.Decoder;
  */
 public final class SoundUtils
 {
-	private SoundUtils()
-	{
-	}
+	private SoundUtils() {}
 	
 	/**
 	 * Imports a file as a DMXSound.
