@@ -14,32 +14,87 @@ package net.mtrop.doom.map.udmf.attributes;
  */
 public interface UDMFZDoomThingAttributes extends UDMFHexenThingAttributes
 {
-	/*
-	 * TODO: All of these.
-      skill# = <bool>			// Unlike the base spec, # can range from 1-16.
-      class# = <bool>			// Unlike the base spec, # can range from 1-16.
-      conversation = <int>		// Assigns a conversation dialogue to this thing.
-                                // Parameter is the conversation ID, 0 meaning none.
-      countsecret = <bool>;     // Picking up this actor counts as a secret.
-      arg0str = <string>;       // Alternate string-based version of arg0
-	  gravity = <float>;		// Set per-actor gravity. Positive values are multiplied with the class's property, 
-	                            // negative values are used as their absolute. Default = 1.0.
-								
-	  health = <int>;			// Set per-actor health. Positive values are multiplied with the class's property,
-								// negative values are used as their absolute. Default = 1.
-								
-	  renderstyle = <string>;	// Set per-actor render style, overriding the class default. Possible values can be "normal",
-								// "none", "add" or "additive", "subtract" or "subtractive", "stencil", "translucentstencil", 
-								// "addstencil", "shaded", "addshaded", "translucent", "fuzzy", "optfuzzy", "soultrans" and "shadow". 
-								// Default is an empty string for no change.
-	  fillcolor = <integer>;    // Fill color used by the "stencil", "addstencil" and "translucentstencil" rendestyles, as RRGGBB value, default = 0x000000.
-	  alpha = <float>;          // Translucency of this actor (if applicable to renderstyle), default is 1.0.
-	  score = <int>;			// Score value of this actor, overriding the class default if not null. Default = 0.
-      pitch = <integer>; 		// Pitch of thing in degrees. Default = 0 (horizontal).
-      roll = <integer>; 		// Pitch of thing in degrees. Default = 0 (horizontal).
-	  scalex = <float>;         // Vertical scaling on thing. Default = 0 (ignored).
-	  scaley = <float>;         // Horizontal scaling on thing. Default = 0 (ignored).
-	  scale = <float>;        	// Vertical and horizontal scaling on thing. Default = 0 (ignored).
-	  floatbobphase = <int>;	// Sets the thing's floatbobphase. Valid phase values are 0-63. Default = -1 (use actor class default).	 
-	 */
+	/** Thing flag: Appears on skill 6. */
+	public static final String ATTRIB_FLAG_SKILL6 = "skill6";
+	/** Thing flag: Appears on skill 7. */
+	public static final String ATTRIB_FLAG_SKILL7 = "skill7";
+	/** Thing flag: Appears on skill 8. */
+	public static final String ATTRIB_FLAG_SKILL8 = "skill8";
+	/** Thing flag: Appears on skill 9. */
+	public static final String ATTRIB_FLAG_SKILL9 = "skill9";
+	/** Thing flag: Appears on skill 10. */
+	public static final String ATTRIB_FLAG_SKILL10 = "skill10";
+	/** Thing flag: Appears on skill 11. */
+	public static final String ATTRIB_FLAG_SKILL11 = "skill11";
+	/** Thing flag: Appears on skill 12. */
+	public static final String ATTRIB_FLAG_SKILL12 = "skill12";
+	/** Thing flag: Appears on skill 13. */
+	public static final String ATTRIB_FLAG_SKILL13 = "skill13";
+	/** Thing flag: Appears on skill 14. */
+	public static final String ATTRIB_FLAG_SKILL14 = "skill14";
+	/** Thing flag: Appears on skill 15. */
+	public static final String ATTRIB_FLAG_SKILL15 = "skill15";
+	/** Thing flag: Appears on skill 16. */
+	public static final String ATTRIB_FLAG_SKILL16 = "skill16";
+
+	/** Thing flag: Appears for class 4. */
+	public static final String ATTRIB_FLAG_CLASS4 = "skill4";
+	/** Thing flag: Appears for class 5. */
+	public static final String ATTRIB_FLAG_CLASS5 = "skill5";
+	/** Thing flag: Appears for class 6. */
+	public static final String ATTRIB_FLAG_CLASS6 = "skill6";
+	/** Thing flag: Appears for class 7. */
+	public static final String ATTRIB_FLAG_CLASS7 = "skill7";
+	/** Thing flag: Appears for class 8. */
+	public static final String ATTRIB_FLAG_CLASS8 = "skill8";
+	/** Thing flag: Appears for class 9. */
+	public static final String ATTRIB_FLAG_CLASS9 = "skill9";
+	/** Thing flag: Appears for class 10. */
+	public static final String ATTRIB_FLAG_CLASS10 = "skill10";
+	/** Thing flag: Appears for class 11. */
+	public static final String ATTRIB_FLAG_CLASS11 = "skill11";
+	/** Thing flag: Appears for class 12. */
+	public static final String ATTRIB_FLAG_CLASS12 = "skill12";
+	/** Thing flag: Appears for class 13. */
+	public static final String ATTRIB_FLAG_CLASS13 = "skill13";
+	/** Thing flag: Appears for class 14. */
+	public static final String ATTRIB_FLAG_CLASS14 = "skill14";
+	/** Thing flag: Appears for class 15. */
+	public static final String ATTRIB_FLAG_CLASS15 = "skill15";
+	/** Thing flag: Appears for class 16. */
+	public static final String ATTRIB_FLAG_CLASS16 = "skill16";
+	/** Thing flag: Count as secret. */
+	public static final String ATTRIB_FLAG_SECRET = "countsecret";
+
+	/** Thing uses a Conversation ID. */
+	public static final String ATTRIB_CONVERSATION = "conversation";
+
+	/** Thing special argument 0, string type. */
+	public static final String ATTRIB_ARG0STR = "arg0str";
+
+	/** Thing gravity scalar. */
+	public static final String ATTRIB_GRAVITY = "gravity";
+	/** Thing health (multiplicative). */
+	public static final String ATTRIB_HEALTH = "health";
+	/** Thing renderstyle. */
+	public static final String ATTRIB_RENDERSTYLE = "renderstyle";
+	/** Thing fill color for stencil renderstyle. */
+	public static final String ATTRIB_FILLCOLOR = "fillcolor";
+	/** Thing alpha component scalar for supported renderstyles. */
+	public static final String ATTRIB_ALPHA = "alpha";
+	/** Thing score value. */
+	public static final String ATTRIB_SCORE = "score";
+	/** Thing pitch (in degrees). */
+	public static final String ATTRIB_PITCH = "pitch";
+	/** Thing roll (in degrees). */
+	public static final String ATTRIB_ROLL = "roll";
+	/** Thing size scalar (both axes). */
+	public static final String ATTRIB_SCALE = "scale";
+	/** Thing size scalar, X. */
+	public static final String ATTRIB_SCALE_X = "scalex";
+	/** Thing size scalar, Y. */
+	public static final String ATTRIB_SCALE_Y = "scaley";
+	/** Thing float bob phase offset (for bobbing things). */
+	public static final String ATTRIB_PHASE_FLOATBOB = "floatbobphase";
+	
 }
