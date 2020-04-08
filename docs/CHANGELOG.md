@@ -9,6 +9,7 @@ Changed in 2.9.0
 - `Added` ZDoom UDMF attributes.
 - `Fixed` Safer input stream/reader use in Wad default methods.
 - `Changed` Altered lots of map-centric class methods in the name of "naming uniformity."
+- `Changed` Some MathUtils moved to `net.mtrop.doom.util`.
 
 
 Changed in 2.8.1

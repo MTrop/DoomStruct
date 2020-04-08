@@ -11,9 +11,9 @@ import java.io.*;
 import java.util.Arrays;
 
 import net.mtrop.doom.object.BinaryObject;
-import net.mtrop.doom.struct.MathUtils;
 import net.mtrop.doom.struct.io.SerialReader;
 import net.mtrop.doom.struct.io.SerialWriter;
+import net.mtrop.doom.util.MathUtils;
 import net.mtrop.doom.util.RangeUtils;
 
 /**
@@ -252,7 +252,7 @@ public class DMXSound implements BinaryObject
 	 */
 	public double getWaveFormSample(InterpolationType type, double periodScalar)
 	{
-		periodScalar = RangeUtils.wrapValue(periodScalar, 0.0, 1.0);
+		periodScalar = MathUtils.wrapValue(periodScalar, 0.0, 1.0);
 		double sampleIncrement = 1.0 / sampleCount;
 		double spos = periodScalar / sampleIncrement;
 		double v1 = samples[(int)Math.floor(spos)];
@@ -263,21 +263,21 @@ public class DMXSound implements BinaryObject
 				return v1;
 			case LINEAR:
 			{
-				double v2 = samples[RangeUtils.wrapValue((int)Math.ceil(spos), 0, samples.length)];
+				double v2 = samples[MathUtils.wrapValue((int)Math.ceil(spos), 0, samples.length)];
 				double interp = (periodScalar % sampleIncrement) / sampleIncrement;
 				return MathUtils.linearInterpolate(interp, v1, v2);
 			}
 			case COSINE:
 			{
-				double v2 = samples[RangeUtils.wrapValue((int)Math.ceil(spos), 0, samples.length)];
+				double v2 = samples[MathUtils.wrapValue((int)Math.ceil(spos), 0, samples.length)];
 				double interp = (periodScalar % sampleIncrement) / sampleIncrement;
 				return MathUtils.cosineInterpolate(interp, v1, v2);
 			}
 			case CUBIC:
 			{
-				double v2 = samples[RangeUtils.wrapValue((int)Math.ceil(spos), 0, samples.length)];
-				double v0 = samples[RangeUtils.wrapValue((int)Math.floor(spos - 1.0), 0, samples.length)];
-				double v3 = samples[RangeUtils.wrapValue((int)Math.ceil(spos + 1.0), 0, samples.length)];
+				double v2 = samples[MathUtils.wrapValue((int)Math.ceil(spos), 0, samples.length)];
+				double v0 = samples[MathUtils.wrapValue((int)Math.floor(spos - 1.0), 0, samples.length)];
+				double v3 = samples[MathUtils.wrapValue((int)Math.ceil(spos + 1.0), 0, samples.length)];
 				double interp = (periodScalar % sampleIncrement) / sampleIncrement;
 				return MathUtils.cubicInterpolate(interp, v0, v1, v2, v3);
 			}

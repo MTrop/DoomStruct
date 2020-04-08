@@ -63,9 +63,10 @@ public class WadBuffer implements Wad
 		this.type = type;
 		this.headerBuffer = ByteBuffer.allocate(12);
 		this.headerBuffer.order(ByteOrder.LITTLE_ENDIAN);
-		this.content = new DataList();
+		this.content = new DataList(1024);
 		this.entries = new ArrayList<WadEntry>();
 		
+		headerBuffer.rewind();
 		headerBuffer.put(type.name().getBytes(ASCII));
 		headerBuffer.putInt(0);			// no entries.
 		headerBuffer.putInt(12);		// entry list offset (12).

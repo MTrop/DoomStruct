@@ -66,7 +66,7 @@ public final class RangeUtils
 	public static void checkEqual(String dataName, String equalVal, String value) throws IllegalArgumentException
 	{
 		if (!value.equals(equalVal))
-			throw new IllegalArgumentException(dataName + " value (\"" + value + "\") not equal to \"" + equalVal + "\".");
+			throw new IllegalArgumentException(dataName + " value (" + value + ") not equal to \"" + equalVal + "\".");
 	}
 
 	/**
@@ -131,7 +131,7 @@ public final class RangeUtils
 		else if (value.trim().length() == 0)
 			throw new IllegalArgumentException(dataName + " value is the empty string.");
 		else if (value.getBytes(Charset.forName("ASCII")).length > 8)
-			throw new IllegalArgumentException(dataName + " value (" + value	+ ") is not 8 characters or less in ASCII encoding.");
+			throw new IllegalArgumentException(dataName + " value (" + value + ") is not 8 characters or less in ASCII encoding.");
 	}
 
 	/**
@@ -198,142 +198,6 @@ public final class RangeUtils
 	public static void checkFalse(String dataName, boolean value) throws IllegalArgumentException
 	{
 		checkBoolean(dataName, false, value);
-	}
-
-	/**
-	 * Coerces an integer to the range bounded by lo and hi.
-	 * <br>Example: clampValue(32,-16,16) returns 16.
-	 * <br>Example: clampValue(4,-16,16) returns 4.
-	 * <br>Example: clampValue(-1000,-16,16) returns -16.
-	 * @param val the integer.
-	 * @param lo the lower bound.
-	 * @param hi the upper bound.
-	 * @return the value after being "forced" into the range.
-	 */
-	public static int clampValue(int val, int lo, int hi)
-	{
-		return Math.min(Math.max(val,lo),hi);
-	}
-
-	/**
-	 * Coerces a short to the range bounded by lo and hi.
-	 * <br>Example: clampValue(32,-16,16) returns 16.
-	 * <br>Example: clampValue(4,-16,16) returns 4.
-	 * <br>Example: clampValue(-1000,-16,16) returns -16.
-	 * @param val the short.
-	 * @param lo the lower bound.
-	 * @param hi the upper bound.
-	 * @return the value after being "forced" into the range.
-	 */
-	public static short clampValue(short val, short lo, short hi)
-	{
-		return (short)Math.min((short)Math.max(val,lo),hi);
-	}
-
-	/**
-	 * Coerces a float to the range bounded by lo and hi.
-	 * <br>Example: clampValue(32,-16,16) returns 16.
-	 * <br>Example: clampValue(4,-16,16) returns 4.
-	 * <br>Example: clampValue(-1000,-16,16) returns -16.
-	 * @param val the float.
-	 * @param lo the lower bound.
-	 * @param hi the upper bound.
-	 * @return the value after being "forced" into the range.
-	 */
-	public static float clampValue(float val, float lo, float hi)
-	{
-		return Math.min(Math.max(val,lo),hi);
-	}
-
-	/**
-	 * Coerces a double to the range bounded by lo and hi.
-	 * <br>Example: clampValue(32,-16,16) returns 16.
-	 * <br>Example: clampValue(4,-16,16) returns 4.
-	 * <br>Example: clampValue(-1000,-16,16) returns -16.
-	 * @param val the double.
-	 * @param lo the lower bound.
-	 * @param hi the upper bound.
-	 * @return the value after being "forced" into the range.
-	 */
-	public static double clampValue(double val, double lo, double hi)
-	{
-		return Math.min(Math.max(val,lo),hi);
-	}
-
-	/**
-	 * Coerces an integer to the range bounded by lo and hi, by "wrapping" the value.
-	 * <br>Example: wrapValue(32,-16,16) returns 0.
-	 * <br>Example: wrapValue(4,-16,16) returns 4.
-	 * <br>Example: wrapValue(-1000,-16,16) returns 8.
-	 * @param val the integer.
-	 * @param lo the lower bound.
-	 * @param hi the upper bound.
-	 * @return the value after being "wrapped" into the range.
-	 */
-	public static int wrapValue(int val, int lo, int hi)
-	{
-		val = val - (int)(val - lo) / (hi - lo) * (hi - lo);
-	   	if (val < 0)
-	   		val = val + hi - lo;
-	   	return val;
-	}
-
-	/**
-	 * Coerces a short to the range bounded by lo and hi, by "wrapping" the value.
-	 * <br>Example: wrapValue(32,-16,16) returns 0.
-	 * <br>Example: wrapValue(4,-16,16) returns 4.
-	 * <br>Example: wrapValue(-1000,-16,16) returns 8.
-	 * @param val the short.
-	 * @param lo the lower bound.
-	 * @param hi the upper bound.
-	 * @return the value after being "wrapped" into the range.
-	 */
-	public static short wrapValue(short val, short lo, short hi)
-	{
-		val = (short)(val - (val - lo) / (hi - lo) * (hi - lo));
-	   	if (val < 0)
-	   		val = (short)(val + hi - lo);
-	   	return val;
-	}
-
-	/**
-	 * Coerces a float to the range bounded by lo and hi, by "wrapping" the value.
-	 * <br>Example: wrapValue(32,-16,16) returns 0.
-	 * <br>Example: wrapValue(4,-16,16) returns 4.
-	 * <br>Example: wrapValue(-1000,-16,16) returns 8.
-	 * @param val the float.
-	 * @param lo the lower bound.
-	 * @param hi the upper bound.
-	 * @return the value after being "wrapped" into the range.
-	 */
-	public static float wrapValue(float val, float lo, float hi)
-	{
-		float range = hi - lo;
-		val = val - lo;
-		val = (val % range);
-		if (val < 0.0)
-			val = val + hi;
-		return val;
-	}
-
-	/**
-	 * Coerces a double to the range bounded by lo and hi, by "wrapping" the value.
-	 * <br>Example: wrapValue(32,-16,16) returns 0.
-	 * <br>Example: wrapValue(4,-16,16) returns 4.
-	 * <br>Example: wrapValue(-1000,-16,16) returns 8.
-	 * @param val the double.
-	 * @param lo the lower bound.
-	 * @param hi the upper bound.
-	 * @return the value after being "wrapped" into the range.
-	 */
-	public static double wrapValue(double val, double lo, double hi)
-	{
-		double range = hi - lo;
-		val = val - lo;
-		val = (val % range);
-		if (val < 0.0)
-			val = val + hi;
-		return val;
 	}
 
 }

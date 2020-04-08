@@ -15,8 +15,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 import net.mtrop.doom.object.BinaryObject;
-import net.mtrop.doom.struct.MathUtils;
-import net.mtrop.doom.util.RangeUtils;
+import net.mtrop.doom.util.MathUtils;
 
 /**
  * The palette that makes up the Doom Engine's color palette.
@@ -732,27 +731,27 @@ public class Palette implements BinaryObject
 	private void mixColorNoSort(int index, double scalar, int red, int green, int blue)
 	{
 		setColorNoSort(index, 
-			RangeUtils.clampValue((int)MathUtils.linearInterpolate(scalar, (0x0ff & colorPalette[index][0]), red), 0, 255), 
-			RangeUtils.clampValue((int)MathUtils.linearInterpolate(scalar, (0x0ff & colorPalette[index][1]), green), 0, 255), 
-			RangeUtils.clampValue((int)MathUtils.linearInterpolate(scalar, (0x0ff & colorPalette[index][2]), blue), 0, 255)
+			MathUtils.clampValue((int)MathUtils.linearInterpolate(scalar, (0x0ff & colorPalette[index][0]), red), 0, 255), 
+			MathUtils.clampValue((int)MathUtils.linearInterpolate(scalar, (0x0ff & colorPalette[index][1]), green), 0, 255), 
+			MathUtils.clampValue((int)MathUtils.linearInterpolate(scalar, (0x0ff & colorPalette[index][2]), blue), 0, 255)
 		);
 	}
 
 	private void addColorNoSort(int index, double scalar, int red, int green, int blue)
 	{
 		setColorNoSort(index, 
-			RangeUtils.clampValue((0x0ff & colorPalette[index][0]) + (int)(scalar * red), 0, 255), 
-			RangeUtils.clampValue((0x0ff & colorPalette[index][1]) + (int)(scalar * green), 0, 255), 
-			RangeUtils.clampValue((0x0ff & colorPalette[index][2]) + (int)(scalar * blue), 0, 255)
+			MathUtils.clampValue((0x0ff & colorPalette[index][0]) + (int)(scalar * red), 0, 255), 
+			MathUtils.clampValue((0x0ff & colorPalette[index][1]) + (int)(scalar * green), 0, 255), 
+			MathUtils.clampValue((0x0ff & colorPalette[index][2]) + (int)(scalar * blue), 0, 255)
 		);
 	}
 
 	private void subtractColorNoSort(int index, double scalar, int red, int green, int blue)
 	{
 		setColorNoSort(index, 
-			RangeUtils.clampValue((0x0ff & colorPalette[index][0]) - (int)(scalar * red), 0, 255), 
-			RangeUtils.clampValue((0x0ff & colorPalette[index][1]) - (int)(scalar * green), 0, 255), 
-			RangeUtils.clampValue((0x0ff & colorPalette[index][2]) - (int)(scalar * blue), 0, 255)
+			MathUtils.clampValue((0x0ff & colorPalette[index][0]) - (int)(scalar * red), 0, 255), 
+			MathUtils.clampValue((0x0ff & colorPalette[index][1]) - (int)(scalar * green), 0, 255), 
+			MathUtils.clampValue((0x0ff & colorPalette[index][2]) - (int)(scalar * blue), 0, 255)
 		);
 	}
 

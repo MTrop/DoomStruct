@@ -19,10 +19,19 @@ interface UDMFCommonLinedefAttributes extends UDMFCommonAttributes
 	public static final String ATTRIB_FLAG_BLOCK_MONSTERS = "blockmonsters";
 	/** Linedef flag: two sided. */
 	public static final String ATTRIB_FLAG_TWO_SIDED = "twosided";
-	/** Linedef flag: upper texture unpegged. */
+	/** Linedef flag: top texture unpegged. */
 	public static final String ATTRIB_FLAG_UNPEG_TOP = "dontpegtop";
-	/** Linedef flag: lower texture unpegged. */
+	/** 
+	 * Linedef flag: bottom texture unpegged. 
+	 * @deprecated [NOW], use {@link #ATTRIB_FLAG_UNPEG_BOTTOM}
+	 */
+	@SuppressWarnings("javadoc")
 	public static final String ATTRIB_FLAG_UNPEG_LOWER = "dontpegbottom";
+	/** 
+	 * Linedef flag: bottom texture unpegged. 
+	 * @since [NOW], naming convention change.
+	 */
+	public static final String ATTRIB_FLAG_UNPEG_BOTTOM = "dontpegbottom";
 	/** Linedef flag: Secret (shows up as 1-sided, blocking on automap). */
 	public static final String ATTRIB_FLAG_SECRET = "secret";
 	/** Linedef flag: Block sound propagation. */

@@ -17,6 +17,7 @@ import net.mtrop.doom.object.BinaryObject;
 import net.mtrop.doom.object.GraphicObject;
 import net.mtrop.doom.struct.io.SerialReader;
 import net.mtrop.doom.struct.io.SerialWriter;
+import net.mtrop.doom.util.MathUtils;
 import net.mtrop.doom.util.RangeUtils;
 
 /**
@@ -138,7 +139,7 @@ public class Picture implements BinaryObject, GraphicObject, IndexedGraphic
 	public void setPixel(int x, int y, int value)
 	{
 		RangeUtils.checkRange("Pixel ("+x+", "+y+")", -1, 255, value);
-		pixels[x][y] = (short)RangeUtils.clampValue(value, -1, 255);
+		pixels[x][y] = (short)MathUtils.clampValue(value, -1, 255);
 	}
 	
 	/**

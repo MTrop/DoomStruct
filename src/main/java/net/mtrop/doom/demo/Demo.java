@@ -19,6 +19,7 @@ import java.util.List;
 import net.mtrop.doom.object.BinaryObject;
 import net.mtrop.doom.struct.io.SerialReader;
 import net.mtrop.doom.struct.io.SerialWriter;
+import net.mtrop.doom.util.MathUtils;
 import net.mtrop.doom.util.RangeUtils;
 
 /**
@@ -1274,7 +1275,7 @@ public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 				{
 					sw.writeByte(out, t.forwardMovement);
 					sw.writeByte(out, t.rightStrafe);
-					sw.writeByte(out, (byte)(RangeUtils.clampValue(t.turnLeft, -127, 127)));
+					sw.writeByte(out, (byte)(MathUtils.clampValue(t.turnLeft, -127, 127)));
 					sw.writeByte(out, t.action);
 				}
 			}
@@ -1360,9 +1361,9 @@ public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 		public static Tic create(int forward, int rightStrafe, int turnLeft, byte action)
 		{
 			Tic out = new Tic();
-			out.forwardMovement = (byte)RangeUtils.clampValue(forward, -127, 127);
-			out.rightStrafe = (byte)RangeUtils.clampValue(rightStrafe, -127, 127);
-			out.turnLeft = (short)RangeUtils.clampValue(turnLeft, -32767, 32767);
+			out.forwardMovement = (byte)MathUtils.clampValue(forward, -127, 127);
+			out.rightStrafe = (byte)MathUtils.clampValue(rightStrafe, -127, 127);
+			out.turnLeft = (short)MathUtils.clampValue(turnLeft, -32767, 32767);
 			out.action = action;
 			return out;
 		}

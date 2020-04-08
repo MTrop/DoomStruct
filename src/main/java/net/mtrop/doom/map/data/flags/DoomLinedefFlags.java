@@ -20,10 +20,26 @@ public interface DoomLinedefFlags extends LinedefFlags
 	public static final int BLOCK_MONSTERS = 1;
 	/** Linedef flag: Two-sided. */
 	public static final int TWO_SIDED = 2;
-	/** Linedef flag: Draw upper texture from top-down. */
+	/** 
+	 * Linedef flag: Draw upper texture from top-down. 
+	 * @deprecated [NOW], use {@link #UNPEG_TOP}
+	 */
 	public static final int UNPEG_UPPER = 3;
-	/** Linedef flag: Draw lower texture from bottom-up. */
+	/** 
+	 * Linedef flag: Draw upper texture from top-down. 
+	 * @since [NOW], naming convention change.
+	 */
+	public static final int UNPEG_TOP = 3;
+	/** 
+	 * Linedef flag: Draw lower texture from bottom-up.
+	 * @deprecated [NOW], use {@link #UNPEG_BOTTOM}
+	 */
 	public static final int UNPEG_LOWER = 4;
+	/** 
+	 * Linedef flag: Draw lower texture from bottom-up. 
+	 * @since [NOW], naming convention change.
+	 */
+	public static final int UNPEG_BOTTOM = 4;
 	/** Linedef flag: Render as solid wall on automap. */
 	public static final int SECRET = 5;
 	/** Linedef flag: Blocks sound propagation (needs two). */

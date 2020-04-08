@@ -18,9 +18,9 @@ import java.util.List;
 import java.util.Set;
 
 import net.mtrop.doom.object.BinaryObject;
-import net.mtrop.doom.struct.MathUtils;
 import net.mtrop.doom.struct.io.SerialReader;
 import net.mtrop.doom.struct.io.SerialWriter;
+import net.mtrop.doom.util.MathUtils;
 
 /**
  * Abstraction of MUS formatted music sequence data.
