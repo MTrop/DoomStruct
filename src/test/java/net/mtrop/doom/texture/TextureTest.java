@@ -9,12 +9,12 @@ package net.mtrop.doom.texture;
 
 import java.io.IOException;
 
-import net.mtrop.doom.WadFile;
 import net.mtrop.doom.texture.DoomTextureList;
 import net.mtrop.doom.texture.PatchNames;
 import net.mtrop.doom.texture.TextureSet;
 import net.mtrop.doom.texture.TextureSet.Patch;
 import net.mtrop.doom.texture.TextureSet.Texture;
+import net.mtrop.doom.util.WadUtils;
 import net.mtrop.doom.LoggingFactory;
 import net.mtrop.doom.LoggingFactory.Logger;
 
@@ -25,12 +25,12 @@ public final class TextureTest
 	{
 		Logger logger = LoggingFactory.createConsoleLoggerFor(TextureTest.class);
 		
-		WadFile wad = new WadFile(args[0]);
-		TextureSet set = new TextureSet(
-			wad.getDataAs("PNAMES", PatchNames.class), 
-			wad.getDataAs("TEXTURE1", DoomTextureList.class)
+		TextureSet set = WadUtils.openWadAndGet(args[0], (wad) ->
+			new TextureSet(
+				wad.getDataAs("PNAMES", PatchNames.class), 
+				wad.getDataAs("TEXTURE1", DoomTextureList.class)
+			)
 		);
-		wad.close();
 		
 		for (Texture tex : set)
 		{
