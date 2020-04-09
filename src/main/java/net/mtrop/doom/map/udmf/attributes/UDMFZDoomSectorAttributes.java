@@ -10,7 +10,7 @@ package net.mtrop.doom.map.udmf.attributes;
 /**
  * Contains sector attributes for ZDoom namespaces.
  * @author Matthew Tropiano
- * @since [NOW]
+ * @since 2.9.0
  */
 public interface UDMFZDoomSectorAttributes extends UDMFDoomSectorAttributes
 {

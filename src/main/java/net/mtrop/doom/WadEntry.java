@@ -52,7 +52,7 @@ public class WadEntry
 	 * @param name the name of the entry.
 	 * @return the constructed WadEntry.
 	 * @throws IllegalArgumentException if the name is invalid or the offset or size is negative.
-	 * @since [NOW]
+	 * @since 2.9.0
 	 */
 	public static WadEntry create(String name)
 	{

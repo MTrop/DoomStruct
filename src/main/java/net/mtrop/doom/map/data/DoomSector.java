@@ -60,7 +60,7 @@ public class DoomSector implements BinaryObject
 	 * Sets this sector's floor height. 
 	 * @param floorHeight the new height.
 	 * @throws IllegalArgumentException if floorHeight is outside of the range -32768 to 32767.
-	 * @deprecated [NOW], use {@link #setHeightFloor(int)}
+	 * @deprecated 2.9.0, use {@link #setHeightFloor(int)}
 	 */
 	public void setFloorHeight(int floorHeight)
 	{
@@ -69,7 +69,7 @@ public class DoomSector implements BinaryObject
 	
 	/**
 	 * @return the sector's floor height.
-	 * @deprecated [NOW], use {@link #getHeightFloor()}
+	 * @deprecated 2.9.0, use {@link #getHeightFloor()}
 	 */
 	public int getFloorHeight()
 	{
@@ -80,7 +80,7 @@ public class DoomSector implements BinaryObject
 	 * Sets the sector's ceiling height. 
 	 * @param ceilingHeight the new height.
 	 * @throws IllegalArgumentException if floorHeight is outside of the range -32768 to 32767.
-	 * @deprecated [NOW], use {@link #setHeightCeiling(int)}
+	 * @deprecated 2.9.0, use {@link #setHeightCeiling(int)}
 	 */
 	public void setCeilingHeight(int ceilingHeight)
 	{
@@ -89,7 +89,7 @@ public class DoomSector implements BinaryObject
 	
 	/**
 	 * @return the sector's ceiling height.
-	 * @deprecated [NOW], use {@link #getHeightCeiling()}
+	 * @deprecated 2.9.0, use {@link #getHeightCeiling()}
 	 */
 	public int getCeilingHeight()
 	{
@@ -100,7 +100,7 @@ public class DoomSector implements BinaryObject
 	 * Sets the sector's floor texture.
 	 * @param textureFloor the new texture.
 	 * @throws IllegalArgumentException if the texture name is invalid. 
-	 * @deprecated [NOW], use {@link #setTextureFloor(String)}
+	 * @deprecated 2.9.0, use {@link #setTextureFloor(String)}
 	 */
 	public void setFloorTexture(String textureFloor)
 	{
@@ -110,7 +110,7 @@ public class DoomSector implements BinaryObject
 	
 	/**
 	 * @return the sector's floor texture.
-	 * @deprecated [NOW], use {@link #getTextureFloor()}
+	 * @deprecated 2.9.0, use {@link #getTextureFloor()}
 	 */
 	public String getFloorTexture()
 	{
@@ -121,7 +121,7 @@ public class DoomSector implements BinaryObject
 	 * Sets the sector's ceiling texture. 
 	 * @param textureCeiling the new texture.
 	 * @throws IllegalArgumentException if the texture name is invalid. 
-	 * @deprecated [NOW], use {@link #setTextureCeiling(String)}
+	 * @deprecated 2.9.0, use {@link #setTextureCeiling(String)}
 	 */
 	public void setCeilingTexture(String textureCeiling)
 	{
@@ -131,7 +131,7 @@ public class DoomSector implements BinaryObject
 	
 	/**
 	 * @return the sector's ceiling texture. 
-	 * @deprecated [NOW], use {@link #getTextureCeiling()}
+	 * @deprecated 2.9.0, use {@link #getTextureCeiling()}
 	 */
 	public String getCeilingTexture()
 	{
@@ -142,7 +142,7 @@ public class DoomSector implements BinaryObject
 	 * Sets this sector's floor height. 
 	 * @param heightFloor the new height.
 	 * @throws IllegalArgumentException if floorHeight is outside of the range -32768 to 32767.
-	 * @since [NOW], naming convention change.
+	 * @since 2.9.0, naming convention change.
 	 */
 	public void setHeightFloor(int heightFloor)
 	{
@@ -152,7 +152,7 @@ public class DoomSector implements BinaryObject
 
 	/**
 	 * @return the sector's floor height.
-	 * @since [NOW], naming convention change.
+	 * @since 2.9.0, naming convention change.
 	 */
 	public int getHeightFloor()
 	{
@@ -163,7 +163,7 @@ public class DoomSector implements BinaryObject
 	 * Sets the sector's ceiling height. 
 	 * @param heightCeiling the new height.
 	 * @throws IllegalArgumentException if floorHeight is outside of the range -32768 to 32767.
-	 * @since [NOW], naming convention change.
+	 * @since 2.9.0, naming convention change.
 	 */
 	public void setHeightCeiling(int heightCeiling)
 	{
@@ -173,7 +173,7 @@ public class DoomSector implements BinaryObject
 
 	/**
 	 * @return the sector's ceiling height.
-	 * @since [NOW], naming convention change.
+	 * @since 2.9.0, naming convention change.
 	 */
 	public int getHeightCeiling()
 	{

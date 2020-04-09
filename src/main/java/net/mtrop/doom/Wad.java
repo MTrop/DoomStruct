@@ -1709,7 +1709,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @return the entry added.
 	 * @throws IOException if the entry cannot be written.
 	 * @throws NullPointerException if <code>entry</code> is <code>null</code>.
-	 * @since [NOW]
+	 * @since 2.9.0
 	 */
 	default WadEntry addEntry(WadEntry entry) throws IOException
 	{
@@ -1745,7 +1745,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @return the entry added.
 	 * @throws IOException if the entry cannot be written.
 	 * @throws NullPointerException if <code>entry</code> is <code>null</code>.
-	 * @since [NOW]
+	 * @since 2.9.0
 	 */
 	WadEntry addEntryAt(int index, WadEntry entry) throws IOException;
 	
@@ -2311,7 +2311,7 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws IndexOutOfBoundsException if index &lt; 0 or &gt;= size.
 	 * @throws IOException if the file cannot be altered in such a manner.
 	 * @see {@link #unmapEntries(int, WadEntry...)}
-	 * @since [NOW]
+	 * @since 2.9.0
 	 */
 	default void setEntry(int index, WadEntry entry) throws IOException
 	{

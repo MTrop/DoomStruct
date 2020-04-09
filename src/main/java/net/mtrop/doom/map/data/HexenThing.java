@@ -49,7 +49,7 @@ public class HexenThing extends CommonThing implements BinaryObject
 
 	/**
 	 * @return the Z position relative to sector plane.
-	 * @deprecated [NOW], use {@link #getHeight()}
+	 * @deprecated 2.9.0, use {@link #getHeight()}
 	 */
 	public int getZ()
 	{
@@ -60,7 +60,7 @@ public class HexenThing extends CommonThing implements BinaryObject
 	 * Sets the Z position relative to sector plane.
 	 * @param z the new Z position.
 	 * @throws IllegalArgumentException if <code>z</code> is not between -32768 and 32767.
-	 * @deprecated [NOW], use {@link #setHeight(int)}
+	 * @deprecated 2.9.0, use {@link #setHeight(int)}
 	 */
 	public void setZ(int z)
 	{
@@ -69,7 +69,7 @@ public class HexenThing extends CommonThing implements BinaryObject
 
 	/**
 	 * @return the Z position relative to sector plane.
-	 * @since [NOW], for naming clarity/uniformity.
+	 * @since 2.9.0, for naming clarity/uniformity.
 	 */
 	public int getHeight()
 	{
@@ -80,7 +80,7 @@ public class HexenThing extends CommonThing implements BinaryObject
 	 * Sets the Z position relative to sector plane.
 	 * @param height the new height.
 	 * @throws IllegalArgumentException if <code>z</code> is not between -32768 and 32767.
-	 * @since [NOW], for naming clarity/uniformity.
+	 * @since 2.9.0, for naming clarity/uniformity.
 	 */
 	public void setHeight(int height)
 	{

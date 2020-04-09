@@ -23,13 +23,13 @@ interface UDMFCommonLinedefAttributes extends UDMFCommonAttributes
 	public static final String ATTRIB_FLAG_UNPEG_TOP = "dontpegtop";
 	/** 
 	 * Linedef flag: bottom texture unpegged. 
-	 * @deprecated [NOW], use {@link #ATTRIB_FLAG_UNPEG_BOTTOM}
+	 * @deprecated 2.9.0, use {@link #ATTRIB_FLAG_UNPEG_BOTTOM}
 	 */
 	@SuppressWarnings("javadoc")
 	public static final String ATTRIB_FLAG_UNPEG_LOWER = "dontpegbottom";
 	/** 
 	 * Linedef flag: bottom texture unpegged. 
-	 * @since [NOW], naming convention change.
+	 * @since 2.9.0, naming convention change.
 	 */
 	public static final String ATTRIB_FLAG_UNPEG_BOTTOM = "dontpegbottom";
 	/** Linedef flag: Secret (shows up as 1-sided, blocking on automap). */
