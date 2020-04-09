@@ -24,7 +24,6 @@ import java.util.List;
 import net.mtrop.doom.exception.WadException;
 import net.mtrop.doom.object.BinaryObject;
 import net.mtrop.doom.object.TextObject;
-import net.mtrop.doom.struct.io.IOUtils;
 import net.mtrop.doom.struct.io.SerialWriter;
 import net.mtrop.doom.struct.io.SerializerUtils;
 import net.mtrop.doom.util.NameUtils;
@@ -36,11 +35,14 @@ import net.mtrop.doom.util.NameUtils;
  * do so is minimal in this class. Bulk reads/additions/writes/changes are best left for the {@link WadBuffer} class. 
  * Many writing I/O operations will cause the opened file to be changed many times, the length of time of 
  * which being dictated by the length of the entry list (as the list grows, so does the time it takes to write/change it).
- * <p>WadFile operations are not thread-safe!
+ * <p>Since this WadFile maintains current file position for reads and writes, most operations are not thread-safe!
  * @author Matthew Tropiano
  */
 public class WadFile implements Wad, AutoCloseable
 {
+	/** The relay buffer used by relay(). */
+	private static final ThreadLocal<byte[]> RELAY_BUFFER = ThreadLocal.withInitial(()->new byte[4096]);
+
 	/** File handle. */
 	private RandomAccessFile file;
 	
@@ -544,7 +546,7 @@ public class WadFile implements Wad, AutoCloseable
 		int offset = entryListOffset;
 		file.seek(entryListOffset);
 		
-		int len = IOUtils.relay(in, file, maxLength);
+		int len = relay(in, file, maxLength);
 		entryListOffset += len;
 	
 		WadEntry entry = WadEntry.create(entryName, offset, len);
@@ -662,6 +664,37 @@ public class WadFile implements Wad, AutoCloseable
 		file.close();
 	}
 	
+	/**
+	 * Reads from an input stream, reading in a consistent set of data
+	 * and writing it to an open file. The read/write is buffered
+	 * so that it does not bog down the OS's other I/O requests.
+	 * This method finishes when the end of the source stream is reached.
+	 * Note that this may block if the input stream is a type of stream
+	 * that will block if the input stream blocks for additional input.
+	 * This method is thread-safe.
+	 * @param in the input stream to grab data from.
+	 * @param out the file to write the data to.
+	 * @param maxLength the maximum amount of bytes to relay, or a value &lt; 0 for no max.
+	 * @return the total amount of bytes relayed.
+	 * @throws IOException if a read or write error occurs.
+	 */
+	private int relay(InputStream in, RandomAccessFile out, int maxLength) throws IOException
+	{
+		int total = 0;
+		int buf = 0;
+			
+		byte[] BUFFER = RELAY_BUFFER.get();
+		
+		while ((buf = in.read(BUFFER, 0, Math.min(maxLength < 0 ? Integer.MAX_VALUE : maxLength, BUFFER.length))) > 0)
+		{
+			out.write(BUFFER, 0, buf);
+			total += buf;
+			if (maxLength >= 0)
+				maxLength -= buf;
+		}
+		return total;
+	}
+
 	/**
 	 * Bulk add mechanism for WadFile.
 	 * All methods on this object manipulate the WadFile it is created from, and

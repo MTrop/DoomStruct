@@ -1760,7 +1760,7 @@ public interface Wad extends Iterable<WadEntry>
 	 */
 	default WadEntry addMarker(String entryName) throws IOException
 	{
-		return addData(entryName, NO_DATA);
+		return addEntry(WadEntry.create(entryName, getContentLength(), 0));
 	}
 
 	/**
@@ -1775,7 +1775,7 @@ public interface Wad extends Iterable<WadEntry>
 	 */
 	default WadEntry addMarkerAt(int index, String entryName) throws IOException
 	{
-		return addDataAt(index, entryName, NO_DATA);
+		return addEntryAt(index, WadEntry.create(entryName, getContentLength(), 0));
 	}
 
 	/**

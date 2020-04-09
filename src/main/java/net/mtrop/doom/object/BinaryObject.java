@@ -27,6 +27,22 @@ import net.mtrop.doom.struct.io.IOUtils;
 public interface BinaryObject
 {
 	/**
+	 * Reads from an {@link InputStream} and sets this object's fields.
+	 * Only reads the amount of bytes that it takes to read a single instance of the object.
+	 * Note that not every object may have a consistent length!
+	 * @param in the {@link InputStream} to read from. 
+	 * @throws IOException if a read error occurs.
+	 */
+	void readBytes(InputStream in) throws IOException;
+
+	/**
+	 * Writes this object to an {@link OutputStream}.
+	 * @param out the {@link OutputStream} to write to.
+	 * @throws IOException if a write error occurs.
+	 */
+	void writeBytes(OutputStream out) throws IOException;
+
+	/**
 	 * Gets the byte representation of this object. 
 	 * @return this object as a series of bytes.
 	 */
@@ -47,20 +63,6 @@ public interface BinaryObject
 		ByteArrayInputStream bin = new ByteArrayInputStream(data);
 		readBytes(bin);
 	}
-
-	/**
-	 * Reads from an {@link InputStream} and sets this object's fields. 
-	 * @param in the {@link InputStream} to read from. 
-	 * @throws IOException if a read error occurs.
-	 */
-	void readBytes(InputStream in) throws IOException;
-
-	/**
-	 * Writes this object to an {@link OutputStream}.
-	 * @param out the {@link OutputStream} to write to.
-	 * @throws IOException if a write error occurs.
-	 */
-	void writeBytes(OutputStream out) throws IOException;
 
 	/**
 	 * Converts an array of BinaryObjects into bytes.

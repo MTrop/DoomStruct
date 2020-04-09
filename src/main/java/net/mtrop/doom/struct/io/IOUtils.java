@@ -7,13 +7,9 @@
  ******************************************************************************/
 package net.mtrop.doom.struct.io;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.RandomAccessFile;
-
-import net.mtrop.doom.struct.DataList;
 
 /**
  * I/O utils.
@@ -25,19 +21,6 @@ public final class IOUtils
 	private static final ThreadLocal<byte[]> RELAY_BUFFER = ThreadLocal.withInitial(()->new byte[8192]);
 
 	private IOUtils() {}
-
-	/**
-	 * Retrieves the binary contents of a stream until it hits the end of the stream.
-	 * @param in	the input stream to use.
-	 * @return		an array of len bytes that make up the data in the stream.
-	 * @throws IOException	if the read cannot be done.
-	 */
-	public static byte[] getBinaryContents(InputStream in) throws IOException
-	{
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		relay(in, bos);
-		return bos.toByteArray();
-	}
 
 	/**
 	 * Reads from an input stream, reading in a consistent set of data
@@ -81,68 +64,6 @@ public final class IOUtils
 		while ((buf = in.read(BUFFER, 0, Math.min(maxLength < 0 ? Integer.MAX_VALUE : maxLength, BUFFER.length))) > 0)
 		{
 			out.write(BUFFER, 0, buf);
-			total += buf;
-			if (maxLength >= 0)
-				maxLength -= buf;
-		}
-		return total;
-	}
-
-	/**
-	 * Reads from an input stream, reading in a consistent set of data
-	 * and writing it to an open file. The read/write is buffered
-	 * so that it does not bog down the OS's other I/O requests.
-	 * This method finishes when the end of the source stream is reached.
-	 * Note that this may block if the input stream is a type of stream
-	 * that will block if the input stream blocks for additional input.
-	 * This method is thread-safe.
-	 * @param in the input stream to grab data from.
-	 * @param out the file to write the data to.
-	 * @param maxLength the maximum amount of bytes to relay, or a value &lt; 0 for no max.
-	 * @return the total amount of bytes relayed.
-	 * @throws IOException if a read or write error occurs.
-	 */
-	public static int relay(InputStream in, RandomAccessFile out, int maxLength) throws IOException
-	{
-		int total = 0;
-		int buf = 0;
-			
-		byte[] BUFFER = RELAY_BUFFER.get();
-		
-		while ((buf = in.read(BUFFER, 0, Math.min(maxLength < 0 ? Integer.MAX_VALUE : maxLength, BUFFER.length))) > 0)
-		{
-			out.write(BUFFER, 0, buf);
-			total += buf;
-			if (maxLength >= 0)
-				maxLength -= buf;
-		}
-		return total;
-	}
-
-	/**
-	 * Reads from an input stream, reading in a consistent set of data
-	 * and writing it to a {@link DataList}. The read/write is buffered
-	 * so that it does not bog down the OS's other I/O requests.
-	 * This method finishes when the end of the source stream is reached.
-	 * Note that this may block if the input stream is a type of stream
-	 * that will block if the input stream blocks for additional input.
-	 * This method is thread-safe.
-	 * @param in the input stream to grab data from.
-	 * @param out the file to write the data to.
-	 * @param maxLength the maximum amount of bytes to relay, or a value &lt; 0 for no max.
-	 * @return the total amount of bytes relayed.
-	 * @throws IOException if a read or write error occurs.
-	 */
-	public static int relay(InputStream in, DataList out, int maxLength) throws IOException
-	{
-		int total = 0;
-		int buf = 0;
-			
-		byte[] BUFFER = RELAY_BUFFER.get();
-		
-		while ((buf = in.read(BUFFER, 0, Math.min(maxLength < 0 ? Integer.MAX_VALUE : maxLength, BUFFER.length))) > 0)
-		{
-			out.append(BUFFER, 0, buf);
 			total += buf;
 			if (maxLength >= 0)
 				maxLength -= buf;

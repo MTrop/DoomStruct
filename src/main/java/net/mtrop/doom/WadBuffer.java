@@ -35,6 +35,9 @@ import net.mtrop.doom.util.NameUtils;
  */
 public class WadBuffer implements Wad
 {
+	/** The relay buffer used by relay(). */
+	private static final ThreadLocal<byte[]> RELAY_BUFFER = ThreadLocal.withInitial(()->new byte[4096]);
+
 	private static final Charset ASCII = Charset.forName("ASCII");
 	
 	/** Type of Wad File (IWAD or PWAD). */
@@ -403,7 +406,7 @@ public class WadBuffer implements Wad
 	public WadEntry addDataAt(int index, String entryName, InputStream in, int maxLength) throws IOException
 	{
 		int offset = content.size();
-		int len = IOUtils.relay(in, content, maxLength);
+		int len = relay(in, content, maxLength);
 		WadEntry entry = WadEntry.create(entryName, offset, len);
 		entries.add(index, entry);
 		updateHeader();
@@ -436,6 +439,37 @@ public class WadBuffer implements Wad
 	public void close() throws IOException
 	{
 		// Do nothing.
+	}
+
+	/**
+	 * Reads from an input stream, reading in a consistent set of data
+	 * and writing it to a {@link DataList}. The read/write is buffered
+	 * so that it does not bog down the OS's other I/O requests.
+	 * This method finishes when the end of the source stream is reached.
+	 * Note that this may block if the input stream is a type of stream
+	 * that will block if the input stream blocks for additional input.
+	 * This method is thread-safe.
+	 * @param in the input stream to grab data from.
+	 * @param out the file to write the data to.
+	 * @param maxLength the maximum amount of bytes to relay, or a value &lt; 0 for no max.
+	 * @return the total amount of bytes relayed.
+	 * @throws IOException if a read or write error occurs.
+	 */
+	private int relay(InputStream in, DataList out, int maxLength) throws IOException
+	{
+		int total = 0;
+		int buf = 0;
+			
+		byte[] BUFFER = RELAY_BUFFER.get();
+		
+		while ((buf = in.read(BUFFER, 0, Math.min(maxLength < 0 ? Integer.MAX_VALUE : maxLength, BUFFER.length))) > 0)
+		{
+			out.append(BUFFER, 0, buf);
+			total += buf;
+			if (maxLength >= 0)
+				maxLength -= buf;
+		}
+		return total;
 	}
 
 	/**

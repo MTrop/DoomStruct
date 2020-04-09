@@ -137,7 +137,7 @@ public class PNGPicture implements BinaryObject, GraphicObject
 	@Override
 	public void readBytes(InputStream in) throws IOException
 	{
-		byte[] b = IOUtils.getBinaryContents(in);
+		byte[] b = getBinaryContents(in);
 		PNGContainerReader pr = new PNGContainerReader(new ByteArrayInputStream(b));
 		PNGContainerReader.Chunk cin = null;
 		while ((cin = pr.nextChunk()) != null)
@@ -179,6 +179,19 @@ public class PNGPicture implements BinaryObject, GraphicObject
 			pw.writeChunk(cin.getName(), cin.getData());
 		pw.close();
 		pr.close();
+	}
+
+	/**
+	 * Retrieves the binary contents of a stream until it hits the end of the stream.
+	 * @param in	the input stream to use.
+	 * @return		an array of len bytes that make up the data in the stream.
+	 * @throws IOException	if the read cannot be done.
+	 */
+	private byte[] getBinaryContents(InputStream in) throws IOException
+	{
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		IOUtils.relay(in, bos);
+		return bos.toByteArray();
 	}
 
 }
