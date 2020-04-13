@@ -17,6 +17,11 @@ public interface UDMFHexenThingAttributes extends UDMFDoomThingAttributes
 	/** Thing position: height. */
 	public static final String ATTRIB_HEIGHT = "height";
 	
+	/** 
+	 * Thing flag: Dormant.
+	 * @since 2.9.1 
+	 */
+	public static final String ATTRIB_FLAG_DORMANT = "dormant";
 	/** Thing flag: Appears for class 1. */
 	public static final String ATTRIB_FLAG_CLASS1 = "class1";
 	/** Thing flag: Appears for class 2. */

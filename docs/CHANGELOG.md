@@ -3,6 +3,12 @@ Doom Struct (C) 2015-2020
 by Matt Tropiano et al. (see AUTHORS.txt)
 
 
+Changed in 2.9.1
+----------------
+
+- `Added` Missing Hexen UDMF Thing attribute.
+
+
 Changed in 2.9.0
 ----------------
 
