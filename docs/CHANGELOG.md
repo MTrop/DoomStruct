@@ -7,6 +7,8 @@ Changed in 2.9.1
 ----------------
 
 - `Added` Missing Hexen UDMF Thing attribute.
+- `Added` Additional methods to UDMFWriter.
+- `Changed` UDMFWriter.writeObject(...) now has a nullable count field (to match docs).
 
 
 Changed in 2.9.0

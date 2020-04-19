@@ -60,16 +60,42 @@ public final class UDMFWriter
 	 * @param object the object to write.
 	 * @param writer the Writer to write to.
 	 * @param type the object type.
+	 * @throws IOException if the output stream cannot be written to.
+	 * @since 2.9.1
+	 */
+	public static void writeObject(UDMFObject object, Writer writer, String type) throws IOException
+	{
+		writeObject(object, writer, type, null);
+	}
+
+	/**
+	 * Writes UDMF-formatted data into a {@link Writer}.
+	 * @param object the object to write.
+	 * @param writer the Writer to write to.
+	 * @param type the object type.
 	 * @param count the index of the written object (can be null - not required).
 	 * @throws IOException if the output stream cannot be written to.
+	 * @since 2.9.1, count is actually nullable.
 	 */
-	public static void writeObject(UDMFObject object, Writer writer, String type, int count) throws IOException
+	public static void writeObject(UDMFObject object, Writer writer, String type, Integer count) throws IOException
 	{
 		writeStructStart(type, writer, count, "");
 		writeFields(object, writer, "\t");
-		writeStructEnd(type, writer, count, "");
+		writeStructEnd(type, writer, "");
 	}
 
+	/**
+	 * Writes the fields out to a {@link Writer}.
+	 * @param object the object to write.
+	 * @param writer the Writer to write to.
+	 * @throws IOException if the output stream cannot be written to.
+	 * @since 2.9.1
+	 */
+	public static void writeFields(UDMFObject object, Writer writer) throws IOException
+	{
+		writeFields(object, writer, "");
+	}
+	
 	/**
 	 * Writes the fields out to a {@link Writer}.
 	 * @param object the object to write.
@@ -81,6 +107,19 @@ public final class UDMFWriter
 	{
 		for (Entry<String, Object> entry : object)
 			writeField(entry.getKey(), entry.getValue(), writer, lineprefix);
+	}
+	
+	/**
+	 * Writes the fields out to a {@link Writer}.
+	 * @param fieldName the field name.
+	 * @param value the field's value.
+	 * @param writer the Writer to write to.
+	 * @throws IOException if the output stream cannot be written to.
+	 * @since 2.9.1
+	 */
+	public static void writeField(String fieldName, Object value, Writer writer) throws IOException
+	{
+		writeField(fieldName, value, writer, "");
 	}
 	
 	/**
@@ -105,13 +144,16 @@ public final class UDMFWriter
 	/**
 	 * Starts the structure.
 	 */
-	private static void writeStructStart(String name, Writer writer, int count, String lineprefix) throws IOException
+	private static void writeStructStart(String name, Writer writer, Integer count, String lineprefix) throws IOException
 	{
 		writer.append(lineprefix)
-			.append(name)
-			.append(" // ")
-			.append(String.valueOf(count))
-			.append('\n');
+			.append(name);
+		if (count != null)
+		{
+			writer.append(" // ")
+				.append(String.valueOf(count))
+				.append('\n');
+		}
 		writer.append(lineprefix)
 			.append('{')
 			.append('\n')
@@ -121,7 +163,7 @@ public final class UDMFWriter
 	/**
 	 * Ends the structure.
 	 */
-	private static void writeStructEnd(String name, Writer writer, int count, String lineprefix) throws IOException
+	private static void writeStructEnd(String name, Writer writer, String lineprefix) throws IOException
 	{
 		writer.append(lineprefix)
 			.append('}')
