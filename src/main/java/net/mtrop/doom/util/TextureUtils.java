@@ -10,6 +10,7 @@ package net.mtrop.doom.util;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 import net.mtrop.doom.Wad;
@@ -303,7 +304,7 @@ public final class TextureUtils
 			if (destinationPatchStartIndex == null ^ destinationPatchEndIndex == null)
 				throw new TextureException("Destination Wad does not have a complete patch namespace.");
 
-			destinationPatches = new HashSet<String>();
+			destinationPatches = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
 			for (WadEntry e : WadUtils.getEntriesInNamespace(destinationWad, "P", Pattern.compile("P[1-9]_(START|END)")))
 				destinationPatches.add(e.getName());
 			for (WadEntry e : WadUtils.getEntriesInNamespace(destinationWad, "PP"))
@@ -323,7 +324,7 @@ public final class TextureUtils
 			if (destinationFlatStartIndex == null ^ destinationFlatEndIndex == null)
 				throw new TextureException("Destination Wad does not have a complete flat namespace.");
 
-			destinationFlats = new HashSet<String>();
+			destinationFlats = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
 			for (WadEntry e : WadUtils.getEntriesInNamespace(destinationWad, "F", Pattern.compile("F[1-9]_(START|END)")))
 				destinationFlats.add(e.getName());
 			for (WadEntry e : WadUtils.getEntriesInNamespace(destinationWad, "FF"))
@@ -350,9 +351,10 @@ public final class TextureUtils
 		 * <p>This does not pay attention to ANIMATED entries! Those will have to be moved separately!
 		 * <p>This is completely equivalent to <code>copyFlat(flatName, false)</code>
 		 * @param flatName the name of the flat to copy over.
-		 * @throws IOException if a read or write error occurs.
 		 * @return true if the flat was copied over, 
 		 * 		false if the flat name was not found in the source, or it already existed in the destination.
+		 * @throws IOException if a read or write error occurs.
+		 * @throws IllegalArgumentException if flatName is not a valid entry name.
 		 */
 		public boolean copyFlat(String flatName) throws IOException
 		{
@@ -368,9 +370,10 @@ public final class TextureUtils
 		 * <p>This does not pay attention to ANIMATED entries! Those will have to be moved separately!
 		 * @param flatName the name of the flat to copy over.
 		 * @param force if true, this will not check for flats that already exist (by name) in the destination Wad, and copy anyway.
-		 * @throws IOException if a read or write error occurs.
 		 * @return true if the flat was copied over, 
 		 * 		false if the flat name was not found in the source, or it already existed in the destination.
+		 * @throws IOException if a read or write error occurs.
+		 * @throws IllegalArgumentException if flatName is not a valid entry name.
 		 * @since 2.6.0
 		 */
 		public boolean copyFlat(String flatName, boolean force) throws IOException
@@ -412,6 +415,18 @@ public final class TextureUtils
 		}
 		
 		/**
+		 * Adds a flat to the list of "already copied" flats, as though it already exists in the destination.
+		 * @param flatName the name of the flat.
+		 * @throws IllegalArgumentException if flatName is not a valid entry name.
+		 * @since [NOW]
+		 */
+		public void ignoreFlat(String flatName)
+		{
+			NameUtils.checkValidEntryName(flatName);
+			destinationFlats.add(flatName);			
+		}
+		
+		/**
 		 * Copies one texture from the source Wad to the destination Wad, and copies 
 		 * the associated patch entries from the source Wad to the destination Wad, if they exist in the source.
 		 * This will not re-copy patches that already exist (by name) in the destination Wad.
@@ -428,9 +443,9 @@ public final class TextureUtils
 		 */
 		public boolean copyTexture(String textureName) throws IOException
 		{
-			return copyTexture(textureName, false);
+			return copyTexture(textureName, false, false);
 		}
-		
+
 		/**
 		 * Copies one texture from the source Wad to the destination Wad, and copies 
 		 * the associated patch entries from the source Wad to the destination Wad, if they exist in the source.
@@ -447,6 +462,27 @@ public final class TextureUtils
 		 * @since 2.6.0
 		 */
 		public boolean copyTexture(String textureName, boolean force) throws IOException
+		{
+			return copyTexture(textureName, force, false);
+		}
+
+		/**
+		 * Copies one texture from the source Wad to the destination Wad, and copies 
+		 * the associated patch entries from the source Wad to the destination Wad, if they exist in the source.
+		 * <p>If the TEXTUREx/PNAMES entries do not exist in the destination Wad, blank ones will be prepared (and written on close).
+		 * <p>If the patch start/end namespace markers do not exist in the destination Wad, they will be created:
+		 * <code>P_START</code> and <code>P_END</code> if IWAD, <code>PP_START</code> and <code>PP_END</code> if PWAD.
+		 * <p>An error will occur if either Wad is closed (mostly WadFiles) when this is called.
+		 * <p>This does not pay attention to ANIMATED or SWITCHES entries! Those will have to be moved separately!
+		 * @param textureName the name of the texture to copy over.
+		 * @param force if true, this will not check for textures that already exist (by name) in the destination Wad, and copy it and its patches anyway.
+		 * @param replace if true, and <code>force</code> is true, then the texture of the same name in the destination is deleted first (BUT NOT PATCHES).
+		 * @throws IOException if a read or write error occurs.
+		 * @return true if the texture was copied over, 
+		 * 		false if the texture name was not found in the source, or it already existed in the destination.
+		 * @since [NOW]
+		 */
+		public boolean copyTexture(String textureName, boolean force, boolean replace) throws IOException
 		{
 			if (sourceTextureSet == null)
 				return false;
