@@ -418,7 +418,7 @@ public final class TextureUtils
 		 * Adds a flat to the list of "already copied" flats, as though it already exists in the destination.
 		 * @param flatName the name of the flat.
 		 * @throws IllegalArgumentException if flatName is not a valid entry name.
-		 * @since [NOW]
+		 * @since 2.10.0
 		 */
 		public void ignoreFlat(String flatName)
 		{
@@ -480,7 +480,7 @@ public final class TextureUtils
 		 * @throws IOException if a read or write error occurs.
 		 * @return true if the texture was copied over, 
 		 * 		false if the texture name was not found in the source, or it already existed in the destination.
-		 * @since [NOW]
+		 * @since 2.10.0
 		 */
 		public boolean copyTexture(String textureName, boolean force, boolean replace) throws IOException
 		{

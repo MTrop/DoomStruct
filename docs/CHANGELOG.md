@@ -7,6 +7,7 @@ Changed in [NOW]
 ----------------
 
 - `Added` TextureUtils.TextureCopier methods: copyTexture() with replace, ignoreFlat().
+- `Fixed` NameUtils.isValidEntryName() and NameUtils.toValidEntryName() now accept the carat `^`.
 
 
 Changed in 2.9.1

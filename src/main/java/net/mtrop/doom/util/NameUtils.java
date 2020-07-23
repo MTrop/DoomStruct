@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 public final class NameUtils
 {
 	/** A regex pattern that matches valid entry names. */
-	public static final Pattern ENTRY_NAME = Pattern.compile("[A-Z0-9\\[\\]\\-\\_\\\\]{1,8}");
+	public static final Pattern ENTRY_NAME = Pattern.compile("[A-Z0-9\\[\\]\\-\\_\\^\\\\]{1,8}");
 	/** A regex pattern that matches valid texture names. */
 	public static final Pattern TEXTURE_NAME = Pattern.compile("(\\-|[A-Z0-9\\-\\_]{1,8})");
 
@@ -71,7 +71,7 @@ public final class NameUtils
 	/**
 	 * Tests if an input string is a valid entry name, and if not, converts it into a valid one.
 	 * <p>
-	 * In a valid entry, all characters must be A-Z (uppercase only), 0-9, and [ ] - _ plus the backslash ("\").
+	 * In a valid entry, all characters must be A-Z (uppercase only), 0-9, and [ ] - _ ^ plus the backslash ("\").
 	 * <p>
 	 * Lowercase letters are made uppercase and unknown characters are converted to dashes.
 	 * Latin characters with diacritical marks are converted to their normalized forms.
@@ -118,6 +118,8 @@ public final class NameUtils
 				sb.append(c);
 			else if (c == '\\')
 				sb.append(c);
+			else if (c == '^')
+				sb.append(c);
 			else
 				sb.append('-');
 		}
@@ -134,7 +136,7 @@ public final class NameUtils
 	public static void checkValidEntryName(String name)
 	{
 		if (!isValidEntryName(name))
-			throw new IllegalArgumentException("The provided entry name, \""+name+"\", is invalid. It must be up to 8 characters long; all characters must be A-Z (uppercase only), 0-9, and [ ] - _ plus the backslash \\.");
+			throw new IllegalArgumentException("The provided entry name, \""+name+"\", is invalid. It must be up to 8 characters long; all characters must be A-Z (uppercase only), 0-9, and [ ] - _ ^ plus the backslash \\.");
 	}
 
 	/**
