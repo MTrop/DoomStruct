@@ -3,8 +3,8 @@ Doom Struct (C) 2015-2020
 by Matt Tropiano et al. (see AUTHORS.txt)
 
 
-Changed in [NOW]
-----------------
+Changed in 2.10.0
+-----------------
 
 - `Added` TextureUtils.TextureCopier methods: copyTexture() with replace, ignoreFlat().
 - `Fixed` NameUtils.isValidEntryName() and NameUtils.toValidEntryName() now accept the carat `^`.
