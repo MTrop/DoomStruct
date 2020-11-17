@@ -307,6 +307,7 @@ public class WadBuffer implements Wad
 	}
 
 	@Override
+	// FIXME: Problem here. Data is not fully copied.
 	public InputStream getInputStream(WadEntry entry) throws IOException
 	{
 		return new WadBufferInputStream(entry.getOffset(), entry.getSize());
@@ -498,7 +499,7 @@ public class WadBuffer implements Wad
 			if (amount <= 0)
 				return -1;
 			
-			byte b = content.getData(offset++);
+			int b = content.getData(offset++) & 0x0ff; // byte to unsigned int
 			amount--;
 			if (--readlimit < 0)
 			{
