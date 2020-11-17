@@ -3,6 +3,12 @@ Doom Struct (C) 2015-2020
 by Matt Tropiano et al. (see AUTHORS.txt)
 
 
+Changed in 2.10.1
+-----------------
+
+- `Fixed` WadBuffer.WadBufferInputStream may sometimes return 0xff (-1) itself, killing the stream prematurely. This has been fixed.
+
+
 Changed in 2.10.0
 -----------------
 
