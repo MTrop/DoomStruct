@@ -307,7 +307,6 @@ public class WadBuffer implements Wad
 	}
 
 	@Override
-	// FIXME: Problem here. Data is not fully copied.
 	public InputStream getInputStream(WadEntry entry) throws IOException
 	{
 		return new WadBufferInputStream(entry.getOffset(), entry.getSize());
