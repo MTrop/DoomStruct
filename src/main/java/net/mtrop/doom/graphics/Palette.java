@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015-2020 Matt Tropiano
+ * Copyright (c) 2015-2021 Matt Tropiano
  * This program and the accompanying materials are made available under the 
  * terms of the GNU Lesser Public License v2.1 which accompanies this 
  * distribution, and is available at
@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
-import java.util.Comparator;
 
 import net.mtrop.doom.object.BinaryObject;
 import net.mtrop.doom.util.MathUtils;
@@ -21,10 +20,13 @@ import net.mtrop.doom.util.MathUtils;
  * The palette that makes up the Doom Engine's color palette.
  * The colors are all opaque. This contains an indexed set of 256 colors.
  * Doom's PLAYPAL lump contains several of these.
+ * TODO: Revisit "nearest match" with better algorithm.
  * @author Matthew Tropiano
  */
 public class Palette implements BinaryObject
 {
+	private static final ThreadLocal<byte[]> TEMP_COLOR = ThreadLocal.withInitial(()->new byte[3]);
+	
 	/** The number of total colors in a standard Doom palette. */
 	public static final int NUM_COLORS = 256;
 	/** Number of bytes per color in a Doom palette. */
@@ -32,125 +34,8 @@ public class Palette implements BinaryObject
 	/** A single palette's length in bytes. */
 	public static final int LENGTH = NUM_COLORS * BYTES_PER_COLOR;
 
-	/** Comparators for hue. */
-	private static final Comparator<byte[]> PALETTE_COMPARATOR = new Comparator<byte[]>()
-	{
-		// get this color's hue.
-		private float getHue(byte[] color)
-		{
-			int r = color[0] & 0x0ff;
-			int g = color[1] & 0x0ff;
-			int b = color[2] & 0x0ff;
-			
-			if (r == g && g == b)
-			{
-				return 0.0f;
-			}
-			else if (b < g && b < r)
-			{
-				g -= b;
-				r -= b;
-				
-				if (g == 0)
-					return 0.0f;
-				else if (r == 0)
-					return 120.0f;
-				else if (r < g)
-					return 120.0f - ((float)r / g * 60.0f);
-				else
-					return 60.0f - ((float)g / r * 60.0f);
-			}
-			else if (r < g && r < b)
-			{
-				g -= r;
-				b -= r;
-				
-				if (g == 0)
-					return 240.0f;
-				else if (b == 0)
-					return 120.0f;
-				else if (g < b)
-					return 240.0f - ((float)g / b * 60.0f);
-				else
-					return 180.0f - ((float)b / g * 60.0f);
-			}
-			else
-			{
-				r -= g;
-				b -= g;
-				
-				if (r == 0)
-					return 240.0f;
-				else if (b == 0)
-					return 0.0f;
-				else if (b < r)
-					return 360.0f - ((float)b / r * 60.0f);
-				else
-					return 300.0f - ((float)r / b * 60.0f);
-			}
-		}
-		
-		private int getSaturation(byte[] color)
-		{
-			int r = color[0] & 0x0ff;
-			int g = color[1] & 0x0ff;
-			int b = color[2] & 0x0ff;
-			
-			if (r == g && g == b)
-				return 0;
-			else if (r == 0 || g == 0 || b == 0)
-				return 255;
-			else if (r == g)
-				return Math.abs(b - g); 
-			else if (g == b)
-				return Math.abs(r - g); 
-			else if (r == b)
-				return Math.abs(g - r); 
-			else if (r < g && g < b)
-				return (g - r) + (b - g);
-			else if (g < r && r < b)
-				return (r - g) + (b - r);
-			else // (r < b && b < g)
-				return (b - r) + (g - b);
-		}
-		
-		private float getLuminance(byte[] color)
-		{
-			float r = (color[0] & 0x0ff) / 255f;
-			float g = (color[1] & 0x0ff) / 255f;
-			float b = (color[2] & 0x0ff) / 255f;
-			return 0.2126f * r + 0.7152f * g + 0.0722f * b;
-		}
-		
-		@Override
-		public int compare(byte[] c1, byte[] c2)
-		{
-			float h1, h2, s1, s2, b1, b2;
-			
-			return (h1 = getHue(c1)) == (h2 = getHue(c2)) 
-				? (s1 = getSaturation(c1)) == (s2 = getSaturation(c2))
-				? (b1 = getLuminance(c1)) == (b2 = getLuminance(c2))
-				? 0 
-				: (b1 < b2 ? -1 : 1)
-				: (s1 < s2 ? -1 : 1)
-				: (h1 < h2 ? -1 : 1)
-				;
-		}
-	}; 
-
-	/** Comparators for index. */
-	private Comparator<Integer> paletteIndexComparator = new Comparator<Integer>()
-	{
-		public int compare(Integer o1, Integer o2)
-		{
-			return PALETTE_COMPARATOR.compare(colorPalette[o1], colorPalette[o2]);
-		}
-	};
-	
 	/** The palette of colors. */
 	protected byte[][] colorPalette;
-	/** The color sort. */
-	protected Integer[] colorSort;
 	
 	/**
 	 * Creates a new palette of black, opaque colors.
@@ -158,11 +43,6 @@ public class Palette implements BinaryObject
 	public Palette()
 	{
 		colorPalette = new byte[NUM_COLORS][3];
-		colorSort = new Integer[NUM_COLORS];
-		for (int i = 0; i < NUM_COLORS; i++)
-		{
-			colorSort[i] = i;
-		}
 	}
 	
 	/**
@@ -175,7 +55,6 @@ public class Palette implements BinaryObject
 		Palette out = new Palette();
 		for (int i = 0; i < NUM_COLORS; i++)
 			System.arraycopy(this.colorPalette[i], 0, out.colorPalette[i], 0, BYTES_PER_COLOR);
-		System.arraycopy(this.colorSort, 0, out.colorSort, 0, NUM_COLORS);
 		return out;
 	}
 	
@@ -223,43 +102,26 @@ public class Palette implements BinaryObject
 	 */
 	public int getNearestColorIndex(int red, int green, int blue)
 	{
-		byte[] cbyte = new byte[3];
-		int u = NUM_COLORS, l = 0;
-		int i = (u+l)/2;
-		int prev = u;
-		
-		while (true)
+		byte[] cbyte = TEMP_COLOR.get();
+		cbyte[0] = (byte)red;
+		cbyte[1] = (byte)green;
+		cbyte[2] = (byte)blue;
+		long minDist = Long.MAX_VALUE;
+		int closest = -1;
+		for (int i = 0; i < NUM_COLORS; i++)
 		{
-			cbyte[0] = (byte)red;
-			cbyte[1] = (byte)green;
-			cbyte[2] = (byte)blue;
-			
-			if (Arrays.equals(colorPalette[colorSort[i]], cbyte))
+			long dist = getColorDistance(cbyte, colorPalette[i]);
+			if (dist == 0)
+			{
 				return i;
-			
-			int c = PALETTE_COMPARATOR.compare(colorPalette[colorSort[i]], cbyte); 
-			
-			if (c < 0)
-				l = i;
-			else if (c == 0)
-				return i;
-			else
-				u = i;
-			
-			if (i == (u+l)/2)
-				break;
-			
-			prev = i;
-			i = (u+l)/2;
+			}
+			else if (dist < minDist)
+			{
+				minDist = dist;
+				closest = i;
+			}
 		}
-		
-		double d1 = getColorDistance(cbyte, colorPalette[colorSort[i]]);
-		double d2 = getColorDistance(cbyte, colorPalette[colorSort[prev]]);
-		
-		if (d1 < d2)
-			return colorSort[i];
-		else
-			return colorSort[prev];
+		return closest;
 	}
 
 	/**
@@ -725,7 +587,7 @@ public class Palette implements BinaryObject
 	 */
 	protected void sortIndices()
 	{
-		Arrays.sort(colorSort, paletteIndexComparator);
+		// Do nothing.
 	}
 
 	private void mixColorNoSort(int index, double scalar, int red, int green, int blue)
@@ -778,11 +640,11 @@ public class Palette implements BinaryObject
 		return 0.2126f * r + 0.7152f * g + 0.0722f * b;
 	}
 
-	private static double getColorDistance(byte[] color1, byte[] color2)
+	private static long getColorDistance(byte[] color1, byte[] color2)
 	{
-		int dr = color1[0] - color2[0];
-		int dg = color1[1] - color2[1];
-		int db = color1[2] - color2[2];
+		long dr = (0x0ff & color1[0]) - (0x0ff & color2[0]);
+		long dg = (0x0ff & color1[1]) - (0x0ff & color2[1]);
+		long db = (0x0ff & color1[2]) - (0x0ff & color2[2]);
 		return dr * dr + dg * dg + db * db;
 	}
 

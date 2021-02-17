@@ -1,6 +1,12 @@
-Doom Struct (C) 2015-2020 
+Doom Struct (C) 2015-2021
 =========================
 by Matt Tropiano et al. (see AUTHORS.txt)
+
+
+Changed in 2.11.0
+-----------------
+
+- `Fixed` Palette.getNearestColorIndex(), because apparently it never worked.
 
 
 Changed in 2.10.1
