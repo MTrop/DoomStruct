@@ -43,6 +43,8 @@ public class WadFile implements Wad, AutoCloseable
 	/** The relay buffer used by relay(). */
 	private static final ThreadLocal<byte[]> RELAY_BUFFER = ThreadLocal.withInitial(()->new byte[4096]);
 
+	private static final Charset ASCII = Charset.forName("ASCII");
+
 	/** File handle. */
 	private RandomAccessFile file;
 	
@@ -90,13 +92,13 @@ public class WadFile implements Wad, AutoCloseable
 		if (!f.exists())
 			throw new FileNotFoundException(f.getPath() + " does not exist!");
 		
-		this.file = new RandomAccessFile(f,"rws");
+		this.file = new RandomAccessFile(f, "rws");
 		byte[] buffer = new byte[4];
 
 		// read header
 		file.seek(0);
 		file.read(buffer);
-		String head = new String(buffer,"ASCII");
+		String head = new String(buffer, "ASCII");
 		if (!head.equals(Type.IWAD.toString()) && !head.equals(Type.PWAD.toString()))
 			throw new WadException("Not a Wad file or supported Wad file type.");
 
@@ -205,7 +207,8 @@ public class WadFile implements Wad, AutoCloseable
 
 	private void writeHeader() throws IOException
 	{
-		file.seek(4);
+		file.seek(0);
+		file.write(type.name().getBytes(ASCII));
 		byte[] b = new byte[4];
 		SerializerUtils.intToBytes(entries.size(), SerializerUtils.LITTLE_ENDIAN, b, 0);
 		file.write(b);

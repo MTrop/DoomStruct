@@ -3,6 +3,12 @@ Doom Struct (C) 2015-2021
 by Matt Tropiano et al. (see AUTHORS.txt)
 
 
+Changed in 2.11.1
+-----------------
+
+- `Fixed` WadFile.writeHeader() did not write the IWAD/PWAD magic number on change.
+
+
 Changed in 2.11.0
 -----------------
 
