@@ -173,30 +173,6 @@ public class WadMap implements Wad
 		throw new UnsupportedOperationException("WadMap does not support addDataAt()");
 	}
 
-	/**
-	 * @deprecated 2.7.0 - The reason why this method was added in the first place was to have a bulk add operation that incurred hopefully
-	 * less transaction overhead in implementations. In WadBuffer, the performance overhead was already moot, and WadFile has methods
-	 * that delay the writing of the entry list, which, although less "safe," solves this problem by allowing the user
-	 * to defer the final write via {@link WadFile#flushEntries()}.
-	 */
-	@Override
-	public WadEntry[] addAllData(String[] entryNames, byte[][] data) throws IOException
-	{
-		throw new UnsupportedOperationException("WadMap does not support addAllData()");
-	}
-
-	/**
-	 * @deprecated 2.7.0 - The reason why this method was added in the first place was to have a bulk add operation that incurred hopefully
-	 * less transaction overhead in implementations. In WadBuffer, the performance overhead was already moot, and WadFile has methods
-	 * that delay the writing of the entry list, which, although less "safe," solves this problem by allowing the user
-	 * to defer the final write via {@link WadFile#flushEntries()}.
-	 */
-	@Override
-	public WadEntry[] addAllDataAt(int index, String[] entryNames, byte[][] data) throws IOException
-	{
-		throw new UnsupportedOperationException("WadMap does not support addAllDataAt()");
-	}
-
 	@Override
 	public WadEntry deleteEntry(int n) throws IOException
 	{

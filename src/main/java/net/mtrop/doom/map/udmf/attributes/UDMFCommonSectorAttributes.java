@@ -27,12 +27,6 @@ interface UDMFCommonSectorAttributes extends UDMFCommonAttributes
 	public static final String ATTRIB_SPECIAL = "special";
 	/** 
 	 * Sector tag/id.
-	 * @deprecated 2.9.0, name uniformity - use {@link #ATTRIB_ID} 
-	 */
-	@SuppressWarnings("javadoc")
-	public static final String ATTRIB_TAG = "id";
-	/** 
-	 * Sector tag/id.
 	 * @since 2.9.0 
 	 */
 	public static final String ATTRIB_ID = "id";

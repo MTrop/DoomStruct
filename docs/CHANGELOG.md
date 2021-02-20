@@ -3,6 +3,12 @@ Doom Struct (C) 2015-2021
 by Matt Tropiano et al. (see AUTHORS.txt)
 
 
+Changed in 2.12.0
+-----------------
+
+- `Removed` ALL Deprecated fields and methods. If you need a transitional version of this library, use version `2.11.1`.
+
+
 Changed in 2.11.1
 -----------------
 

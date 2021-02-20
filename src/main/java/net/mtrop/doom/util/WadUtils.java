@@ -162,41 +162,6 @@ public final class WadUtils
 	 * @param prefix the namespace prefix to use (e.g. "F" or "FF" for flats, "P" or "PP" for patches, etc.).
 	 * @param wad the WAD file to scan.
 	 * @return an array of all entries in the namespace, or an empty array if none are found.
-	 * @deprecated (in 2.5.0) Parameter ordering not in line with rest of util methods. Will be removed!
-	 */
-	public static WadEntry[] getEntriesInNamespace(String prefix, Wad wad)
-	{
-		return getEntriesInNamespace(wad, prefix);
-	}
-
-	/**
-	 * Finds all entries within a WAD entry namespace.
-	 * A namespace is marked by one or two characters and "_START" or "_END" as a suffix.
-	 * All entries in between are considered part of the "namespace."
-	 * <p>
-	 * The returned entries are valid only to the provided WAD. Using entry information with unassociated WADs
-	 * could create undesired results.
-	 * @param prefix the namespace prefix to use (e.g. "F" or "FF" for flats, "P" or "PP" for texture patches, etc.).
-	 * @param wad the WAD file to scan.
-	 * @param ignorePattern the regex pattern to use for deciding which entries in the namespace to ignore.
-	 * @return an array of all entries in the namespace, or an empty array if none are found.
-	 * @deprecated (in 2.5.0) Parameter ordering not in line with rest of util methods. Will be removed!
-	 */
-	public static WadEntry[] getEntriesInNamespace(String prefix, Pattern ignorePattern, Wad wad)
-	{
-		return getEntriesInNamespace(wad, prefix, ignorePattern);
-	}
-
-	/**
-	 * Finds all entries within a WAD entry namespace.
-	 * A namespace is marked by one or two characters and "_START" or "_END" as a suffix.
-	 * All entries in between are considered part of the "namespace."
-	 * <p>
-	 * The returned entries are valid only to the provided WAD. Using entry information with unassociated WADs
-	 * could create undesired results.
-	 * @param prefix the namespace prefix to use (e.g. "F" or "FF" for flats, "P" or "PP" for patches, etc.).
-	 * @param wad the WAD file to scan.
-	 * @return an array of all entries in the namespace, or an empty array if none are found.
 	 */
 	public static WadEntry[] getEntriesInNamespace(Wad wad, String prefix)
 	{

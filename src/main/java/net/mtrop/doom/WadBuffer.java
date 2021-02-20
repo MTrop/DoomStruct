@@ -413,22 +413,6 @@ public class WadBuffer implements Wad
 		return entry;
 	}
 
-	/**
-	 * @deprecated 2.7.0 - The reason why this method was added in the first place was to have a bulk add operation 
-	 * that incurred hopefully less transaction overhead in implementations. WadMap, of course, cannot add data. In 
-	 * WadBuffer, the performance overhead was already moot, and WadFile has {@link WadFile#createAdder()} for large 
-	 * add operations to reduce the overhead.
-	 */
-	@Override
-	public WadEntry[] addAllDataAt(int index, String[] entryNames, byte[][] data) throws IOException
-	{
-		WadEntry[] out = new WadEntry[entryNames.length];
-		for (int i = 0; i < entryNames.length; i++)
-			out[i] = addDataAt(index + i, entryNames[i], data[i]);
-		updateHeader();
-		return out;
-	}
-
 	@Override
 	public Iterator<WadEntry> iterator()
 	{

@@ -22,19 +22,9 @@ public interface DoomLinedefFlags extends LinedefFlags
 	public static final int TWO_SIDED = 2;
 	/** 
 	 * Linedef flag: Draw upper texture from top-down. 
-	 * @deprecated 2.9.0, use {@link #UNPEG_TOP}
-	 */
-	public static final int UNPEG_UPPER = 3;
-	/** 
-	 * Linedef flag: Draw upper texture from top-down. 
 	 * @since 2.9.0, naming convention change.
 	 */
 	public static final int UNPEG_TOP = 3;
-	/** 
-	 * Linedef flag: Draw lower texture from bottom-up.
-	 * @deprecated 2.9.0, use {@link #UNPEG_BOTTOM}
-	 */
-	public static final int UNPEG_LOWER = 4;
 	/** 
 	 * Linedef flag: Draw lower texture from bottom-up. 
 	 * @since 2.9.0, naming convention change.

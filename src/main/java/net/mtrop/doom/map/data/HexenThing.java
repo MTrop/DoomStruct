@@ -49,26 +49,6 @@ public class HexenThing extends CommonThing implements BinaryObject
 
 	/**
 	 * @return the Z position relative to sector plane.
-	 * @deprecated 2.9.0, use {@link #getHeight()}
-	 */
-	public int getZ()
-	{
-		return getHeight();
-	}
-
-	/**
-	 * Sets the Z position relative to sector plane.
-	 * @param z the new Z position.
-	 * @throws IllegalArgumentException if <code>z</code> is not between -32768 and 32767.
-	 * @deprecated 2.9.0, use {@link #setHeight(int)}
-	 */
-	public void setZ(int z)
-	{
-		setHeight(z);
-	}
-
-	/**
-	 * @return the Z position relative to sector plane.
 	 * @since 2.9.0, for naming clarity/uniformity.
 	 */
 	public int getHeight()
