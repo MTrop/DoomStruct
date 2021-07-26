@@ -7,8 +7,13 @@
  ******************************************************************************/
 package net.mtrop.doom.object;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -36,11 +41,62 @@ public interface BinaryObject
 	void readBytes(InputStream in) throws IOException;
 
 	/**
+	 * Reads from a {@link File} and sets this object's fields.
+	 * Only reads the amount of bytes that it takes to read a single instance of the object.
+	 * Note that not every object may have a consistent length!
+	 * @param file the {@link File} to read from. 
+	 * @throws FileNotFoundException if the file could not be found.
+	 * @throws IOException if a read error occurs.
+	 * @throws SecurityException if the file could not be opened due to OS permissions.
+	 * @since [NOW]
+	 */
+	default void readFile(File file) throws IOException
+	{
+		try (InputStream fis = new BufferedInputStream(new FileInputStream(file), 8192))
+		{
+			readBytes(fis);
+		}
+	}
+
+	/**
 	 * Writes this object to an {@link OutputStream}.
 	 * @param out the {@link OutputStream} to write to.
 	 * @throws IOException if a write error occurs.
 	 */
 	void writeBytes(OutputStream out) throws IOException;
+
+	/**
+	 * Writes this object to a {@link File}.
+	 * The file's contents are overwritten.
+	 * @param file the {@link File} to write to.
+	 * @param append if true, the content is written to the end of the file.
+	 * @throws FileNotFoundException if the file exists, but is a directory.
+	 * @throws IOException if a write error occurs.
+	 * @throws SecurityException if the file could not be written to due to OS permissions.
+	 * @since [NOW]
+	 * @see #writeFile(File, boolean)
+	 */
+	default void writeFile(File file) throws IOException
+	{
+		writeFile(file, false);
+	}
+
+	/**
+	 * Writes this object to a {@link File}.
+	 * @param file the {@link File} to write to.
+	 * @param append if true, the content is written to the end of the file.
+	 * @throws FileNotFoundException if the file exists, but is a directory.
+	 * @throws IOException if a write error occurs.
+	 * @throws SecurityException if the file could not be written to due to OS permissions.
+	 * @since [NOW]
+	 */
+	default void writeFile(File file, boolean append) throws IOException
+	{
+		try (FileOutputStream fos = new FileOutputStream(file, append))
+		{
+			writeBytes(fos);
+		}
+	}
 
 	/**
 	 * Gets the byte representation of this object. 
@@ -60,8 +116,7 @@ public interface BinaryObject
 	 */
 	default void fromBytes(byte[] data) throws IOException
 	{
-		ByteArrayInputStream bin = new ByteArrayInputStream(data);
-		readBytes(bin);
+		readBytes(new ByteArrayInputStream(data));
 	}
 
 	/**
@@ -85,7 +140,7 @@ public interface BinaryObject
 	 * @param <BO> the object type, a subtype of {@link BinaryObject}.
 	 * @param boClass the class to create.
 	 * @param b the array of bytes.
-	 * @return an array of length <code>count</code> of the created objects.
+	 * @return a single instance of the created object.
 	 * @throws IOException if an error occurs during the read - most commonly "not enough bytes".
 	 */
 	static <BO extends BinaryObject> BO create(Class<BO> boClass, byte[] b) throws IOException
@@ -98,7 +153,7 @@ public interface BinaryObject
 	 * @param <BO> the object type, a subtype of {@link BinaryObject}.
 	 * @param boClass the class to create.
 	 * @param in the input stream.
-	 * @return an array of length <code>count</code> of the created objects.
+	 * @return a single instance of the created object.
 	 * @throws IOException if an error occurs during the read - most commonly "not enough bytes".
 	 */
 	static <BO extends BinaryObject> BO read(Class<BO> boClass, InputStream in) throws IOException
@@ -106,6 +161,25 @@ public interface BinaryObject
 		BO out = (BO)Reflect.create(boClass);
 		out.readBytes(in);
 		return out;
+	}
+
+	/**
+	 * Creates a single object of a specific class from from a {@link File}.
+	 * @param <BO> the object type, a subtype of {@link BinaryObject}.
+	 * @param boClass the class to create.
+	 * @param file the source file.
+	 * @return a single instance of the created object.
+	 * @throws FileNotFoundException if the file could not be found.
+	 * @throws IOException if an error occurs during the read - most commonly "not enough bytes".
+	 * @throws SecurityException if the file could not be opened due to OS permissions.
+	 * @since [NOW]
+	 */
+	static <BO extends BinaryObject> BO read(Class<BO> boClass, File file) throws IOException
+	{
+		try (FileInputStream fis = new FileInputStream(file))
+		{
+			return read(boClass, fis);
+		}
 	}
 
 	/**
@@ -146,13 +220,33 @@ public interface BinaryObject
 	}
 
 	/**
+	 * Creates an amount of objects of a specific class from a {@link File}.
+	 * @param <BO> the object type, a subtype of {@link BinaryObject}.
+	 * @param boClass the class to create.
+	 * @param file the source file.
+	 * @param count the (maximum) amount of objects to read. 
+	 * @return an array of length <code>count</code> of the created objects.
+	 * @throws FileNotFoundException if the file could not be found.
+	 * @throws IOException if an error occurs during the read - most commonly "not enough bytes".
+	 * @throws SecurityException if the file could not be opened due to OS permissions.
+	 * @since [NOW]
+	 */
+	static <BO extends BinaryObject> BO[] read(Class<BO> boClass, File file, int count) throws IOException
+	{
+		try (FileInputStream fis = new FileInputStream(file))
+		{
+			return read(boClass, fis, count);
+		}
+	}
+
+	/**
 	 * Creates a deserializing scanner iterator that returns independent instances of objects.
 	 * <p><b>NOTE:</b> The InputStream is closed after the last object is read.
 	 * @param <BO> the object type, a subtype of {@link BinaryObject}.
 	 * @param boClass the class to create.
 	 * @param in the input stream.
 	 * @param length the length of each object to read. 
-	 * @return an array of length <code>count</code> of the created objects.
+	 * @return a Scanner object for reading the objects.
 	 * @throws IOException if an error occurs during the read - most commonly "not enough bytes".
 	 */
 	static <BO extends BinaryObject> Scanner<BO> scanner(Class<BO> boClass, InputStream in, int length) throws IOException
@@ -170,7 +264,7 @@ public interface BinaryObject
 	 * @param boClass the class to create.
 	 * @param in the input stream.
 	 * @param length the length of each object to read. 
-	 * @return an array of length <code>count</code> of the created objects.
+	 * @return an InlineScanner object for reading the objects.
 	 * @throws IOException if an error occurs during the read - most commonly "not enough bytes".
 	 */
 	static <BO extends BinaryObject> InlineScanner<BO> inlineScanner(Class<BO> boClass, InputStream in, int length) throws IOException

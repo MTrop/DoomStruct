@@ -3,6 +3,15 @@ Doom Struct (C) 2015-2021
 by Matt Tropiano et al. (see AUTHORS.txt)
 
 
+Changed in [NOW]
+-----------------
+
+- `Added` BinaryObject file-reading methods for convenience.
+- `Added` TextObject file-reading methods for convenience.
+- `Fixed` GraphicUtils did not set transparent pixels when converted from full color images.
+- `Fixed` Some GraphicUtils method documentation was either misleading or unclear.
+
+
 Changed in 2.12.0
 -----------------
 

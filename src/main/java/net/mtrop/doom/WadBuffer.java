@@ -16,7 +16,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -26,6 +25,7 @@ import net.mtrop.doom.struct.DataList;
 import net.mtrop.doom.struct.io.IOUtils;
 import net.mtrop.doom.struct.io.SerialReader;
 import net.mtrop.doom.util.NameUtils;
+import net.mtrop.doom.util.TextUtils;
 
 /**
  * An implementation of Wad where any and all WAD information is manipulated in memory.
@@ -38,8 +38,6 @@ public class WadBuffer implements Wad
 	/** The relay buffer used by relay(). */
 	private static final ThreadLocal<byte[]> RELAY_BUFFER = ThreadLocal.withInitial(()->new byte[4096]);
 
-	private static final Charset ASCII = Charset.forName("ASCII");
-	
 	/** Type of Wad File (IWAD or PWAD). */
 	private Type type;
 	/** Header buffer. */
@@ -70,7 +68,7 @@ public class WadBuffer implements Wad
 		this.entries = new ArrayList<WadEntry>();
 		
 		headerBuffer.rewind();
-		headerBuffer.put(type.name().getBytes(ASCII));
+		headerBuffer.put(type.name().getBytes(TextUtils.ASCII));
 		headerBuffer.putInt(0);			// no entries.
 		headerBuffer.putInt(12);		// entry list offset (12).
 		content.append(headerBuffer.array());	
@@ -79,7 +77,7 @@ public class WadBuffer implements Wad
 	private void updateHeader()
 	{
 		headerBuffer.rewind();
-		headerBuffer.put(type.name().getBytes(ASCII));
+		headerBuffer.put(type.name().getBytes(TextUtils.ASCII));
 		headerBuffer.putInt(entries.size());
 		headerBuffer.putInt(content.size());
 		content.setData(0, headerBuffer.array());

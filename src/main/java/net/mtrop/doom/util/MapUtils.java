@@ -8,7 +8,6 @@
 package net.mtrop.doom.util;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -297,7 +296,7 @@ public final class MapUtils
 			switch (name)
 			{
 				case LUMP_TEXTMAP:
-					map = wad.getTextDataAs(entry, Charset.forName("UTF-8"), UDMFMap.class);
+					map = wad.getTextDataAs(entry, TextUtils.UTF8, UDMFMap.class);
 					break;
 			}
 		}

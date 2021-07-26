@@ -1107,7 +1107,7 @@ public final class GraphicUtils
 	/**
 	 * Creates a {@link Flat} from a {@link BufferedImage}.
 	 * Colors are approximated using the provided {@link Palette}, and translated using the provided {@link Colormap}.
-	 * Pixels that are not opaque are considered black. 
+	 * Pixels that are not fully opaque are given index 0. 
 	 * @param image the image to convert.
 	 * @param palette the palette to use for color approximation.
 	 * @return the resultant Flat.
@@ -1120,7 +1120,7 @@ public final class GraphicUtils
 	/**
 	 * Creates a {@link Flat} from a {@link BufferedImage}.
 	 * Colors are approximated using the provided {@link Palette}, and translated using the provided {@link Colormap}.
-	 * Pixels that are not opaque are considered black. 
+	 * Pixels that are not fully opaque are given index 0. 
 	 * @param image the image to convert.
 	 * @param palette the palette to use for color approximation.
 	 * @param colormap the colormap to use for palette translation. Can be <code>null</code> for no translation.
@@ -1146,7 +1146,7 @@ public final class GraphicUtils
 	/**
 	 * Creates a {@link Picture} from a {@link BufferedImage}.
 	 * Colors are approximated using the provided {@link Palette}, and translated using the provided {@link Colormap}.
-	 * Pixels that are not opaque are considered blank. 
+	 * Pixels that are not fully opaque are considered transparent. 
 	 * @param image the image to convert.
 	 * @param palette the palette to use for color approximation.
 	 * @return the resultant Picture.
@@ -1159,7 +1159,7 @@ public final class GraphicUtils
 	/**
 	 * Creates a {@link Picture} from a {@link BufferedImage}.
 	 * Colors are approximated using the provided {@link Palette}, and translated using the provided {@link Colormap}.
-	 * Pixels that are not opaque are considered blank. 
+	 * Pixels that are not fully opaque are considered transparent. 
 	 * @param image the image to convert.
 	 * @param palette the palette to use for color approximation.
 	 * @param colormap the colormap to use for palette translation. Can be <code>null</code> for no translation.
@@ -1173,10 +1173,13 @@ public final class GraphicUtils
 			{
 				int argb = image.getRGB(x, y);
 				if ((argb & 0xff000000) >>> 24 != 0x0ff)
-					argb = 0;
-				int index = palette.getNearestColorIndex((argb & 0x00ff0000) >> 16, (argb & 0x0000ff00) >> 8, (argb & 0x000000ff));
-				index = colormap != null ? colormap.getPaletteIndex(index) : index;
-				out.setPixel(x, y, index);
+					out.setPixel(x, y, Picture.PIXEL_TRANSLUCENT);
+				else
+				{
+					int index = palette.getNearestColorIndex((argb & 0x00ff0000) >> 16, (argb & 0x0000ff00) >> 8, (argb & 0x000000ff));
+					index = colormap != null ? colormap.getPaletteIndex(index) : index;
+					out.setPixel(x, y, index);
+				}
 			}
 		
 		return out;

@@ -11,7 +11,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
 
 import net.mtrop.doom.object.BinaryObject;
 import net.mtrop.doom.object.GraphicObject;
@@ -27,10 +28,10 @@ import net.mtrop.doom.util.RangeUtils;
  */
 public class Picture implements BinaryObject, GraphicObject, IndexedGraphic
 {
-	public static final short PIXEL_TRANSLUCENT = -1;
+	public static final byte PIXEL_TRANSLUCENT = -1;
 	
 	/** The pixel data. */
-	private short[][] pixels; 
+	private byte[][] pixels; 
 	/** The offset from the center, horizontally, in pixels. */
 	private int offsetX; 
 	/** The offset from the center, vertically, in pixels. */
@@ -48,15 +49,12 @@ public class Picture implements BinaryObject, GraphicObject, IndexedGraphic
 	 * Creates a new picture.
 	 * @param width		the width of the picture in pixels.
 	 * @param height	the height of the picture in pixels.
+	 * @throws IllegalArgumentException if width is &lt; 1 or &gt; 256, or height is &lt; 1 or &gt; 65535.
 	 */
 	public Picture(int width, int height)
 	{
-		if (width < 1 || height < 1)
-			throw new IllegalArgumentException("Width or height cannot be less than 1.");
-		if (width > 65535 || height > 65535)
-			throw new IllegalArgumentException("Width or height cannot be greater than 65535.");
-		offsetX = 0;
-		offsetY = 0;
+		this.offsetX = 0;
+		this.offsetY = 0;
 		setDimensions(width, height);
 	}
 
@@ -65,10 +63,18 @@ public class Picture implements BinaryObject, GraphicObject, IndexedGraphic
 	 * WARNING: This will clear all of the data in the picture.
 	 * @param width	the width of the picture in pixels.
 	 * @param height the height of the picture in pixels.
+	 * @throws IllegalArgumentException if width is &lt; 1 or &gt; 256, or height is &lt; 1 or &gt; 65535.
 	 */
 	public void setDimensions(int width, int height)
 	{
-		pixels = new short[width][height];
+		if (width < 1 || height < 1)
+			throw new IllegalArgumentException("Width or height cannot be less than 1.");
+		if (width > 65535)
+			throw new IllegalArgumentException("Width cannot be greater than 65535.");
+		if (height > 65535)
+			throw new IllegalArgumentException("Height cannot be greater than 65535.");
+		
+		pixels = new byte[width][height];
 		for (int i = 0; i < pixels.length; i++)
 			for (int j = 0; j < pixels[i].length; j++)
 				pixels[i][j] = PIXEL_TRANSLUCENT;
@@ -126,27 +132,25 @@ public class Picture implements BinaryObject, GraphicObject, IndexedGraphic
 	
 	/**
 	 * Sets the pixel data at a location in the picture.
-	 * Valid values are in the range of -1 to 255, with
-	 * 0 to 255 being palette indexes and -1 being translucent
-	 * pixel information. Values outside this range are CLAMPED into the
-	 * range.
+	 * Valid values are in the range of -1 to 255, with 0 to 254 being palette indexes and -1 / 255 being translucent pixels.
+	 * Note that palette value 255 does not get used as a color! 
 	 * @param x	picture x-coordinate.
 	 * @param y	picture y-coordinate.
 	 * @param value	the value to set.
-	 * @throws IllegalArgumentException if the offset is outside the range -1 to 255.
+	 * @throws IllegalArgumentException if the value is outside the range -1 to 255.
 	 * @throws ArrayIndexOutOfBoundsException if the provided coordinates is outside the graphic.
 	 */
 	public void setPixel(int x, int y, int value)
 	{
 		RangeUtils.checkRange("Pixel ("+x+", "+y+")", -1, 255, value);
-		pixels[x][y] = (short)MathUtils.clampValue(value, -1, 255);
+		pixels[x][y] = (byte)MathUtils.clampValue(value, -1, 255);
 	}
 	
 	/**
 	 * Gets the pixel data at a location in the picture.
 	 * @param x	picture x-coordinate.
 	 * @param y	picture y-coordinate.
-	 * @return a palette index value from 0 to 255 or PIXEL_TRANSLUCENT if the pixel is not filled in.
+	 * @return a palette index value from 0 to 254 or {@link #PIXEL_TRANSLUCENT} if the pixel is not filled in.
 	 * @throws ArrayIndexOutOfBoundsException if the provided coordinates is outside the graphic.
 	 */
 	public int getPixel(int x, int y)
@@ -168,15 +172,13 @@ public class Picture implements BinaryObject, GraphicObject, IndexedGraphic
 		// data must be treated as a stream: find highest short offset so that the reading can stop.
 		int offMax = -1;
 		for (int i : columnOffsets)
-		{
 			offMax = i > offMax ? i : offMax;
-		}
 		
 		// precache columns at each particular offset: picture may be compressed.
-		HashMap<Integer, byte[]> columnData = new HashMap<Integer, byte[]>();
+		Map<Integer, byte[]> columnData = new TreeMap<Integer, byte[]>();
 
 		for (int i = 0; i < columnOffsets.length; i++)
-			columnData.put(columnOffsets[i],columnRead(sr, in));
+			columnData.put(columnOffsets[i], columnRead(sr, in));
 			
 		for (int x = 0; x < columnOffsets.length; x++)
 		{
@@ -187,95 +189,15 @@ public class Picture implements BinaryObject, GraphicObject, IndexedGraphic
 				y = b[i++] & 0x0ff;
 				int span = b[i++] & 0x0ff;
 				for (int j = 0; j < span; j++)
-					pixels[x][y+j] = (short)(b[i+j] & 0x0ff);
+					pixels[x][y+j] = (byte)(b[i+j] & 0x0ff);
 				i += span-1;
 			}
 		}
 				
 	}
 
-	@Override
-	public void writeBytes(OutputStream out) throws IOException
-	{
-		SerialWriter sw = new SerialWriter(SerialWriter.LITTLE_ENDIAN);
-		sw.writeUnsignedShort(out, pixels.length);
-		sw.writeUnsignedShort(out, pixels[0].length);
-		sw.writeShort(out, (short)offsetX);
-		sw.writeShort(out, (short)offsetY);
-		
-		int[] columnOffsets = new int[getWidth()];
-
-		final int STATE_TRANS = 0;
-		final int STATE_COLOR = 1;
-		
-		int columnOffs = 8 + (4 * getWidth());
-		ByteArrayOutputStream dataBytes = new ByteArrayOutputStream();
-		
-		for (int i = 0; i < columnOffsets.length; i++)
-		{
-			columnOffsets[i] = columnOffs;
-			ByteArrayOutputStream columnBytes = new ByteArrayOutputStream();
-			ByteArrayOutputStream pbytes = new ByteArrayOutputStream();
-			short[] col = pixels[i];
-			int STATE = STATE_TRANS;
-			int span = 0;
-
-			for (int offs = 0; offs < col.length; offs++)
-			{
-				switch (STATE)
-				{
-					case STATE_TRANS:
-						if (col[offs] != PIXEL_TRANSLUCENT)
-						{
-							span = 0;
-							columnBytes.write(offs & 0x0ff);
-							pbytes = new ByteArrayOutputStream();
-							STATE = STATE_COLOR;
-							offs--;	// state change. keep index.
-						}
-						break;
-						
-					case STATE_COLOR:
-						if (col[offs] == PIXEL_TRANSLUCENT)
-						{
-							columnBytes.write(span & 0x0ff);
-							columnBytes.write(0);
-							columnBytes.write(pbytes.toByteArray());
-							columnBytes.write(0);
-							pbytes.reset();
-							STATE = STATE_TRANS;
-							offs--;	// state change. keep index.
-						}
-						else
-						{
-							pbytes.write(col[offs] & 0x0ff);
-							span++;
-						}
-						break;
-				}
-			}
-			
-			if (pbytes.size() > 0)
-			{
-				columnBytes.write(span & 0x0ff);
-				columnBytes.write(0);
-				columnBytes.write(pbytes.toByteArray());
-				columnBytes.write(0);
-			}
-			columnBytes.write(-1);
-			columnOffs += columnBytes.size();
-			dataBytes.write(columnBytes.toByteArray());
-			columnBytes.reset();
-		}
-		
-		for (int n : columnOffsets)
-			sw.writeInt(out, n);
-		
-		sw.writeBytes(out, dataBytes.toByteArray());
-	}
-
 	// Reads a column of pixels.
-	private byte[] columnRead(SerialReader sr, InputStream in) throws IOException
+	private static byte[] columnRead(SerialReader sr, InputStream in) throws IOException
 	{
 		ByteArrayOutputStream out = new ByteArrayOutputStream(); 
 	
@@ -298,7 +220,123 @@ public class Picture implements BinaryObject, GraphicObject, IndexedGraphic
 		
 		return out.toByteArray();
 	}
-	
-	
 
+	@Override
+	public void writeBytes(OutputStream out) throws IOException
+	{
+		SerialWriter sw = new SerialWriter(SerialWriter.LITTLE_ENDIAN);
+		sw.writeUnsignedShort(out, pixels.length);
+		sw.writeUnsignedShort(out, pixels[0].length);
+		sw.writeShort(out, (short)offsetX);
+		sw.writeShort(out, (short)offsetY);
+		
+		int[] columnOffsets = new int[getWidth()];
+
+		int columnOffs = 8 + (4 * columnOffsets.length);
+		ByteArrayOutputStream dataBytes = new ByteArrayOutputStream();
+		ByteArrayOutputStream columnBytes = new ByteArrayOutputStream();
+		
+		for (int i = 0; i < columnOffsets.length; i++)
+		{
+			columnOffsets[i] = columnOffs;
+			writeColumn(pixels[i], columnBytes);
+			columnBytes.writeTo(dataBytes);
+			columnOffs += columnBytes.size();
+			columnBytes.reset();
+		}
+		
+		for (int n : columnOffsets)
+			sw.writeInt(out, n);
+		
+		sw.writeBytes(out, dataBytes.toByteArray());
+	}
+	
+	// Writes a column of pixels.
+	// FIXME: Transparency is broken.
+	private static void writeColumn(byte[] columnPixels, ByteArrayOutputStream buffer) throws IOException
+	{
+		int topDelta = 0;
+		ByteArrayOutputStream postBytes = new ByteArrayOutputStream();
+
+		final int STATE_TRANSPARENT = 0;
+		final int STATE_OPAQUE = 1;
+		int state = STATE_TRANSPARENT;
+		
+		for (int i = 0; i < columnPixels.length; i++)
+		{
+			byte b = columnPixels[i];
+			switch (state)
+			{
+				case STATE_TRANSPARENT:
+				{
+					if (topDelta >= 254)
+					{
+						// should be empty. Write empty post to set up "tall patch" workaround.
+						writePost(254, postBytes, buffer);
+						topDelta = 0;
+					}
+					else if (b != PIXEL_TRANSLUCENT)
+					{
+						postBytes.write(b);
+						state = STATE_OPAQUE;
+					} 
+					else
+					{
+						topDelta++;
+					}
+				}
+				break;
+				
+				case STATE_OPAQUE:
+				{
+					if (b == PIXEL_TRANSLUCENT || postBytes.size() == 254)
+					{
+						writePost(topDelta, postBytes, buffer);
+						topDelta = (postBytes.size() + topDelta) % 255;
+						postBytes.reset();
+						
+						if (topDelta == 254)
+						{
+							writePost(254, postBytes, buffer);
+							topDelta = 0;
+						}
+
+						if (b == PIXEL_TRANSLUCENT)
+						{
+							topDelta++;
+							state = STATE_TRANSPARENT;
+						}
+						else
+						{
+							postBytes.write(b);
+						}
+					}
+					else
+					{
+						postBytes.write(b);
+					}
+				}
+				break;
+			}
+		}
+		
+		// flush remaining
+		if (state == STATE_OPAQUE)
+		{
+			writePost(topDelta, postBytes, buffer);
+		}
+
+		buffer.write(0xff); // terminal topDelta
+	}
+	
+	// Writes a post of pixels to an output buffer.
+	private static void writePost(int topDelta, ByteArrayOutputStream postBytes, OutputStream out) throws IOException
+	{
+		out.write(topDelta);
+		out.write(postBytes.size());
+		out.write(0);
+		postBytes.writeTo(out);
+		out.write(0);
+	}
+	
 }

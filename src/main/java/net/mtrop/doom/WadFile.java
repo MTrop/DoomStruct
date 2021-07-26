@@ -27,6 +27,7 @@ import net.mtrop.doom.object.TextObject;
 import net.mtrop.doom.struct.io.SerialWriter;
 import net.mtrop.doom.struct.io.SerializerUtils;
 import net.mtrop.doom.util.NameUtils;
+import net.mtrop.doom.util.TextUtils;
 
 /**
  * The class that reads WadFile information and provides random access to Wad files.
@@ -42,8 +43,6 @@ public class WadFile implements Wad, AutoCloseable
 {
 	/** The relay buffer used by relay(). */
 	private static final ThreadLocal<byte[]> RELAY_BUFFER = ThreadLocal.withInitial(()->new byte[4096]);
-
-	private static final Charset ASCII = Charset.forName("ASCII");
 
 	/** File handle. */
 	private RandomAccessFile file;
@@ -208,7 +207,7 @@ public class WadFile implements Wad, AutoCloseable
 	private void writeHeader() throws IOException
 	{
 		file.seek(0);
-		file.write(type.name().getBytes(ASCII));
+		file.write(type.name().getBytes(TextUtils.ASCII));
 		byte[] b = new byte[4];
 		SerializerUtils.intToBytes(entries.size(), SerializerUtils.LITTLE_ENDIAN, b, 0);
 		file.write(b);

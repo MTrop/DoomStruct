@@ -12,18 +12,18 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
-import java.nio.charset.Charset;
 
 import net.mtrop.doom.object.BinaryObject;
 import net.mtrop.doom.struct.io.SerialReader;
 import net.mtrop.doom.struct.io.SerialWriter;
+import net.mtrop.doom.util.TextUtils;
 
 /**
  * Abstraction of the ENDOOM and other similarly-formatted lumps for the Doom Engine.
  * An example of this would be the screen that is dumped to DOS after the player quits
  * or the loading screen for Heretic.
  * <p>
- * All characters are converted using the CP437 charset (<code>Charset.forName("CP437")</code>), a.k.a. the MS-DOS encoding for extended ASCII.
+ * All characters are converted using the CP437 charset (<code>TextUtils.CP437</code>), a.k.a. the MS-DOS encoding for extended ASCII.
  * @author Matthew Tropiano
  */
 public class EndDoom implements BinaryObject
@@ -58,9 +58,6 @@ public class EndDoom implements BinaryObject
 	FGCOLOR_LIGHT_MAGENTA = 13,
 	FGCOLOR_YELLOW = 14,
 	FGCOLOR_WHITE = 15;
-	
-	/** Character set for encoding/decoding characters.  */
-	public static final Charset CP437 = Charset.forName("CP437");
 	
 	/** The foreground colors for each character. */
 	private byte[] fgColor;
@@ -228,7 +225,7 @@ public class EndDoom implements BinaryObject
 	{
 		tempByteBuffer.put(0, vgaByte);
 		tempByteBuffer.rewind();
-		return CP437.decode(tempByteBuffer).get(0);
+		return TextUtils.CP437.decode(tempByteBuffer).get(0);
 	}
 	
 	/**
@@ -239,7 +236,7 @@ public class EndDoom implements BinaryObject
 	{
 		tempCharBuffer.put(0, c);
 		tempCharBuffer.rewind();
-		return CP437.encode(tempCharBuffer).get(0);
+		return TextUtils.CP437.encode(tempCharBuffer).get(0);
 	}
 	
 	/**

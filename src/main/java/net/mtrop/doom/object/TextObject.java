@@ -7,13 +7,21 @@
  ******************************************************************************/
 package net.mtrop.doom.object;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.Charset;
 
 /**
  * Common elements of all objects that are loaded from text data.
@@ -40,8 +48,7 @@ public interface TextObject
 	 */
 	default void fromText(String string) throws IOException
 	{
-		StringReader sr = new StringReader(string);
-		readText(sr);
+		readText(new StringReader(string));
 	}
 
 	/**
@@ -52,11 +59,109 @@ public interface TextObject
 	void readText(Reader reader) throws IOException;
 
 	/**
+	 * Reads from a {@link File} and sets this object's fields.
+	 * The charset encoding used is the default platform encoding.
+	 * @param file the {@link File} to read from.
+	 * @throws FileNotFoundException if the file could not be found.
+	 * @throws IOException if a read error occurs.
+	 * @throws SecurityException if the file could not be opened due to OS permissions.
+	 * @see #readFile(File, Charset)
+	 * @since [NOW]
+	 */
+	default void readFile(File file) throws IOException
+	{
+		readFile(file, Charset.defaultCharset());
+	}
+
+	/**
+	 * Reads from a {@link File} and sets this object's fields. 
+	 * @param file the {@link File} to read from.
+	 * @param charset the charset encoding to use for reading.
+	 * @throws FileNotFoundException if the file could not be found.
+	 * @throws IOException if a read error occurs.
+	 * @throws SecurityException if the file could not be opened due to OS permissions.
+	 * @since [NOW]
+	 */
+	default void readFile(File file, Charset charset) throws IOException
+	{
+		try (Reader reader = new InputStreamReader(new BufferedInputStream(new FileInputStream(file), 8192), charset))
+		{
+			readText(reader);
+		}
+	}
+
+	/**
 	 * Writes this object to a {@link Writer}.
 	 * @param writer the {@link Writer} to write to.
 	 * @throws IOException if a write error occurs.
 	 */
 	void writeText(Writer writer) throws IOException;
+
+	/**
+	 * Writes this object to a {@link File}.
+	 * The file's contents are overwritten.
+	 * The charset encoding used is the default platform encoding.
+	 * @param file the {@link File} to write to.
+	 * @throws FileNotFoundException if the file exists, but is a directory.
+	 * @throws IOException if a write error occurs.
+	 * @throws SecurityException if the file could not be written to due to OS permissions.
+	 * @see #writeFile(File, boolean, Charset)
+	 * @since [NOW]
+	 */
+	default void writeFile(File file) throws IOException
+	{
+		writeFile(file, false, Charset.defaultCharset());
+	}
+
+	/**
+	 * Writes this object to a {@link File}.
+	 * The file's contents are overwritten.
+	 * @param file the {@link File} to write to.
+	 * @param charset the charset encoding to use for writing.
+	 * @throws FileNotFoundException if the file exists, but is a directory.
+	 * @throws IOException if a write error occurs.
+	 * @throws SecurityException if the file could not be written to due to OS permissions.
+	 * @see #writeFile(File, boolean, Charset)
+	 * @since [NOW]
+	 */
+	default void writeFile(File file, Charset charset) throws IOException
+	{
+		writeFile(file, false, charset);
+	}
+
+	/**
+	 * Writes this object to a {@link File}.
+	 * The charset encoding used is the default platform encoding.
+	 * @param file the {@link File} to write to.
+	 * @param append if true, the content is written to the end of the file.
+	 * @throws FileNotFoundException if the file exists, but is a directory.
+	 * @throws IOException if a write error occurs.
+	 * @throws SecurityException if the file could not be written to due to OS permissions.
+	 * @see #writeFile(File, boolean, Charset)
+	 * @since [NOW]
+	 */
+	default void writeFile(File file, boolean append) throws IOException
+	{
+		writeFile(file, append, Charset.defaultCharset());
+	}
+
+	/**
+	 * Writes this object to a {@link File}.
+	 * @param file the {@link File} to write to.
+	 * @param append if true, the content is written to the end of the file.
+	 * @param charset the charset encoding to use for writing.
+	 * @throws FileNotFoundException if the file exists, but is a directory.
+	 * @throws IOException if a write error occurs.
+	 * @throws SecurityException if the file could not be written to due to OS permissions.
+	 * @since [NOW]
+	 */
+	default void writeFile(File file, boolean append, Charset charset) throws IOException
+	{
+		try (Writer writer = new OutputStreamWriter(new FileOutputStream(file, append), charset))
+		{
+			writeText(writer);
+		}
+	}
 
 	/**
 	 * Creates a single object of a specific class from a string.

@@ -7,8 +7,6 @@
  ******************************************************************************/
 package net.mtrop.doom.util;
 
-import java.nio.charset.Charset;
-
 /**
  * Holds a series of helpful methods for testing data integrity for Doom map data export.
  * @author Matthew Tropiano
@@ -130,7 +128,7 @@ public final class RangeUtils
 			throw new IllegalArgumentException(dataName + " value is null.");
 		else if (value.trim().length() == 0)
 			throw new IllegalArgumentException(dataName + " value is the empty string.");
-		else if (value.getBytes(Charset.forName("ASCII")).length > 8)
+		else if (value.getBytes(TextUtils.ASCII).length > 8)
 			throw new IllegalArgumentException(dataName + " value (" + value + ") is not 8 characters or less in ASCII encoding.");
 	}
 
