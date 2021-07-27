@@ -11,6 +11,7 @@ package net.mtrop.doom.graphics;
  * Interface for graphic data with indexed palettes.
  * @author Matthew Tropiano
  * @since 2.2.0
+ * @deprecated [NOW] - made superfluous.
  */
 public interface IndexedGraphic
 {
@@ -29,7 +30,7 @@ public interface IndexedGraphic
 	 * May return -1 if this graphic has translucent pixels. 
 	 * @param x	graphic x-coordinate.
 	 * @param y	graphic y-coordinate.
-	 * @return a palette index value from 0 to 255, or -1 if translucent.
+	 * @return a palette index value from 0 to 255, or {@link Picture#PIXEL_TRANSLUCENT} if translucent.
 	 * @throws ArrayIndexOutOfBoundsException if the provided coordinates is outside the graphic.
 	 */
 	public int getPixel(int x, int y);

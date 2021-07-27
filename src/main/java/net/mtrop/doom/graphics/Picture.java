@@ -28,7 +28,7 @@ import net.mtrop.doom.util.RangeUtils;
  * Doom's Picture format does not contain information about the length of a picture's total pixel data.
  * @author Matthew Tropiano
  */
-public class Picture implements BinaryObject, GraphicObject, IndexedGraphic
+public class Picture implements BinaryObject, GraphicObject
 {
 	private static final ThreadLocal<byte[]> TEMP_POST = ThreadLocal.withInitial(()->new byte[257]);
 

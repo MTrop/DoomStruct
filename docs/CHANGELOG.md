@@ -11,6 +11,7 @@ Changed in [NOW]
 - `Fixed` Tall Patch Graphics are now supported. (Issue #9)
 - `Added` BinaryObject file-reading methods for convenience.
 - `Added` TextObject file-reading methods for convenience.
+- `Changed` IndexedGraphic interface is now deprecated.
 
 
 Changed in 2.12.0

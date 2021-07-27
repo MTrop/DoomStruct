@@ -113,6 +113,18 @@ public class PNGPicture implements BinaryObject, GraphicObject
 		this.offsetY = offsetY;
 	}
 
+	@Override
+	public int getPixel(int x, int y)
+	{
+		return image.getRGB(x, y);
+	}
+
+	@Override
+	public void setPixel(int x, int y, int value) 
+	{
+		image.setRGB(x, y, value);
+	}
+
 	/**
 	 * Sets the pixel data for this graphic using an Image.
 	 * @param newImage the image to copy from. 

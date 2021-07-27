@@ -15,10 +15,10 @@ import java.awt.image.BufferedImage;
 import net.mtrop.doom.graphics.Colormap;
 import net.mtrop.doom.graphics.EndDoom;
 import net.mtrop.doom.graphics.Flat;
-import net.mtrop.doom.graphics.IndexedGraphic;
 import net.mtrop.doom.graphics.PNGPicture;
 import net.mtrop.doom.graphics.Palette;
 import net.mtrop.doom.graphics.Picture;
+import net.mtrop.doom.object.GraphicObject;
 
 /**
  * Graphics utility methods for image types.
@@ -1275,8 +1275,7 @@ public final class GraphicUtils
 	 */
 	public static PNGPicture createPNGImage(Picture picture, Palette palette, Colormap colormap)
 	{
-		PNGPicture out = new PNGPicture(createImage(picture, palette, colormap));
-		return out;
+		return new PNGPicture(createImage(picture, palette, colormap));
 	}
 
 	/**
@@ -1335,7 +1334,7 @@ public final class GraphicUtils
 	}
 		
 	/**
-	 * Creates a series of colormaps using a two-dimensional indexed graphic.
+	 * Creates a series of colormaps using a two-dimensional graphic, assumed indexed.
 	 * The provided indexed graphic must have a width of at least {@link Colormap#NUM_INDICES}.
 	 * The amount of colormaps returned is equal to the graphic height. Translucent pixels are changed to index 0.
 	 * @param graphic the source graphic to use.
@@ -1344,7 +1343,7 @@ public final class GraphicUtils
 	 * @throws ArrayIndexOutOfBoundsException if the provided graphic's width is less than {@link Colormap#NUM_INDICES}.
 	 * @since 2.2.0
 	 */
-	public static Colormap[] createColormapsFromGraphic(IndexedGraphic graphic)
+	public static Colormap[] createColormapsFromGraphic(GraphicObject graphic)
 	{
 		Colormap[] out = new Colormap[graphic.getHeight()];
 		for (int i = 0; i < out.length; i++)

@@ -28,7 +28,7 @@ import net.mtrop.doom.util.RangeUtils;
  * current dimensions of the flat, as this information is not found in the byte data.
  * @author Matthew Tropiano
  */
-public class Flat implements BinaryObject, GraphicObject, IndexedGraphic
+public class Flat implements BinaryObject, GraphicObject
 {
 	/** This flat's width. */
 	private int width;
