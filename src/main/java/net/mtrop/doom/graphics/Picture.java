@@ -11,23 +11,28 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.Arrays;
 
 import net.mtrop.doom.object.BinaryObject;
 import net.mtrop.doom.object.GraphicObject;
+import net.mtrop.doom.struct.io.IOUtils;
 import net.mtrop.doom.struct.io.SerialReader;
 import net.mtrop.doom.struct.io.SerialWriter;
-import net.mtrop.doom.util.MathUtils;
 import net.mtrop.doom.util.RangeUtils;
 
 /**
  * Doom graphic data stored as column-major indices (patches and most graphics with baked-in offsets). 
  * Useful for editing/displaying graphics.
+ * <p>
+ * NOTE: The {@link Picture#readBytes(InputStream)} method will read until the end of the stream is reached.
+ * Doom's Picture format does not contain information about the length of a picture's total pixel data.
  * @author Matthew Tropiano
  */
 public class Picture implements BinaryObject, GraphicObject, IndexedGraphic
 {
+	private static final ThreadLocal<byte[]> TEMP_POST = ThreadLocal.withInitial(()->new byte[257]);
+
+	/** Transparent pixel value. */
 	public static final byte PIXEL_TRANSLUCENT = -1;
 	
 	/** The pixel data. */
@@ -76,8 +81,7 @@ public class Picture implements BinaryObject, GraphicObject, IndexedGraphic
 		
 		pixels = new byte[width][height];
 		for (int i = 0; i < pixels.length; i++)
-			for (int j = 0; j < pixels[i].length; j++)
-				pixels[i][j] = PIXEL_TRANSLUCENT;
+			Arrays.fill(pixels[i], PIXEL_TRANSLUCENT);
 	}
 	
 	@Override
@@ -143,7 +147,7 @@ public class Picture implements BinaryObject, GraphicObject, IndexedGraphic
 	public void setPixel(int x, int y, int value)
 	{
 		RangeUtils.checkRange("Pixel ("+x+", "+y+")", -1, 255, value);
-		pixels[x][y] = (byte)MathUtils.clampValue(value, -1, 255);
+		pixels[x][y] = (byte)value;
 	}
 	
 	/**
@@ -155,7 +159,7 @@ public class Picture implements BinaryObject, GraphicObject, IndexedGraphic
 	 */
 	public int getPixel(int x, int y)
 	{
-		return pixels[x][y];
+		return pixels[x][y] == PIXEL_TRANSLUCENT ? PIXEL_TRANSLUCENT : pixels[x][y] & 0x0ff;
 	}
 	
 	@Override
@@ -168,59 +172,75 @@ public class Picture implements BinaryObject, GraphicObject, IndexedGraphic
 
 		// load offset table.
 		int[] columnOffsets = sr.readInts(in, getWidth());
-		
-		// data must be treated as a stream: find highest short offset so that the reading can stop.
-		int offMax = -1;
-		for (int i : columnOffsets)
-			offMax = i > offMax ? i : offMax;
-		
-		// precache columns at each particular offset: picture may be compressed.
-		Map<Integer, byte[]> columnData = new TreeMap<Integer, byte[]>();
 
-		for (int i = 0; i < columnOffsets.length; i++)
-			columnData.put(columnOffsets[i], columnRead(sr, in));
-			
-		for (int x = 0; x < columnOffsets.length; x++)
+		final int HEADERLEN = 8 + (4 * getWidth());
+		
+		// load pixel data posts.
+		byte[] columnBytes = null;
+		try (ByteArrayOutputStream bos = new ByteArrayOutputStream(8192))
 		{
-			int y = 0;
-			byte[] b = columnData.get(columnOffsets[x]);
-			for (int i = 0; i < b.length; i++)
-			{
-				y = b[i++] & 0x0ff;
-				int span = b[i++] & 0x0ff;
-				for (int j = 0; j < span; j++)
-					pixels[x][y+j] = (byte)(b[i+j] & 0x0ff);
-				i += span-1;
-			}
+			// offset byte section by header length.
+			for (int i = 0; i < HEADERLEN; i++)
+				bos.write(0x0ff);
+			IOUtils.relay(in, bos);
+			columnBytes = bos.toByteArray();
 		}
-				
+		
+		for (int column = 0; column < pixels.length; column++)
+			readColumn(column, columnOffsets[column], columnBytes);
 	}
 
-	// Reads a column of pixels.
-	private static byte[] columnRead(SerialReader sr, InputStream in) throws IOException
+	// Reads
+	private void readColumn(int column, int offset, byte[] columnBytes) throws IOException
 	{
-		ByteArrayOutputStream out = new ByteArrayOutputStream(); 
-	
-		int offs = 0;
-		int span = 0;
-	
-		offs = (sr.readByte(in) & 0x0ff);
-		while (offs != 255)
-		{
-			span = (sr.readByte(in) & 0x0ff);
-			sr.readByte(in);
-			
-			out.write(offs);
-			out.write(span);
-			out.write(sr.readBytes(in, span));
-			sr.readByte(in);
-			
-			offs = (sr.readByte(in) & 0x0ff);
-		}
+		byte[] postBytes = TEMP_POST.get();
 		
-		return out.toByteArray();
-	}
+		int prevTopDelta = -1;
+		boolean tallPatch = false;
+		int nextOffset;
+		int y = 0;
+		while ((nextOffset = readPost(offset, columnBytes, postBytes)) > 0)
+		{
+			int topDelta = postBytes[0] & 0x0ff;
+			
+			if (tallPatch)
+			{
+				topDelta = prevTopDelta + topDelta;
+			}
+			else if (prevTopDelta > topDelta)
+			{
+				tallPatch = true;
+				topDelta = prevTopDelta + topDelta;
+			}
 
+			y = topDelta;
+			
+			int i = 0;
+			int length = postBytes[1] & 0x0ff;
+			while (i < length)
+			{
+				pixels[column][y++] = postBytes[i + 2];
+				i++;
+			}
+			
+			prevTopDelta = topDelta;
+			offset = nextOffset;
+		}
+	}
+	
+	// Reads a single vertical post.
+	// Returns offset for next post, or -1 for last post.
+	private static int readPost(int offset, byte[] columnBytes, byte[] outputPostBytes) throws IOException
+	{
+		outputPostBytes[0] = columnBytes[offset];
+		if (outputPostBytes[0] == PIXEL_TRANSLUCENT)
+			return -1;
+		outputPostBytes[1] = columnBytes[offset + 1];
+		int length = outputPostBytes[1] & 0x0ff;
+		System.arraycopy(columnBytes, offset + 3, outputPostBytes, 2, length);
+		return offset + length + 4;
+	}
+	
 	@Override
 	public void writeBytes(OutputStream out) throws IOException
 	{
@@ -236,6 +256,7 @@ public class Picture implements BinaryObject, GraphicObject, IndexedGraphic
 		ByteArrayOutputStream dataBytes = new ByteArrayOutputStream();
 		ByteArrayOutputStream columnBytes = new ByteArrayOutputStream();
 		
+		// TODO: Future enhancement: compress patches.
 		for (int i = 0; i < columnOffsets.length; i++)
 		{
 			columnOffsets[i] = columnOffs;
@@ -252,7 +273,6 @@ public class Picture implements BinaryObject, GraphicObject, IndexedGraphic
 	}
 	
 	// Writes a column of pixels.
-	// FIXME: Transparency is broken.
 	private static void writeColumn(byte[] columnPixels, ByteArrayOutputStream buffer) throws IOException
 	{
 		int topDelta = 0;
@@ -261,6 +281,7 @@ public class Picture implements BinaryObject, GraphicObject, IndexedGraphic
 		final int STATE_TRANSPARENT = 0;
 		final int STATE_OPAQUE = 1;
 		int state = STATE_TRANSPARENT;
+		boolean tallPatch = false;
 		
 		for (int i = 0; i < columnPixels.length; i++)
 		{
@@ -273,6 +294,7 @@ public class Picture implements BinaryObject, GraphicObject, IndexedGraphic
 					{
 						// should be empty. Write empty post to set up "tall patch" workaround.
 						writePost(254, postBytes, buffer);
+						tallPatch = true;
 						topDelta = 0;
 					}
 					else if (b != PIXEL_TRANSLUCENT)
@@ -291,13 +313,22 @@ public class Picture implements BinaryObject, GraphicObject, IndexedGraphic
 				{
 					if (b == PIXEL_TRANSLUCENT || postBytes.size() == 254)
 					{
-						writePost(topDelta, postBytes, buffer);
-						topDelta = (postBytes.size() + topDelta) % 255;
+						if (tallPatch)
+						{
+							writePost(topDelta % 255, postBytes, buffer);
+							topDelta = postBytes.size();
+						}
+						else
+						{
+							writePost(topDelta, postBytes, buffer);
+							topDelta += postBytes.size();
+						}
 						postBytes.reset();
 						
 						if (topDelta == 254)
 						{
 							writePost(254, postBytes, buffer);
+							tallPatch = true;
 							topDelta = 0;
 						}
 
@@ -321,7 +352,7 @@ public class Picture implements BinaryObject, GraphicObject, IndexedGraphic
 		}
 		
 		// flush remaining
-		if (state == STATE_OPAQUE)
+		if (state == STATE_OPAQUE && postBytes.size() > 0)
 		{
 			writePost(topDelta, postBytes, buffer);
 		}

@@ -19,7 +19,7 @@ import net.mtrop.doom.graphics.EndDoom;
 import net.mtrop.doom.graphics.Flat;
 import net.mtrop.doom.graphics.Palette;
 import net.mtrop.doom.graphics.Picture;
-
+import net.mtrop.doom.object.BinaryObject;
 import net.mtrop.doom.util.GraphicUtils;
 
 public final class TallGraphicTest
@@ -31,6 +31,7 @@ public final class TallGraphicTest
 		wad.close();
 
 		GraphicUtils.createPicture(ImageIO.read(new File(args[1])), pal).writeFile(new File("junk.lmp"));
+		ImageIO.write(GraphicUtils.createImage(BinaryObject.read(Picture.class, new File("junk.lmp")), pal), "png", new File("junk.png"));
 	}
 
 }
