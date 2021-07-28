@@ -11,6 +11,7 @@ Changed in [NOW]
 - `Fixed` Tall Patch Graphics are now supported. (Issue #9)
 - `Added` BinaryObject file-reading methods for convenience.
 - `Added` TextObject file-reading methods for convenience.
+- `Added` GraphicUtils methods for converting PNGPictures and preserving offsets for Pictures.
 - `Changed` IndexedGraphic interface is now deprecated.
 
 

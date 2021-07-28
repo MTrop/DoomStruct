@@ -1186,6 +1186,69 @@ public final class GraphicUtils
 	}
 	
 	/**
+	 * Creates a {@link Flat} from a {@link PNGPicture}.
+	 * Colors are approximated using the provided {@link Palette}, and translated using the provided {@link Colormap}.
+	 * Pixels that are not fully opaque are given index 0. 
+	 * @param pngPicture the PNGPicture to convert.
+	 * @param palette the palette to use for color approximation.
+	 * @return the resultant Flat.
+	 * @since [NOW]
+	 */
+	public static Flat createFlat(PNGPicture pngPicture, Palette palette)
+	{
+		return createFlat(pngPicture, palette, null);
+	}
+
+	/**
+	 * Creates a {@link Flat} from a {@link PNGPicture}.
+	 * Colors are approximated using the provided {@link Palette}, and translated using the provided {@link Colormap}.
+	 * Pixels that are not fully opaque are given index 0. 
+	 * @param pngPicture the PNGPicture to convert.
+	 * @param palette the palette to use for color approximation.
+	 * @param colormap the colormap to use for palette translation. Can be <code>null</code> for no translation.
+	 * @return the resultant Flat.
+	 * @since [NOW]
+	 */
+	public static Flat createFlat(PNGPicture pngPicture, Palette palette, Colormap colormap)
+	{
+		return createFlat(pngPicture.getImage(), palette, colormap);
+	}
+	
+	/**
+	 * Creates a {@link Picture} from a {@link BufferedImage}.
+	 * Colors are approximated using the provided {@link Palette}, and translated using the provided {@link Colormap}.
+	 * Pixels that are not fully opaque are considered transparent. 
+	 * Offset info from the PNG is preserved. 
+	 * @param pngPicture the PNGPicture to convert.
+	 * @param palette the palette to use for color approximation.
+	 * @return the resultant Picture.
+	 * @since [NOW]
+	 */
+	public static Picture createPicture(PNGPicture pngPicture, Palette palette)
+	{
+		return createPicture(pngPicture, palette, null);
+	}
+
+	/**
+	 * Creates a {@link Picture} from a {@link BufferedImage}.
+	 * Colors are approximated using the provided {@link Palette}, and translated using the provided {@link Colormap}.
+	 * Pixels that are not fully opaque are considered transparent. 
+	 * Offset info from the PNG is preserved. 
+	 * @param pngPicture the PNGPicture to convert.
+	 * @param palette the palette to use for color approximation.
+	 * @param colormap the colormap to use for palette translation. Can be <code>null</code> for no translation.
+	 * @return the resultant Picture.
+	 * @since [NOW]
+	 */
+	public static Picture createPicture(PNGPicture pngPicture, Palette palette, Colormap colormap)
+	{
+		Picture out = createPicture(pngPicture.getImage(), palette, colormap);
+		out.setOffsetX(pngPicture.getOffsetX());
+		out.setOffsetY(pngPicture.getOffsetY());
+		return out;
+	}
+	
+	/**
 	 * Creates a {@link BufferedImage} from a {@link Flat}.
 	 * @param flat the Flat to convert.
 	 * @param palette the palette to use as a color source.
