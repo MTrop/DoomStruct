@@ -22,7 +22,6 @@ import java.util.List;
 
 import net.mtrop.doom.exception.WadException;
 import net.mtrop.doom.struct.DataList;
-import net.mtrop.doom.struct.io.IOUtils;
 import net.mtrop.doom.struct.io.SerialReader;
 import net.mtrop.doom.util.NameUtils;
 import net.mtrop.doom.util.TextUtils;
@@ -246,9 +245,10 @@ public class WadBuffer implements Wad
 	 */
 	public final void writeToFile(File path) throws IOException
 	{
-		FileOutputStream fos = new FileOutputStream(path);
-		writeToStream(fos);
-		IOUtils.close(fos);
+		try (FileOutputStream fos = new FileOutputStream(path))
+		{
+			writeToStream(fos);
+		}
 	}
 	
 	/**
