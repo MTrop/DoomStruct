@@ -1241,7 +1241,7 @@ public class Lexer
 	 * If this method is overridden, this should have 
 	 * <pre>
 	 * if (super.modifyType(token)) 
-	 *     return true;
+	 *	 return true;
 	 * </pre>
 	 * right at the beginning.
 	 * 

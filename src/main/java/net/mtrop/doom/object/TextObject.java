@@ -66,7 +66,7 @@ public interface TextObject
 	 * @throws IOException if a read error occurs.
 	 * @throws SecurityException if the file could not be opened due to OS permissions.
 	 * @see #readFile(File, Charset)
-	 * @since [NOW]
+	 * @since 2.13.0
 	 */
 	default void readFile(File file) throws IOException
 	{
@@ -80,7 +80,7 @@ public interface TextObject
 	 * @throws FileNotFoundException if the file could not be found.
 	 * @throws IOException if a read error occurs.
 	 * @throws SecurityException if the file could not be opened due to OS permissions.
-	 * @since [NOW]
+	 * @since 2.13.0
 	 */
 	default void readFile(File file, Charset charset) throws IOException
 	{
@@ -106,7 +106,7 @@ public interface TextObject
 	 * @throws IOException if a write error occurs.
 	 * @throws SecurityException if the file could not be written to due to OS permissions.
 	 * @see #writeFile(File, boolean, Charset)
-	 * @since [NOW]
+	 * @since 2.13.0
 	 */
 	default void writeFile(File file) throws IOException
 	{
@@ -122,7 +122,7 @@ public interface TextObject
 	 * @throws IOException if a write error occurs.
 	 * @throws SecurityException if the file could not be written to due to OS permissions.
 	 * @see #writeFile(File, boolean, Charset)
-	 * @since [NOW]
+	 * @since 2.13.0
 	 */
 	default void writeFile(File file, Charset charset) throws IOException
 	{
@@ -138,7 +138,7 @@ public interface TextObject
 	 * @throws IOException if a write error occurs.
 	 * @throws SecurityException if the file could not be written to due to OS permissions.
 	 * @see #writeFile(File, boolean, Charset)
-	 * @since [NOW]
+	 * @since 2.13.0
 	 */
 	default void writeFile(File file, boolean append) throws IOException
 	{
@@ -153,7 +153,7 @@ public interface TextObject
 	 * @throws FileNotFoundException if the file exists, but is a directory.
 	 * @throws IOException if a write error occurs.
 	 * @throws SecurityException if the file could not be written to due to OS permissions.
-	 * @since [NOW]
+	 * @since 2.13.0
 	 */
 	default void writeFile(File file, boolean append, Charset charset) throws IOException
 	{

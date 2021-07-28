@@ -339,9 +339,9 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws NullPointerException if out is null.
 	 * @since 2.4.0
 	 */
-    void fetchContent(int offset, int length, byte[] out, int outOffset) throws IOException;
+	void fetchContent(int offset, int length, byte[] out, int outOffset) throws IOException;
 
-    /**
+	/**
 	 * Retrieves the data of a particular entry index and puts it in a provided array
 	 * and puts it in a provided array.
 	 * @param n the index of the entry in the Wad.
@@ -353,14 +353,14 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws IOException if an error occurs during read.
 	 * @throws NullPointerException if out is null.
 	 * @since 2.4.0
-     */
-    default int fetchData(int n, byte[] out, int offset) throws IOException
-    {
-        WadEntry entry = getEntry(n);
-        return fetchData(entry, out, offset);
-    }
-    
-    /**
+	 */
+	default int fetchData(int n, byte[] out, int offset) throws IOException
+	{
+		WadEntry entry = getEntry(n);
+		return fetchData(entry, out, offset);
+	}
+	
+	/**
 	 * Retrieves the data of the first occurrence of a particular entry
 	 * and puts it in a provided array.
 	 * <p>The name is case-insensitive.
@@ -372,16 +372,16 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws IOException if an error occurs during read.
 	 * @throws NullPointerException if out is null.
 	 * @since 2.4.0
-     */
-    default int fetchData(String entryName, byte[] out, int offset) throws IOException
-    {
-        WadEntry entry = getEntry(entryName);
-        if (entry == null) 
-        	return -1;
-        return fetchData(entry, out, offset);
-    }
-    
-    /**
+	 */
+	default int fetchData(String entryName, byte[] out, int offset) throws IOException
+	{
+		WadEntry entry = getEntry(entryName);
+		if (entry == null) 
+			return -1;
+		return fetchData(entry, out, offset);
+	}
+	
+	/**
 	 * Retrieves the data of the first occurrence of a particular entry from a starting index
 	 * and puts it in a provided array.
 	 * <p>The name is case-insensitive.
@@ -394,16 +394,16 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws IOException if an error occurs during read.
 	 * @throws NullPointerException if out is null.
 	 * @since 2.4.0
-     */
-    default int fetchData(String entryName, int start, byte[] out, int offset) throws IOException
-    {
-        WadEntry entry = getEntry(entryName, start);
-        if (entry == null) 
-        	return -1;
-        return fetchData(entry, out, offset);
-    }
+	 */
+	default int fetchData(String entryName, int start, byte[] out, int offset) throws IOException
+	{
+		WadEntry entry = getEntry(entryName, start);
+		if (entry == null) 
+			return -1;
+		return fetchData(entry, out, offset);
+	}
 
-    /**
+	/**
 	 * Retrieves the data of the first occurrence of a particular entry from a starting entry (by name)
 	 * and puts it in a provided array.
 	 * <p>The names are case-insensitive.
@@ -416,15 +416,15 @@ public interface Wad extends Iterable<WadEntry>
 	 * @throws IOException if an error occurs during read.
 	 * @throws NullPointerException if out is null.
 	 * @since 2.4.0
-     */
-    default int fetchData(String entryName, String startEntryName, byte[] out, int offset) throws IOException
-    {
-        WadEntry entry = getEntry(entryName, startEntryName);
-        if (entry == null) 
-        	return -1;
-        return fetchData(entry, out, offset);
-    }
-    
+	 */
+	default int fetchData(String entryName, String startEntryName, byte[] out, int offset) throws IOException
+	{
+		WadEntry entry = getEntry(entryName, startEntryName);
+		if (entry == null) 
+			return -1;
+		return fetchData(entry, out, offset);
+	}
+	
 	/**
 	 * Fetches the data of the specified entry and puts it in a provided array.
 	 * @param entry the entry to use.
@@ -438,8 +438,8 @@ public interface Wad extends Iterable<WadEntry>
 	 */
 	default int fetchData(WadEntry entry, byte[] out, int offset) throws IOException
 	{
-	    fetchContent(entry.getOffset(), entry.getSize(), out, offset);
-	    return entry.getSize();
+		fetchContent(entry.getOffset(), entry.getSize(), out, offset);
+		return entry.getSize();
 	}
 
 	/**
@@ -603,9 +603,9 @@ public interface Wad extends Iterable<WadEntry>
 	 */
 	default byte[] getContent(int offset, int length) throws IOException
 	{
-	    byte[] out = new byte[length];
-	    fetchContent(offset, length, out, 0);
-	    return out;
+		byte[] out = new byte[length];
+		fetchContent(offset, length, out, 0);
+		return out;
 	}
 
 	/**
@@ -1371,9 +1371,9 @@ public interface Wad extends Iterable<WadEntry>
 	 */
 	default <BO extends BinaryObject> void transformData(int n, Class<BO> type, BinaryObject.Transformer<BO> transformer) throws IOException
 	{
-	    BO bo = getDataAs(n, type);
-	    transformer.transform(bo, 0);
-	    replaceEntry(n, bo.toBytes());
+		BO bo = getDataAs(n, type);
+		transformer.transform(bo, 0);
+		replaceEntry(n, bo.toBytes());
 	}
 
 	/**
@@ -1464,16 +1464,16 @@ public interface Wad extends Iterable<WadEntry>
 	 */
 	default <BO extends BinaryObject> void transformData(int n, Class<BO> type, int objectLength, BinaryObject.Transformer<BO> transformer) throws IOException
 	{
-	    ByteArrayOutputStream bos = new ByteArrayOutputStream();
-	    BinaryObject.InlineScanner<BO> scanner = getInlineScanner(n, type, objectLength);
-	    int i = 0;
-	    while (scanner.hasNext())
-	    {
-	        BO next = scanner.next();
-	        transformer.transform(next, i++);
-	        next.writeBytes(bos);
-	    }
-	    replaceEntry(n, bos.toByteArray());
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		BinaryObject.InlineScanner<BO> scanner = getInlineScanner(n, type, objectLength);
+		int i = 0;
+		while (scanner.hasNext())
+		{
+			BO next = scanner.next();
+			transformer.transform(next, i++);
+			next.writeBytes(bos);
+		}
+		replaceEntry(n, bos.toByteArray());
 	}
 
 	/**
@@ -1567,9 +1567,9 @@ public interface Wad extends Iterable<WadEntry>
 	 */
 	default <TO extends TextObject> void transformTextData(int n, Charset charset, Class<TO> type, TextObject.Transformer<TO> transformer) throws IOException
 	{
-	    TO to = getTextDataAs(n, charset, type);
-	    transformer.transform(to);
-	    replaceEntry(n, to.toText().getBytes(charset));
+		TO to = getTextDataAs(n, charset, type);
+		transformer.transform(to);
+		replaceEntry(n, to.toText().getBytes(charset));
 	}
 
 	/**

@@ -1192,7 +1192,7 @@ public final class GraphicUtils
 	 * @param pngPicture the PNGPicture to convert.
 	 * @param palette the palette to use for color approximation.
 	 * @return the resultant Flat.
-	 * @since [NOW]
+	 * @since 2.13.0
 	 */
 	public static Flat createFlat(PNGPicture pngPicture, Palette palette)
 	{
@@ -1207,7 +1207,7 @@ public final class GraphicUtils
 	 * @param palette the palette to use for color approximation.
 	 * @param colormap the colormap to use for palette translation. Can be <code>null</code> for no translation.
 	 * @return the resultant Flat.
-	 * @since [NOW]
+	 * @since 2.13.0
 	 */
 	public static Flat createFlat(PNGPicture pngPicture, Palette palette, Colormap colormap)
 	{
@@ -1222,7 +1222,7 @@ public final class GraphicUtils
 	 * @param pngPicture the PNGPicture to convert.
 	 * @param palette the palette to use for color approximation.
 	 * @return the resultant Picture.
-	 * @since [NOW]
+	 * @since 2.13.0
 	 */
 	public static Picture createPicture(PNGPicture pngPicture, Palette palette)
 	{
@@ -1238,7 +1238,7 @@ public final class GraphicUtils
 	 * @param palette the palette to use for color approximation.
 	 * @param colormap the colormap to use for palette translation. Can be <code>null</code> for no translation.
 	 * @return the resultant Picture.
-	 * @since [NOW]
+	 * @since 2.13.0
 	 */
 	public static Picture createPicture(PNGPicture pngPicture, Palette palette, Colormap colormap)
 	{

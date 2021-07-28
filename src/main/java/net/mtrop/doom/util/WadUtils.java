@@ -228,9 +228,9 @@ public final class WadUtils
 	 */
 	public static void createWadAnd(File path, WadConsumer wadConsumer) throws IOException
 	{
-	    try (WadFile wad = WadFile.createWadFile(path)) {
-	        wadConsumer.accept(wad);
-	    } // auto-closed
+		try (WadFile wad = WadFile.createWadFile(path)) {
+			wadConsumer.accept(wad);
+		} // auto-closed
 	}
 	
 	/**
@@ -243,7 +243,7 @@ public final class WadUtils
 	 */
 	public static void openWadAnd(String path, WadConsumer wadConsumer) throws IOException
 	{
-	    openWadAnd(new File(path), wadConsumer);
+		openWadAnd(new File(path), wadConsumer);
 	}
 	
 	/**
@@ -258,9 +258,9 @@ public final class WadUtils
 	 */
 	public static void openWadAnd(File path, WadConsumer wadConsumer) throws IOException
 	{
-	    try (WadFile wad = new WadFile(path)) {
-	        wadConsumer.accept(wad);
-	    } // auto-closed
+		try (WadFile wad = new WadFile(path)) {
+			wadConsumer.accept(wad);
+		} // auto-closed
 	}
 	
 	/**
@@ -294,9 +294,9 @@ public final class WadUtils
 	 */
 	public static <R> R openWadAndGet(File path, WadFunction<R> wadFunction) throws IOException
 	{
-	    try (WadFile wad = new WadFile(path)) {
-	        return wadFunction.apply(wad);
-	    } // auto-closed
+		try (WadFile wad = new WadFile(path)) {
+			return wadFunction.apply(wad);
+		} // auto-closed
 	}
 	
 	/**
@@ -312,7 +312,7 @@ public final class WadUtils
 	 */
 	public static void openWadAndExtractTo(String path, String outPath, WadFunction<WadEntry[]> wadFunction) throws IOException
 	{
-	    openWadAndExtractTo(new File(path), new File(outPath), wadFunction);
+		openWadAndExtractTo(new File(path), new File(outPath), wadFunction);
 	}
 
 	/**
@@ -328,7 +328,7 @@ public final class WadUtils
 	 */
 	public static void openWadAndExtractTo(String path, File outPath, WadFunction<WadEntry[]> wadFunction) throws IOException
 	{
-	    openWadAndExtractTo(new File(path), outPath, wadFunction);
+		openWadAndExtractTo(new File(path), outPath, wadFunction);
 	}
 
 	/**
@@ -344,7 +344,7 @@ public final class WadUtils
 	 */
 	public static void openWadAndExtractTo(File path, String outPath, WadFunction<WadEntry[]> wadFunction) throws IOException
 	{
-	    openWadAndExtractTo(path, new File(outPath), wadFunction);
+		openWadAndExtractTo(path, new File(outPath), wadFunction);
 	}
 
 	/**
@@ -360,9 +360,9 @@ public final class WadUtils
 	 */
 	public static void openWadAndExtractTo(File path, File outPath, WadFunction<WadEntry[]> wadFunction) throws IOException 
 	{
-	    try (WadFile source = new WadFile(path)) {
-	        WadFile.extract(outPath, source, wadFunction.apply(source)).close();
-	    } // auto-closed
+		try (WadFile source = new WadFile(path)) {
+			WadFile.extract(outPath, source, wadFunction.apply(source)).close();
+		} // auto-closed
 	}
 
 	/**
@@ -378,7 +378,7 @@ public final class WadUtils
 	 */
 	public static WadBuffer openWadAndExtractBuffer(String path, WadFunction<WadEntry[]> wadFunction) throws IOException
 	{
-	    return openWadAndExtractBuffer(new File(path), wadFunction);
+		return openWadAndExtractBuffer(new File(path), wadFunction);
 	}
 
 	/**
@@ -394,9 +394,9 @@ public final class WadUtils
 	 */
 	public static WadBuffer openWadAndExtractBuffer(File path, WadFunction<WadEntry[]> wadFunction) throws IOException
 	{
-	    try (WadFile source = new WadFile(path)) {
-	        return WadBuffer.extract(source, wadFunction.apply(source));
-	    } // auto-closed
+		try (WadFile source = new WadFile(path)) {
+			return WadBuffer.extract(source, wadFunction.apply(source));
+		} // auto-closed
 	}
 	
 }

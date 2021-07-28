@@ -5,7 +5,7 @@ import java.nio.charset.Charset;
 /**
  * Text utilities and constants.
  * @author Matthew Tropiano
- * @since [NOW]
+ * @since 2.13.0
  */
 public final class TextUtils 
 {

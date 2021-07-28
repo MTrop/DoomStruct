@@ -48,7 +48,7 @@ public interface BinaryObject
 	 * @throws FileNotFoundException if the file could not be found.
 	 * @throws IOException if a read error occurs.
 	 * @throws SecurityException if the file could not be opened due to OS permissions.
-	 * @since [NOW]
+	 * @since 2.13.0
 	 */
 	default void readFile(File file) throws IOException
 	{
@@ -73,7 +73,7 @@ public interface BinaryObject
 	 * @throws FileNotFoundException if the file exists, but is a directory.
 	 * @throws IOException if a write error occurs.
 	 * @throws SecurityException if the file could not be written to due to OS permissions.
-	 * @since [NOW]
+	 * @since 2.13.0
 	 * @see #writeFile(File, boolean)
 	 */
 	default void writeFile(File file) throws IOException
@@ -88,7 +88,7 @@ public interface BinaryObject
 	 * @throws FileNotFoundException if the file exists, but is a directory.
 	 * @throws IOException if a write error occurs.
 	 * @throws SecurityException if the file could not be written to due to OS permissions.
-	 * @since [NOW]
+	 * @since 2.13.0
 	 */
 	default void writeFile(File file, boolean append) throws IOException
 	{
@@ -172,7 +172,7 @@ public interface BinaryObject
 	 * @throws FileNotFoundException if the file could not be found.
 	 * @throws IOException if an error occurs during the read - most commonly "not enough bytes".
 	 * @throws SecurityException if the file could not be opened due to OS permissions.
-	 * @since [NOW]
+	 * @since 2.13.0
 	 */
 	static <BO extends BinaryObject> BO read(Class<BO> boClass, File file) throws IOException
 	{
@@ -229,7 +229,7 @@ public interface BinaryObject
 	 * @throws FileNotFoundException if the file could not be found.
 	 * @throws IOException if an error occurs during the read - most commonly "not enough bytes".
 	 * @throws SecurityException if the file could not be opened due to OS permissions.
-	 * @since [NOW]
+	 * @since 2.13.0
 	 */
 	static <BO extends BinaryObject> BO[] read(Class<BO> boClass, File file, int count) throws IOException
 	{

@@ -107,7 +107,7 @@ public final class MathUtils
 	 */
 	public static boolean randBoolean(Random rand)
 	{
-	    return rand.nextBoolean();
+		return rand.nextBoolean();
 	}
 
 	/**
@@ -116,7 +116,7 @@ public final class MathUtils
 	 */
 	public static double randDouble(Random rand)
 	{
-	    return rand.nextDouble();
+		return rand.nextDouble();
 	}
 
 	/**
@@ -126,7 +126,7 @@ public final class MathUtils
 	 */
 	public static double randDoubleN(Random rand)
 	{
-	    return randDouble(rand) * (randBoolean(rand)? -1.0 : 1.0);
+		return randDouble(rand) * (randBoolean(rand)? -1.0 : 1.0);
 	}
 
 	/**

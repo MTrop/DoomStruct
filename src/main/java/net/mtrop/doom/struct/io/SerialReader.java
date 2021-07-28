@@ -23,8 +23,8 @@ public class SerialReader
 	private static final int SIZEOF_FLOAT = Float.SIZE/Byte.SIZE;
 	private static final int SIZEOF_DOUBLE = Double.SIZE/Byte.SIZE;
 
-    public static final boolean LITTLE_ENDIAN =	true;
-    public static final boolean BIG_ENDIAN = false;
+	public static final boolean LITTLE_ENDIAN =	true;
+	public static final boolean BIG_ENDIAN = false;
 
 	/** Endian mode switch. */
 	private boolean endianMode;
@@ -92,7 +92,7 @@ public class SerialReader
 	// Casts a short to a char.
 	private char shortToChar(short s)
 	{
-	    return (char)(s & 0xFFFF);
+		return (char)(s & 0xFFFF);
 	}
 
 	/**
@@ -148,12 +148,12 @@ public class SerialReader
 	public byte[] readByteArray(InputStream in) throws IOException
 	{
 		byte[] out = new byte[readInt(in)];
-	    if (out.length == 0)
-	    	return out;
-	    int buf = byteRead(in, out);
-	    if (buf < out.length)
-	        throw new IOException("Not enough bytes for byte array.");
-	    return out;
+		if (out.length == 0)
+			return out;
+		int buf = byteRead(in, out);
+		if (buf < out.length)
+			throw new IOException("Not enough bytes for byte array.");
+		return out;
 	}
 
 	/**
@@ -164,7 +164,7 @@ public class SerialReader
 	 */
 	public String readString(InputStream in) throws IOException
 	{
-	    return new String(readCharArray(in));
+		return new String(readCharArray(in));
 	}
 
 	/**
@@ -177,7 +177,7 @@ public class SerialReader
 	 */
 	public String readString(InputStream in, String encoding) throws IOException
 	{
-	    return new String(readByteArray(in), encoding);
+		return new String(readByteArray(in), encoding);
 	}
 
 	/**
@@ -190,7 +190,7 @@ public class SerialReader
 	 */
 	public String readString(InputStream in, Charset charset) throws IOException
 	{
-	    return new String(readByteArray(in), charset);
+		return new String(readByteArray(in), charset);
 	}
 
 	/**
@@ -204,7 +204,7 @@ public class SerialReader
 	 */
 	public String readString(InputStream in, int bytes, String encoding) throws IOException
 	{
-	    return new String(readBytes(in, bytes), encoding);
+		return new String(readBytes(in, bytes), encoding);
 	}
 
 	/**
@@ -218,7 +218,7 @@ public class SerialReader
 	 */
 	public String readString(InputStream in, int bytes, Charset charset) throws IOException
 	{
-	    return new String(readBytes(in, bytes), charset);
+		return new String(readBytes(in, bytes), charset);
 	}
 
 	/**
@@ -230,10 +230,10 @@ public class SerialReader
 	 */
 	public String[] readStringArray(InputStream in) throws IOException
 	{
-	    String[] out = new String[readInt(in)];
-	    for (int i = 0; i < out.length; i++)
-	        out[i] = readString(in);
-	    return out;
+		String[] out = new String[readInt(in)];
+		for (int i = 0; i < out.length; i++)
+			out[i] = readString(in);
+		return out;
 	}
 
 	/**
@@ -278,11 +278,11 @@ public class SerialReader
 	 */
 	public long readLong(InputStream in) throws IOException
 	{
-	    byte[] buffer = new byte[SIZEOF_LONG];
-	    int buf = byteRead(in, buffer);
-	    if (buf < SIZEOF_LONG) 
-	    	throw new IOException("Not enough bytes for a long.");
-	    return bytesToLong(buffer, endianMode);
+		byte[] buffer = new byte[SIZEOF_LONG];
+		int buf = byteRead(in, buffer);
+		if (buf < SIZEOF_LONG) 
+			throw new IOException("Not enough bytes for a long.");
+		return bytesToLong(buffer, endianMode);
 	}
 
 	/**
@@ -294,10 +294,10 @@ public class SerialReader
 	 */
 	public long[] readLongs(InputStream in, int n) throws IOException
 	{
-	    long[] out = new long[n];
-	    for (int i = 0; i < out.length; i++)
-	    	out[i] = readLong(in);
-	    return out;
+		long[] out = new long[n];
+		for (int i = 0; i < out.length; i++)
+			out[i] = readLong(in);
+		return out;
 	}
 
 	/**
@@ -321,11 +321,11 @@ public class SerialReader
 	public byte readByte(InputStream in) throws IOException
 	{
 		Cache cache = CACHE.get();
-	    int buf = byteRead(in, cache.buffer, 1);
-	    if (buf < 1)
-	    	throw new IOException("not enough bytes");
-	    else if (buf < 1) throw new IOException("Not enough bytes for a byte.");
-	    return cache.buffer[0];
+		int buf = byteRead(in, cache.buffer, 1);
+		if (buf < 1)
+			throw new IOException("not enough bytes");
+		else if (buf < 1) throw new IOException("Not enough bytes for a byte.");
+		return cache.buffer[0];
 	}
 
 	/**
@@ -336,7 +336,7 @@ public class SerialReader
 	 */
 	public short readUnsignedByte(InputStream in) throws IOException
 	{
-	    return (short)(readByte(in) & 0x0ff);
+		return (short)(readByte(in) & 0x0ff);
 	}
 
 	/**
@@ -377,11 +377,11 @@ public class SerialReader
 	 */
 	public byte[] readBytes(InputStream in, int n) throws IOException
 	{
-	    byte[] out = new byte[n];
-	    int buf = byteRead(in, out);
-	    if (buf < n) 
-	    	throw new IOException("Not enough bytes to read.");
-	    return out;
+		byte[] out = new byte[n];
+		int buf = byteRead(in, out);
+		if (buf < n) 
+			throw new IOException("Not enough bytes to read.");
+		return out;
 	}
 
 	/**
@@ -403,11 +403,11 @@ public class SerialReader
 	 */
 	public int readInt(InputStream in) throws IOException
 	{
-	    byte[] buffer = new byte[SIZEOF_INT];
-	    int buf = byteRead(in, buffer);
-	    if (buf < SIZEOF_INT) 
-	    	throw new IOException("Not enough bytes for an int.");
-	    return bytesToInt(buffer, endianMode);
+		byte[] buffer = new byte[SIZEOF_INT];
+		int buf = byteRead(in, buffer);
+		if (buf < SIZEOF_INT) 
+			throw new IOException("Not enough bytes for an int.");
+		return bytesToInt(buffer, endianMode);
 	}
 
 	/**
@@ -419,16 +419,16 @@ public class SerialReader
 	public int read24BitInt(InputStream in) throws IOException
 	{
 		byte[] bbu = new byte[3];
-	    byte[] buffer = new byte[SIZEOF_INT];
-	    int buf = byteRead(in, bbu,3);
-	    if (buf < 3)
-	    	throw new IOException("not enough bytes");
-	    else if (buf < bbu.length) throw new IOException("Not enough bytes for a 24-bit int.");
-	    if (endianMode == BIG_ENDIAN)
-	    	System.arraycopy(bbu, 0, buffer, 1, 3);
-	    else if (endianMode == LITTLE_ENDIAN)
-	    	System.arraycopy(bbu, 0, buffer, 0, 3);
-	    return bytesToInt(buffer, endianMode);
+		byte[] buffer = new byte[SIZEOF_INT];
+		int buf = byteRead(in, bbu,3);
+		if (buf < 3)
+			throw new IOException("not enough bytes");
+		else if (buf < bbu.length) throw new IOException("Not enough bytes for a 24-bit int.");
+		if (endianMode == BIG_ENDIAN)
+			System.arraycopy(bbu, 0, buffer, 1, 3);
+		else if (endianMode == LITTLE_ENDIAN)
+			System.arraycopy(bbu, 0, buffer, 0, 3);
+		return bytesToInt(buffer, endianMode);
 	}
 
 	/**
@@ -440,10 +440,10 @@ public class SerialReader
 	 */
 	public int[] readInts(InputStream in, int n) throws IOException
 	{
-	    int[] out = new int[n];
-	    for (int i = 0; i < out.length; i++)
-	    	out[i] = readInt(in);
-	    return out;
+		int[] out = new int[n];
+		for (int i = 0; i < out.length; i++)
+			out[i] = readInt(in);
+		return out;
 	}
 
 	/**
@@ -455,7 +455,7 @@ public class SerialReader
 	 */
 	public int[] readIntArray(InputStream in) throws IOException
 	{
-	    return readInts(in, readInt(in));
+		return readInts(in, readInt(in));
 	}
 
 	/**
@@ -466,11 +466,11 @@ public class SerialReader
 	 */
 	public float readFloat(InputStream in) throws IOException
 	{
-	    byte[] buffer = new byte[SIZEOF_FLOAT];
-	    int buf = byteRead(in, buffer);
-	    if (buf < SIZEOF_FLOAT) 
-	    	throw new IOException("Not enough bytes for a float.");
-	    return bytesToFloat(buffer, endianMode);
+		byte[] buffer = new byte[SIZEOF_FLOAT];
+		int buf = byteRead(in, buffer);
+		if (buf < SIZEOF_FLOAT) 
+			throw new IOException("Not enough bytes for a float.");
+		return bytesToFloat(buffer, endianMode);
 	}
 
 	/**
@@ -482,10 +482,10 @@ public class SerialReader
 	 */
 	public float[] readFloats(InputStream in, int n) throws IOException
 	{
-	    float[] out = new float[n];
-	    for (int i = 0; i < out.length; i++)
-	    	out[i] = readFloat(in);
-	    return out;
+		float[] out = new float[n];
+		for (int i = 0; i < out.length; i++)
+			out[i] = readFloat(in);
+		return out;
 	}
 
 	/**
@@ -497,7 +497,7 @@ public class SerialReader
 	 */
 	public float[] readFloatArray(InputStream in) throws IOException
 	{
-	    return readFloats(in, readInt(in));
+		return readFloats(in, readInt(in));
 	}
 
 	/**
@@ -508,11 +508,11 @@ public class SerialReader
 	 */
 	public double readDouble(InputStream in) throws IOException
 	{
-	    byte[] buffer = new byte[SIZEOF_DOUBLE];
-	    int buf = byteRead(in, buffer);
-	    if (buf < SIZEOF_DOUBLE) 
-	    	throw new IOException("Not enough bytes for a double.");
-	    return Double.longBitsToDouble(bytesToLong(buffer, endianMode));
+		byte[] buffer = new byte[SIZEOF_DOUBLE];
+		int buf = byteRead(in, buffer);
+		if (buf < SIZEOF_DOUBLE) 
+			throw new IOException("Not enough bytes for a double.");
+		return Double.longBitsToDouble(bytesToLong(buffer, endianMode));
 	}
 
 	/**
@@ -524,10 +524,10 @@ public class SerialReader
 	 */
 	public double[] readDoubles(InputStream in, int n) throws IOException
 	{
-	    double[] out = new double[n];
-	    for (int i = 0; i < out.length; i++)
-	    	out[i] = readDouble(in);
-	    return out;
+		double[] out = new double[n];
+		for (int i = 0; i < out.length; i++)
+			out[i] = readDouble(in);
+		return out;
 	}
 
 	/**
@@ -539,7 +539,7 @@ public class SerialReader
 	 */
 	public double[] readDoubleArray(InputStream in) throws IOException
 	{
-	    return readDoubles(in, readInt(in));
+		return readDoubles(in, readInt(in));
 	}
 
 	/**
@@ -550,11 +550,11 @@ public class SerialReader
 	 */
 	public short readShort(InputStream in) throws IOException
 	{
-	    byte[] buffer = new byte[SIZEOF_SHORT];
-	    int buf = byteRead(in, buffer);
-	    if (buf < SIZEOF_SHORT) 
-	    	throw new IOException("Not enough bytes for a short.");
-	    return bytesToShort(buffer, endianMode);
+		byte[] buffer = new byte[SIZEOF_SHORT];
+		int buf = byteRead(in, buffer);
+		if (buf < SIZEOF_SHORT) 
+			throw new IOException("Not enough bytes for a short.");
+		return bytesToShort(buffer, endianMode);
 	}
 
 	/**
@@ -577,10 +577,10 @@ public class SerialReader
 	 */
 	public short[] readShorts(InputStream in, int n) throws IOException
 	{
-	    short[] out = new short[n];
-	    for (int i = 0; i < out.length; i++)
-	    	out[i] = readShort(in);
-	    return out;
+		short[] out = new short[n];
+		for (int i = 0; i < out.length; i++)
+			out[i] = readShort(in);
+		return out;
 	}
 
 	/**
@@ -592,7 +592,7 @@ public class SerialReader
 	 */
 	public short[] readShortArray(InputStream in) throws IOException
 	{
-	    return readShorts(in, readInt(in));
+		return readShorts(in, readInt(in));
 	}
 
 	/**
@@ -603,7 +603,7 @@ public class SerialReader
 	 */
 	public char readChar(InputStream in) throws IOException
 	{
-	    return shortToChar(readShort(in));
+		return shortToChar(readShort(in));
 	}
 
 	/**
@@ -615,10 +615,10 @@ public class SerialReader
 	 */
 	public char[] readChars(InputStream in, int n) throws IOException
 	{
-	    char[] out = new char[n];
-	    for (int i = 0; i < out.length; i++)
-	    	out[i] = readChar(in);
-	    return out;
+		char[] out = new char[n];
+		for (int i = 0; i < out.length; i++)
+			out[i] = readChar(in);
+		return out;
 	}
 
 	/**
@@ -630,11 +630,11 @@ public class SerialReader
 	 */
 	public char[] readCharArray(InputStream in) throws IOException
 	{
-	    short[] s = readShortArray(in);
-	    char[] out = new char[s.length];
-	    for (int i = 0; i < s.length; i++)
-	        out[i] = shortToChar(s[i]);
-	    return out;
+		short[] s = readShortArray(in);
+		char[] out = new char[s.length];
+		for (int i = 0; i < s.length; i++)
+			out[i] = shortToChar(s[i]);
+		return out;
 	}
 
 	/**
@@ -686,7 +686,7 @@ public class SerialReader
 
 	private static float bytesToFloat(byte[] b, boolean endianMode)
 	{
-	    return Float.intBitsToFloat(bytesToInt(b, endianMode));
+		return Float.intBitsToFloat(bytesToInt(b, endianMode));
 	}
 
 	private static short bytesToShort(byte[] b, boolean endianMode)

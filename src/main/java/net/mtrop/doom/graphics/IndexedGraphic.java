@@ -11,7 +11,7 @@ package net.mtrop.doom.graphics;
  * Interface for graphic data with indexed palettes.
  * @author Matthew Tropiano
  * @since 2.2.0
- * @deprecated [NOW] - made superfluous.
+ * @deprecated Since 2.13.0 - made superfluous.
  */
 public interface IndexedGraphic
 {

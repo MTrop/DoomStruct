@@ -21,8 +21,8 @@ public class SerialWriter
 	private static final int SIZEOF_SHORT = Short.SIZE/Byte.SIZE;
 	private static final int SIZEOF_LONG = Long.SIZE/Byte.SIZE;
 
-    public static final boolean LITTLE_ENDIAN =	true;
-    public static final boolean BIG_ENDIAN = false;
+	public static final boolean LITTLE_ENDIAN =	true;
+	public static final boolean BIG_ENDIAN = false;
 
 	/** Endian mode switch. */
 	private boolean endianMode;
@@ -227,8 +227,8 @@ public class SerialWriter
 		{
 			b[n] = (byte)(i & 0x7f);
 			i >>= 7;
-	    	if (n != x-1)
-	    		b[n] |= (byte)(0x80);
+			if (n != x-1)
+				b[n] |= (byte)(0x80);
 		}
 		out.write(b);
 	}
@@ -261,8 +261,8 @@ public class SerialWriter
 		{
 			b[n] = (byte)(i & 0x7f);
 			i >>= 7;
-	    	if (n != x-1)
-	    		b[n] |= (byte)(0x80);
+			if (n != x-1)
+				b[n] |= (byte)(0x80);
 		}
 		out.write(b);
 	}
@@ -277,8 +277,8 @@ public class SerialWriter
 	public void writeIntArray(OutputStream out, int[] i) throws IOException
 	{
 		writeInt(out, i.length);
-	    for (int x = 0; x < i.length; x++)
-	    	writeInt(out, i[x]);
+		for (int x = 0; x < i.length; x++)
+			writeInt(out, i[x]);
 	}
 
 	/**
@@ -330,7 +330,7 @@ public class SerialWriter
 	 */
 	public void writeFloat(OutputStream out, float f) throws IOException
 	{
-	    writeInt(out, Float.floatToIntBits(f));
+		writeInt(out, Float.floatToIntBits(f));
 	}
 
 	/**
@@ -341,7 +341,7 @@ public class SerialWriter
 	 */
 	public void writeDouble(OutputStream out, double d) throws IOException
 	{
-	    writeLong(out, Double.doubleToLongBits(d));
+		writeLong(out, Double.doubleToLongBits(d));
 	}
 
 	/**
@@ -404,7 +404,7 @@ public class SerialWriter
 	 */
 	public void writeChar(OutputStream out, char c) throws IOException
 	{
-	    writeShort(out, charToShort(c));
+		writeShort(out, charToShort(c));
 	}
 
 	/**
@@ -442,7 +442,7 @@ public class SerialWriter
 
 	private static short charToShort(char c)
 	{
-	    return (short)(c & 0xFFFF);
+		return (short)(c & 0xFFFF);
 	}
 
 	private static int shortToBytes(short s, boolean endianMode, byte[] out, int offset)
