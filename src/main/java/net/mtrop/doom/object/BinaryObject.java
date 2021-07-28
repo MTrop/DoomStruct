@@ -69,7 +69,6 @@ public interface BinaryObject
 	 * Writes this object to a {@link File}.
 	 * The file's contents are overwritten.
 	 * @param file the {@link File} to write to.
-	 * @param append if true, the content is written to the end of the file.
 	 * @throws FileNotFoundException if the file exists, but is a directory.
 	 * @throws IOException if a write error occurs.
 	 * @throws SecurityException if the file could not be written to due to OS permissions.
