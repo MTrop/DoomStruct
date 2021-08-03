@@ -86,7 +86,7 @@ A:hover {
 }
 
 .markdown-body {
-	background-color: #05161B;
+	background-color: rgb(48, 48, 48);
 	color: #dddddd;
 	padding: 16px;
 	max-width: 900px;
@@ -100,7 +100,7 @@ SVG.octicon {
 
 PRE {
 	font-family: 'Courier New', Courier, monospace;
-	background-color: #020f0c;
+	background-color: rgb(32, 32, 32);
 	color: #dddddd;
 	padding: 16px;
     overflow: auto;
