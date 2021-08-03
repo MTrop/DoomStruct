@@ -173,8 +173,8 @@ wad<span class="pl-k">.</span>close();
 textureSet<span class="pl-k">.</span>export(pout, tout);
 
 <span class="pl-smi">WadFile</span> newwad <span class="pl-k">=</span> <span class="pl-smi">WadFile</span><span class="pl-k">.</span>createWadFile(<span class="pl-s"><span class="pl-pds">"</span>new.wad<span class="pl-pds">"</span></span>);
-newwad<span class="pl-k">.</span>addData(<span class="pl-s"><span class="pl-pds">"</span>PNAMES<span class="pl-pds">"</span></span>, pout<span class="pl-k">.</span>toBytes());
-newwad<span class="pl-k">.</span>addData(<span class="pl-s"><span class="pl-pds">"</span>TEXTURE1<span class="pl-pds">"</span></span>, tout<span class="pl-k">.</span>toBytes());
+newwad<span class="pl-k">.</span>addData(<span class="pl-s"><span class="pl-pds">"</span>PNAMES<span class="pl-pds">"</span></span>, pout);
+newwad<span class="pl-k">.</span>addData(<span class="pl-s"><span class="pl-pds">"</span>TEXTURE1<span class="pl-pds">"</span></span>, tout);
 newwad<span class="pl-k">.</span>close();</pre></div>
     <p>Open <code>DOOM.WAD</code>, get the first map of each episode and write it to a new WAD called <code>OUT.wad</code> and close both (with one statement!).</p>
     <div class="highlight highlight-source-java position-relative"><pre><span class="pl-smi">WadUtils</span><span class="pl-k">.</span>openWadAndExtractTo(<span class="pl-s"><span class="pl-pds">"</span>DOOM.WAD<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>OUT.wad<span class="pl-pds">"</span></span>, (wad)<span class="pl-k">-</span><span class="pl-k">&gt;</span>
