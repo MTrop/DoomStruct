@@ -1,0 +1,238 @@
+<article class="markdown-body entry-content container-lg" itemprop="text"><h1><a id="user-content-doom-struct" class="anchor" aria-hidden="true" href="#doom-struct"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M7.775 3.275a.75.75 0 001.06 1.06l1.25-1.25a2 2 0 112.83 2.83l-2.5 2.5a2 2 0 01-2.83 0 .75.75 0 00-1.06 1.06 3.5 3.5 0 004.95 0l2.5-2.5a3.5 3.5 0 00-4.95-4.95l-1.25 1.25zm-4.69 9.64a2 2 0 010-2.83l2.5-2.5a2 2 0 012.83 0 .75.75 0 001.06-1.06 3.5 3.5 0 00-4.95 0l-2.5 2.5a3.5 3.5 0 004.95 4.95l1.25-1.25a.75.75 0 00-1.06-1.06l-1.25 1.25a2 2 0 01-2.83 0z"></path></svg></a>Doom Struct</h1>
+	<p>Copyright (c) 2015 - 2021 Matt Tropiano</p>
+	<p><a href="https://github.com/MTrop/DoomStruct/releases/latest">Latest Release</a></p>
+	<h3><a id="user-content-notice" class="anchor" aria-hidden="true" href="#notice"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M7.775 3.275a.75.75 0 001.06 1.06l1.25-1.25a2 2 0 112.83 2.83l-2.5 2.5a2 2 0 01-2.83 0 .75.75 0 00-1.06 1.06 3.5 3.5 0 004.95 0l2.5-2.5a3.5 3.5 0 00-4.95-4.95l-1.25 1.25zm-4.69 9.64a2 2 0 010-2.83l2.5-2.5a2 2 0 012.83 0 .75.75 0 001.06-1.06 3.5 3.5 0 00-4.95 0l-2.5 2.5a3.5 3.5 0 004.95 4.95l1.25-1.25a.75.75 0 00-1.06-1.06l-1.25 1.25a2 2 0 01-2.83 0z"></path></svg></a>NOTICE</h3>
+	<p>This library is an offshoot/rewrite of <a href="https://github.com/BlackRookSoftware/Doom">Black Rook Software's Doom Struct Project</a>,
+	of which I have been granted rights to rewrite (the rights were granted to myself BY myself).</p>
+	<p>All deprecated classes from the origin project will not be in this one.
+	All end users are encouraged to switch to this one, as this project will be
+	actively maintained.</p>
+	<h3><a id="user-content-required-libraries" class="anchor" aria-hidden="true" href="#required-libraries"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M7.775 3.275a.75.75 0 001.06 1.06l1.25-1.25a2 2 0 112.83 2.83l-2.5 2.5a2 2 0 01-2.83 0 .75.75 0 00-1.06 1.06 3.5 3.5 0 004.95 0l2.5-2.5a3.5 3.5 0 00-4.95-4.95l-1.25 1.25zm-4.69 9.64a2 2 0 010-2.83l2.5-2.5a2 2 0 012.83 0 .75.75 0 001.06-1.06 3.5 3.5 0 00-4.95 0l-2.5 2.5a3.5 3.5 0 004.95 4.95l1.25-1.25a.75.75 0 00-1.06-1.06l-1.25 1.25a2 2 0 01-2.83 0z"></path></svg></a>Required Libraries</h3>
+	<p>NONE</p>
+	<h3><a id="user-content-required-modules" class="anchor" aria-hidden="true" href="#required-modules"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M7.775 3.275a.75.75 0 001.06 1.06l1.25-1.25a2 2 0 112.83 2.83l-2.5 2.5a2 2 0 01-2.83 0 .75.75 0 00-1.06 1.06 3.5 3.5 0 004.95 0l2.5-2.5a3.5 3.5 0 00-4.95-4.95l-1.25 1.25zm-4.69 9.64a2 2 0 010-2.83l2.5-2.5a2 2 0 012.83 0 .75.75 0 001.06-1.06 3.5 3.5 0 00-4.95 0l-2.5 2.5a3.5 3.5 0 004.95 4.95l1.25-1.25a.75.75 0 00-1.06-1.06l-1.25 1.25a2 2 0 01-2.83 0z"></path></svg></a>Required Modules</h3>
+	<p><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.desktop/module-summary.html" rel="nofollow">java.desktop</a></p>
+	<ul>
+	<li><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.xml/module-summary.html" rel="nofollow">java.xml</a></li>
+	<li><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.datatransfer/module-summary.html" rel="nofollow">java.datatransfer</a></li>
+	<li><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/module-summary.html" rel="nofollow">java.base</a></li>
+	</ul>
+	<h3><a id="user-content-source" class="anchor" aria-hidden="true" href="#source"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M7.775 3.275a.75.75 0 001.06 1.06l1.25-1.25a2 2 0 112.83 2.83l-2.5 2.5a2 2 0 01-2.83 0 .75.75 0 00-1.06 1.06 3.5 3.5 0 004.95 0l2.5-2.5a3.5 3.5 0 00-4.95-4.95l-1.25 1.25zm-4.69 9.64a2 2 0 010-2.83l2.5-2.5a2 2 0 012.83 0 .75.75 0 001.06-1.06 3.5 3.5 0 00-4.95 0l-2.5 2.5a3.5 3.5 0 004.95 4.95l1.25-1.25a.75.75 0 00-1.06-1.06l-1.25 1.25a2 2 0 01-2.83 0z"></path></svg></a>Source</h3>
+	<p>The <code>master</code> branch contains stable code (I hope). Until a release is cut, the <code>master</code> branch will be shifting.</p>
+	<h3><a id="user-content-introduction" class="anchor" aria-hidden="true" href="#introduction"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M7.775 3.275a.75.75 0 001.06 1.06l1.25-1.25a2 2 0 112.83 2.83l-2.5 2.5a2 2 0 01-2.83 0 .75.75 0 00-1.06 1.06 3.5 3.5 0 004.95 0l2.5-2.5a3.5 3.5 0 00-4.95-4.95l-1.25 1.25zm-4.69 9.64a2 2 0 010-2.83l2.5-2.5a2 2 0 012.83 0 .75.75 0 001.06-1.06 3.5 3.5 0 00-4.95 0l-2.5 2.5a3.5 3.5 0 004.95 4.95l1.25-1.25a.75.75 0 00-1.06-1.06l-1.25 1.25a2 2 0 01-2.83 0z"></path></svg></a>Introduction</h3>
+	<p>The purpose of the Doom Struct project is to provide a means to read/write
+	data structures for the Doom Engine and similar derivatives.</p>
+	<h3><a id="user-content-why" class="anchor" aria-hidden="true" href="#why"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M7.775 3.275a.75.75 0 001.06 1.06l1.25-1.25a2 2 0 112.83 2.83l-2.5 2.5a2 2 0 01-2.83 0 .75.75 0 00-1.06 1.06 3.5 3.5 0 004.95 0l2.5-2.5a3.5 3.5 0 00-4.95-4.95l-1.25 1.25zm-4.69 9.64a2 2 0 010-2.83l2.5-2.5a2 2 0 012.83 0 .75.75 0 001.06-1.06 3.5 3.5 0 00-4.95 0l-2.5 2.5a3.5 3.5 0 004.95 4.95l1.25-1.25a.75.75 0 00-1.06-1.06l-1.25 1.25a2 2 0 01-2.83 0z"></path></svg></a>Why?</h3>
+	<p>There are several libraries out there for reading data from Doom in many different programming languages,
+	but there isn't a decent one for Java. And by decent, I mean:</p>
+	<ul>
+	<li>Useful</li>
+	<li>Documented</li>
+	<li>Performant</li>
+	<li>Efficient</li>
+	</ul>
+	<p>The goal with this library is to get end-users up-and-running quickly with little boilerplate code,
+	and to ensure clarity within documentation and with written code, and future-proofing to a reasonable
+	extent.</p>
+	<h3><a id="user-content-implemented-features-so-far" class="anchor" aria-hidden="true" href="#implemented-features-so-far"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M7.775 3.275a.75.75 0 001.06 1.06l1.25-1.25a2 2 0 112.83 2.83l-2.5 2.5a2 2 0 01-2.83 0 .75.75 0 00-1.06 1.06 3.5 3.5 0 004.95 0l2.5-2.5a3.5 3.5 0 00-4.95-4.95l-1.25 1.25zm-4.69 9.64a2 2 0 010-2.83l2.5-2.5a2 2 0 012.83 0 .75.75 0 001.06-1.06 3.5 3.5 0 00-4.95 0l-2.5 2.5a3.5 3.5 0 004.95 4.95l1.25-1.25a.75.75 0 00-1.06-1.06l-1.25 1.25a2 2 0 01-2.83 0z"></path></svg></a>Implemented Features (so far)</h3>
+	<ul>
+	<li>Reads/edits WAD files.</li>
+	<li>Reads PK3 files (zips).</li>
+	<li>Full UDMF parsing/writing support.</li>
+	<li>Reads/edits all Doom data structures in Doom, Hexen/ZDoom, or Strife
+	formats. This includes textures, patches, lines, vertices, things, sectors,
+	nodes, palettes, colormaps, text, PNG data, music data, sound data, flats, blockmaps,
+	reject, and even ENDOOM-type VGA lumps.</li>
+	<li>Supports PNGs with offset data (grAb).</li>
+	<li>Reads/edits Boom-engine data lumps like ANIMATED and SWITCHES.</li>
+	<li>Contains a utility class for converting Doom graphics to standard Java
+	graphics structures, and vice-versa.</li>
+	<li>Contains a utility class for converting Doom DMX sound data to other formats via
+	the Java SPI, and vice-versa.</li>
+	<li>Contains a utility class for managing texture sets without needing to care too much
+	about Doom's nightmarish texture data setup.</li>
+	</ul>
+	<h3><a id="user-content-in-the-future" class="anchor" aria-hidden="true" href="#in-the-future"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M7.775 3.275a.75.75 0 001.06 1.06l1.25-1.25a2 2 0 112.83 2.83l-2.5 2.5a2 2 0 01-2.83 0 .75.75 0 00-1.06 1.06 3.5 3.5 0 004.95 0l2.5-2.5a3.5 3.5 0 00-4.95-4.95l-1.25 1.25zm-4.69 9.64a2 2 0 010-2.83l2.5-2.5a2 2 0 012.83 0 .75.75 0 001.06-1.06 3.5 3.5 0 00-4.95 0l-2.5 2.5a3.5 3.5 0 004.95 4.95l1.25-1.25a.75.75 0 00-1.06-1.06l-1.25 1.25a2 2 0 01-2.83 0z"></path></svg></a>In the Future...</h3>
+	<ul>
+	<li>Reading/converting PC Speaker effects.</li>
+	<li>Supporting additional BSP node types.</li>
+	<li>Stuff for drawing maps more easily (graphic-wise).</li>
+	<li>Better ENDOOM rendering options.</li>
+	<li>Turning this project into a Maven Repository Compatible one (currently it's Ant-compatible; it gets the job done).</li>
+	<li>Better Unit tests (or automatable ones).</li>
+	</ul>
+	<h3><a id="user-content-library" class="anchor" aria-hidden="true" href="#library"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M7.775 3.275a.75.75 0 001.06 1.06l1.25-1.25a2 2 0 112.83 2.83l-2.5 2.5a2 2 0 01-2.83 0 .75.75 0 00-1.06 1.06 3.5 3.5 0 004.95 0l2.5-2.5a3.5 3.5 0 00-4.95-4.95l-1.25 1.25zm-4.69 9.64a2 2 0 010-2.83l2.5-2.5a2 2 0 012.83 0 .75.75 0 001.06-1.06 3.5 3.5 0 00-4.95 0l-2.5 2.5a3.5 3.5 0 004.95 4.95l1.25-1.25a.75.75 0 00-1.06-1.06l-1.25 1.25a2 2 0 01-2.83 0z"></path></svg></a>Library</h3>
+	<p>Contained in this release is a series of libraries that allow reading, writing,
+	and extracting data in Doom Engine structures, found in the <strong>net.mtrop.doom</strong>
+	packages.</p>
+	<p>Unless otherwise specified, assume that all methods are not thread-safe.</p>
+	<h3><a id="user-content-examples" class="anchor" aria-hidden="true" href="#examples"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M7.775 3.275a.75.75 0 001.06 1.06l1.25-1.25a2 2 0 112.83 2.83l-2.5 2.5a2 2 0 01-2.83 0 .75.75 0 00-1.06 1.06 3.5 3.5 0 004.95 0l2.5-2.5a3.5 3.5 0 00-4.95-4.95l-1.25 1.25zm-4.69 9.64a2 2 0 010-2.83l2.5-2.5a2 2 0 012.83 0 .75.75 0 001.06-1.06 3.5 3.5 0 00-4.95 0l-2.5 2.5a3.5 3.5 0 004.95 4.95l1.25-1.25a.75.75 0 00-1.06-1.06l-1.25 1.25a2 2 0 01-2.83 0z"></path></svg></a>Examples</h3>
+	<p>Open a WAD file (and close it).</p>
+	<div class="highlight highlight-source-java position-relative"><pre><span class="pl-smi">WadFile</span> wad <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">WadFile</span>(<span class="pl-s"><span class="pl-pds">"</span>doom2.wad<span class="pl-pds">"</span></span>);
+wad<span class="pl-k">.</span>close();</pre></div>
+	<p>Open <code>DOOM2.WAD</code> and read <code>MAP01</code> into a Doom Map.</p>
+	<div class="highlight highlight-source-java position-relative"><pre><span class="pl-smi">WadFile</span> wad <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">WadFile</span>(<span class="pl-s"><span class="pl-pds">"</span>doom2.wad<span class="pl-pds">"</span></span>);
+	<span class="pl-smi">DoomMap</span> map <span class="pl-k">=</span> <span class="pl-smi">MapUtils</span><span class="pl-k">.</span>createDoomMap(wad, <span class="pl-s"><span class="pl-pds">"</span>map01<span class="pl-pds">"</span></span>);
+wad<span class="pl-k">.</span>close();</pre></div>
+	<p>Open <code>DOOM2.WAD</code> and fetch all sectors in <code>MAP29</code> with the <code>BLOOD1</code> floor texture.</p>
+	<div class="highlight highlight-source-java position-relative"><pre><span class="pl-smi">WadFile</span> wad <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">WadFile</span>(<span class="pl-s"><span class="pl-pds">"</span>doom2.wad<span class="pl-pds">"</span></span>);
+	<span class="pl-k">Set&lt;<span class="pl-smi">DoomSector</span>&gt;</span> set <span class="pl-k">=</span> wad<span class="pl-k">.</span>getDataAsList(<span class="pl-s"><span class="pl-pds">"</span>sectors<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>map29<span class="pl-pds">"</span></span>, <span class="pl-smi">DoomSector</span><span class="pl-k">.</span>class, <span class="pl-smi">DoomSector</span><span class="pl-c1"><span class="pl-k">.</span>LENGTH</span>)<span class="pl-k">.</span>stream()
+	.filter((sector) <span class="pl-k">-</span><span class="pl-k">&gt;</span> sector<span class="pl-k">.</span>getFloorTexture()<span class="pl-k">.</span>equals(<span class="pl-s"><span class="pl-pds">"</span>BLOOD1<span class="pl-pds">"</span></span>))
+	.collect(<span class="pl-smi">Collectors</span><span class="pl-k">.</span>toSet());
+wad<span class="pl-k">.</span>close();</pre></div>
+	<p>Open <code>DOOM.WAD</code> and fetch all things in <code>E1M1</code> that appear in multiplayer.</p>
+	<div class="highlight highlight-source-java position-relative"><pre><span class="pl-smi">WadFile</span> wad <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">WadFile</span>(<span class="pl-s"><span class="pl-pds">"</span>doom.wad<span class="pl-pds">"</span></span>);
+	<span class="pl-k">Set&lt;<span class="pl-smi">DoomThing</span>&gt;</span> set <span class="pl-k">=</span> wad<span class="pl-k">.</span>getDataAsList(<span class="pl-s"><span class="pl-pds">"</span>things<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>e1m1<span class="pl-pds">"</span></span>, <span class="pl-smi">DoomThing</span><span class="pl-k">.</span>class, <span class="pl-smi">DoomThing</span><span class="pl-c1"><span class="pl-k">.</span>LENGTH</span>)<span class="pl-k">.</span>stream()
+	.filter((thing) <span class="pl-k">-</span><span class="pl-k">&gt;</span> thing<span class="pl-k">.</span>isFlagSet(<span class="pl-smi">DoomThingFlags</span><span class="pl-c1"><span class="pl-k">.</span>NOT_SINGLEPLAYER</span>))
+	.collect(<span class="pl-smi">Collectors</span><span class="pl-k">.</span>toSet());
+wad<span class="pl-k">.</span>close();</pre></div>
+	<p>Open <code>HEXEN.WAD</code> and fetch all things in <code>MAP01</code> that have a special.</p>
+	<div class="highlight highlight-source-java position-relative"><pre><span class="pl-smi">WadFile</span> wad <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">WadFile</span>(<span class="pl-s"><span class="pl-pds">"</span>hexen.wad<span class="pl-pds">"</span></span>);
+	<span class="pl-k">Set&lt;<span class="pl-smi">HexenThing</span>&gt;</span> set <span class="pl-k">=</span> wad<span class="pl-k">.</span>getDataAsList(<span class="pl-s"><span class="pl-pds">"</span>things<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>map01<span class="pl-pds">"</span></span>, <span class="pl-smi">HexenThing</span><span class="pl-k">.</span>class, <span class="pl-smi">HexenThing</span><span class="pl-c1"><span class="pl-k">.</span>LENGTH</span>)<span class="pl-k">.</span>stream()
+	.filter((thing) <span class="pl-k">-</span><span class="pl-k">&gt;</span> thing<span class="pl-k">.</span>getSpecial() <span class="pl-k">&gt;</span> <span class="pl-c1">0</span>)
+	.collect(<span class="pl-smi">Collectors</span><span class="pl-k">.</span>toSet());
+wad<span class="pl-k">.</span>close();</pre></div>
+	<p>Open <code>DOOM.WAD</code> and fetch all maps that have less than 1000 linedefs.</p>
+	<div class="highlight highlight-source-java position-relative"><pre><span class="pl-k">final</span> <span class="pl-smi">WadFile</span> wad <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">WadFile</span>(<span class="pl-s"><span class="pl-pds">"</span>doom.wad<span class="pl-pds">"</span></span>);
+	<span class="pl-k">Set&lt;<span class="pl-smi">String</span>&gt;</span> set <span class="pl-k">=</span> <span class="pl-smi">Arrays</span><span class="pl-k">.</span>asList(<span class="pl-smi">MapUtils</span><span class="pl-k">.</span>getAllMapHeaders(wad))<span class="pl-k">.</span>stream()
+	.filter((header) <span class="pl-k">-</span><span class="pl-k">&gt;</span> wad<span class="pl-k">.</span>getEntry(<span class="pl-s"><span class="pl-pds">"</span>linedefs<span class="pl-pds">"</span></span>, header)<span class="pl-k">.</span>getSize() <span class="pl-k">/</span> <span class="pl-smi">DoomLinedef</span><span class="pl-c1"><span class="pl-k">.</span>LENGTH</span> <span class="pl-k">&lt;</span> <span class="pl-c1">1000</span>)
+	.collect(<span class="pl-smi">Collectors</span><span class="pl-k">.</span>toSet());
+wad<span class="pl-k">.</span>close();</pre></div>
+	<p>Open <code>SQUARE1.PK3</code>, fetch <code>maps/E1A1.WAD</code> and read it into a UDMF Map.</p>
+	<div class="highlight highlight-source-java position-relative"><pre><span class="pl-smi">DoomPK3</span> pk3 <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">DoomPK3</span>(<span class="pl-s"><span class="pl-pds">"</span>square1.pk3<span class="pl-pds">"</span></span>);
+	<span class="pl-smi">WadBuffer</span> wad <span class="pl-k">=</span> pk3<span class="pl-k">.</span>getDataAsWadBuffer(<span class="pl-s"><span class="pl-pds">"</span>maps/e1a1.wad<span class="pl-pds">"</span></span>);
+	<span class="pl-smi">UDMFMap</span> map <span class="pl-k">=</span> wad<span class="pl-k">.</span>getTextDataAs(<span class="pl-s"><span class="pl-pds">"</span>textmap<span class="pl-pds">"</span></span>, <span class="pl-smi">Charset</span><span class="pl-k">.</span>forName(<span class="pl-s"><span class="pl-pds">"</span>UTF-8<span class="pl-pds">"</span></span>), <span class="pl-smi">UDMFMap</span><span class="pl-k">.</span>class);
+pk3<span class="pl-k">.</span>close();</pre></div>
+	<p>Open <code>DOOM2.WAD</code>, read <code>DEMO2</code> and figure out how many tics that player 1 was pushing "fire".</p>
+	<div class="highlight highlight-source-java position-relative"><pre><span class="pl-smi">WadFile</span> wad <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">WadFile</span>(<span class="pl-s"><span class="pl-pds">"</span>doom2.wad<span class="pl-pds">"</span></span>);
+	<span class="pl-smi">Demo</span> demo <span class="pl-k">=</span> wad<span class="pl-k">.</span>getDataAs(<span class="pl-s"><span class="pl-pds">"</span>demo2<span class="pl-pds">"</span></span>, <span class="pl-smi">Demo</span><span class="pl-k">.</span>class);
+	<span class="pl-k">int</span> tics <span class="pl-k">=</span> <span class="pl-c1">0</span>;
+	<span class="pl-k">for</span> (<span class="pl-k">int</span> i <span class="pl-k">=</span> <span class="pl-c1">0</span>; i <span class="pl-k">&lt;</span> demo<span class="pl-k">.</span>getTicCount(); i<span class="pl-k">++</span>) {
+	tics <span class="pl-k">+=</span> (demo<span class="pl-k">.</span>getTic(i)<span class="pl-k">.</span>getAction() <span class="pl-k">&amp;</span> <span class="pl-smi">Demo</span><span class="pl-k">.</span><span class="pl-smi">Tic</span><span class="pl-c1"><span class="pl-k">.</span>ACTION_FIRE</span>) <span class="pl-k">!=</span> <span class="pl-c1">0</span> <span class="pl-k">?</span> <span class="pl-c1">1</span> <span class="pl-k">:</span> <span class="pl-c1">0</span>;
+}
+wad<span class="pl-k">.</span>close();</pre></div>
+	<p>Open <code>DOOM.WAD</code> and get MD5 hashes of each entry.</p>
+	<div class="highlight highlight-source-java position-relative"><pre><span class="pl-smi">WadFile</span> wad <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">WadFile</span>(<span class="pl-s"><span class="pl-pds">"</span>doom.wad<span class="pl-pds">"</span></span>);
+<span class="pl-k">byte</span>[][] hashes <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">byte</span>[wad<span class="pl-k">.</span>getEntryCount()][];
+<span class="pl-k">int</span> i <span class="pl-k">=</span> <span class="pl-c1">0</span>;
+<span class="pl-k">for</span> (<span class="pl-smi">WadEntry</span> entry <span class="pl-k">:</span> wad)
+	hashes[i<span class="pl-k">++</span>] <span class="pl-k">=</span> <span class="pl-smi">MessageDigest</span><span class="pl-k">.</span>getInstance(<span class="pl-s"><span class="pl-pds">"</span>MD5<span class="pl-pds">"</span></span>)<span class="pl-k">.</span>digest(wad<span class="pl-k">.</span>getData(entry));
+wad<span class="pl-k">.</span>close();</pre></div>
+	<p>Open <code>DOOM2.WAD</code>, fetch all <code>TROO*</code> (graphic) entries and export them as PNGs.</p>
+	<div class="highlight highlight-source-java position-relative"><pre><span class="pl-smi">WadFile</span> wad <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">WadFile</span>(<span class="pl-s"><span class="pl-pds">"</span>doom2.wad<span class="pl-pds">"</span></span>);
+<span class="pl-k">final</span> <span class="pl-smi">Palette</span> pal <span class="pl-k">=</span> wad<span class="pl-k">.</span>getDataAs(<span class="pl-s"><span class="pl-pds">"</span>playpal<span class="pl-pds">"</span></span>, <span class="pl-smi">Palette</span><span class="pl-k">.</span>class);
+<span class="pl-k">for</span> (<span class="pl-smi">WadEntry</span> entry <span class="pl-k">:</span> wad) {
+	<span class="pl-k">if</span> (entry<span class="pl-k">.</span>getName()<span class="pl-k">.</span>startsWith(<span class="pl-s"><span class="pl-pds">"</span>TROO<span class="pl-pds">"</span></span>)) {
+		<span class="pl-smi">Picture</span> p <span class="pl-k">=</span> wad<span class="pl-k">.</span>getDataAs(entry, <span class="pl-smi">Picture</span><span class="pl-k">.</span>class);
+		<span class="pl-smi">ImageIO</span><span class="pl-k">.</span>write(<span class="pl-smi">GraphicUtils</span><span class="pl-k">.</span>createImage(p, pal), <span class="pl-s"><span class="pl-pds">"</span>PNG<span class="pl-pds">"</span></span>, <span class="pl-k">new</span> <span class="pl-smi">File</span>(entry<span class="pl-k">.</span>getName()<span class="pl-k">+</span><span class="pl-s"><span class="pl-pds">"</span>.png<span class="pl-pds">"</span></span>));
+	}
+}
+wad<span class="pl-k">.</span>close();</pre></div>
+	<p>Open <code>DOOM.WAD</code>, fetch all <code>DS*</code> (audio) entries, upsample them to 22kHz (cosine interpolation), and export them as WAVs.</p>
+	<div class="highlight highlight-source-java position-relative"><pre><span class="pl-smi">WadFile</span> wad <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">WadFile</span>(<span class="pl-s"><span class="pl-pds">"</span>doom.wad<span class="pl-pds">"</span></span>);
+<span class="pl-k">for</span> (<span class="pl-smi">WadEntry</span> entry <span class="pl-k">:</span> wad) {
+	<span class="pl-k">if</span> (entry<span class="pl-k">.</span>getName()<span class="pl-k">.</span>startsWith(<span class="pl-s"><span class="pl-pds">"</span>DS<span class="pl-pds">"</span></span>)) {
+		<span class="pl-smi">DMXSound</span> sound <span class="pl-k">=</span> wad<span class="pl-k">.</span>getDataAs(entry, <span class="pl-smi">DMXSound</span><span class="pl-k">.</span>class)
+				.resample(<span class="pl-smi">InterpolationType</span><span class="pl-c1"><span class="pl-k">.</span>COSINE</span>, <span class="pl-smi">DMXSound</span><span class="pl-c1"><span class="pl-k">.</span>SAMPLERATE_22KHZ</span>);
+		<span class="pl-smi">SoundUtils</span><span class="pl-k">.</span>writeSoundToFile(sound, <span class="pl-smi">AudioFileFormat</span><span class="pl-k">.</span><span class="pl-smi">Type</span><span class="pl-c1"><span class="pl-k">.</span>WAVE</span>, <span class="pl-k">new</span> <span class="pl-smi">File</span>(entry<span class="pl-k">.</span>getName() <span class="pl-k">+</span> <span class="pl-s"><span class="pl-pds">"</span>.wav<span class="pl-pds">"</span></span>));
+	}
+}
+wad<span class="pl-k">.</span>close();</pre></div>
+	<p>Open <code>DOOM.WAD</code>, fetch all map headers, and extract those maps' entries to separate WADs.</p>
+	<div class="highlight highlight-source-java position-relative"><pre><span class="pl-smi">WadFile</span> wad <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">WadFile</span>(<span class="pl-s"><span class="pl-pds">"</span>doom.wad<span class="pl-pds">"</span></span>);
+<span class="pl-k">for</span> (<span class="pl-k">int</span> headerIndex <span class="pl-k">:</span> <span class="pl-smi">MapUtils</span><span class="pl-k">.</span>getAllMapIndices(wad)) {
+	<span class="pl-smi">String</span> headerName <span class="pl-k">=</span> wad<span class="pl-k">.</span>getEntry(headerIndex)<span class="pl-k">.</span>getName();
+	<span class="pl-smi">WadBuffer</span><span class="pl-k">.</span>extract(wad, <span class="pl-smi">MapUtils</span><span class="pl-k">.</span>getMapEntries(wad, headerName))
+			.writeToFile(<span class="pl-k">new</span> <span class="pl-smi">File</span>(headerName <span class="pl-k">+</span> <span class="pl-s"><span class="pl-pds">"</span>.wad<span class="pl-pds">"</span></span>));
+}
+wad<span class="pl-k">.</span>close();</pre></div>
+	<p>Open <code>DOOM2.WAD</code>, extract <code>MAP01</code> from it into a file called <code>MAP01.WAD</code>, and replace any wall texture that starts with <code>TEKGREN</code> to <code>FIREBLU1</code>.</p>
+	<div class="highlight highlight-source-java position-relative"><pre><span class="pl-smi">WadFile</span> wad <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">WadFile</span>(<span class="pl-s"><span class="pl-pds">"</span>doom2.wad<span class="pl-pds">"</span></span>);
+<span class="pl-smi">WadFile</span> temp <span class="pl-k">=</span> <span class="pl-smi">WadFile</span><span class="pl-k">.</span>extract(<span class="pl-k">new</span> <span class="pl-smi">File</span>(<span class="pl-s"><span class="pl-pds">"</span>MAP01.WAD<span class="pl-pds">"</span></span>), wad, <span class="pl-smi">MapUtils</span><span class="pl-k">.</span>getMapEntries(wad, <span class="pl-s"><span class="pl-pds">"</span>MAP01<span class="pl-pds">"</span></span>));
+temp<span class="pl-k">.</span>transformData(<span class="pl-s"><span class="pl-pds">"</span>sidedefs<span class="pl-pds">"</span></span>, <span class="pl-smi">DoomSidedef</span><span class="pl-k">.</span>class, <span class="pl-smi">DoomSidedef</span><span class="pl-c1"><span class="pl-k">.</span>LENGTH</span>, (sidedef, n) <span class="pl-k">-</span><span class="pl-k">&gt;</span> {
+	<span class="pl-k">if</span> (sidedef<span class="pl-k">.</span>getTextureMiddle()<span class="pl-k">.</span>startsWith(<span class="pl-s"><span class="pl-pds">"</span>TEKGREN<span class="pl-pds">"</span></span>))
+		sidedef<span class="pl-k">.</span>setTextureMiddle(<span class="pl-s"><span class="pl-pds">"</span>FIREBLU1<span class="pl-pds">"</span></span>);
+});
+temp<span class="pl-k">.</span>close();
+wad<span class="pl-k">.</span>close();</pre></div>
+	<p>Open <code>DOOM2.WAD</code>, assemble a TextureSet, remove every texture that begins with <code>R</code>, and write it to a new WAD.</p>
+	<div class="highlight highlight-source-java position-relative"><pre><span class="pl-smi">WadFile</span> wad <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">WadFile</span>(<span class="pl-s"><span class="pl-pds">"</span>doom2.wad<span class="pl-pds">"</span></span>);
+<span class="pl-smi">TextureSet</span> textureSet <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">TextureSet</span>(
+	wad<span class="pl-k">.</span>getDataAs(<span class="pl-s"><span class="pl-pds">"</span>pnames<span class="pl-pds">"</span></span>, <span class="pl-smi">PatchNames</span><span class="pl-k">.</span>class),
+	wad<span class="pl-k">.</span>getDataAs(<span class="pl-s"><span class="pl-pds">"</span>texture1<span class="pl-pds">"</span></span>, <span class="pl-smi">DoomTextureList</span><span class="pl-k">.</span>class)
+);
+wad<span class="pl-k">.</span>close();
+
+<span class="pl-k">Iterator&lt;<span class="pl-smi">TextureSet</span>.</span><span class="pl-smi">Texture</span><span class="pl-k">&gt;</span> it <span class="pl-k">=</span> textureSet<span class="pl-k">.</span>iterator();
+<span class="pl-k">while</span> (it<span class="pl-k">.</span>hasNext()) {
+	<span class="pl-smi">TextureSet</span><span class="pl-k">.</span><span class="pl-smi">Texture</span> t <span class="pl-k">=</span> it<span class="pl-k">.</span>next();
+	<span class="pl-k">if</span> (t<span class="pl-k">.</span>getName()<span class="pl-k">.</span>startsWith(<span class="pl-s"><span class="pl-pds">"</span>R<span class="pl-pds">"</span></span>))
+		it<span class="pl-k">.</span>remove();
+}
+<span class="pl-smi">PatchNames</span> pout <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">PatchNames</span>();
+<span class="pl-smi">DoomTextureList</span> tout <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">DoomTextureList</span>();
+textureSet<span class="pl-k">.</span>export(pout, tout);
+
+<span class="pl-smi">WadFile</span> newwad <span class="pl-k">=</span> <span class="pl-smi">WadFile</span><span class="pl-k">.</span>createWadFile(<span class="pl-s"><span class="pl-pds">"</span>new.wad<span class="pl-pds">"</span></span>);
+newwad<span class="pl-k">.</span>addData(<span class="pl-s"><span class="pl-pds">"</span>PNAMES<span class="pl-pds">"</span></span>, pout<span class="pl-k">.</span>toBytes());
+newwad<span class="pl-k">.</span>addData(<span class="pl-s"><span class="pl-pds">"</span>TEXTURE1<span class="pl-pds">"</span></span>, tout<span class="pl-k">.</span>toBytes());
+newwad<span class="pl-k">.</span>close();</pre></div>
+	<p>Open <code>DOOM.WAD</code>, get the first map of each episode and write it to a new WAD called <code>OUT.wad</code> and close both (with one statement!).</p>
+	<div class="highlight highlight-source-java position-relative"><pre><span class="pl-smi">WadUtils</span><span class="pl-k">.</span>openWadAndExtractTo(<span class="pl-s"><span class="pl-pds">"</span>DOOM.WAD<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>OUT.wad<span class="pl-pds">"</span></span>, (wad)<span class="pl-k">-</span><span class="pl-k">&gt;</span>
+	<span class="pl-smi">WadUtils</span><span class="pl-k">.</span>withEntries(<span class="pl-smi">MapUtils</span><span class="pl-k">.</span>getMapEntries(wad, <span class="pl-s"><span class="pl-pds">"</span>E1M1<span class="pl-pds">"</span></span>))
+		.and(<span class="pl-smi">MapUtils</span><span class="pl-k">.</span>getMapEntries(wad, <span class="pl-s"><span class="pl-pds">"</span>E2M1<span class="pl-pds">"</span></span>))
+		.and(<span class="pl-smi">MapUtils</span><span class="pl-k">.</span>getMapEntries(wad, <span class="pl-s"><span class="pl-pds">"</span>E3M1<span class="pl-pds">"</span></span>))
+		.and(<span class="pl-smi">MapUtils</span><span class="pl-k">.</span>getMapEntries(wad, <span class="pl-s"><span class="pl-pds">"</span>E4M1<span class="pl-pds">"</span></span>))
+	.get()
+);</pre></div>
+	<p>Open <code>DOOM2.WAD</code>, create a new Wad called <code>TEXTURES.wad</code> and copy over only a few textures and flats (and also-close them):</p>
+	<div class="highlight highlight-source-java position-relative"><pre><span class="pl-k">try</span> (<span class="pl-smi">WadFile</span> source <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">WadFile</span>(<span class="pl-s"><span class="pl-pds">"</span>DOOM2.WAD<span class="pl-pds">"</span></span>)) {
+	<span class="pl-k">try</span> (<span class="pl-smi">WadFile</span> target <span class="pl-k">=</span> <span class="pl-smi">WadFile</span><span class="pl-k">.</span>createWadFile(<span class="pl-s"><span class="pl-pds">"</span>TEXTURES.wad<span class="pl-pds">"</span></span>)) {
+		<span class="pl-k">try</span> (<span class="pl-smi">TextureCopier</span> copier <span class="pl-k">=</span> <span class="pl-smi">TextureUtils</span><span class="pl-k">.</span>createTextureCopier(source, target)) {
+			copier<span class="pl-k">.</span>copyFlat(<span class="pl-s"><span class="pl-pds">"</span>FLOOR7_1<span class="pl-pds">"</span></span>);
+			copier<span class="pl-k">.</span>copyFlat(<span class="pl-s"><span class="pl-pds">"</span>CEIL5_2<span class="pl-pds">"</span></span>);
+			copier<span class="pl-k">.</span>copyTexture(<span class="pl-s"><span class="pl-pds">"</span>AASHITTY<span class="pl-pds">"</span></span>); <span class="pl-c"><span class="pl-c">//</span> first texture is "null" texture</span>
+			copier<span class="pl-k">.</span>copyTexture(<span class="pl-s"><span class="pl-pds">"</span>SUPPORT3<span class="pl-pds">"</span></span>);
+			copier<span class="pl-k">.</span>copyTexture(<span class="pl-s"><span class="pl-pds">"</span>SUPPORT2<span class="pl-pds">"</span></span>);
+			copier<span class="pl-k">.</span>copyTexture(<span class="pl-s"><span class="pl-pds">"</span>BIGDOOR1<span class="pl-pds">"</span></span>);
+			copier<span class="pl-k">.</span>copyTexture(<span class="pl-s"><span class="pl-pds">"</span>BIGDOOR2<span class="pl-pds">"</span></span>);
+			copier<span class="pl-k">.</span>copyTexture(<span class="pl-s"><span class="pl-pds">"</span>BIGDOOR3<span class="pl-pds">"</span></span>);
+			copier<span class="pl-k">.</span>copyTexture(<span class="pl-s"><span class="pl-pds">"</span>BIGDOOR4<span class="pl-pds">"</span></span>);
+			copier<span class="pl-k">.</span>copyTexture(<span class="pl-s"><span class="pl-pds">"</span>BIGDOOR5<span class="pl-pds">"</span></span>);
+		}
+	}
+}</pre></div>
+	<h3><a id="user-content-compiling-with-ant" class="anchor" aria-hidden="true" href="#compiling-with-ant"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M7.775 3.275a.75.75 0 001.06 1.06l1.25-1.25a2 2 0 112.83 2.83l-2.5 2.5a2 2 0 01-2.83 0 .75.75 0 00-1.06 1.06 3.5 3.5 0 004.95 0l2.5-2.5a3.5 3.5 0 00-4.95-4.95l-1.25 1.25zm-4.69 9.64a2 2 0 010-2.83l2.5-2.5a2 2 0 012.83 0 .75.75 0 001.06-1.06 3.5 3.5 0 00-4.95 0l-2.5 2.5a3.5 3.5 0 004.95 4.95l1.25-1.25a.75.75 0 00-1.06-1.06l-1.25 1.25a2 2 0 01-2.83 0z"></path></svg></a>Compiling with Ant</h3>
+	<p>To compile this library with Apache Ant, type:</p>
+	<div class="snippet-clipboard-content position-relative"><pre><code>ant compile
+	</code></pre></div>
+	<p>To make Maven-compatible JARs of this library (placed in the <em>build/jar</em> directory), type:</p>
+	<div class="snippet-clipboard-content position-relative"><pre><code>ant jar
+	</code></pre></div>
+	<p>To make Javadocs (placed in the <em>build/docs</em> directory):</p>
+	<div class="snippet-clipboard-content position-relative"><pre><code>ant javadoc
+	</code></pre></div>
+	<p>To compile main and test code and run tests (if any):</p>
+	<div class="snippet-clipboard-content position-relative"><pre><code>ant test
+	</code></pre></div>
+	<p>To make Zip archives of everything (main src/resources, bin, javadocs, placed in the <em>build/zip</em> directory):</p>
+	<div class="snippet-clipboard-content position-relative"><pre><code>ant zip
+	</code></pre></div>
+	<p>To compile, JAR, test, and Zip up everything:</p>
+	<div class="snippet-clipboard-content position-relative"><pre><code>ant release
+	</code></pre></div>
+	<p>To clean up everything:</p>
+	<div class="snippet-clipboard-content position-relative"><pre><code>ant clean
+	</code></pre></div>
+	<h3><a id="user-content-javadocs" class="anchor" aria-hidden="true" href="#javadocs"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M7.775 3.275a.75.75 0 001.06 1.06l1.25-1.25a2 2 0 112.83 2.83l-2.5 2.5a2 2 0 01-2.83 0 .75.75 0 00-1.06 1.06 3.5 3.5 0 004.95 0l2.5-2.5a3.5 3.5 0 00-4.95-4.95l-1.25 1.25zm-4.69 9.64a2 2 0 010-2.83l2.5-2.5a2 2 0 012.83 0 .75.75 0 001.06-1.06 3.5 3.5 0 00-4.95 0l-2.5 2.5a3.5 3.5 0 004.95 4.95l1.25-1.25a.75.75 0 00-1.06-1.06l-1.25 1.25a2 2 0 01-2.83 0z"></path></svg></a>Javadocs</h3>
+	<p>Online Javadocs can be found at: <a href="https://mtrop.github.io/DoomStruct/javadoc/" rel="nofollow">https://mtrop.github.io/DoomStruct/javadoc/</a></p>
+	<h3><a id="user-content-other" class="anchor" aria-hidden="true" href="#other"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M7.775 3.275a.75.75 0 001.06 1.06l1.25-1.25a2 2 0 112.83 2.83l-2.5 2.5a2 2 0 01-2.83 0 .75.75 0 00-1.06 1.06 3.5 3.5 0 004.95 0l2.5-2.5a3.5 3.5 0 00-4.95-4.95l-1.25 1.25zm-4.69 9.64a2 2 0 010-2.83l2.5-2.5a2 2 0 012.83 0 .75.75 0 001.06-1.06 3.5 3.5 0 00-4.95 0l-2.5 2.5a3.5 3.5 0 004.95 4.95l1.25-1.25a.75.75 0 00-1.06-1.06l-1.25 1.25a2 2 0 01-2.83 0z"></path></svg></a>Other</h3>
+	<p>This program/library and the accompanying materials
+	are made available under the terms of the GNU Lesser Public License v2.1
+	which accompanies this distribution, and is available at
+	<a href="http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html" rel="nofollow">http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html</a></p>
+	<p>A copy of the LGPL should have been included in this release (LICENSE.txt).
+	If it was not, please contact me for a copy, or to notify me of a distribution
+	that has not included it.</p>
+	<p>This contains code copied from Black Rook Base, under the terms of the MIT License (docs/LICENSE-BlackRookBase.txt).</p>
+	<p><sub>Eat your heart out, <a href="https://github.com/devinacker/omgifol">OMGIFOL</a>!</sub></p>
+</article>
