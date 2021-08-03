@@ -13,8 +13,8 @@ BODY {
 	padding-bottom: 32px;
 	padding-left: 16px;
 	padding-right: 16px;
-    margin-left: auto;
-    margin-right: auto;
+	margin-left: auto;
+	margin-right: auto;
 }
 
 A:hover {
@@ -23,15 +23,15 @@ A:hover {
 
 #page-links {
 	max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
+	margin-left: auto;
+	margin-right: auto;
 }
 
 .site-logo {
 	display: block;
 	max-width: 100%;
-    margin-left: auto;
-    margin-right: auto;
+	margin-left: auto;
+	margin-right: auto;
 	height: auto;
 	box-shadow: 0 6px 12px 3px rgba(0, 0, 0, 50%)
 }
@@ -50,8 +50,8 @@ A:hover {
 .site-project-logo {
 	display: block;
 	max-width: 100px;
-    margin-left: auto;
-    margin-right: auto;
+	margin-left: auto;
+	margin-right: auto;
 	height: auto;
 }
 
@@ -65,15 +65,15 @@ A:hover {
 
 .site-release-links {
 	max-width: 1000px;
-    margin-left: auto;
-    margin-right: auto;
+	margin-left: auto;
+	margin-right: auto;
 }
 
 .site-blurb {
 	max-width: 700px;
 	text-align: justify;
-    margin-left: auto;
-    margin-right: auto;
+	margin-left: auto;
+	margin-right: auto;
 }
 
 .download-link {
@@ -90,7 +90,7 @@ A:hover {
 	color: #dddddd;
 	padding: 16px;
 	max-width: 900px;
-    margin-left: auto;
+	margin-left: auto;
 	margin-right: auto;
 }
 
@@ -103,8 +103,8 @@ PRE {
 	background-color: rgb(32, 32, 32);
 	color: #dddddd;
 	padding: 16px;
-    overflow: auto;
-    font-size: 85%;
-    line-height: 1.45;
+	overflow: auto;
+	font-size: 85%;
+	line-height: 1.45;
 	border-radius: 3px;
 }
