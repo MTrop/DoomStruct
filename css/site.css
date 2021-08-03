@@ -76,6 +76,13 @@ A:hover {
 	margin-right: auto;
 }
 
+.example-blurb {
+	max-width: 920px;
+	text-align: justify;
+	margin-left: auto;
+	margin-right: auto;
+}
+
 .download-link {
 	width: 300px;
 	border: 1px solid rgb(8, 37, 46);
@@ -101,9 +108,11 @@ SVG.octicon {
 PRE {
 	font-family: 'Courier New', Courier, monospace;
 	background-color: rgb(32, 32, 32);
+	width: 100%;
+	text-align: left !important;
 	color: #dddddd;
 	padding: 16px;
-	overflow: auto;
+	overflow-x: auto;
 	font-size: 85%;
 	line-height: 1.45;
 	border-radius: 3px;

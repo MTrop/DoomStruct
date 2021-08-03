@@ -44,6 +44,7 @@
 		<!-- Style and Scripts -->
 		<link rel="StyleSheet" type="text/css" href="css/w3.css" />
 		<link rel="StyleSheet" type="text/css" href="css/site.css" />
+		<link rel="StyleSheet" type="text/css" href="css/rainbow.css" />
 		<script type="text/javascript">
 			var REPO_OWNER = 'MTrop';
 			var REPO_NAME = 'DoomStruct';
@@ -82,6 +83,227 @@
 			</div>
 		</div>
 		<div class="w3-row"><div class="w3-col l12 w3-center">&nbsp;</div></div>
+		<div id="intro" class="w3-container">
+			<div class="w3-row">
+				<div class="w3-col l12 w3-center">
+					<h2>Introduction</h2>
+				</div>
+			</div>
+			<div class="w3-row">
+				<div class="w3-col l12 w3-center">
+					<p class="site-blurb">
+						<strong>Doom Struct</strong> is a Java library that does a bunch of Doom Engine game
+						data reading, manipulating, and writing.
+					</p>
+				</div>
+			</div>
+			<div class="w3-row">
+				<div class="w3-col l12 w3-center">
+					<h2>Why?</h2>
+				</div>
+			</div>
+			<div class="w3-row">
+				<div class="w3-col l12 w3-center">
+					<p class="site-blurb">
+						There are several libraries out there for reading data from Doom in many different 
+						programming languages, but there isn't a decent one for Java. And by decent, I mean:
+					</p>
+					<ul class="site-blurb">
+						<li>Useful</li>
+						<li>Documented</li>
+						<li>Performant</li>
+						<li>Efficient</li>
+					</ul>
+					<p class="site-blurb">
+ 						The goal with this library is to get end-users up-and-running quickly with little 
+						boilerplate code, and to ensure clarity within documentation and with written code, 
+						and future-proofing to a reasonable extent.
+					</p>
+				</div>
+			</div>
+			<div class="w3-row">
+				<div class="w3-col l12 w3-center">
+					<h2>What kind of features does it have?</h2>
+				</div>
+			</div>
+			<div class="w3-row">
+				<div class="w3-col l12 w3-center">
+					<ul class="site-blurb">
+						<li>Reads/edits WAD files.</li>
+						<li>Reads PK3 files (zips).</li>
+						<li>Full UDMF parsing/writing support.</li>
+						<li>
+							Reads/edits all Doom data structures in Doom, Hexen/ZDoom, or Strife formats. 
+							This includes textures, patches, lines, vertices, things, sectors, nodes, palettes, colormaps,
+							text, PNG data, music data, sound data, flats, blockmaps, reject, and even ENDOOM-type VGA lumps.
+						</li>
+						<li>Supports PNGs with offset data (grAb).</li>
+						<li>Reads/edits Boom-engine data lumps like ANIMATED and SWITCHES.</li>
+						<li>Contains a utility class for converting Doom graphics to standard Java graphics structures, and vice-versa.</li>
+						<li>Contains a utility class for converting Doom DMX sound data to other formats via the Java SPI, and vice-versa.</li>
+						<li>Contains a utility class for managing texture sets without needing to care too much about Doom's nightmarish texture data setup.</li>
+					</ul>
+				</div>
+			</div>
+			<div id="examples" class="w3-row">
+				<div class="w3-col l12 w3-center">
+					<h2>EXAMPLES</h2>
+				</div>
+			</div>
+			<!-- BEGIN EXAMPLES -->
+			<div class="w3-row example-blurb">
+
+				<p>Open a WAD file (and close it).</p>
+<pre><code data-language="java">WadFile wad = new WadFile("doom2.wad");
+wad.close();
+</code></pre>
+
+				<p>Open <strong>DOOM2.WAD</strong> and read <strong>MAP01</strong> into a Doom Map.</p>
+<pre><code data-language="java">WadFile wad = new WadFile("doom2.wad");
+DoomMap map = MapUtils.createDoomMap(wad, "map01");
+wad.close();
+</code></pre>
+
+				<p>Open <strong>DOOM2.WAD</strong> and fetch all sectors in <strong>MAP29</strong> with the <strong>BLOOD1</strong> floor texture.</p>
+<pre><code data-language="java">WadFile wad = new WadFile("doom2.wad");
+Set&lt;DoomSector> set = wad.getDataAsList("sectors", "map29", DoomSector.class, DoomSector.LENGTH).stream()
+    .filter((sector) -> sector.getFloorTexture().equals("BLOOD1"))
+    .collect(Collectors.toSet());
+wad.close();
+</code></pre>
+
+				<p>Open <strong>DOOM.WAD</strong> and fetch all things in <strong>E1M1</strong> that appear in multiplayer.</p>
+<pre><code data-language="java">WadFile wad = new WadFile("doom.wad");
+Set&lt;DoomThing> set = wad.getDataAsList("things", "e1m1", DoomThing.class, DoomThing.LENGTH).stream()
+    .filter((thing) -> thing.isFlagSet(DoomThingFlags.NOT_SINGLEPLAYER))
+    .collect(Collectors.toSet());
+wad.close();
+</code></pre>
+
+				<p>Open <strong>HEXEN.WAD</strong> and fetch all things in <strong>MAP01</strong> that have a special.</p>
+<pre><code data-language="java">WadFile wad = new WadFile("hexen.wad");
+Set&lt;HexenThing> set = wad.getDataAsList("things", "map01", HexenThing.class, HexenThing.LENGTH).stream()
+    .filter((thing) -> thing.getSpecial() > 0)
+    .collect(Collectors.toSet());
+wad.close();
+</code></pre>
+
+				<p>Open <strong>DOOM.WAD</strong> and fetch all maps that have less than 1000 linedefs.</p>
+<pre><code data-language="java">final WadFile wad = new WadFile("doom.wad");
+Set&lt;String> set = Arrays.asList(MapUtils.getAllMapHeaders(wad)).stream()
+    .filter((header) -> wad.getEntry("linedefs", header).getSize() / DoomLinedef.LENGTH &lt; 1000)
+    .collect(Collectors.toSet());
+wad.close();
+</code></pre>
+
+				<p>Open <strong>SQUARE1.PK3</strong>, fetch <strong>maps/E1A1.WAD</strong> and read it into a UDMF Map.</p>
+<pre><code data-language="java">DoomPK3 pk3 = new DoomPK3("square1.pk3");
+WadBuffer wad = pk3.getDataAsWadBuffer("maps/e1a1.wad");
+UDMFMap map = wad.getTextDataAs("textmap", Charset.forName("UTF-8"), UDMFMap.class);
+pk3.close();
+</code></pre>
+
+				<p>Open <strong>DOOM2.WAD</strong>, read <strong>DEMO2</strong> and figure out how many tics that player 1 was pushing "fire".</p>
+<pre><code data-language="java">WadFile wad = new WadFile("doom2.wad");
+Demo demo = wad.getDataAs("demo2", Demo.class);
+int tics = 0;
+for (int i = 0; i &lt; demo.getTicCount(); i++) {
+    tics += (demo.getTic(i).getAction() & Demo.Tic.ACTION_FIRE) != 0 ? 1 : 0;
+}
+wad.close();
+</code></pre>
+
+				<p>Open <strong>DOOM.WAD</strong> and get MD5 hashes of each entry.</p>
+<pre><code data-language="java">WadFile wad = new WadFile("doom.wad");
+byte[][] hashes = new byte[wad.getEntryCount()][];
+int i = 0;
+for (WadEntry entry : wad)
+    hashes[i++] = MessageDigest.getInstance("MD5").digest(wad.getData(entry));
+wad.close();
+</code></pre>
+
+				<p>Open <strong>DOOM2.WAD</strong>, fetch all <strong>TROO*</strong> (graphic) entries and export them as PNGs.</p>
+<pre><code data-language="java">WadFile wad = new WadFile("doom2.wad");
+final Palette pal = wad.getDataAs("playpal", Palette.class);
+for (WadEntry entry : wad) {
+    if (entry.getName().startsWith("TROO")) {
+        Picture p = wad.getDataAs(entry, Picture.class);
+        ImageIO.write(GraphicUtils.createImage(p, pal), "PNG", new File(entry.getName()+".png"));
+    }
+}
+wad.close();
+</code></pre>
+
+				<p>Open <strong>DOOM.WAD</strong>, fetch all <strong>DS*</strong> (audio) entries, upsample them to 22kHz (cosine interpolation), and export them as WAVs.</p>
+<pre><code data-language="java">WadFile wad = new WadFile("doom.wad");
+for (WadEntry entry : wad) {
+    if (entry.getName().startsWith("DS")) {
+        DMXSound sound = wad.getDataAs(entry, DMXSound.class)
+            .resample(InterpolationType.COSINE, DMXSound.SAMPLERATE_22KHZ);
+        SoundUtils.writeSoundToFile(sound, AudioFileFormat.Type.WAVE, new File(entry.getName() + ".wav"));
+    }
+}
+wad.close();
+</code></pre>
+
+				<p>Open <strong>DOOM2.WAD</strong>, assemble a TextureSet, remove every texture that begins with R, and write it to a new WAD.</p>
+<pre><code data-language="java">WadFile wad = new WadFile("doom2.wad");
+TextureSet textureSet = new TextureSet(
+    wad.getDataAs("pnames", PatchNames.class),
+    wad.getDataAs("texture1", DoomTextureList.class)
+);
+wad.close();
+
+Iterator&lt;TextureSet.Texture> it = textureSet.iterator();
+while (it.hasNext()) {
+    TextureSet.Texture t = it.next();
+    if (t.getName().startsWith("R")) {
+        it.remove();
+    }
+}
+PatchNames pout = new PatchNames();
+DoomTextureList tout = new DoomTextureList();
+textureSet.export(pout, tout);
+
+WadFile newwad = WadFile.createWadFile("new.wad");
+newwad.addData("PNAMES", pout);
+newwad.addData("TEXTURE1", tout);
+newwad.close();
+</code></pre>
+
+				<p>Open <strong>DOOM.WAD</strong>, get the first map of each episode and write it to a new WAD called <strong>OUT.wad</strong> and close both (with one statement!).</p>
+<pre><code data-language="java">WadUtils.openWadAndExtractTo("DOOM.WAD", "OUT.wad", (wad)->
+    WadUtils.withEntries(MapUtils.getMapEntries(wad, "E1M1"))
+        .and(MapUtils.getMapEntries(wad, "E2M1"))
+        .and(MapUtils.getMapEntries(wad, "E3M1"))
+        .and(MapUtils.getMapEntries(wad, "E4M1"))
+    .get()
+);
+</code></pre>
+
+				<p>Open <strong>DOOM2.WAD</strong>, create a new Wad called <strong>TEXTURES.wad</strong> and copy over only a few textures and flats (and also-close them):</p>
+<pre><code data-language="java">try (WadFile source = new WadFile("DOOM2.WAD")) {
+    try (WadFile target = WadFile.createWadFile("TEXTURES.wad")) {
+        try (TextureCopier copier = TextureUtils.createTextureCopier(source, target)) {
+            copier.copyFlat("FLOOR7_1");
+            copier.copyFlat("CEIL5_2");
+            copier.copyTexture("AASHITTY"); // first texture is "null" texture
+            copier.copyTexture("SUPPORT3");
+            copier.copyTexture("SUPPORT2");
+            copier.copyTexture("BIGDOOR1");
+            copier.copyTexture("BIGDOOR2");
+            copier.copyTexture("BIGDOOR3");
+            copier.copyTexture("BIGDOOR4");
+            copier.copyTexture("BIGDOOR5");
+        }
+    }
+}
+</code></pre>
+
+			</div>
+			<!-- END EXAMPLES -->
+		</div>
+		<div class="w3-row"><div class="w3-col l12 w3-center">&nbsp;</div></div>
 		<div id="changelog" class="w3-container">
 			<div class="w3-row">
 				<div class="w3-col l12 w3-center">
@@ -89,26 +311,15 @@
 				</div>
 			</div>
 			<div class="w3-row">
-				<div include-html="changelog.html" class="w3-col l12">
-				</div>
+				<div include-html="changelog.html" class="w3-col l12"></div>
 			</div>
 		</div>
 		<div class="w3-row"><div class="w3-col l12 w3-center">&nbsp;</div></div>
-		<div id="readme" class="w3-container">
-			<div class="w3-row">
-				<div class="w3-col l12 w3-center">
-					<h2>README</h2>
-				</div>
-			</div>
-			<div class="w3-row">
-				<div include-html="readme.html" class="w3-col l12">
-				</div>
-			</div>
-		</div>
 		<div class="w3-row site-footer">
 			<div class="w3-col s12 w3-center w3-small">
 				Copyright (C) Matt "MTrop" Tropiano<br/>
 				<a href="https://www.dafont.com/amazdoom.font">AmazDoom Font</a> by Amazingmax<br/>
+				<a href="https://craig.is/making/rainbows">Rainbow</a> syntax highlighter by Craig Campbell<br/>
 				Doom is a registered trademark of id Software, LLC<br/>
 				Not affiliated with id Software LLC, Bethesda Softworks LLC, nor ZeniMax Media Inc.
 			</div>
@@ -116,5 +327,6 @@
 		<script type="text/javascript" src="js/dom.js"></script>
 		<!-- This page's JS. -->
 		<script type="text/javascript" src="js/site.js"></script>
+		<script type="text/javascript" src="js/rainbow-custom.min.js"></script>
 	</body>
 </html>
