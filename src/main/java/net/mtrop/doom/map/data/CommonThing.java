@@ -13,14 +13,13 @@ import net.mtrop.doom.map.data.flags.HexenThingFlags;
 import net.mtrop.doom.map.data.flags.MBFThingFlags;
 import net.mtrop.doom.map.data.flags.StrifeThingFlags;
 import net.mtrop.doom.map.data.flags.ZDoomThingFlags;
-import net.mtrop.doom.object.BinaryObject;
 import net.mtrop.doom.util.RangeUtils;
 
 /**
  * Contains common elements of all binary things.
  * @author Matthew Tropiano
  */
-abstract class CommonThing implements BinaryObject
+abstract class CommonThing
 {
 	/** Thing X position. */
 	protected int x;

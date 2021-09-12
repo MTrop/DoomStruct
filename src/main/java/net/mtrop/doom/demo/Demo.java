@@ -13,14 +13,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 import net.mtrop.doom.object.BinaryObject;
 import net.mtrop.doom.struct.io.SerialReader;
 import net.mtrop.doom.struct.io.SerialWriter;
 import net.mtrop.doom.util.MathUtils;
+import net.mtrop.doom.util.NameUtils;
 import net.mtrop.doom.util.RangeUtils;
+import net.mtrop.doom.util.TextUtils;
 
 /**
  * This class is an abstract representation of a DEMO lump in Doom.
@@ -30,6 +34,7 @@ import net.mtrop.doom.util.RangeUtils;
  * The method {@link #readBytes(InputStream)} will read until it detects the end of the DEMO
  * information.
  * @author Matthew Tropiano
+ * @since [NOW] Certain methods will throw {@link UnsupportedOperationException} if a setting cannot be examined or set, depending on demo version.
  */
 public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 {
@@ -45,6 +50,7 @@ public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 	public static final int VERSION_19 =			109;  
 	/** Demo version 1.9 byte. */
 	public static final int VERSION_FINALDOOM =		111;  
+
 	/** Demo version Boom. */
 	public static final int VERSION_BOOM =			200;  
 	/** Demo version Boom v2.01. */
@@ -65,6 +71,9 @@ public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 	public static final int VERSION_PRBOOM240 =		213;  
 	/** Demo version PrBoom v2.5.0.X. */
 	public static final int VERSION_PRBOOM250 =		214;  
+
+	/** Demo version: Extended. */
+	public static final int VERSION_EXTENDED =		255;  
 
 	/** Demo skill byte (very easy). */
 	public static final byte SKILL_VERY_EASY =		0x00;  
@@ -190,15 +199,22 @@ public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 	public static final int BOOM_MIN_MAXPLAYERS = 		32;
 	
 	/** MBF Demo Signature */
-	public static final byte[] MBF_SIGNATURE = {0x1d, 'M', 'B', 'F', (byte)0xe6, '\0'};
+	public static final byte[] MBF_SIGNATURE =      {0x1d, 'M', 'B', 'F', (byte)0xe6, '\0'};
 	/** Boom Demo Signature */
-	public static final byte[] BOOM_SIGNATURE = {0x1d, 'B', 'o', 'o', 'm', (byte)0xe6};
+	public static final byte[] BOOM_SIGNATURE =     {0x1d, 'B', 'o', 'o', 'm', (byte)0xe6};
+	/** Eternity Extended Demo Signature */
+	public static final byte[] ETERNITY_SIGNATURE = {'E', 'T', 'E', 'R', 'N', '\0'};
 	
 	/** Number of players. */
 	private int players;
 
 	/** Demo version (game version). */
 	private int version;
+	/** Demo version extended signature. */
+	private byte[] extendedVersionSignature;
+	/** Demo subversion. */
+	private int subversion;	
+	
 	/** Demo skill level. */
 	private int skill;
 	/** Demo episode. */
@@ -239,6 +255,8 @@ public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 	private boolean monsterInfighting;
 	/** Enable/disable Dogs (Man's Best Friend). */
 	private boolean enableDogs;
+	/** BFG type. */
+	private int bfgType;
 	/** Enable/Disable monkeys. */
 	private boolean enableMonkeys;
 	/** Can dogs jump?. */
@@ -249,18 +267,27 @@ public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 	private boolean monstersAvoidHazards;
 	/** Monsters are affected by friction. */
 	private boolean monsterFriction;
-	/** Number of helpers. */
+	/** Number of MBF helpers. */
 	private int helperCount;
-	
-	/** Force something with BSPs. */
-	private boolean	forceOldBSP;
-	
+
 	/** Compatibility flags. */
 	private boolean[] compatibilityFlags;
 
 	/** Demo compatibility level. */
 	private int compatibilityLevel;
 	
+	/** If Eternity, DMFlags are recorded. */
+	private int dmFlags;
+	/** If Eternity, the map lump. */
+	private String mapLump;
+	
+	/** Autoaim bit. */
+	private boolean autoAim;
+	/** Allow mouselook. */
+	private boolean allowMouseLook;
+	/** Pitched flight. */
+	private boolean pitchedFlight;
+
 	/** List of game tics. */
 	private List<Tic[]> gameTics;
 
@@ -292,6 +319,9 @@ public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 	{
 		gameTics = new ArrayList<Tic[]>(35*150); // 3 minutes of tics.
 		setVersion(VERSION_19);
+		this.subversion = 0;
+		this.extendedVersionSignature = null;
+		
 		setCompatibilityLevel(COMPLEVEL_DOOM_19);
 		setSkill(SKILL_MEDIUM);
 		setEpisode(1);
@@ -313,6 +343,7 @@ public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 		setFriendFollowDistance(0);
 		setMonsterInfighting(true);
 		setEnableDogs(false);
+		setBFGType(0);
 		setEnableMonkeys(false);
 		setDogsJump(false);
 		setMonsterBacking(false);
@@ -321,7 +352,10 @@ public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 		setHelperCount(0);
 		for (int i = 0; i < COMPFLAG_LENGTH; i++)
 			setCompatibilityFlag(i, false);
-		setForceOldBSP(false);
+		
+		this.dmFlags = 0;
+		this.mapLump = null;
+		
 	}
 	
 	/**
@@ -350,14 +384,59 @@ public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 	 * <p>
 	 * This affects how the demo is exported if written to an output stream of some kind.
 	 * @param version the version value.
-	 * @throws IllegalArgumentException if version is outside the range 0 to 255.
+	 * @throws IllegalArgumentException if version is outside the range 0 to 254.
+	 * @since [NOW], this does not accept 255. Use {@link #setExtendedVersion(int, int, byte[])}.
 	 */
 	public void setVersion(int version)
 	{
-		RangeUtils.checkByteUnsigned("Version", version);
+		RangeUtils.checkRange("Version", 0, 254, version);
 		this.version = version;
+		this.subversion = 0;
+		this.extendedVersionSignature = null;
 	}
 
+	/**
+	 * @return the demo sub-version. 
+	 */
+	public int getSubversion() 
+	{
+		return subversion;
+	}
+	
+	/**
+	 * Sets extended version parameters.
+	 * <p>
+	 * This affects how the demo is exported if written to an output stream of some kind.
+	 * @param version the version number. Must be 255 or higher.
+	 * @param subversion the subversion. Must be between 0 to 255.
+	 * @param extendedVersionSignature the 6-byte signature for the extended demo port.
+	 * @throws IllegalArgumentException if version is &lt; 255, if subversion is outside the range 0 to 255, or the signature isn't 6 bytes long.
+	 * @since [NOW]
+	 */
+	public void setExtendedVersion(int version, int subversion, byte[] extendedVersionSignature) 
+	{
+		RangeUtils.checkRange("Version", 255, Integer.MAX_VALUE, version);
+		RangeUtils.checkRange("Subversion", 0, 255, subversion);
+		Objects.requireNonNull(extendedVersionSignature);
+		if (extendedVersionSignature.length != 6)
+			throw new IllegalArgumentException("Version signature must be 6 bytes long.");
+		
+		this.version = version;
+		this.subversion = subversion;
+		this.extendedVersionSignature = extendedVersionSignature;
+	}
+
+	/**
+	 * Gets if this Demo has a 6-byte extended signature (Boom or better).
+	 * @return this demo's extended 6-byte signature.
+	 * @since [NOW]
+	 */
+	public byte[] getExtendedVersionSignature()
+	{
+		return extendedVersionSignature;
+	}
+	
+	
 	/**
 	 * Gets the skill level that this demo is for.
 	 * See the SKILL macros for the important values.
@@ -683,6 +762,27 @@ public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 	}
 
 	/**
+	 * Gets the BFG type in use.
+	 * @return the BFG type id.
+	 * @since [NOW]
+	 */
+	public int getBFGType()
+	{
+		return bfgType;
+	}
+	
+	/**
+	 * Sets the BFG type in use.
+	 * @param bfgType the BFG type id.
+	 * @since [NOW]
+	 */
+	public void setBFGType(int bfgType) 
+	{
+		RangeUtils.checkRange("BFG type", 0, 255, bfgType);
+		this.bfgType = bfgType;
+	}
+	
+	/**
 	 * Gets if helper monkeys are enabled.
 	 * @return true if so, false if not.
 	 */
@@ -783,28 +883,12 @@ public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 	/**
 	 * Sets how many helpers are spawned.
 	 * @param helperCount the amount of helpers.
+	 * @throws IllegalArgumentException if helperCount is outside the range 0 to 255.
 	 */
 	public void setHelperCount(int helperCount)
 	{
+		RangeUtils.checkByteUnsigned("Helper count", helperCount);
 		this.helperCount = helperCount;
-	}
-
-	/**
-	 * Gets if old BSP methods are forced.
-	 * @return true if so, false if not.
-	 */
-	public boolean getForceOldBSP()
-	{
-		return forceOldBSP;
-	}
-
-	/**
-	 * Sets if old BSP methods are forced.
-	 * @param forceOldBSP true if so, false if not.
-	 */
-	public void setForceOldBSP(boolean forceOldBSP)
-	{
-		this.forceOldBSP = forceOldBSP;
 	}
 
 	/**
@@ -937,20 +1021,86 @@ public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 		return gameTics.iterator();
 	}
 
+	// Calculates the "full version".
+	private static int demoFullVersion(int version, int subversion) 
+	{
+		return (version << 8) | subversion;
+	}
+	
+	// Reads the options chunk.
+	private void readOptions(InputStream in) throws IOException
+	{
+		SerialReader optr = new SerialReader(SerialReader.LITTLE_ENDIAN);
+		
+		// read Boom options.
+		setMonstersRememberTarget(optr.readBoolean(in));
+		setEnableFriction(optr.readBoolean(in));
+		setEnableWeaponRecoil(optr.readBoolean(in));
+		setAllowPushers(optr.readBoolean(in));
+
+		optr.readByte(in); // skip byte
+		
+		setEnablePlayerBobbing(optr.readBoolean(in));
+		setMonsterRespawn(optr.readBoolean(in));
+		setFastMonsters(optr.readBoolean(in));
+		setNoMonsters(optr.readBoolean(in));
+		
+		setDemoInsurance(optr.readByte(in));
+		
+		int r = 0;
+		r |= optr.readByte(in) & 0x0ff; r <<= 8;
+		r |= optr.readByte(in) & 0x0ff; r <<= 8;
+		r |= optr.readByte(in) & 0x0ff; r <<= 8;
+		r |= optr.readByte(in) & 0x0ff;
+		setRandomSeed(r);
+		
+		if (compatibilityLevel >= VERSION_LXDOOM)
+		{
+			setMonsterInfighting(optr.readBoolean(in));
+			setEnableDogs(optr.readBoolean(in));
+			setBFGType(optr.readUnsignedByte(in));
+			
+			optr.readByte(in); // skip byte
+			
+			int f = 0;
+			f |= optr.readByte(in) & 0x0ff; r <<= 8;
+			f |= optr.readByte(in) & 0x0ff;
+			setFriendFollowDistance(f);
+			
+			setMonsterBacking(optr.readBoolean(in));
+			setMonstersAvoidHazards(optr.readBoolean(in));
+			setMonsterFriction(optr.readBoolean(in));
+			setHelperCount(optr.readByte(in));
+			setDogsJump(optr.readBoolean(in));
+			setEnableMonkeys(optr.readBoolean(in));
+			
+			for (int i = 0; i < COMPFLAG_LENGTH; i++)
+				setCompatibilityFlag(i, optr.readBoolean(in));
+			
+			int fullDemoVersion = demoFullVersion(version, subversion);
+
+			if (fullDemoVersion >= demoFullVersion(331, 8))
+				autoAim = optr.readBoolean(in);
+			
+			if (version >= 333)
+				allowMouseLook = optr.readBoolean(in);
+			
+			if (fullDemoVersion >= demoFullVersion(340, 23))
+				pitchedFlight = optr.readBoolean(in);
+		}
+	}
+	
 	@Override
 	public void readBytes(InputStream in) throws IOException
 	{
 		reset();
 		SerialReader sr = new SerialReader(SerialReader.LITTLE_ENDIAN);
+		boolean LONGTICS = false;
 		
 		version = sr.readUnsignedByte(in);
+		subversion = 0;
 		
-		final boolean VERSION0 = (version >= 0 && version <= 4); // Doom 1.2 has no version byte
-		final boolean VERSION1 = (version >= VERSION_14 && version <= VERSION_FINALDOOM);
-		final boolean VERSION2 = (version >= VERSION_BOOM && version <= VERSION_PRBOOM250);
-		final boolean LONGTICS = version == VERSION_FINALDOOM || version == VERSION_PRBOOM250;
-		
-		if (VERSION0)
+		if (version >= 0 && version <= 4) // Doom 1.2 has no version byte
 		{
 			setCompatibilityLevel(COMPLEVEL_DOOM_12);
 			setSkill(version); // read byte was skill.
@@ -958,8 +1108,9 @@ public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 			setMap(sr.readUnsignedByte(in));
 			setVersion(0);
 		}
-		else if (VERSION1)
+		else if (version >= VERSION_14 && version <= VERSION_FINALDOOM)
 		{
+			LONGTICS = version == VERSION_FINALDOOM;
 			if (version <= VERSION_1666)
 				setCompatibilityLevel(COMPLEVEL_DOOM_1666);
 			else if (version == VERSION_19)
@@ -976,9 +1127,10 @@ public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 			setNoMonsters(sr.readBoolean(in));
 			setViewpoint(sr.readUnsignedByte(in));
 		}
-		else if (VERSION2)
+		else if ((version >= VERSION_BOOM && version <= VERSION_PRBOOM250) || version == VERSION_EXTENDED)
 		{
-			byte[] head = sr.readBytes(in, 6); // read header
+			boolean eternity = false;
+			extendedVersionSignature = sr.readBytes(in, 6); // read header
 			
 			// set compatibility.
 			switch (version)
@@ -997,9 +1149,9 @@ public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 						setCompatibilityLevel(COMPLEVEL_BOOM);
 					break;
 				case VERSION_LXDOOM:
-					if (head[1] == 'B')
+					if (extendedVersionSignature[1] == 'B')
 						setCompatibilityLevel(COMPLEVEL_LXDOOM);
-					else if (head[1] == 'M')
+					else if (extendedVersionSignature[1] == 'M')
 					{
 						setCompatibilityLevel(COMPLEVEL_MBF);
 						sr.readByte(in);
@@ -1026,74 +1178,45 @@ public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 					sr.readByte(in);
 					break;
 				case VERSION_PRBOOM250:
+					LONGTICS = true;
 					setCompatibilityLevel(COMPLEVEL_CURRENT_PRBOOM);
 					sr.readByte(in);
 					break;
+				case VERSION_EXTENDED:
+					version = sr.readInt(in);
+					subversion = sr.readUnsignedByte(in);
+					setCompatibilityLevel(sr.readUnsignedByte(in));
+					eternity = Arrays.equals(ETERNITY_SIGNATURE, extendedVersionSignature);
+					break;
 			}
-			
+
+			int fullDemoVersion = demoFullVersion(version, subversion);
+
 			setSkill(sr.readUnsignedByte(in));
 			setEpisode(sr.readUnsignedByte(in));
 			setMap(sr.readUnsignedByte(in));
 			setGameMode(sr.readUnsignedByte(in));
 			setViewpoint(sr.readUnsignedByte(in));
-			
-			byte[] options = sr.readBytes(in, OPTION_FLAGS_LENGTH);
-			ByteArrayInputStream bis = new ByteArrayInputStream(options);
-			SerialReader optr = new SerialReader(SerialReader.LITTLE_ENDIAN);
-			
-			// read Boom options.
-			setMonstersRememberTarget(optr.readBoolean(bis));
-			setEnableFriction(optr.readBoolean(bis));
-			setEnableWeaponRecoil(optr.readBoolean(bis));
-			setAllowPushers(optr.readBoolean(bis));
-			
-			optr.readByte(bis); // skip byte
-			
-			setEnablePlayerBobbing(optr.readBoolean(bis));
-			setMonsterRespawn(optr.readBoolean(bis));
-			setFastMonsters(optr.readBoolean(bis));
-			setNoMonsters(optr.readBoolean(bis));
-			
-			setDemoInsurance(optr.readByte(bis));
-			
-			int r = 0;
-			r |= optr.readByte(bis) & 0x0ff; r <<= 8;
-			r |= optr.readByte(bis) & 0x0ff; r <<= 8;
-			r |= optr.readByte(bis) & 0x0ff; r <<= 8;
-			r |= optr.readByte(bis) & 0x0ff;
-			setRandomSeed(r);
-			
-			if (compatibilityLevel >= COMPLEVEL_MBF)
+						
+			if (eternity) 
 			{
-				setMonsterInfighting(optr.readBoolean(bis));
-				setEnableDogs(optr.readBoolean(bis));
-				
-				optr.readShort(bis); // skip 2 bytes
-				
-				int f = 0;
-				f |= optr.readByte(bis) & 0x0ff; r <<= 8;
-				f |= optr.readByte(bis) & 0x0ff;
-				setFriendFollowDistance(f);
-				
-				setMonsterBacking(optr.readBoolean(bis));
-				setMonstersAvoidHazards(optr.readBoolean(bis));
-				setMonsterFriction(optr.readBoolean(bis));
-				setHelperCount(optr.readByte(bis));
-				setDogsJump(optr.readBoolean(bis));
-				setEnableMonkeys(optr.readBoolean(bis));
-				
-				for (int i = 0; i < COMPFLAG_LENGTH; i++)
-					compatibilityFlags[i] = optr.readBoolean(bis);
-				
-				setForceOldBSP(optr.readBoolean(bis));
+				if (!LONGTICS)
+					LONGTICS = fullDemoVersion >= demoFullVersion(333, 50);
+				if (version >= 331)
+					dmFlags = sr.readInt(in);
+				if (fullDemoVersion >= demoFullVersion(329, 5))
+					mapLump = NameUtils.nullTrim(sr.readString(in, 8, TextUtils.ASCII));
 			}
-			else if (version == VERSION_BOOM)
-			{
-				sr.readBytes(in, 256 - OPTION_FLAGS_LENGTH);
-			}
+			
+			byte[] options = new byte[256];
+			if (in.read(options) < 256)
+				throw new IOException("Not enough option bytes.");
+			readOptions(new ByteArrayInputStream(options));
 		}
 		else
-			throw new IOException("Not a DEMO lump. Found version "+version);
+		{
+			throw new IOException("Not a DEMO lump. Found version " + version);
+		}
 		
 		int p = 0;
 		for (int i = 0; i < MAX_PLAYERS; i++)
@@ -1125,6 +1248,55 @@ public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 		
 	}
 
+	// Writes the options chunk.
+	private void writeOptions(OutputStream optout) throws IOException
+	{
+		SerialWriter optwr = new SerialWriter(SerialWriter.LITTLE_ENDIAN);
+		
+		optwr.writeBoolean(optout, getMonstersRememberTarget());
+		optwr.writeBoolean(optout, getEnableFriction());
+		optwr.writeBoolean(optout, getEnableWeaponRecoil());
+		optwr.writeBoolean(optout, getAllowPushers());
+		
+		optwr.writeBoolean(optout, false); // pad
+
+		optwr.writeBoolean(optout, getEnablePlayerBobbing());
+		optwr.writeBoolean(optout, getMonsterRespawn());
+		optwr.writeBoolean(optout, getFastMonsters());
+		optwr.writeBoolean(optout, getNoMonsters());
+
+		optwr.writeUnsignedByte(optout, (short)getDemoInsurance());
+		
+		int r = getRandomSeed();
+		optwr.writeUnsignedByte(optout, (short)(r & 0x0ff)); r >>>= 8;
+		optwr.writeUnsignedByte(optout, (short)(r & 0x0ff)); r >>>= 8;
+		optwr.writeUnsignedByte(optout, (short)(r & 0x0ff)); r >>>= 8;
+		optwr.writeUnsignedByte(optout, (short)(r & 0x0ff));
+		
+		if (compatibilityLevel >= COMPLEVEL_MBF)
+		{
+			optwr.writeBoolean(optout, getMonsterInfighting());
+			optwr.writeBoolean(optout, getEnableDogs());
+			optwr.writeUnsignedByte(optout, getBFGType());
+
+			optwr.writeUnsignedByte(optout, 0); // skip byte
+			
+			int f = getFriendFollowDistance();
+			optwr.writeUnsignedByte(optout, (short)(f & 0x0ff)); f >>>= 8;
+			optwr.writeUnsignedByte(optout, (short)(f & 0x0ff));
+
+			optwr.writeBoolean(optout, getMonsterBacking());
+			optwr.writeBoolean(optout, getMonstersAvoidHazards());
+			optwr.writeBoolean(optout, getMonsterFriction());
+			optwr.writeUnsignedByte(optout, (short)getHelperCount());
+			optwr.writeBoolean(optout, getDogsJump());
+			optwr.writeBoolean(optout, getEnableMonkeys());
+
+			for (int i = 0; i < COMPFLAG_LENGTH; i++)
+				optwr.writeBoolean(optout, compatibilityFlags[i]);
+		}
+	}
+
 	@Override
 	public void writeBytes(OutputStream out) throws IOException
 	{
@@ -1132,8 +1304,8 @@ public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 		
 		final boolean VERSION0 = (version == VERSION_12); // Doom 1.2 has no version byte
 		final boolean VERSION1 = (version >= VERSION_14 && version <= VERSION_FINALDOOM);
-		final boolean VERSION2 = (version >= VERSION_BOOM && version <= VERSION_PRBOOM250);
-		final boolean LONGTICS = version == VERSION_FINALDOOM || version == VERSION_PRBOOM250;
+		final boolean VERSION2 = (version >= VERSION_BOOM && version <= VERSION_PRBOOM250) || version >= VERSION_EXTENDED;
+		final boolean LONGTICS = version >= VERSION_FINALDOOM;
 		
 		if (!VERSION0)
 		{
@@ -1157,7 +1329,13 @@ public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 		}
 		else if (VERSION2)
 		{
-			switch (version)
+			if (version >= VERSION_EXTENDED)
+			{
+				sw.writeBytes(out, extendedVersionSignature);
+				sw.writeInt(out, version);
+				sw.writeUnsignedByte(out, subversion);
+			}
+			else switch (version)
 			{
 				case VERSION_BOOM:
 				case VERSION_BOOM201:
@@ -1197,60 +1375,11 @@ public class Demo implements BinaryObject, Iterable<Demo.Tic[]>
 			sw.writeBoolean(out, getNoMonsters());
 			sw.writeUnsignedByte(out, (short)getViewpoint());
 			
-			// start option block
 			ByteArrayOutputStream optout = new ByteArrayOutputStream();
-			SerialWriter optwr = new SerialWriter(SerialWriter.LITTLE_ENDIAN);
-			
-			optwr.writeBoolean(optout, getMonstersRememberTarget());
-			optwr.writeBoolean(optout, getEnableFriction());
-			optwr.writeBoolean(optout, getEnableWeaponRecoil());
-			optwr.writeBoolean(optout, getAllowPushers());
-			
-			optwr.writeBoolean(optout, false); // pad
-
-			optwr.writeBoolean(optout, getEnablePlayerBobbing());
-			optwr.writeBoolean(optout, getMonsterRespawn());
-			optwr.writeBoolean(optout, getFastMonsters());
-			optwr.writeBoolean(optout, getNoMonsters());
-
-			optwr.writeUnsignedByte(optout, (short)getDemoInsurance());
-			
-			int r = getRandomSeed();
-			optwr.writeUnsignedByte(optout, (short)(r & 0x0ff)); r >>>= 8;
-			optwr.writeUnsignedByte(optout, (short)(r & 0x0ff)); r >>>= 8;
-			optwr.writeUnsignedByte(optout, (short)(r & 0x0ff)); r >>>= 8;
-			optwr.writeUnsignedByte(optout, (short)(r & 0x0ff));
-			
-			if (compatibilityLevel >= COMPLEVEL_MBF)
-			{
-				optwr.writeBoolean(optout, getMonsterInfighting());
-				optwr.writeBoolean(optout, getEnableDogs());
-				
-				optwr.writeShort(optout, (short)0); // skip 2 bytes
-				
-				int f = getFriendFollowDistance();
-				optwr.writeUnsignedByte(optout, (short)(f & 0x0ff)); f >>>= 8;
-				optwr.writeUnsignedByte(optout, (short)(f & 0x0ff));
-
-				optwr.writeBoolean(optout, getMonsterBacking());
-				optwr.writeBoolean(optout, getMonstersAvoidHazards());
-				optwr.writeBoolean(optout, getMonsterFriction());
-				optwr.writeUnsignedByte(optout, (short)getHelperCount());
-				optwr.writeBoolean(optout, getDogsJump());
-				optwr.writeBoolean(optout, getEnableMonkeys());
-
-				for (int i = 0; i < COMPFLAG_LENGTH; i++)
-					optwr.writeBoolean(optout, compatibilityFlags[i]);
-
-				optwr.writeBoolean(optout, getForceOldBSP());
-			}
-			else if (version == VERSION_BOOM)
-			{
-				sw.writeBytes(optout, new byte[256 - OPTION_FLAGS_LENGTH]);
-			}
-
-			sw.writeBytes(out, optout.toByteArray());
-			// end option block.
+			writeOptions(optout);
+			byte[] optbytes = optout.toByteArray();
+			sw.writeBytes(out, optbytes);
+			sw.writeBytes(out, new byte[OPTION_FLAGS_LENGTH - optbytes.length]);
 		}
 
 		int p = getPlayers();

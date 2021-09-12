@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
 
+import net.mtrop.doom.object.BinaryObject;
 import net.mtrop.doom.struct.io.SerialReader;
 import net.mtrop.doom.struct.io.SerialWriter;
 import net.mtrop.doom.util.RangeUtils;
@@ -20,7 +21,7 @@ import net.mtrop.doom.util.RangeUtils;
  * Hexen/ZDoom 16-byte format implementation of Linedef.
  * @author Matthew Tropiano
  */
-public class HexenLinedef extends CommonLinedef 
+public class HexenLinedef extends CommonLinedef implements BinaryObject
 {
 	/** Byte length of this object. */
 	public static final int LENGTH = 16;

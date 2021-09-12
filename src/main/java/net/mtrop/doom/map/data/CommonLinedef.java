@@ -13,14 +13,13 @@ import net.mtrop.doom.map.data.flags.DoomLinedefFlags;
 import net.mtrop.doom.map.data.flags.HexenLinedefFlags;
 import net.mtrop.doom.map.data.flags.StrifeLinedefFlags;
 import net.mtrop.doom.map.data.flags.ZDoomLinedefFlags;
-import net.mtrop.doom.object.BinaryObject;
 import net.mtrop.doom.util.RangeUtils;
 
 /**
  * Contains common elements of all binary linedefs.
  * @author Matthew Tropiano
  */
-abstract class CommonLinedef implements BinaryObject
+abstract class CommonLinedef
 {
 	/** Vertex start. */
 	protected int vertexStartIndex;
