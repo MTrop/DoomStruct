@@ -33,10 +33,14 @@ import net.mtrop.doom.util.TextUtils;
  * The class that reads WadFile information and provides random access to Wad files.
  * <p>
  * Use of this class is recommended for reading WAD information or small additions of data, as the overhead needed to
- * do so is minimal in this class. Bulk reads/additions/writes/changes are best left for the {@link WadBuffer} class. 
+ * do so is minimal in this class. 
+ * <p>
  * Many writing I/O operations will cause the opened file to be changed many times, the length of time of 
  * which being dictated by the length of the entry list (as the list grows, so does the time it takes to write/change it).
- * <p>Since this WadFile maintains current file position for reads and writes, most operations are not thread-safe!
+ * Bulk reads/additions/writes/changes are best left for the {@link WadBuffer} class, however,
+ * if only additions need to happen, using {@link Adder} via {@link #createAdder()} is a viable method for 
+ * bulk addition with little overhead.
+ * <p>Since this WadFile maintains current file position for reads and writes, most operations are <b>not thread-safe!</b>
  * @author Matthew Tropiano
  */
 public class WadFile implements Wad, AutoCloseable
@@ -63,10 +67,16 @@ public class WadFile implements Wad, AutoCloseable
 	/** Offset of the beginning of the entry list. */
 	private int entryListOffset;
 	
+	/** If true, writing is possible to this WadFile. */
+	private boolean writeEnabled;
+	/** Flush on close switch. */
+	private boolean flushOnClose;
+	
 	/**
 	 * Opens a WadFile from a file specified by "path."
-	 * @param path	the path to the File;
-	 * @throws IOException if the file can't be read.
+	 * The file will be opened in a mode appropriate for file permission capabilities. 
+	 * @param path the path to the File.
+	 * @throws IOException if the file can't be read or an incompatible mode was used for access.
 	 * @throws FileNotFoundException if the file can't be found.
 	 * @throws SecurityException if you don't have permission to access the file.
 	 * @throws WadException if the file isn't a Wad file.
@@ -74,13 +84,34 @@ public class WadFile implements Wad, AutoCloseable
 	 */
 	public WadFile(String path) throws IOException
 	{
-		this(new File(path));
+		this(new File(path), null);
+	}
+
+	/**
+	 * Opens a WadFile from a file specified by "path."
+	 * @param path the path to the File.
+	 * @param readOnly if <code>true</code>, the file will be opened in read-only mode. 
+	 * 		If <code>false</code>, this will attempt to open the file in a mode that allows writing.
+	 * 		If <code>null</code>, this will attempt to detect whether or not the file can be written
+	 * 		to. If so, open in a writable mode. If not, open in read-only mode.
+	 * @throws IOException if the file can't be read or an incompatible mode was used for access.
+	 * @throws FileNotFoundException if the file can't be found.
+	 * @throws SecurityException if you don't have permission to access the file.
+	 * @throws WadException if the file isn't a Wad file.
+	 * @throws NullPointerException if <code>path</code> is null.
+	 * @see File#canWrite()
+	 * @since 2.14.0
+	 */
+	public WadFile(String path, Boolean readOnly) throws IOException
+	{
+		this(new File(path), readOnly);
 	}
 
 	/**
 	 * Opens a WadFile from a file.
+	 * The file will be opened in a mode appropriate for file permission capabilities. 
 	 * @param f	the file.
-	 * @throws IOException if the file can't be read.
+	 * @throws IOException if the file can't be read or an incompatible mode was used for access.
 	 * @throws FileNotFoundException if the file can't be found.
 	 * @throws SecurityException if you don't have permission to access the file.
 	 * @throws WadException if the file isn't a Wad file.
@@ -88,10 +119,31 @@ public class WadFile implements Wad, AutoCloseable
 	 */
 	public WadFile(File f) throws IOException
 	{
+		this(f, null);
+	}
+	
+	/**
+	 * Opens a WadFile from a file.
+	 * @param f	the file.
+	 * @param readOnly if <code>true</code>, the file will be opened in read-only mode. 
+	 * 		If <code>false</code>, this will attempt to open the file in a mode that allows writing.
+	 * 		If <code>null</code>, this will attempt to detect whether or not the file can be written
+	 * 		to. If so, open in a writable mode. If not, open in read-only mode.
+	 * @throws IOException if the file can't be read or an incompatible mode was used for access.
+	 * @throws FileNotFoundException if the file can't be found.
+	 * @throws SecurityException if you don't have permission to access the file.
+	 * @throws WadException if the file isn't a Wad file.
+	 * @throws NullPointerException if <code>f</code> is null.
+	 * @since 2.14.0
+	 */
+	public WadFile(File f, Boolean readOnly) throws IOException
+	{
 		if (!f.exists())
 			throw new FileNotFoundException(f.getPath() + " does not exist!");
 		
-		this.file = new RandomAccessFile(f, "rws");
+		this.writeEnabled = readOnly == null ? f.canWrite() : !readOnly;
+		
+		this.file = new RandomAccessFile(f, writeEnabled ? "rws" : "r");
 		byte[] buffer = new byte[4];
 
 		// read header
@@ -232,6 +284,7 @@ public class WadFile implements Wad, AutoCloseable
 	{
 		writeHeader();
 		writeEntryList();
+		flushOnClose = false;
 	}
 
 	/**
@@ -468,7 +521,7 @@ public class WadFile implements Wad, AutoCloseable
 	 * The overhead for multiple additions may be expensive I/O-wise depending on the Wad implementation.
 	 * <p>
 	 * <b>NOTE: If this is called with <code>noFlush</code> being true, you <i>must</i> call {@link #flushEntries()} or
-	 * the Wad file will be in an unreadable state!</b>
+	 * get {@link #close()} called on this somehow (either directly or auto-closed via <code>try</code>) to close the Wad correctly, or the Wad file will be in an unreadable state!</b>
 	 * @param index the index at which to add the entry.
 	 * @param entryName the name of the entry to add this as.
 	 * @param in the input stream to read.
@@ -490,7 +543,9 @@ public class WadFile implements Wad, AutoCloseable
 	
 		WadEntry entry = WadEntry.create(entryName, offset, len);
 		entries.add(index, entry);
-	
+		
+		flushOnClose = noFlush;
+		
 		if (!noFlush)
 			flushEntries();
 		return entry;
@@ -527,9 +582,17 @@ public class WadFile implements Wad, AutoCloseable
 		return entries.iterator();
 	}
 
+	/**
+	 * Closes this Wad, but calls {@link #flushEntries()} first to commit 
+	 * any changes that happened that did not auto-flush the entries, if
+	 * writing is enabled on this file.
+	 * @throws IOException if an error occurred during close.
+	 */
 	@Override
 	public void close() throws IOException
 	{
+		if (flushOnClose)
+			flushEntries();
 		file.close();
 	}
 	

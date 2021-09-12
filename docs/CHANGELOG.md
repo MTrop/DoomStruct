@@ -3,6 +3,13 @@ Doom Struct (C) 2015-2021
 by Matt Tropiano et al. (see AUTHORS.txt)
 
 
+Changed in 2.14.0
+-----------------
+
+- `Added` WadFile constructors can now specify read or write mode.
+- `Changed` WadFiles are now opened in an appropriate mode due to file read/write capability by default.
+
+
 Changed in 2.13.0
 -----------------
 
