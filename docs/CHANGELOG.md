@@ -1,4 +1,4 @@
-Doom Struct (C) 2015-2021
+Doom Struct (C) 2015-2022
 =========================
 by Matt Tropiano et al. (see AUTHORS.txt)
 

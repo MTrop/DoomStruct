@@ -1,5 +1,5 @@
 # Doom Struct
-Copyright (c) 2015 - 2021 Matt Tropiano  
+Copyright (c) 2015 - 2022 Matt Tropiano  
 
 [Latest Release](https://github.com/MTrop/DoomStruct/releases/latest)
 
