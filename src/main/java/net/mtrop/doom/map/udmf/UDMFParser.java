@@ -320,6 +320,8 @@ class UDMFParser extends Parser
 			addDelimiter("}", TYPE_RBRACE);
 			addDelimiter("+", TYPE_PLUS);
 			addDelimiter("-", TYPE_MINUS);
+			
+			setDecimalSeparator('.');
 		}
 		
 	}

@@ -3,6 +3,13 @@ Doom Struct (C) 2015-2021
 by Matt Tropiano et al. (see AUTHORS.txt)
 
 
+Changed in 2.14.1
+-----------------
+
+- `Fixed` Force dot `.` as the decimal separator in the UDMF parser. It used to rely on the locale's separator
+  by default. This is wildly incorrect.
+
+
 Changed in 2.14.0
 -----------------
 
