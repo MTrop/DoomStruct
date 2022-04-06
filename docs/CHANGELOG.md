@@ -3,6 +3,12 @@ Doom Struct (C) 2015-2022
 by Matt Tropiano et al. (see AUTHORS.txt)
 
 
+Changed in 2.14.2
+-----------------
+
+- `Changed` Added `+` as a valid character for entries and textures (PR #12).
+
+
 Changed in 2.14.1
 -----------------
 
