@@ -10,10 +10,12 @@ package net.mtrop.doom.test;
 import net.mtrop.doom.PK3Test;
 import net.mtrop.doom.WadTest;
 import net.mtrop.doom.test.TestUtils.TestDependsOn;
+import net.mtrop.doom.util.NameUtilsTest;
 
 @TestDependsOn({
 	WadTest.class,
 	PK3Test.class,
+	NameUtilsTest.class,
 })
 public final class TestSuite
 {
