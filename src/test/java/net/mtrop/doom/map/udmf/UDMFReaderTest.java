@@ -12,10 +12,6 @@ import java.io.InputStream;
 import java.io.StringWriter;
 
 import net.mtrop.doom.WadFile;
-import net.mtrop.doom.map.udmf.UDMFReader;
-import net.mtrop.doom.map.udmf.UDMFTable;
-import net.mtrop.doom.map.udmf.UDMFWriter;
-
 import net.mtrop.doom.LoggingFactory;
 import net.mtrop.doom.LoggingFactory.Logger;
 

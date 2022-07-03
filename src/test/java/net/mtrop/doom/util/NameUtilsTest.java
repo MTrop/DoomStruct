@@ -10,7 +10,6 @@ package net.mtrop.doom.util;
 import static net.mtrop.doom.test.TestUtils.assertEqual;
 
 import net.mtrop.doom.test.TestUtils.Test;
-import net.mtrop.doom.util.NameUtils;
 
 public final class NameUtilsTest
 {

@@ -13,8 +13,6 @@ import net.mtrop.doom.WadFile;
 import net.mtrop.doom.LoggingFactory;
 import net.mtrop.doom.LoggingFactory.Logger;
 
-import net.mtrop.doom.map.data.DoomSector;
-
 public class DoomSectorTest
 {
 	public static void main(String[] args) throws IOException

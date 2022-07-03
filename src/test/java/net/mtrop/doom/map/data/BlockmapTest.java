@@ -12,7 +12,6 @@ import java.io.IOException;
 import net.mtrop.doom.WadFile;
 import net.mtrop.doom.LoggingFactory;
 import net.mtrop.doom.LoggingFactory.Logger;
-import net.mtrop.doom.map.data.Blockmap;
 
 
 public final class BlockmapTest

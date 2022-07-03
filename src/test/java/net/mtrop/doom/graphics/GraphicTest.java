@@ -14,11 +14,6 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import net.mtrop.doom.WadFile;
-import net.mtrop.doom.graphics.EndDoom;
-import net.mtrop.doom.graphics.Flat;
-import net.mtrop.doom.graphics.Palette;
-import net.mtrop.doom.graphics.Picture;
-
 import net.mtrop.doom.util.GraphicUtils;
 
 public final class GraphicTest

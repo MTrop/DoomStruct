@@ -15,7 +15,6 @@ import javax.sound.sampled.AudioFileFormat.Type;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
 import net.mtrop.doom.sound.DMXSound;
-import net.mtrop.doom.util.SoundUtils;
 
 public final class SoundUtilTest
 {

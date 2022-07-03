@@ -10,8 +10,6 @@ package net.mtrop.doom.graphics;
 import java.io.IOException;
 
 import net.mtrop.doom.WadFile;
-import net.mtrop.doom.graphics.Palette;
-
 import net.mtrop.doom.LoggingFactory;
 import net.mtrop.doom.LoggingFactory.Logger;
 
