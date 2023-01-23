@@ -265,21 +265,19 @@ WadUtils.openWadAndExtractTo("DOOM.WAD", "OUT.wad", (wad)->
 Open `DOOM2.WAD`, create a new Wad called `TEXTURES.wad` and copy over only a few textures and flats (and also-close them):
 
 ```java
-try (WadFile source = new WadFile("DOOM2.WAD")) {
-	try (WadFile target = WadFile.createWadFile("TEXTURES.wad")) {
-		try (TextureCopier copier = TextureUtils.createTextureCopier(source, target)) {
-			copier.copyFlat("FLOOR7_1");
-			copier.copyFlat("CEIL5_2");
-			copier.copyTexture("AASHITTY"); // first texture is "null" texture
-			copier.copyTexture("SUPPORT3");
-			copier.copyTexture("SUPPORT2");
-			copier.copyTexture("BIGDOOR1");
-			copier.copyTexture("BIGDOOR2");
-			copier.copyTexture("BIGDOOR3");
-			copier.copyTexture("BIGDOOR4");
-			copier.copyTexture("BIGDOOR5");
-		}
-	}
+try (WadFile source = new WadFile("DOOM2.WAD");
+	WadFile target = WadFile.createWadFile("TEXTURES.wad");
+	TextureCopier copier = TextureUtils.createTextureCopier(source, target)) {
+	copier.copyFlat("FLOOR7_1");
+	copier.copyFlat("CEIL5_2");
+	copier.copyTexture("AASHITTY"); // first texture is "null" texture
+	copier.copyTexture("SUPPORT3");
+	copier.copyTexture("SUPPORT2");
+	copier.copyTexture("BIGDOOR1");
+	copier.copyTexture("BIGDOOR2");
+	copier.copyTexture("BIGDOOR3");
+	copier.copyTexture("BIGDOOR4");
+	copier.copyTexture("BIGDOOR5");
 }
 ```
 
