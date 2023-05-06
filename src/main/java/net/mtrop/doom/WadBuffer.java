@@ -34,6 +34,11 @@ import net.mtrop.doom.util.TextUtils;
  */
 public class WadBuffer implements Wad
 {
+	/** The default internal capacity of the WadBuffer in bytes. */
+	public static final int DEFAULT_CAPACITY = 1024;
+	/** Default capacity increment for the buffer (doubles every resize). */
+	public static final int DEFAULT_CAPACITY_INCREMENT = 0;
+	
 	/** The relay buffer used by relay(). */
 	private static final ThreadLocal<byte[]> RELAY_BUFFER = ThreadLocal.withInitial(()->new byte[4096]);
 
@@ -51,7 +56,28 @@ public class WadBuffer implements Wad
 	 */
 	public WadBuffer()
 	{
-		this(Type.PWAD);
+		this(Type.PWAD, DEFAULT_CAPACITY, DEFAULT_CAPACITY_INCREMENT);
+	}
+	
+	/**
+	 * Creates an empty WadBuffer (as a PWAD).
+	 * @param capacity the initial capacity of the buffer in bytes.
+	 * @since [NOW]
+	 */
+	public WadBuffer(int capacity)
+	{
+		this(Type.PWAD, capacity, DEFAULT_CAPACITY_INCREMENT);
+	}
+	
+	/**
+	 * Creates an empty WadBuffer (as a PWAD).
+	 * @param capacity the initial capacity of the buffer in bytes.
+	 * @param capacityIncrement the capacity increment in bytes to grow the buffer. 0 or less will double the buffer's size.
+	 * @since [NOW]
+	 */
+	public WadBuffer(int capacity, int capacityIncrement)
+	{
+		this(Type.PWAD, capacity, capacityIncrement);
 	}
 	
 	/**
@@ -60,10 +86,33 @@ public class WadBuffer implements Wad
 	 */
 	public WadBuffer(Type type)
 	{
+		this(type, DEFAULT_CAPACITY, DEFAULT_CAPACITY_INCREMENT);
+	}
+	
+	/**
+	 * Creates an empty WadBuffer with a specific type.
+	 * @param type the type to set.
+	 * @param capacity the initial capacity of the buffer in bytes.
+	 * @since [NOW]
+	 */
+	public WadBuffer(Type type, int capacity)
+	{
+		this(type, capacity, DEFAULT_CAPACITY_INCREMENT);
+	}
+	
+	/**
+	 * Creates an empty WadBuffer with a specific type.
+	 * @param type the type to set.
+	 * @param capacity the initial capacity of the buffer in bytes.
+	 * @param capacityIncrement the capacity increment in bytes to grow the buffer. 0 or less will double the buffer's size.
+	 * @since [NOW]
+	 */
+	public WadBuffer(Type type, int capacity, int capacityIncrement)
+	{
 		this.type = type;
 		this.headerBuffer = ByteBuffer.allocate(12);
 		this.headerBuffer.order(ByteOrder.LITTLE_ENDIAN);
-		this.content = new DataList(1024);
+		this.content = new DataList(capacity, capacityIncrement);
 		this.entries = new ArrayList<WadEntry>();
 		
 		headerBuffer.rewind();
@@ -71,15 +120,6 @@ public class WadBuffer implements Wad
 		headerBuffer.putInt(0);			// no entries.
 		headerBuffer.putInt(12);		// entry list offset (12).
 		content.append(headerBuffer.array());	
-	}
-	
-	private void updateHeader()
-	{
-		headerBuffer.rewind();
-		headerBuffer.put(type.name().getBytes(TextUtils.ASCII));
-		headerBuffer.putInt(entries.size());
-		headerBuffer.putInt(content.size());
-		content.setData(0, headerBuffer.array());
 	}
 	
 	/**
@@ -107,10 +147,11 @@ public class WadBuffer implements Wad
 	 */
 	public WadBuffer(File f) throws IOException
 	{
-		this();
-		FileInputStream fis = new FileInputStream(f);
-		readWad(fis);
-		fis.close();
+		this((int)f.length(), DEFAULT_CAPACITY_INCREMENT);
+		try (FileInputStream fis = new FileInputStream(f))
+		{
+			readWad(fis);
+		}
 	}
 	
 	/**
@@ -159,6 +200,15 @@ public class WadBuffer implements Wad
 			}
 		}
 		return out;
+	}
+
+	private void updateHeader()
+	{
+		headerBuffer.rewind();
+		headerBuffer.put(type.name().getBytes(TextUtils.ASCII));
+		headerBuffer.putInt(entries.size());
+		headerBuffer.putInt(content.size());
+		content.setData(0, headerBuffer.array());
 	}
 
 	/**
@@ -219,6 +269,36 @@ public class WadBuffer implements Wad
 	public final Type getType()
 	{
 		return type;
+	}
+
+	/**
+	 * Gets the capacity of this buffer.
+	 * @return the current capacity in bytes.
+	 * @since [NOW]
+	 */
+	public int getCapacity()
+	{
+		return content.getCapacity();
+	}
+
+	/**
+	 * Returns the capacity increment value.
+	 * @return the current capacity increment in bytes (or a value of 0 or less if it doubles).
+	 * @since [NOW]
+	 */
+	public int getCapacityIncrement()
+	{
+		return content.getCapacityIncrement();
+	}
+
+	/**
+	 * Sets the capacity increment value.
+	 * @param capacityIncrement what to increase the capacity of this buffer by (in bytes) if this reaches the max. if 0 or less, it will double.
+	 * @since [NOW]
+	 */
+	public void setCapacityIncrement(int capacityIncrement)
+	{
+		content.setCapacityIncrement(capacityIncrement);
 	}
 
 	/**

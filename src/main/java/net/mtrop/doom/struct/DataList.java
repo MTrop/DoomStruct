@@ -258,12 +258,12 @@ public class DataList
 	
 	/**
 	 * Increases the size of the internal buffer if necessary.
-	 * @param requiredLength the required length that the buffer needs to be.
+	 * @param additionalLength the additional length that needs to be contained in the buffer.
 	 */
-	protected void capacityCheck(int requiredLength)
+	protected void capacityCheck(int additionalLength)
 	{
-		while (size + requiredLength > buffer.length)
-			setCapacity(buffer.length + (capacityIncrement == 0 ? buffer.length : capacityIncrement));
+		while (size + additionalLength > buffer.length)
+			setCapacity(buffer.length + (capacityIncrement <= 0 ? buffer.length : capacityIncrement));
 	}
 	
 	/**
