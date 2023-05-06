@@ -375,6 +375,7 @@ public final class MapUtils
 	/**
 	 * Returns all of the indices of every map in the wad.
 	 * This algorithm scans for map entry names. If it finds one, the previous entry is the probably the header.
+	 * This algorithm is not perfect, and may return false positives in case some outlying entries are named the same as some map entries.
 	 * @param wad the {@link Wad} to search inside.
 	 * @return an array of all of the entry indices of maps. 
 	 */
@@ -536,6 +537,7 @@ public final class MapUtils
 		return NameUtils.isValidEntryName(name) 
 			&& (
 				name.startsWith("GX_") 
+				|| name.startsWith("GL_") 
 				|| name.startsWith("SCRIPT") 
 				|| MAP_SPECIAL.contains(name.toUpperCase())
 			);
