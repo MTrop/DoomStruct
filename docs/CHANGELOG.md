@@ -6,9 +6,9 @@ by Matt Tropiano et al. (see AUTHORS.txt)
 Changed in [NOW]
 ----------------
 
+- `Fixed` WadBuffer.unmapEntries() did not update the header.
 - `Added` WadBuffer now has capacity control methods/constructors (Enhancement #15).
 - `Changed` MapUtils.getAllMapIndices() was changed to include missing `GL_` entries. (Issue #16).
-- `Fixed` WadBuffer.unmapEntries() did not update the header.
 
 
 Changed in 2.14.2
