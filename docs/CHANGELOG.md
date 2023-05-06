@@ -3,6 +3,13 @@ Doom Struct (C) 2015-2022
 by Matt Tropiano et al. (see AUTHORS.txt)
 
 
+Changed in [NOW]
+----------------
+
+- `Added` WadBuffer now has capacity control methods/constructors (Enhancement #15).
+- `Fixed` WadBuffer.unmapEntries() did not update the header.
+
+
 Changed in 2.14.2
 -----------------
 
