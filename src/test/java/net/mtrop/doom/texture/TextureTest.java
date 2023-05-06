@@ -9,9 +9,6 @@ package net.mtrop.doom.texture;
 
 import java.io.IOException;
 
-import net.mtrop.doom.texture.DoomTextureList;
-import net.mtrop.doom.texture.PatchNames;
-import net.mtrop.doom.texture.TextureSet;
 import net.mtrop.doom.texture.TextureSet.Patch;
 import net.mtrop.doom.texture.TextureSet.Texture;
 import net.mtrop.doom.util.WadUtils;

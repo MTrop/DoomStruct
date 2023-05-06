@@ -10,7 +10,6 @@ package net.mtrop.doom.sound;
 import java.io.IOException;
 
 import net.mtrop.doom.WadFile;
-import net.mtrop.doom.sound.DMXSound;
 import net.mtrop.doom.sound.DMXSound.InterpolationType;
 
 

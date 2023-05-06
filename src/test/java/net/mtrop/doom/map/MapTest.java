@@ -14,7 +14,6 @@ import net.mtrop.doom.LoggingFactory.Logger;
 import net.mtrop.doom.WadFile;
 import net.mtrop.doom.exception.MapException;
 
-import net.mtrop.doom.map.MapFormat;
 import net.mtrop.doom.util.MapUtils;
 
 public final class MapTest
