@@ -62,7 +62,7 @@ public class WadBuffer implements Wad
 	/**
 	 * Creates an empty WadBuffer (as a PWAD).
 	 * @param capacity the initial capacity of the buffer in bytes.
-	 * @since [NOW]
+	 * @since 2.15.0
 	 */
 	public WadBuffer(int capacity)
 	{
@@ -73,7 +73,7 @@ public class WadBuffer implements Wad
 	 * Creates an empty WadBuffer (as a PWAD).
 	 * @param capacity the initial capacity of the buffer in bytes.
 	 * @param capacityIncrement the capacity increment in bytes to grow the buffer. 0 or less will double the buffer's size.
-	 * @since [NOW]
+	 * @since 2.15.0
 	 */
 	public WadBuffer(int capacity, int capacityIncrement)
 	{
@@ -93,7 +93,7 @@ public class WadBuffer implements Wad
 	 * Creates an empty WadBuffer with a specific type.
 	 * @param type the type to set.
 	 * @param capacity the initial capacity of the buffer in bytes.
-	 * @since [NOW]
+	 * @since 2.15.0
 	 */
 	public WadBuffer(Type type, int capacity)
 	{
@@ -105,7 +105,7 @@ public class WadBuffer implements Wad
 	 * @param type the type to set.
 	 * @param capacity the initial capacity of the buffer in bytes.
 	 * @param capacityIncrement the capacity increment in bytes to grow the buffer. 0 or less will double the buffer's size.
-	 * @since [NOW]
+	 * @since 2.15.0
 	 */
 	public WadBuffer(Type type, int capacity, int capacityIncrement)
 	{
@@ -274,7 +274,7 @@ public class WadBuffer implements Wad
 	/**
 	 * Gets the capacity of this buffer.
 	 * @return the current capacity in bytes.
-	 * @since [NOW]
+	 * @since 2.15.0
 	 */
 	public int getCapacity()
 	{
@@ -284,7 +284,7 @@ public class WadBuffer implements Wad
 	/**
 	 * Returns the capacity increment value.
 	 * @return the current capacity increment in bytes (or a value of 0 or less if it doubles).
-	 * @since [NOW]
+	 * @since 2.15.0
 	 */
 	public int getCapacityIncrement()
 	{
@@ -294,7 +294,7 @@ public class WadBuffer implements Wad
 	/**
 	 * Sets the capacity increment value.
 	 * @param capacityIncrement what to increase the capacity of this buffer by (in bytes) if this reaches the max. if 0 or less, it will double.
-	 * @since [NOW]
+	 * @since 2.15.0
 	 */
 	public void setCapacityIncrement(int capacityIncrement)
 	{
