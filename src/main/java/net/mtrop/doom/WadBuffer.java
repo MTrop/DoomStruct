@@ -461,6 +461,7 @@ public class WadBuffer implements Wad
 			else
 				entries.set(startIndex + i, entryList[i]);
 		}
+		updateHeader();
 	}
 
 	@Override
