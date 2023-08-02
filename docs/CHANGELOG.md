@@ -1,6 +1,12 @@
-Doom Struct (C) 2015-2022
+Doom Struct (C) 2015-2023
 =========================
 by Matt Tropiano et al. (see AUTHORS.txt)
+
+
+Changed in 2.15.1
+-----------------
+
+- `Changed` NameUtils: Valid entry names and texture names are virtually the same.
 
 
 Changed in 2.15.0
