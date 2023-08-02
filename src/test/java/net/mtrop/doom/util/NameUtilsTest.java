@@ -47,12 +47,12 @@ public final class NameUtilsTest
 		assertEqual(NameUtils.isValidTextureName("--------"), true);
 		assertEqual(NameUtils.isValidTextureName("O2V+35_0"), true);
 		assertEqual(NameUtils.isValidTextureName("12345678"), true);
+		assertEqual(NameUtils.isValidTextureName("SFALL[1]"), true);
+		assertEqual(NameUtils.isValidTextureName("^SFALL1"), true);
+		assertEqual(NameUtils.isValidTextureName("\\MARKER"), true);
 
 		assertEqual(NameUtils.isValidTextureName("123456789"), false);
 		assertEqual(NameUtils.isValidTextureName("sfall1"), false);
-		assertEqual(NameUtils.isValidTextureName("SFALL[1]"), false);
-		assertEqual(NameUtils.isValidTextureName("^SFALL1"), false);
-		assertEqual(NameUtils.isValidTextureName("\\MARKER"), false);
 		assertEqual(NameUtils.isValidTextureName(" "), false);
 		assertEqual(NameUtils.isValidTextureName(""), false);
 		assertEqual(NameUtils.isValidTextureName("NOUMLÄUT"), false);
