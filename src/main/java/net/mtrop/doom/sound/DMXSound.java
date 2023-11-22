@@ -331,21 +331,23 @@ public class DMXSound implements BinaryObject
 	@Override
 	public void writeBytes(OutputStream out) throws IOException
 	{
-		final byte[] PADDING = new byte[]{
-				0x7F, 0x7F, 0x7F, 0x7F,
-				0x7F, 0x7F, 0x7F, 0x7F,
-				0x7F, 0x7F, 0x7F, 0x7F,
-				0x7F, 0x7F, 0x7F, 0x7F
-			};
 		SerialWriter sw = new SerialWriter(SerialWriter.LITTLE_ENDIAN);
 		sw.writeUnsignedShort(out, 3); // format type
 		sw.writeUnsignedShort(out, sampleRate);
-		sw.writeUnsignedInteger(out, sampleCount + (PADDING.length * 2));
+		sw.writeUnsignedInteger(out, sampleCount + (16 * 2)); // padding is 2 sets of 16 bytes
 		
-		sw.writeBytes(out, PADDING);
+		byte[] PAD = new byte[16];
+		
+		Arrays.fill(PAD, (byte)(getSampleUnsignedByte(0) & 0x0ff));
+		
+		sw.writeBytes(out, PAD);
+		
 		for (int i = 0; i < sampleCount; i++)
 			sw.writeUnsignedByte(out, getSampleUnsignedByte(i));
-		sw.writeBytes(out, PADDING);
+		
+		Arrays.fill(PAD, (byte)(getSampleUnsignedByte(sampleCount - 1) & 0x0ff));
+		
+		sw.writeBytes(out, PAD);
 	}
 
 	@Override

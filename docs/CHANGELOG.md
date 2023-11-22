@@ -3,6 +3,12 @@ Doom Struct (C) 2015-2023
 by Matt Tropiano et al. (see AUTHORS.txt)
 
 
+Changed in 2.15.2
+-----------------
+
+- `Fixed` Proper padding values on DMX sound export. (Issue #19)
+
+
 Changed in 2.15.1
 -----------------
 
