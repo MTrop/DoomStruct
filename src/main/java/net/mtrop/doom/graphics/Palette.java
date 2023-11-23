@@ -67,7 +67,11 @@ public class Palette implements BinaryObject
 	public Color getColor(int index)
 	{
 		byte[] c = colorPalette[index];
-		return new Color(c[0], c[1], c[2]);
+		return new Color(
+			(int)(c[0] & 0x0ff), 
+			(int)(c[1] & 0x0ff), 
+			(int)(c[2] & 0x0ff)
+		);
 	}
 	
 	/**
