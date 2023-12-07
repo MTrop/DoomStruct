@@ -192,6 +192,25 @@ public interface TextObject
 	}
 
 	/**
+	 * Specific IOException for when a parsing exception occurs on read. 
+	 * @since [NOW]
+	 */
+	public static class ParseException extends IOException
+	{
+		private static final long serialVersionUID = 5235858958680110289L;
+
+		public ParseException(String message)
+		{
+			super(message);
+		}
+		
+		public ParseException(String message, Throwable cause)
+		{
+			super(message, cause);
+		}
+	}
+	
+	/**
 	 * Transformer interface for transform calls. 
 	 * @param <TO> the TextObject type.
 	 * @since 2.1.0

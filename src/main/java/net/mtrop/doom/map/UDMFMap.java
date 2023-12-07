@@ -82,7 +82,7 @@ public class UDMFMap extends CommonMap<UDMFObject, UDMFObject, UDMFObject, UDMFO
 			@Override
 			public void onParseError(String error)
 			{
-				exception[0] = new IOException(error);
+				exception[0] = new ParseException(error);
 			}
 
 			@Override

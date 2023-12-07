@@ -1087,10 +1087,20 @@ public class Lexer
 						setDelimBreak(c);
 						breakloop = true;
 					}
+					else if (kernel.getCommentStartTable().containsKey(getCurrentLexeme()))
+					{
+						clearCurrentLexeme();
+						setState(Kernel.TYPE_COMMENT);
+					}
 					else if (kernel.getCommentStartTable().containsKey(getCurrentLexeme()+c))
 					{
 						clearCurrentLexeme();
 						setState(Kernel.TYPE_COMMENT);
+					}
+					else if (kernel.getCommentLineTable().containsKey(getCurrentLexeme()))
+					{
+						clearCurrentLexeme();
+						setState(Kernel.TYPE_LINE_COMMENT);
 					}
 					else if (kernel.getCommentLineTable().containsKey(getCurrentLexeme()+c))
 					{
