@@ -1839,11 +1839,6 @@ public class Lexer
 				return charIndex;
 			}
 			
-			private boolean isNewlineChar(int c)
-			{
-				return c == '\r' || c == '\n';
-			}
-			
 			/**
 			 * Reads the next char from the stream.
 			 * Eats all manner of newline combos into '\n'.
@@ -1861,19 +1856,12 @@ public class Lexer
 				else
 				{
 					c = reader.read();
-					boolean newline = false;
-					while (isNewlineChar(c))
-					{
-						if (c == (int)'\n')
-							line++;
-
-						newline = true;
+					
+					if (c == '\r') // skip carriage return
 						c = reader.read();
-						if (!isNewlineChar(c))
-							pushChar(c);
-					}
-					if (newline)
-						c = (int)NEWLINE;
+					
+					if (c == (int)'\n')
+						line++;
 				}
 				
 				if (c == (int)NEWLINE)
