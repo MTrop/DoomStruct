@@ -1,6 +1,7 @@
 package net.mtrop.doom.text.data;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -32,7 +33,7 @@ public class MapInfoData implements Iterable<MapInfoData>
 	{
 		this.name = name;
 		this.values = NO_VALUES;
-		this.children = new ArrayList<>(4);
+		this.children = null;
 	}
 	
 	/**
@@ -94,6 +95,9 @@ public class MapInfoData implements Iterable<MapInfoData>
 	 */
 	public MapInfoData addChild(String type, Object ... typeValues)
 	{
+		if (children == null)
+			children = new ArrayList<>(4);
+		
 		MapInfoData out = new MapInfoData(type, typeValues);
 		children.add(out);
 		return out;
@@ -109,6 +113,9 @@ public class MapInfoData implements Iterable<MapInfoData>
 	 */
 	public MapInfoData addChildAt(int index, String type, Object ... typeValues)
 	{
+		if (children == null)
+			children = new ArrayList<>(4);
+
 		MapInfoData out = new MapInfoData(type, typeValues);
 		children.add(index, out);
 		return out;
@@ -122,6 +129,9 @@ public class MapInfoData implements Iterable<MapInfoData>
 	 */
 	public MapInfoData getChildAt(int index)
 	{
+		if (children == null)
+			throw new IndexOutOfBoundsException("no children in list");
+		
 		return children.get(index);
 	}
 	
@@ -133,6 +143,9 @@ public class MapInfoData implements Iterable<MapInfoData>
 	 */
 	public MapInfoData removeChildAt(int index)
 	{
+		if (children == null)
+			throw new IndexOutOfBoundsException("no children in list");
+		
 		return children.remove(index);
 	}
 	
@@ -141,12 +154,18 @@ public class MapInfoData implements Iterable<MapInfoData>
 	 */
 	public int getChildCount()
 	{
+		if (children == null)
+			return 0;
+		
 		return children.size();
 	}
 	
 	@Override
 	public Iterator<MapInfoData> iterator()
 	{
+		if (children == null)
+			return Collections.emptyIterator();
+		
 		return children.iterator();
 	}
 

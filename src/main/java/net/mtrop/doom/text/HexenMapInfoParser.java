@@ -9,28 +9,29 @@ package net.mtrop.doom.text;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.Stack;
 import java.util.TreeSet;
 
 import net.mtrop.doom.object.TextObject;
 import net.mtrop.doom.struct.Lexer;
 import net.mtrop.doom.struct.Lexer.Kernel;
 import net.mtrop.doom.struct.Lexer.Parser;
-import net.mtrop.doom.text.data.MapInfoData;
+import net.mtrop.doom.struct.io.IOUtils;
 
 /**
- * Abstraction of Hexen-style MAPINFO data (also called "old MAPINFO" in ZDoom).
- * All of the typed value sets in this info are stored in order, as the ordering matters when read.
+ * Parser for Hexen-style MAPINFO data (also called "old MAPINFO" in ZDoom).
+ * This parser provides a means for scanning through a MAPINFO definition, line by line, tokenized, as its data
+ * is procedural and not serializable. 
+ * All data is buffered into memory on read through {@link #readText(Reader)}.
  * @author Matthew Tropiano
  * @since [NOW]
  */
-public class HexenMapInfo implements TextObject, Iterable<MapInfoData>
+public class HexenMapInfoParser implements TextObject
 {
 	// Author's note: this is the worst MAPINFO to parse - all keywords require knowledge about them to figure out how to parse them.
 	
@@ -44,147 +45,94 @@ public class HexenMapInfo implements TextObject, Iterable<MapInfoData>
 	public static final String SETTYPE_CLEARSKILLS = "clearskills";
 	public static final String SETTYPE_SKILL = "skill";
 
-	/** The list of typed structures in this MapInfo. */
-	private List<MapInfoData> mapInfoDataList;
-
+	/** Internal text for MapInfo. */
+	private StringBuilder builder;
+	/** Internal parser for MapInfo. */
+	private InfoParser parser;
+	
 	/**
-	 * Creates a new, blank Hexen-style MapInfo.
+	 * Creates a blank Hexen MAPINFO parser that reads from a blank definition.
+	 * You should probably use {@link #readText(Reader)} or {@link #readFile(java.io.File)} to construct this.
 	 */
-	public HexenMapInfo()
+	public HexenMapInfoParser() 
 	{
-		this.mapInfoDataList = new ArrayList<>(16);
+		this("");
 	}
 	
 	/**
-	 * Creates a new, empty value set at the end of the list of sets.
-	 * @param type the set type.
-	 * @param typeValues the set type's values (if any).
-	 * @return the created empty set.
-	 * @throws IndexOutOfBoundsException if the index is less than 0 or greater than or equal to the amount of sets in this MapInfo.
+	 * Creates a Hexen MAPINFO parser that reads from text.
+	 * @param sequence the MAPINFO data to read.
 	 */
-	public MapInfoData addChild(String type, Object ... typeValues)
+	public HexenMapInfoParser(CharSequence sequence) 
 	{
-		MapInfoData out = new MapInfoData(type, typeValues);
-		mapInfoDataList.add(out);
+		this.builder = new StringBuilder(sequence);
+		refreshParser(); 
+	}
+	
+	/**
+	 * Gets the underlying StringBuilder for this info parser.
+	 * If the data is changed, call {@link #refreshParser()} to reset the parser. 
+	 * @return a reference to the underlying builder.
+	 */
+	public StringBuilder getBuilder()
+	{
+		return builder;
+	}
+	
+	/**
+	 * Refreshes the internal parser if changes were made to the internal text.
+	 */
+	public void refreshParser()
+	{
+		parser = new InfoParser(new StringReader(builder.toString())); 
+	}
+	
+	/**
+	 * Parses the next significant line in the MAPINFO and returns it as a set of tokens.
+	 * @return the set of tokens as a string array, or null if end of MAPINFO.
+	 * @throws ParseException if a parse error occurs during read.
+	 */
+	public String[] nextTokens() throws ParseException
+	{
+		return parser.parse();
+	}
+	
+	/**
+	 * Scans the MAPINFO to the next property an returns its line, tokenized.
+	 * @param property the property to scan to, case-insensitive check.
+	 * @return the set of tokens as a string array, or null if end of MAPINFO.
+	 * @throws ParseException if a parse error occurs during read.
+	 */
+	public String[] scanTo(String property) throws ParseException
+	{
+		String[] out;
+		while ((out = nextTokens()) != null)
+		{
+			if (out[0].equalsIgnoreCase(property))
+				return out;
+		}
 		return out;
 	}
 	
-	/**
-	 * Creates a new, empty value set to add to at a specific index in the list of sets.
-	 * @param index the index to add to.
-	 * @param type the set type.
-	 * @param typeValues the set type's values (if any).
-	 * @return the created empty set.
-	 * @throws IndexOutOfBoundsException if the index is less than 0 or greater than or equal to the amount of sets in this MapInfo.
-	 */
-	public MapInfoData addChildAt(int index, String type, Object ... typeValues)
-	{
-		MapInfoData out = new MapInfoData(type, typeValues);
-		mapInfoDataList.add(index, out);
-		return out;
-	}
-	
-	/**
-	 * Gets a specific typed value set from this MapInfo by its index.
-	 * @param index the index of the value set.
-	 * @return the value set at the index.
-	 * @throws IndexOutOfBoundsException if the index is less than 0 or greater than or equal to the amount of sets in this MapInfo.
-	 */
-	public MapInfoData getChildAt(int index)
-	{
-		return mapInfoDataList.get(index);
-	}
-	
-	/**
-	 * Removes a value set at a specific index.
-	 * @param index the index.
-	 * @return the removed set.
-	 * @throws IndexOutOfBoundsException if the index is less than 0 or greater than or equal to the amount of sets in this MapInfo.
-	 */
-	public MapInfoData removeChildAt(int index)
-	{
-		return mapInfoDataList.remove(index);
-	}
-	
-	/**
-	 * @return the amount of value sets in this MapInfo.
-	 */
-	public int getChildCount()
-	{
-		return mapInfoDataList.size();
-	}
-	
 	@Override
-	public Iterator<MapInfoData> iterator()
+	public void readText(Reader reader) throws IOException 
 	{
-		return mapInfoDataList.iterator();
+		StringWriter writer = new StringWriter();
+		IOUtils.relay(reader, writer, 16384, -1);
+		writer.flush();
+		this.builder = new StringBuilder(writer.toString());
+		refreshParser();
 	}
 
 	@Override
-	public void readText(Reader reader) throws IOException
+	public void writeText(Writer writer) throws IOException
 	{
-		mapInfoDataList.clear();
-		(new HexenMapInfoParser(reader)).parseInto(this);
-	}
-
-	@Override
-	public void writeText(Writer writer) throws IOException 
-	{
-		for (MapInfoData set : this)
-		{
-			writer.append(set.getName());
-			for (String value : set.getValues())
-			{
-				if (value.contains(" "))
-					writer.append(" \"").append(value).append("\"");
-				else
-					writer.append(" ").append(value);
-			}
-			writer.append("\r\n");
-			writer.flush();
-			writeBody(writer, set);
-		}
-	}
-	
-	private void writeBody(Writer writer, MapInfoData set) throws IOException 
-	{
-		for (MapInfoData property : set)
-		{
-			writer.append(property.getName());
-			for (String value : property.getValues())
-			{
-				if (value.contains(" "))
-					writer.append(" \"").append(value).append("\"");
-				else
-					writer.append(" ").append(value);
-			}
-
-			if (property.hasChildren())
-			{
-				writer.append(" {\r\n");
-				for (MapInfoData child : property)
-				{
-					writer.append(child.getName());
-					for (String value : child.getValues())
-					{
-						if (value.contains(" "))
-							writer.append(" \"").append(value).append("\"");
-						else
-							writer.append(" ").append(value);
-					}
-					writer.append("\r\n");
-				}
-				writer.append("}\r\n");
-			}
-			
-			writer.append("\r\n");
-			writer.flush();
-		}
-		writer.append("\r\n");
+		StringReader reader = new StringReader(builder.toString());
+		IOUtils.relay(reader, writer, 16384, -1);
 		writer.flush();
 	}
 	
-	private static class HexenMapInfoKernel extends Kernel
+	private static class InfoKernel extends Kernel
 	{
 		private static final int TYPE_COMMENT = 0;
 		
@@ -202,7 +150,7 @@ public class HexenMapInfo implements TextObject, Iterable<MapInfoData>
 		private static final int TYPE_MAP = 11;
 		private static final int TYPE_SKILL = 12;
 
-		private HexenMapInfoKernel()
+		private InfoKernel()
 		{
 			addCaseInsensitiveKeyword(SETTYPE_ADDDEFAULTMAP, TYPE_ADDDEFAULTMAP);
 			addCaseInsensitiveKeyword(SETTYPE_CLEAREPISODES, TYPE_CLEAREPISODES);
@@ -224,7 +172,7 @@ public class HexenMapInfo implements TextObject, Iterable<MapInfoData>
 		}
 	}
 	
-	private static class HexenMapInfoParser extends Parser
+	private static class InfoParser extends Parser
 	{
 		private static final Set<String> ZEROARG_SET = setOf(
 			// Episode
@@ -352,9 +300,23 @@ public class HexenMapInfo implements TextObject, Iterable<MapInfoData>
 			"specialaction"
 		);
 
-		private HexenMapInfoParser(Reader in)
+		private static final int STATE_START = 0;
+		private static final int STATE_PROPERTIES = 1;
+		private static final int STATE_VALUE1 = 2;
+		private static final int STATE_VALUE2 = 3;
+		private static final int STATE_VALUESPECIAL = 4;
+
+		private static final int STATE_VALUE1NEXT = 5;
+		private static final int STATE_VALUE1NEXTENDGAME = 6;
+		private static final int STATE_VALUEENDGAME = 7;
+		
+		private int state;
+		
+		private InfoParser(Reader in)
 		{
-			super(new Lexer(new HexenMapInfoKernel(), in));
+			super(new Lexer(new InfoKernel(), in));
+			state = STATE_START;
+			nextToken();
 		}
 		
 		@SafeVarargs
@@ -390,21 +352,8 @@ public class HexenMapInfo implements TextObject, Iterable<MapInfoData>
 			return SPECIALARG_SET.contains(prop);
 		}
 		
-		private void parseInto(HexenMapInfo mapinfo) throws ParseException
+		private String[] parse() throws ParseException
 		{
-			final int STATE_START = 0;
-			final int STATE_PROPERTIES = 1;
-			final int STATE_VALUE1 = 2;
-			final int STATE_VALUE2 = 3;
-			final int STATE_VALUESPECIAL = 4;
-
-			final int STATE_VALUE1NEXT = 5;
-			final int STATE_VALUE1NEXTENDGAME = 6;
-
-			nextToken();
-			
-			int state = STATE_START;
-			Stack<MapInfoData> currentSet = new Stack<>();
 			String property = null;
 			while (currentToken() != null)
 			{
@@ -412,57 +361,69 @@ public class HexenMapInfo implements TextObject, Iterable<MapInfoData>
 				{
 					case STATE_START:
 					{
-						if (currentType(HexenMapInfoKernel.TYPE_ADDDEFAULTMAP))
+						if (currentType(InfoKernel.TYPE_ADDDEFAULTMAP))
 						{
-							mapinfo.addChild(SETTYPE_ADDDEFAULTMAP);
+							String[] out = new String[]{SETTYPE_ADDDEFAULTMAP};
 							nextToken();
+							return out;
 						}
-						else if (currentType(HexenMapInfoKernel.TYPE_CLEAREPISODES))
+						else if (currentType(InfoKernel.TYPE_CLEAREPISODES))
 						{
-							mapinfo.addChild(SETTYPE_CLEAREPISODES);
+							String[] out = new String[]{SETTYPE_CLEAREPISODES};
 							nextToken();
+							return out;
 						}
-						else if (currentType(HexenMapInfoKernel.TYPE_CLEARSKILLS))
+						else if (currentType(InfoKernel.TYPE_CLEARSKILLS))
 						{
-							mapinfo.addChild(SETTYPE_CLEARSKILLS);
+							String[] out = new String[]{SETTYPE_CLEARSKILLS};
 							nextToken();
+							return out;
 						}
-						else if (currentType(HexenMapInfoKernel.TYPE_CLUSTERDEF))
+						else if (currentType(InfoKernel.TYPE_CLUSTERDEF))
 						{
-							List<String> tokens = new LinkedList<>(); 
+							List<String> tokens = new LinkedList<>();
+							
+							tokens.add(SETTYPE_CLUSTERDEF);
 							nextToken();
+							
 							tokens.add(currentToken().getLexeme()); // cluster id
 							nextToken();
-							currentSet.push(mapinfo.addChild(SETTYPE_CLUSTERDEF, tokens.toArray(new Object[tokens.size()])));
+							
 							state = STATE_PROPERTIES;
+							return tokens.toArray(new String[tokens.size()]);
 						}
-						else if (currentType(HexenMapInfoKernel.TYPE_DEFAULTMAP))
+						else if (currentType(InfoKernel.TYPE_DEFAULTMAP))
 						{
+							String[] out = new String[]{SETTYPE_DEFAULTMAP};
 							nextToken();
-							currentSet.push(mapinfo.addChild(SETTYPE_DEFAULTMAP));
 							state = STATE_PROPERTIES;
+							return out;
 						}
-						else if (currentType(HexenMapInfoKernel.TYPE_EPISODE))
+						else if (currentType(InfoKernel.TYPE_EPISODE))
 						{
 							List<String> tokens = new LinkedList<>(); 
+							tokens.add(SETTYPE_EPISODE);
 							nextToken();
+
 							tokens.add(currentToken().getLexeme()); // episode lump
 							nextToken();
-							currentSet.push(mapinfo.addChild(SETTYPE_EPISODE, tokens.toArray(new Object[tokens.size()])));
+							
 							state = STATE_PROPERTIES;
+							return tokens.toArray(new String[tokens.size()]);
 						}
-						else if (currentType(HexenMapInfoKernel.TYPE_GAMEDEFAULTS))
+						else if (currentType(InfoKernel.TYPE_GAMEDEFAULTS))
 						{
+							String[] out = new String[]{SETTYPE_GAMEDEFAULTS};
 							nextToken();
-							if (!matchType(HexenMapInfoKernel.TYPE_DELIM_NEWLINE))
-								throw new ParseException(getTokenInfoLine("Expected newline."));
-							currentSet.push(mapinfo.addChild(SETTYPE_GAMEDEFAULTS));
 							state = STATE_PROPERTIES;
+							return out;
 						}
-						else if (currentType(HexenMapInfoKernel.TYPE_MAP))
+						else if (currentType(InfoKernel.TYPE_MAP))
 						{
-							List<String> tokens = new LinkedList<>(); 
+							List<String> tokens = new LinkedList<>();
+							tokens.add(SETTYPE_MAP);
 							nextToken();
+							
 							tokens.add(currentToken().getLexeme()); // map lump
 							nextToken();
 							
@@ -479,48 +440,53 @@ public class HexenMapInfo implements TextObject, Iterable<MapInfoData>
 								nextToken();
 							}
 							
-							currentSet.push(mapinfo.addChild(SETTYPE_MAP, tokens.toArray(new Object[tokens.size()])));
 							state = STATE_PROPERTIES;
+							return tokens.toArray(new String[tokens.size()]);
 						}
-						else if (currentType(HexenMapInfoKernel.TYPE_SKILL))
+						else if (currentType(InfoKernel.TYPE_SKILL))
 						{
 							List<String> tokens = new LinkedList<>(); 
+							tokens.add(SETTYPE_SKILL);
 							nextToken();
+							
 							tokens.add(currentToken().getLexeme()); // skill type
 							nextToken();
-							currentSet.push(mapinfo.addChild(SETTYPE_SKILL, tokens.toArray(new Object[tokens.size()])));
+							
 							state = STATE_PROPERTIES;
+							return tokens.toArray(new String[tokens.size()]);
 						}
 						else if (currentToken().getLexeme().startsWith("cd_")) // Hexen CD Track data
 						{
 							String name = currentToken().getLexeme();
+							
 							List<String> tokens = new LinkedList<>(); 
+							tokens.add(name);
 							nextToken();
+							
 							tokens.add(currentToken().getLexeme()); // track id
 							nextToken();
-							currentSet.push(mapinfo.addChild(name, tokens.toArray(new Object[tokens.size()])));
+							
+							return tokens.toArray(new String[tokens.size()]);
 						}
 						else
 						{
 							throw new ParseException(getTokenInfoLine("Expected definition type."));
 						}
 					}
-					break;
 					
 					case STATE_PROPERTIES:
 					{
 						if (currentType(
-							HexenMapInfoKernel.TYPE_ADDDEFAULTMAP,
-							HexenMapInfoKernel.TYPE_CLEAREPISODES,
-							HexenMapInfoKernel.TYPE_CLEARSKILLS,
-							HexenMapInfoKernel.TYPE_CLUSTERDEF,
-							HexenMapInfoKernel.TYPE_DEFAULTMAP,
-							HexenMapInfoKernel.TYPE_EPISODE,
-							HexenMapInfoKernel.TYPE_GAMEDEFAULTS,
-							HexenMapInfoKernel.TYPE_MAP,
-							HexenMapInfoKernel.TYPE_SKILL
+							InfoKernel.TYPE_ADDDEFAULTMAP,
+							InfoKernel.TYPE_CLEAREPISODES,
+							InfoKernel.TYPE_CLEARSKILLS,
+							InfoKernel.TYPE_CLUSTERDEF,
+							InfoKernel.TYPE_DEFAULTMAP,
+							InfoKernel.TYPE_EPISODE,
+							InfoKernel.TYPE_GAMEDEFAULTS,
+							InfoKernel.TYPE_MAP,
+							InfoKernel.TYPE_SKILL
 						) || currentToken().getLexeme().startsWith("cd_")){
-							currentSet.pop();
 							state = STATE_START;
 						}
 						else
@@ -529,7 +495,8 @@ public class HexenMapInfo implements TextObject, Iterable<MapInfoData>
 							
 							if (isZeroArgumentProperty(property))
 							{
-								currentSet.peek().addChild(property);
+								nextToken();
+								return new String[]{property};
 							}
 							else if (isSingleArgumentProperty(property))
 							{
@@ -541,11 +508,17 @@ public class HexenMapInfo implements TextObject, Iterable<MapInfoData>
 									state = STATE_VALUE1;
 							}
 							else if (isDoubleArgumentProperty(property))
+							{
 								state = STATE_VALUE2;
+							}
 							else if (isSpecialArgumentProperty(property))
+							{
 								state = STATE_VALUESPECIAL;
+							}
 							else
+							{
 								throw new ParseException(getTokenInfoLine("Unknown property - can't parse."));
+							}
 								
 							nextToken();
 						}
@@ -560,10 +533,9 @@ public class HexenMapInfo implements TextObject, Iterable<MapInfoData>
 						String value1 = currentToken().getLexeme();
 						nextToken();
 						
-						currentSet.peek().addChild(property, value1);
 						state = STATE_PROPERTIES;
+						return new String[]{property, value1};
 					}
-					break;
 
 					case STATE_VALUE1NEXT:
 					{
@@ -575,26 +547,119 @@ public class HexenMapInfo implements TextObject, Iterable<MapInfoData>
 						
 						if (value1.equalsIgnoreCase("endgame")) // oh god help me
 						{
-							currentSet.push(currentSet.peek().addChild(property, value1));
 							state = STATE_VALUE1NEXTENDGAME;
+							return new String[]{property, value1};
 						}
 						else
 						{
-							currentSet.peek().addChild(property, value1);
 							state = STATE_PROPERTIES;
+							return new String[]{property, value1};
 						}
 					}
-					break;
 
 					case STATE_VALUE1NEXTENDGAME:
 					{
-						if (!matchType(HexenMapInfoKernel.TYPE_LBRACE))
+						if (!matchType(InfoKernel.TYPE_LBRACE))
 							throw new ParseException(getTokenInfoLine("Expected '{'."));
 						
-						parseEndGameBody(currentSet);
-												
-						if (!matchType(HexenMapInfoKernel.TYPE_RBRACE))
-							throw new ParseException(getTokenInfoLine("Expected '}'."));
+						state = STATE_VALUEENDGAME;
+					}
+					break;
+					
+					case STATE_VALUEENDGAME:
+					{
+						if (currentToken() == null)
+							throw new ParseException("Expected ENDGAME property.");
+
+						else if (currentToken().getLexeme().equalsIgnoreCase("cast"))
+						{
+							property = currentToken().getLexeme();
+							nextToken();
+							
+							return new String[]{property};
+						}
+						else if (currentToken().getLexeme().equalsIgnoreCase("pic"))
+						{
+							property = currentToken().getLexeme();
+							nextToken();
+
+							if (currentToken() == null)
+								throw new ParseException("Expected argument after property \"" + property + "\"");
+							
+							String value1 = currentToken().getLexeme();
+							nextToken();
+
+							return new String[]{property, value1};
+						}
+						else if (currentToken().getLexeme().equalsIgnoreCase("hscroll"))
+						{
+							property = currentToken().getLexeme();
+							nextToken();
+
+							if (currentToken() == null)
+								throw new ParseException("Expected first argument after property \"" + property + "\"");
+							
+							String value1 = currentToken().getLexeme();
+							nextToken();
+
+							if (currentToken() == null)
+								throw new ParseException("Expected second argument after property \"" + property + "\"");
+							
+							String value2 = currentToken().getLexeme();
+							nextToken();
+
+							return new String[]{property, value1, value2};
+						}
+						else if (currentToken().getLexeme().equalsIgnoreCase("vscroll"))
+						{
+							property = currentToken().getLexeme();
+							nextToken();
+
+							if (currentToken() == null)
+								throw new ParseException("Expected first argument after property \"" + property + "\"");
+							
+							String value1 = currentToken().getLexeme();
+							nextToken();
+
+							if (currentToken() == null)
+								throw new ParseException("Expected second argument after property \"" + property + "\"");
+							
+							String value2 = currentToken().getLexeme();
+							nextToken();
+
+							return new String[]{property, value1, value2};
+						}
+						else if (currentToken().getLexeme().equalsIgnoreCase("music"))
+						{
+							property = currentToken().getLexeme();
+							nextToken();
+
+							if (currentToken() == null)
+								throw new ParseException("Expected argument after property \"" + property + "\"");
+							
+							String value1 = currentToken().getLexeme();
+							nextToken();
+
+							if (currentToken() == null)
+								throw new ParseException("Expected '}' or valid EndGame property.");
+							
+							if (currentToken().getLexeme().equalsIgnoreCase("loop"))
+							{
+								String loop = currentToken().getLexeme();
+								nextToken();
+								return new String[]{property, value1, loop};
+							}
+							
+							String value2 = currentToken().getLexeme();
+							nextToken();
+
+							return new String[]{property, value1, value2};
+						}
+						else
+						{
+							if (!matchType(InfoKernel.TYPE_RBRACE))
+								throw new ParseException(getTokenInfoLine("Expected '}' or valid EndGame property."));
+						}
 						
 						state = STATE_PROPERTIES;
 					}
@@ -614,14 +679,14 @@ public class HexenMapInfo implements TextObject, Iterable<MapInfoData>
 						String value2 = currentToken().getLexeme();
 						nextToken();
 
-						currentSet.peek().addChild(property, value1, value2);
 						state = STATE_PROPERTIES;
+						return new String[]{property, value1, value2};
 					}
-					break;
 					
 					case STATE_VALUESPECIAL:
 					{
 						List<String> tokens = new LinkedList<>();
+						tokens.add(property);
 						
 						if (currentToken() == null)
 							throw new ParseException("Expected first argument after property \"" + property + "\"");
@@ -629,117 +694,27 @@ public class HexenMapInfo implements TextObject, Iterable<MapInfoData>
 						tokens.add(currentToken().getLexeme());
 						nextToken();
 						
-						while (currentType(HexenMapInfoKernel.TYPE_COMMA))
+						while (currentType(InfoKernel.TYPE_COMMA))
 						{
 							nextToken();
 							if (currentToken() == null)
 								throw new ParseException("Expected first argument after property \"" + property + "\"");
 						}
 						
-						currentSet.peek().addChild(property, tokens.toArray(new Object[tokens.size()]));
 						state = STATE_PROPERTIES;
+						return tokens.toArray(new String[tokens.size()]);
 					}
-					break;
+					
+					default:
+						throw new ParseException("INTERNAL ERROR: BAD STATE");
+					
 				}
 				
 			}
 
+			return null;
 		}
 
-		// I hate this.
-		private void parseEndGameBody(Stack<MapInfoData> currentSet) throws ParseException
-		{
-			while (currentType(HexenMapInfoKernel.TYPE_IDENTIFIER))
-			{
-				if (currentToken().getLexeme().equalsIgnoreCase("cast"))
-				{
-					nextToken();
-					currentSet.peek().addChild("cast");
-				}
-				else if (currentToken().getLexeme().equalsIgnoreCase("pic"))
-				{
-					String property = currentToken().getLexeme();
-					nextToken();
-					
-					if (currentToken() == null)
-						throw new ParseException("Expected first argument after property \"" + property + "\"");
-					
-					String value1 = currentToken().getLexeme();
-					nextToken();
-
-					currentSet.peek().addChild(property, value1);
-				}
-				else if (currentToken().getLexeme().equalsIgnoreCase("music"))
-				{
-					String property = currentToken().getLexeme();
-					nextToken();
-					
-					if (currentToken() == null)
-						throw new ParseException("Expected first argument after property \"" + property + "\"");
-					
-					String value1 = currentToken().getLexeme();
-					nextToken();
-					
-					if (currentToken() == null)
-						return;
-
-					if (currentToken().getLexeme().equalsIgnoreCase("loop"))
-					{
-						String value2 = currentToken().getLexeme();
-						nextToken();
-						
-						currentSet.peek().addChild(property, value1, value2);
-					}
-					else
-					{
-						currentSet.peek().addChild(property, value1);
-					}
-				}
-				else if (currentToken().getLexeme().equalsIgnoreCase("hscroll"))
-				{
-					String property = currentToken().getLexeme();
-					nextToken();
-					
-					if (currentToken() == null)
-						throw new ParseException("Expected first argument after property \"" + property + "\"");
-					
-					String value1 = currentToken().getLexeme();
-					nextToken();
-					
-					if (currentToken() == null)
-						throw new ParseException("Expected second argument for property \"" + property + "\"");
-					
-					String value2 = currentToken().getLexeme();
-					nextToken();
-					
-					currentSet.peek().addChild(property, value1, value2);
-				}
-				else if (currentToken().getLexeme().equalsIgnoreCase("vscroll"))
-				{
-					String property = currentToken().getLexeme();
-					nextToken();
-					
-					if (currentToken() == null)
-						throw new ParseException("Expected first argument after property \"" + property + "\"");
-					
-					String value1 = currentToken().getLexeme();
-					nextToken();
-					
-					if (currentToken() == null)
-						throw new ParseException("Expected second argument for property \"" + property + "\"");
-					
-					String value2 = currentToken().getLexeme();
-					nextToken();
-					
-					currentSet.peek().addChild(property, value1, value2);
-				}
-				else
-				{
-					throw new ParseException("Expected EngGame property.");
-				}
-			}
-		}
-		
 	}
 	
 }

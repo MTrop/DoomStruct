@@ -10,6 +10,8 @@ package net.mtrop.doom.struct.io;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Reader;
+import java.io.Writer;
 
 /**
  * I/O utils.
@@ -71,6 +73,39 @@ public final class IOUtils
 		return total;
 	}
 
+	/**
+	 * Reads from an input stream, reading in a consistent set of data
+	 * and writing it to the output stream. The read/write is buffered
+	 * so that it does not bog down the OS's other I/O requests.
+	 * This method finishes when the end of the source stream is reached.
+	 * Note that this may block if the input stream is a type of stream
+	 * that will block if the input stream blocks for additional input.
+	 * This method is thread-safe.
+	 * @param reader the reader to grab characters from.
+	 * @param writer the writer to write the characters to.
+	 * @param bufferSize the buffer size in characters for the I/O. Must be &gt; 0.
+	 * @param maxLength the maximum amount of characters to relay, or a value &lt; 0 for no max.
+	 * @return the total amount of characters relayed.
+	 * @throws IOException if a read or write error occurs.
+	 */
+	public static int relay(Reader reader, Writer writer, int bufferSize, int maxLength) throws IOException
+	{
+		int total = 0;
+		int buf = 0;
+			
+		char[] RELAY_BUFFER = new char[bufferSize];
+		
+		while ((buf = reader.read(RELAY_BUFFER, 0, Math.min(maxLength < 0 ? Integer.MAX_VALUE : maxLength, bufferSize))) > 0)
+		{
+			writer.write(RELAY_BUFFER, 0, buf);
+			total += buf;
+			if (maxLength >= 0)
+				maxLength -= buf;
+		}
+		writer.flush();
+		return total;
+	}
+	
 	/**
 	 * Attempts to close an {@link AutoCloseable} object.
 	 * If the object is null, this does nothing.
