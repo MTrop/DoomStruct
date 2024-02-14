@@ -3,6 +3,12 @@ Doom Struct (C) 2015-2023
 by Matt Tropiano et al. (see AUTHORS.txt)
 
 
+Changed in 2.15.4
+-----------------
+
+- `Fixed` Tall patches/pictures were still mangled on export. (Issue #20)
+
+
 Changed in 2.15.3
 -----------------
 
