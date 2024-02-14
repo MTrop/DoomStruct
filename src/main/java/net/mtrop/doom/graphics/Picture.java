@@ -275,89 +275,90 @@ public class Picture implements BinaryObject, GraphicObject
 	// Writes a column of pixels.
 	private static void writeColumn(byte[] columnPixels, ByteArrayOutputStream buffer) throws IOException
 	{
+		// Lovingly converted from SLADE3 because dealing with tall patches is a nightmare. Thanks, Judd and co.!
+		// See: https://github.com/sirjuddington/SLADE/blob/master/src/Graphics/SImage/Formats/SIFDoom.h
+		
 		int topDelta = 0;
-		ByteArrayOutputStream postBytes = new ByteArrayOutputStream();
-
-		final int STATE_TRANSPARENT = 0;
-		final int STATE_OPAQUE = 1;
-		int state = STATE_TRANSPARENT;
+		int postTopDelta = 0;
+		ByteArrayOutputStream postPixels = new ByteArrayOutputStream();
+		boolean isPost = false;
 		boolean tallPatch = false;
 		
-		for (int i = 0; i < columnPixels.length; i++)
+		for (int y = 0; y < columnPixels.length; y++)
 		{
-			byte b = columnPixels[i];
-			switch (state)
+			int b = columnPixels[y];
+			
+			// For vanilla, split at 128 to prevent tiling.
+			if (columnPixels.length < 256)
 			{
-				case STATE_TRANSPARENT:
+				if (topDelta < 128)
 				{
-					if (topDelta >= 254)
+					if (isPost)
 					{
-						// should be empty. Write empty post to set up "tall patch" workaround.
-						writePost(254, postBytes, buffer);
-						tallPatch = true;
-						topDelta = 0;
-					}
-					else if (b != PIXEL_TRANSLUCENT)
-					{
-						postBytes.write(b);
-						state = STATE_OPAQUE;
-					} 
-					else
-					{
-						topDelta++;
+						writePost(postTopDelta, postPixels, buffer);
+						postPixels.reset();
+						isPost = false;
 					}
 				}
-				break;
-				
-				case STATE_OPAQUE:
-				{
-					if (b == PIXEL_TRANSLUCENT || postBytes.size() == 254)
-					{
-						if (tallPatch)
-						{
-							writePost(topDelta % 255, postBytes, buffer);
-							topDelta = postBytes.size();
-						}
-						else
-						{
-							writePost(topDelta, postBytes, buffer);
-							topDelta += postBytes.size();
-						}
-						postBytes.reset();
-						
-						if (topDelta == 254)
-						{
-							writePost(254, postBytes, buffer);
-							tallPatch = true;
-							topDelta = 0;
-						}
-
-						if (b == PIXEL_TRANSLUCENT)
-						{
-							topDelta++;
-							state = STATE_TRANSPARENT;
-						}
-						else
-						{
-							postBytes.write(b);
-						}
-					}
-					else
-					{
-						postBytes.write(b);
-					}
-				}
-				break;
 			}
+			// Time for TallPatch. After 254 pixels, relative offsets are used.
+			else if (topDelta == 254)
+			{
+				if (isPost)
+				{
+					writePost(postTopDelta, postPixels, buffer);
+					postPixels.reset();
+					isPost = false;
+				}
+					
+				tallPatch = true;
+				
+				// Write a dummy post.
+				postTopDelta = 254;
+				writePost(postTopDelta, postPixels, buffer);
+				
+				// Reset topDelta and clear post.
+				topDelta = 0;
+				isPost = false;
+			}
+			
+			// If we encounter an opaque pixel...
+			if (b != PIXEL_TRANSLUCENT)
+			{
+				// If not building a post currently, begin one and set its topDelta.
+				if (!isPost)
+				{
+					postTopDelta = topDelta;
+					
+					// If in relative offsets mode, reset topDelta.
+					if (tallPatch)
+						topDelta = 0;
+					
+					isPost = true;
+				}
+				
+				// Add pixel to post.
+				postPixels.write(b);
+			}
+			// Else, if it is translucent and we are already building a post...
+			else if (isPost)
+			{
+				// Flush the current post.
+				writePost(postTopDelta, postPixels, buffer);
+				postPixels.reset();
+				isPost = false;
+			}
+			
+			topDelta++;
 		}
 		
-		// flush remaining
-		if (state == STATE_OPAQUE && postBytes.size() > 0)
+		// If we have post data in the post, flush it.
+		if (isPost)
 		{
-			writePost(topDelta, postBytes, buffer);
+			writePost(postTopDelta, postPixels, buffer);
 		}
-
-		buffer.write(0xff); // terminal topDelta
+		
+		buffer.write(0x0ff); // terminal byte - column is done.
 	}
 	
 	// Writes a post of pixels to an output buffer.
