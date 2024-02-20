@@ -288,21 +288,8 @@ public class Picture implements BinaryObject, GraphicObject
 		{
 			int b = columnPixels[y];
 			
-			// For vanilla, split at 128 to prevent tiling.
-			if (columnPixels.length < 256)
-			{
-				if (topDelta < 128)
-				{
-					if (isPost)
-					{
-						writePost(postTopDelta, postPixels, buffer);
-						postPixels.reset();
-						isPost = false;
-					}
-				}
-			}
 			// Time for TallPatch. After 254 pixels, relative offsets are used.
-			else if (topDelta == 254)
+			if (topDelta == 254)
 			{
 				if (isPost)
 				{

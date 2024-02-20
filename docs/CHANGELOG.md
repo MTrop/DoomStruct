@@ -1,6 +1,12 @@
-Doom Struct (C) 2015-2023
+Doom Struct (C) 2015-2024
 =========================
 by Matt Tropiano et al. (see AUTHORS.txt)
+
+
+Changed in 2.15.5
+-----------------
+
+- `Changed` Omit split at 128 pixels for graphics export in Picture.
 
 
 Changed in 2.15.4
