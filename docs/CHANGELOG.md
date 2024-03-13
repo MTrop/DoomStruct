@@ -3,6 +3,12 @@ Doom Struct (C) 2015-2024
 by Matt Tropiano et al. (see AUTHORS.txt)
 
 
+Changed in 2.15.6
+-----------------
+
+- `Changed` Added more legal characters for `NameUtils.isValidEntryName()`.
+
+
 Changed in 2.15.5
 -----------------
 
