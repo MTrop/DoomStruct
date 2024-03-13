@@ -59,7 +59,7 @@ public final class NameUtils
 	 * Tests if an input string is a valid entry name.
 	 * <p>
 	 * A WadEntry must have a name that is up to 8 characters long, and can only contain
-	 * A-Z (uppercase only), 0-9, and [ ] - _, and +, plus the backslash ("\"). 
+	 * A-Z (uppercase only), 0-9, and most symbols plus the backslash ("\"). 
 	 * @param name the input name to test.
 	 * @return true if so, false if not.
 	 */
@@ -121,6 +121,30 @@ public final class NameUtils
 			else if (c == '\\')
 				sb.append(c);
 			else if (c == '^')
+				sb.append(c);
+			else if (c == '@')
+				sb.append(c);
+			else if (c == '#')
+				sb.append(c);
+			else if (c == '%')
+				sb.append(c);
+			else if (c == '&')
+				sb.append(c);
+			else if (c == '=')
+				sb.append(c);
+			else if (c == '{')
+				sb.append(c);
+			else if (c == '}')
+				sb.append(c);
+			else if (c == '(')
+				sb.append(c);
+			else if (c == ')')
+				sb.append(c);
+			else if (c == '$')
+				sb.append(c);
+			else if (c == '*')
+				sb.append(c);
+			else if (c == '!')
 				sb.append(c);
 			else
 				sb.append('-');
