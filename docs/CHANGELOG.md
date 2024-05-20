@@ -3,6 +3,12 @@ Doom Struct (C) 2015-2024
 by Matt Tropiano et al. (see AUTHORS.txt)
 
 
+Changed in 2.15.8
+-----------------
+
+- `Fixed` Some incongruities in allowed ranges in `DoomSector`.
+
+
 Changed in 2.15.7
 -----------------
 
