@@ -8,6 +8,7 @@ Changed in 2.16.0
 
 - `Fixed` GraphicUtils.createPicture(PNGPicture, Palette, Colormap) should not have considered palette index 255 for a viable match.
 - `Added` Palette.getNearestColorIndex(int, int, int, boolean).
+- `Added` Palette.getNearestColorIndex(int, boolean).
 
 
 Changed in 2.15.8
