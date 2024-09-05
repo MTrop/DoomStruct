@@ -106,13 +106,28 @@ public class Palette implements BinaryObject
 	 */
 	public int getNearestColorIndex(int red, int green, int blue)
 	{
+		return getNearestColorIndex(red, green, blue, false);
+	}
+
+	/**
+	 * Returns the index of the color nearest to a color in the palette.
+	 * @param red the red component amount (0 to 255).
+	 * @param green the green component amount (0 to 255).
+	 * @param blue the blue component amount (0 to 255).
+	 * @param exclude255 if true, exclude the 255th color in the palette as a candidate (for patches).
+	 * @since 2.16.0
+	 * @return the closest index.
+	 */
+	public int getNearestColorIndex(int red, int green, int blue, boolean exclude255)
+	{
 		byte[] cbyte = TEMP_COLOR.get();
 		cbyte[0] = (byte)red;
 		cbyte[1] = (byte)green;
 		cbyte[2] = (byte)blue;
 		long minDist = Long.MAX_VALUE;
 		int closest = -1;
-		for (int i = 0; i < NUM_COLORS; i++)
+		int max = exclude255 ? NUM_COLORS - 1 : NUM_COLORS;
+		for (int i = 0; i < max; i++)
 		{
 			long dist = getColorDistance(cbyte, colorPalette[i]);
 			if (dist == 0)

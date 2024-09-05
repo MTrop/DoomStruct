@@ -3,6 +3,13 @@ Doom Struct (C) 2015-2024
 by Matt Tropiano et al. (see AUTHORS.txt)
 
 
+Changed in 2.16.0
+-----------------
+
+- `Fixed` GraphicUtils.createPicture(PNGPicture, Palette, Colormap) should not have considered palette index 255 for a viable match.
+- `Added` Palette.getNearestColorIndex(int, int, int, boolean).
+
+
 Changed in 2.15.8
 -----------------
 
