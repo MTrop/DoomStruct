@@ -94,7 +94,19 @@ public class Palette implements BinaryObject
 	 */
 	public int getNearestColorIndex(int argb)
 	{
-		return getNearestColorIndex((0x00ff0000 & argb) >> 16, (0x0000ff00 & argb) >> 8, (0x000000ff & argb));
+		return getNearestColorIndex(argb, false);
+	}
+
+	/**
+	 * Returns the index of the color nearest to a color in the palette.
+	 * @param argb the ARGB color.
+	 * @param exclude255 if true, exclude the 255th color in the palette as a candidate (for patches).
+	 * @since 2.16.0
+	 * @return the closest index.
+	 */
+	public int getNearestColorIndex(int argb, boolean exclude255)
+	{
+		return getNearestColorIndex((0x00ff0000 & argb) >> 16, (0x0000ff00 & argb) >> 8, (0x000000ff & argb), exclude255);
 	}
 
 	/**
