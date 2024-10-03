@@ -3,6 +3,12 @@ Doom Struct (C) 2015-2024
 by Matt Tropiano et al. (see AUTHORS.txt)
 
 
+Changed in 2.17.0
+-----------------
+
+- `Added` TextureSet.replaceTextureByName(String).
+
+
 Changed in 2.16.0
 -----------------
 
