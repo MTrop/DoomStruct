@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015-2023 Matt Tropiano
+ * Copyright (c) 2015-2025 Matt Tropiano
  * This program and the accompanying materials are made available under the 
  * terms of the GNU Lesser Public License v2.1 which accompanies this 
  * distribution, and is available at
@@ -61,8 +61,22 @@ public class PatchNames implements BinaryObject, Iterable<String>, Sizable
 	 */
 	public int add(String name)
 	{
+		return add(name, false);
+	}
+	
+	/**
+	 * Adds a patch entry.
+	 * @param name the entry name.
+	 * @param allowDuplicates if true, allow a duplicate entry.
+	 * @return the index of the added entry, or an existing index if it was already in the list and <code>allowDuplicates</code> is <code>false</code>.
+	 * @throws IllegalArgumentException if the provided name is not a valid entry name.
+	 * @see NameUtils#isValidEntryName(String)
+	 * @since 2.18.0
+	 */
+	public int add(String name, boolean allowDuplicates)
+	{
 		NameUtils.checkValidEntryName(name);
-		if (nameList.contains(name))
+		if (!allowDuplicates && nameList.contains(name))
 			return nameList.getIndexOf(name);
 		
 		int out = nameList.size();
@@ -120,7 +134,7 @@ public class PatchNames implements BinaryObject, Iterable<String>, Sizable
 		SerialReader sr = new SerialReader(SerialReader.LITTLE_ENDIAN);
 		int n = sr.readInt(in);
 		while (n-- > 0)
-			add(NameUtils.toValidEntryName(NameUtils.nullTrim(new String(sr.readBytes(in, 8), "ASCII"))));
+			add(NameUtils.toValidEntryName(NameUtils.nullTrim(new String(sr.readBytes(in, 8), "ASCII"))), true);
 	}
 
 	@Override

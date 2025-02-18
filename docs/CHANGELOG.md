@@ -1,6 +1,14 @@
-Doom Struct (C) 2015-2024
+Doom Struct (C) 2015-2025
 =========================
 by Matt Tropiano et al. (see AUTHORS.txt)
+
+
+Changed in 2.18.0
+-----------------
+
+- `Fixed` PatchNames.readBytes(...) is now tolerant of PNAMES lumps that may contain duplicate patch names (since it can corrupt a TextureSet).
+- `Added` PatchNames.add(int, boolean) for allowing duplicate patch names.
+- `Changed` Slightly more efficient texture exporting in TextureSet.
 
 
 Changed in 2.17.0
