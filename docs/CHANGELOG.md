@@ -3,6 +3,12 @@ Doom Struct (C) 2015-2025
 by Matt Tropiano et al. (see AUTHORS.txt)
 
 
+Changed in 2.18.1
+-----------------
+
+- `Changed` TextureUtils.importTextureSet(Wad) now considers sets with TEXTURE2/PNAMES only as valid.
+
+
 Changed in 2.18.0
 -----------------
 

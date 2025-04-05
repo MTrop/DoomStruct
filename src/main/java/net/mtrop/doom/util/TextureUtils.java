@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 
 import net.mtrop.doom.Wad;
@@ -55,7 +56,7 @@ public final class TextureUtils
 	/**
 	 * This private method loads TEXTURE1/TEXTURE2.
 	 */
-	private static TextureSet importTextureSet(Wad wf, boolean[] strifeType, Set<String> texture1Names) throws WadException, IOException
+	private static TextureSet importTextureSet(Wad wf, AtomicBoolean strifeType, Set<String> texture1Names) throws WadException, IOException
 	{
 		PatchNames patchNames = null;
 		CommonTextureList<?> textureList1 = null;
@@ -64,32 +65,42 @@ public final class TextureUtils
 		byte[] textureData = wf.getData("TEXTURE1");
 		boolean isStrife = false;
 		
-		if (textureData == null)
-			throw new TextureException("Could not find TEXTURE1!\n");
-
-		// figure out if Strife or Doom Texture Lump.
-		if (TextureUtils.isStrifeTextureData(textureData))
+		if (textureData != null)
 		{
-			textureList1 = BinaryObject.create(StrifeTextureList.class, textureData);
-			isStrife = true;
-		}
-		else
-		{
-			textureList1 = BinaryObject.create(DoomTextureList.class, textureData);
-			isStrife = false;
-		}
+			// figure out if Strife or Doom Texture Lump.
+			if (TextureUtils.isStrifeTextureData(textureData))
+			{
+				textureList1 = BinaryObject.create(StrifeTextureList.class, textureData);
+				isStrife = true;
+			}
+			else
+			{
+				textureList1 = BinaryObject.create(DoomTextureList.class, textureData);
+				isStrife = false;
+			}
 
-		if (strifeType != null)
-			strifeType[0] = isStrife;
-
+			if (strifeType != null)
+				strifeType.set(isStrife);
+		}
+		
 		textureData = wf.getData("TEXTURE2");
 		
 		if (textureData != null)
 		{
-			if (isStrife)
+			// figure out if Strife or Doom Texture Lump.
+			if (TextureUtils.isStrifeTextureData(textureData))
+			{
 				textureList2 = BinaryObject.create(StrifeTextureList.class, textureData);
+				isStrife = true;
+			}
 			else
+			{
 				textureList2 = BinaryObject.create(DoomTextureList.class, textureData);
+				isStrife = false;
+			}
+
+			if (strifeType != null)
+				strifeType.set(isStrife);
 		}
 		
 		textureData = wf.getData("PNAMES");
@@ -105,7 +116,11 @@ public final class TextureUtils
 			if (texture1Names != null)
 				for (CommonTexture<?> t : textureList1)
 					texture1Names.add(t.getName());
-			out = new TextureSet(patchNames, textureList1, textureList2);
+			
+			if (textureList1 != null)
+				out = new TextureSet(patchNames, textureList1, textureList2);
+			else
+				out = new TextureSet(patchNames, textureList2);
 		}
 		else
 			out = new TextureSet(patchNames, textureList1);
@@ -252,7 +267,7 @@ public final class TextureUtils
 			this.destinationFlats = null;
 			
 			int idx;
-			boolean[] strife = new boolean[1];
+			AtomicBoolean strife = new AtomicBoolean(false);
 			
 			// ======== Get source patch namespace start and end.
 			if ((idx = sourceWad.indexOf("P_START")) < 0)
@@ -287,7 +302,7 @@ public final class TextureUtils
 			{
 				sourceTexture1Set = new HashSet<String>();
 				sourceTextureSet = importTextureSet(sourceWad, strife, sourceTexture1Set);
-				sourceIsStrife = strife[0];
+				sourceIsStrife = strife.get();
 			}
 
 			// ======== Get destination patch namespace start and end.
@@ -337,7 +352,7 @@ public final class TextureUtils
 				if (destinationWad.contains("TEXTURE2"))
 					destinationTexture1Set = new HashSet<String>();
 				destinationTextureSet = importTextureSet(destinationWad, strife, destinationTexture1Set);
-				destinationIsStrife = strife[0];
+				destinationIsStrife = strife.get();
 			}
 			
 		}
