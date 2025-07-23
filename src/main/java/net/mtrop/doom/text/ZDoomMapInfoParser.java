@@ -19,6 +19,7 @@ import net.mtrop.doom.object.TextObject;
 import net.mtrop.doom.struct.Lexer;
 import net.mtrop.doom.struct.Lexer.Kernel;
 import net.mtrop.doom.struct.Lexer.Parser;
+import net.mtrop.doom.struct.utils.ValueUtils;
 import net.mtrop.doom.text.data.MapInfoData;
 
 /**
@@ -152,30 +153,55 @@ public class ZDoomMapInfoParser implements TextObject, Iterable<MapInfoData>
 						first = false;
 					}
 				}
-				else for (MapInfoData child : data)
+				else
 				{
-					writeBody(writer, child);
+					for (String value : data.getValues())
+					{
+						writer.append(" ").append(value);
+					}
+					
+					writer.append("\n{\n");
+					for (MapInfoData child : data)
+					{
+						writeBody(writer, child, "\t");
+					}
+					writer.append("}\n");
 				}
+			}
+			else
+			{
+				writer.append("\n");
 			}
 			writer.append("\n");
 			writer.flush();
 		}
 	}
 	
-	private void writeBody(Writer writer, MapInfoData body) throws IOException
+	private void writeBody(Writer writer, MapInfoData body, String tab) throws IOException
 	{
+		writer.append(tab).append(body.getName());
 		boolean first = true;
 		for (String value : body.getValues())
 		{
 			if (!first)
-				writer.append(" ");
-			writer.append("\"").append(value).append("\"");
+				writer.append(", ");
+			else
+				writer.append(" = ");
+			
+			if (isNumeric(value))
+				writer.append(value);
+			else
+				writer.append("\"").append(value).append("\"");
 			first = false;
 		}
-		writer.append("{\r\n");
-		writer.append("}\r\n");
+		writer.append("\n");
 	}
 
+	private static boolean isNumeric(String value)
+	{
+		return !Double.isNaN(ValueUtils.parseDouble(value, Double.NaN));
+	}
+	
 	private static class InfoKernel extends Kernel
 	{
 		private static final int TYPE_COMMENT = 0;
@@ -184,11 +210,16 @@ public class ZDoomMapInfoParser implements TextObject, Iterable<MapInfoData>
 		private static final int TYPE_EQUAL = 3;
 		private static final int TYPE_COMMA = 4;
 
+		// special handling
 		private static final int TYPE_INCLUDE = 10;
+		private static final int TYPE_CLEAREPISODES = 11;
+		private static final int TYPE_CLEARSKILLS = 12;
 
 		private InfoKernel()
 		{
 			addCaseInsensitiveKeyword("include", TYPE_INCLUDE);
+			addCaseInsensitiveKeyword("clearepisodes", TYPE_CLEAREPISODES);
+			addCaseInsensitiveKeyword("clearskills", TYPE_CLEARSKILLS);
 			
 			addCommentLineDelimiter("//", TYPE_COMMENT);
 			addCommentStartDelimiter("/*", TYPE_COMMENT);
@@ -226,6 +257,14 @@ public class ZDoomMapInfoParser implements TextObject, Iterable<MapInfoData>
 			{
 				String entry = currentToken().getLexeme();
 				mapInfo.addChild("include", entry);
+			}
+			else if (matchType(InfoKernel.TYPE_CLEAREPISODES))
+			{
+				mapInfo.addChild("clearepisodes");
+			}
+			else if (matchType(InfoKernel.TYPE_CLEARSKILLS))
+			{
+				mapInfo.addChild("clearskills");
 			}
 			else if (!currentType(InfoKernel.TYPE_IDENTIFIER))
 				throw new ParseException(getTokenInfoLine("Expected definition name."));

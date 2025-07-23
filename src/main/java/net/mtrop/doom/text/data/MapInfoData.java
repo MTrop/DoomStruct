@@ -175,7 +175,7 @@ public class MapInfoData implements Iterable<MapInfoData>
 	 */
 	public boolean hasChildren()
 	{
-		return !children.isEmpty();
+		return children != null && !children.isEmpty();
 	}
 
 	/**
@@ -216,6 +216,25 @@ public class MapInfoData implements Iterable<MapInfoData>
 	}
 
 	/**
+	 * Checks if a value is a numeric one.
+	 * @param valueIndex the value index.
+	 * @return true if so, false if not.
+	 */
+	public boolean isNumeric(int valueIndex)
+	{
+		return !Double.isNaN(getDoubleValue(valueIndex));
+	}
+	
+	/**
+	 * Checks if the first value is a numeric one.
+	 * @return true if so, false if not.
+	 */
+	public boolean isNumeric()
+	{
+		return isNumeric(0);
+	}
+	
+	/**
 	 * Gets a value from this item as a double.
 	 * @param valueIndex the value index.
 	 * @return the property's value as a double, or NaN if no value, or not parseable as a double.
@@ -253,4 +272,26 @@ public class MapInfoData implements Iterable<MapInfoData>
 		return getIntValue(0);
 	}
 	
+	@Override
+	public String toString() 
+	{
+		StringBuilder sb = new StringBuilder();
+		sb.append(name);
+		if (!isDirective())
+		{
+			boolean first = false;
+			sb.append(" [");
+			for (String value : values)
+			{
+				if (first)
+					sb.append(", ");
+				sb.append(value);
+				first = true;
+			}
+			sb.append("]");
+		}
+		if (hasChildren())
+			sb.append(" ...");
+		return sb.toString();
+	}
 }

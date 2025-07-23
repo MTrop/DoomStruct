@@ -98,7 +98,7 @@ public class HexenMapInfoParser implements TextObject
 	}
 	
 	/**
-	 * Scans the MAPINFO to the next property an returns its line, tokenized.
+	 * Scans the MAPINFO to the next property and returns its line, tokenized.
 	 * @param property the property to scan to, case-insensitive check.
 	 * @return the set of tokens as a string array, or null if end of MAPINFO.
 	 * @throws ParseException if a parse error occurs during read.
@@ -174,6 +174,8 @@ public class HexenMapInfoParser implements TextObject
 	
 	private static class InfoParser extends Parser
 	{
+		private static final String COMPAT_PREFIX = "compat_";
+
 		private static final Set<String> ZEROARG_SET = setOf(
 			// Episode
 			"remove",
@@ -331,7 +333,7 @@ public class HexenMapInfoParser implements TextObject
 		private boolean isZeroArgumentProperty(String prop)
 		{
 			prop = prop.toLowerCase();
-			return (prop.startsWith("compat_") || ZEROARG_SET.contains(prop));
+			return (prop.startsWith(COMPAT_PREFIX) || ZEROARG_SET.contains(prop));
 		}
 		
 		private boolean isSingleArgumentProperty(String prop)
