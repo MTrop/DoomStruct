@@ -264,9 +264,9 @@ public final class MathUtils
 	public static int wrapValue(int val, int lo, int hi)
 	{
 		val = val - (int)(val - lo) / (hi - lo) * (hi - lo);
-	   	if (val < 0)
-	   		val = val + hi - lo;
-	   	return val;
+		if (val < 0)
+			val = val + hi - lo;
+		return val;
 	}
 
 	/**
@@ -282,9 +282,9 @@ public final class MathUtils
 	public static short wrapValue(short val, short lo, short hi)
 	{
 		val = (short)(val - (val - lo) / (hi - lo) * (hi - lo));
-	   	if (val < 0)
-	   		val = (short)(val + hi - lo);
-	   	return val;
+		if (val < 0)
+			val = (short)(val + hi - lo);
+		return val;
 	}
 
 	/**

@@ -28,6 +28,8 @@ public final class NameUtilsTest
 		assertEqual(NameUtils.isValidEntryName("\\\\MARKER"), true);
 		assertEqual(NameUtils.isValidEntryName("O2V+35_0"), true);
 		assertEqual(NameUtils.isValidEntryName("12345678"), true);
+		assertEqual(NameUtils.isValidEntryName("\\FLAT**"), true);
+		assertEqual(NameUtils.isValidEntryName("!@#$%^&*"), true);
 
 		assertEqual(NameUtils.isValidEntryName("123456789"), false);
 		assertEqual(NameUtils.isValidEntryName("wall00_3"), false);
@@ -50,6 +52,8 @@ public final class NameUtilsTest
 		assertEqual(NameUtils.isValidTextureName("SFALL[1]"), true);
 		assertEqual(NameUtils.isValidTextureName("^SFALL1"), true);
 		assertEqual(NameUtils.isValidTextureName("\\MARKER"), true);
+		assertEqual(NameUtils.isValidTextureName("\\FLAT**"), true);
+		assertEqual(NameUtils.isValidTextureName("!@#$%^&*"), true);
 
 		assertEqual(NameUtils.isValidTextureName("123456789"), false);
 		assertEqual(NameUtils.isValidTextureName("sfall1"), false);

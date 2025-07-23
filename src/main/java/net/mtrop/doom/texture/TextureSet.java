@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015-2023 Matt Tropiano
+ * Copyright (c) 2015-2025 Matt Tropiano
  * This program and the accompanying materials are made available under the 
  * terms of the GNU Lesser Public License v2.1 which accompanies this 
  * distribution, and is available at
@@ -69,9 +69,10 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 				for (int j = 0; j < t.getPatchCount(); j++)
 				{
 					CommonPatch p = t.getPatch(j);
-					String patchName = pnames.get(p.getNameIndex());
+					int patchIndex = p.getNameIndex();
+					String patchName = pnames.get(patchIndex);
 					if (patchName == null)
-						throw new TextureException("Index "+j+" in PNAMES does not exist!");
+						throw new TextureException("Index "+patchIndex+" in PNAMES does not exist!");
 					Patch newpatch = newtex.createPatch(patchName);
 					newpatch.setOriginX(p.getOriginX());
 					newpatch.setOriginY(p.getOriginY());
@@ -176,6 +177,23 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 	}
 	
 	/**
+	 * Replaces a texture in the set with a new one, in-place without affecting texture order.
+	 * @param textureName the name of the texture to replace.
+	 * @return a new, empty texture to serve as the replacement entry, or <code>null</code> if not found.
+	 * @since 2.17.0
+	 */
+	public Texture replaceTextureByName(String textureName)
+	{
+		int index = textureList.getIndexUsingKey(textureName);
+		if (index == -1)
+			return null;
+		textureList.removeIndex(index);
+		Texture out;
+		textureList.add(index, out = new Texture(textureName));
+		return out;
+	}
+	
+	/**
 	 * Removes a texture at a particular index.
 	 * @param index the index of the texture to remove.
 	 * @return the corresponding removed texture, or <code>null</code> if not removed.
@@ -277,10 +295,7 @@ public class TextureSet implements Iterable<TextureSet.Texture>, Sizable
 				
 				index = pnames.indexOf(pname);
 				if (index == -1)
-				{
-					pnames.add(pname);
-					index = pnames.indexOf(pname);
-				}	
+					index = pnames.add(pname);
 				
 				P ndtp = ndt.createPatch();
 				ndtp.setOriginX(patch.getOriginX());

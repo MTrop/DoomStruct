@@ -1,6 +1,64 @@
-Doom Struct (C) 2015-2023
+Doom Struct (C) 2015-2025
 =========================
 by Matt Tropiano et al. (see AUTHORS.txt)
+
+
+Changed in 2.18.1
+-----------------
+
+- `Changed` TextureUtils.importTextureSet(Wad) now considers sets with TEXTURE2/PNAMES only as valid.
+
+
+Changed in 2.18.0
+-----------------
+
+- `Fixed` PatchNames.readBytes(...) is now tolerant of PNAMES lumps that may contain duplicate patch names (since it can corrupt a TextureSet).
+- `Added` PatchNames.add(int, boolean) for allowing duplicate patch names.
+- `Changed` Slightly more efficient texture exporting in TextureSet.
+
+
+Changed in 2.17.0
+-----------------
+
+- `Added` TextureSet.replaceTextureByName(String).
+
+
+Changed in 2.16.0
+-----------------
+
+- `Fixed` GraphicUtils.createPicture(PNGPicture, Palette, Colormap) should not have considered palette index 255 for a viable match.
+- `Added` Palette.getNearestColorIndex(int, int, int, boolean).
+- `Added` Palette.getNearestColorIndex(int, boolean).
+
+
+Changed in 2.15.8
+-----------------
+
+- `Fixed` Some incongruities in allowed ranges in `DoomSector`.
+
+
+Changed in 2.15.7
+-----------------
+
+- `Changed` Added more legal characters for `NameUtils.toValidEntryName(String)`.
+
+
+Changed in 2.15.6
+-----------------
+
+- `Changed` Added more legal characters for `NameUtils.isValidEntryName()`.
+
+
+Changed in 2.15.5
+-----------------
+
+- `Changed` Omit split at 128 pixels for graphics export in Picture.
+
+
+Changed in 2.15.4
+-----------------
+
+- `Fixed` Tall patches/pictures were still mangled on export. (Issue #20)
 
 
 Changed in 2.15.3
