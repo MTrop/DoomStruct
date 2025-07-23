@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015-2023 Matt Tropiano
+ * Copyright (c) 2015-2025 Matt Tropiano
  * This program and the accompanying materials are made available under the 
  * terms of the GNU Lesser Public License v2.1 which accompanies this 
  * distribution, and is available at
@@ -31,7 +31,7 @@ import net.mtrop.doom.struct.io.IOUtils;
  * @author Matthew Tropiano
  * @since [NOW]
  */
-public class HexenMapInfoParser implements TextObject
+public class HexenMapInfo implements TextObject
 {
 	// Author's note: this is the worst MAPINFO to parse - all keywords require knowledge about them to figure out how to parse them.
 	
@@ -54,7 +54,7 @@ public class HexenMapInfoParser implements TextObject
 	 * Creates a blank Hexen MAPINFO parser that reads from a blank definition.
 	 * You should probably use {@link #readText(Reader)} or {@link #readFile(java.io.File)} to construct this.
 	 */
-	public HexenMapInfoParser() 
+	public HexenMapInfo() 
 	{
 		this("");
 	}
@@ -63,7 +63,7 @@ public class HexenMapInfoParser implements TextObject
 	 * Creates a Hexen MAPINFO parser that reads from text.
 	 * @param sequence the MAPINFO data to read.
 	 */
-	public HexenMapInfoParser(CharSequence sequence) 
+	public HexenMapInfo(CharSequence sequence) 
 	{
 		this.builder = new StringBuilder(sequence);
 		refreshParser(); 
@@ -134,8 +134,6 @@ public class HexenMapInfoParser implements TextObject
 	
 	private static class InfoKernel extends Kernel
 	{
-		private static final int TYPE_COMMENT = 0;
-		
 		private static final int TYPE_LBRACE = 1;
 		private static final int TYPE_RBRACE = 2;
 		private static final int TYPE_COMMA = 3;
@@ -162,7 +160,7 @@ public class HexenMapInfoParser implements TextObject
 			addCaseInsensitiveKeyword(SETTYPE_MAP, TYPE_MAP);
 			addCaseInsensitiveKeyword(SETTYPE_SKILL, TYPE_SKILL);
 			
-			addCommentLineDelimiter(";", TYPE_COMMENT);
+			addCommentLineDelimiter(";");
 			
 			addRawStringDelimiter('"', '"'); // Yes, strings can be multiline.
 
@@ -238,7 +236,9 @@ public class HexenMapInfoParser implements TextObject
 			"easybossbrain",
 			"fastmonsters",
 			"disablecheats",
-			"autousehealth"
+			"autousehealth",
+			"spawnmulti",
+			"instantreaction"
 		);
 		
 		private static final Set<String> SINGLEARG_SET = setOf(
@@ -330,6 +330,14 @@ public class HexenMapInfoParser implements TextObject
 			return out;
 		}
 		
+		private boolean isArgumentProperty(String prop)
+		{
+			return isZeroArgumentProperty(prop)
+				|| isSingleArgumentProperty(prop)
+				|| isDoubleArgumentProperty(prop)
+				|| isSpecialArgumentProperty(prop);
+		}
+		
 		private boolean isZeroArgumentProperty(String prop)
 		{
 			prop = prop.toLowerCase();
@@ -388,7 +396,7 @@ public class HexenMapInfoParser implements TextObject
 							tokens.add(SETTYPE_CLUSTERDEF);
 							nextToken();
 							
-							tokens.add(currentToken().getLexeme()); // cluster id
+							tokens.add(currentLexeme()); // cluster id
 							nextToken();
 							
 							state = STATE_PROPERTIES;
@@ -407,7 +415,7 @@ public class HexenMapInfoParser implements TextObject
 							tokens.add(SETTYPE_EPISODE);
 							nextToken();
 
-							tokens.add(currentToken().getLexeme()); // episode lump
+							tokens.add(currentLexeme()); // episode lump
 							nextToken();
 							
 							state = STATE_PROPERTIES;
@@ -426,19 +434,19 @@ public class HexenMapInfoParser implements TextObject
 							tokens.add(SETTYPE_MAP);
 							nextToken();
 							
-							tokens.add(currentToken().getLexeme()); // map lump
+							tokens.add(currentLexeme()); // map lump
 							nextToken();
 							
-							if (currentToken().getLexeme().equalsIgnoreCase("lookup"))
+							if (currentLexeme().equalsIgnoreCase("lookup"))
 							{
-								tokens.add(currentToken().getLexeme()); // "lookup"
+								tokens.add(currentLexeme()); // "lookup"
 								nextToken();
-								tokens.add(currentToken().getLexeme()); // language lookup
+								tokens.add(currentLexeme()); // language lookup
 								nextToken();
 							}
 							else
 							{
-								tokens.add(currentToken().getLexeme()); // name
+								tokens.add(currentLexeme()); // name
 								nextToken();
 							}
 							
@@ -451,21 +459,21 @@ public class HexenMapInfoParser implements TextObject
 							tokens.add(SETTYPE_SKILL);
 							nextToken();
 							
-							tokens.add(currentToken().getLexeme()); // skill type
+							tokens.add(currentLexeme()); // skill type
 							nextToken();
 							
 							state = STATE_PROPERTIES;
 							return tokens.toArray(new String[tokens.size()]);
 						}
-						else if (currentToken().getLexeme().startsWith("cd_")) // Hexen CD Track data
+						else if (currentLexeme().startsWith("cd_")) // Hexen CD Track data
 						{
-							String name = currentToken().getLexeme();
+							String name = currentLexeme();
 							
 							List<String> tokens = new LinkedList<>(); 
 							tokens.add(name);
 							nextToken();
 							
-							tokens.add(currentToken().getLexeme()); // track id
+							tokens.add(currentLexeme()); // track id
 							nextToken();
 							
 							return tokens.toArray(new String[tokens.size()]);
@@ -488,20 +496,60 @@ public class HexenMapInfoParser implements TextObject
 							InfoKernel.TYPE_GAMEDEFAULTS,
 							InfoKernel.TYPE_MAP,
 							InfoKernel.TYPE_SKILL
-						) || currentToken().getLexeme().startsWith("cd_")){
+						) || currentLexeme().startsWith("cd_")){
 							state = STATE_START;
 						}
 						else
 						{
-							property = currentToken().getLexeme();
+							property = currentLexeme();
 							
 							if (isZeroArgumentProperty(property))
 							{
+								// Gross hack for compat
+								if (property.toLowerCase().startsWith(COMPAT_PREFIX))
+								{
+									nextToken();
+									if (currentType(InfoKernel.TYPE_NUMBER))
+										state = STATE_VALUE1;
+									else
+										state = STATE_PROPERTIES;
+									continue;
+								}
+								
 								nextToken();
 								return new String[]{property};
 							}
 							else if (isSingleArgumentProperty(property))
 							{
+								// Gross hack for optional keywords
+								if (property.equalsIgnoreCase("mustconfirm"))
+								{
+									nextToken();
+									if (currentType(InfoKernel.TYPE_STRING))
+										state = STATE_VALUE1;
+									else
+										state = STATE_PROPERTIES;
+									continue;
+								}
+								else if (property.equalsIgnoreCase("entertext"))
+								{
+									nextToken();
+									if (currentLexeme().equalsIgnoreCase("lookup"))
+										state = STATE_VALUE2;
+									else
+										state = STATE_VALUE1;
+									continue;
+								}
+								else if (property.equalsIgnoreCase("exittext"))
+								{
+									nextToken();
+									if (currentLexeme().equalsIgnoreCase("lookup"))
+										state = STATE_VALUE2;
+									else
+										state = STATE_VALUE1;
+									continue;
+								}
+
 								if (property.equalsIgnoreCase("next"))
 									state = STATE_VALUE1NEXT;
 								else if (property.equalsIgnoreCase("secretnext"))
@@ -532,7 +580,7 @@ public class HexenMapInfoParser implements TextObject
 						if (currentToken() == null)
 							throw new ParseException("Expected argument after property \"" + property + "\"");
 						
-						String value1 = currentToken().getLexeme();
+						String value1 = currentLexeme();
 						nextToken();
 						
 						state = STATE_PROPERTIES;
@@ -544,7 +592,7 @@ public class HexenMapInfoParser implements TextObject
 						if (currentToken() == null)
 							throw new ParseException("Expected argument after property \"" + property + "\"");
 						
-						String value1 = currentToken().getLexeme();
+						String value1 = currentLexeme();
 						nextToken();
 						
 						if (value1.equalsIgnoreCase("endgame")) // oh god help me
@@ -573,86 +621,86 @@ public class HexenMapInfoParser implements TextObject
 						if (currentToken() == null)
 							throw new ParseException("Expected ENDGAME property.");
 
-						else if (currentToken().getLexeme().equalsIgnoreCase("cast"))
+						else if (currentLexeme().equalsIgnoreCase("cast"))
 						{
-							property = currentToken().getLexeme();
+							property = currentLexeme();
 							nextToken();
 							
 							return new String[]{property};
 						}
-						else if (currentToken().getLexeme().equalsIgnoreCase("pic"))
+						else if (currentLexeme().equalsIgnoreCase("pic"))
 						{
-							property = currentToken().getLexeme();
+							property = currentLexeme();
 							nextToken();
 
 							if (currentToken() == null)
 								throw new ParseException("Expected argument after property \"" + property + "\"");
 							
-							String value1 = currentToken().getLexeme();
+							String value1 = currentLexeme();
 							nextToken();
 
 							return new String[]{property, value1};
 						}
-						else if (currentToken().getLexeme().equalsIgnoreCase("hscroll"))
+						else if (currentLexeme().equalsIgnoreCase("hscroll"))
 						{
-							property = currentToken().getLexeme();
+							property = currentLexeme();
 							nextToken();
 
 							if (currentToken() == null)
 								throw new ParseException("Expected first argument after property \"" + property + "\"");
 							
-							String value1 = currentToken().getLexeme();
+							String value1 = currentLexeme();
 							nextToken();
 
 							if (currentToken() == null)
 								throw new ParseException("Expected second argument after property \"" + property + "\"");
 							
-							String value2 = currentToken().getLexeme();
+							String value2 = currentLexeme();
 							nextToken();
 
 							return new String[]{property, value1, value2};
 						}
-						else if (currentToken().getLexeme().equalsIgnoreCase("vscroll"))
+						else if (currentLexeme().equalsIgnoreCase("vscroll"))
 						{
-							property = currentToken().getLexeme();
+							property = currentLexeme();
 							nextToken();
 
 							if (currentToken() == null)
 								throw new ParseException("Expected first argument after property \"" + property + "\"");
 							
-							String value1 = currentToken().getLexeme();
+							String value1 = currentLexeme();
 							nextToken();
 
 							if (currentToken() == null)
 								throw new ParseException("Expected second argument after property \"" + property + "\"");
 							
-							String value2 = currentToken().getLexeme();
+							String value2 = currentLexeme();
 							nextToken();
 
 							return new String[]{property, value1, value2};
 						}
-						else if (currentToken().getLexeme().equalsIgnoreCase("music"))
+						else if (currentLexeme().equalsIgnoreCase("music"))
 						{
-							property = currentToken().getLexeme();
+							property = currentLexeme();
 							nextToken();
 
 							if (currentToken() == null)
 								throw new ParseException("Expected argument after property \"" + property + "\"");
 							
-							String value1 = currentToken().getLexeme();
+							String value1 = currentLexeme();
 							nextToken();
 
 							if (currentToken() == null)
 								throw new ParseException("Expected '}' or valid EndGame property.");
 							
-							if (currentToken().getLexeme().equalsIgnoreCase("loop"))
+							if (currentLexeme().equalsIgnoreCase("loop"))
 							{
-								String loop = currentToken().getLexeme();
+								String loop = currentLexeme();
 								nextToken();
 								return new String[]{property, value1, loop};
 							}
 							
-							String value2 = currentToken().getLexeme();
+							String value2 = currentLexeme();
 							nextToken();
 
 							return new String[]{property, value1, value2};
@@ -672,13 +720,23 @@ public class HexenMapInfoParser implements TextObject
 						if (currentToken() == null)
 							throw new ParseException("Expected first argument after property \"" + property + "\"");
 
-						String value1 = currentToken().getLexeme();
+						String value1 = currentLexeme();
 						nextToken();
+						
+						// Gross hack for sky
+						if (property.equalsIgnoreCase("sky1") || property.equalsIgnoreCase("sky2"))
+						{
+							if (isArgumentProperty(currentLexeme()))
+							{
+								state = STATE_PROPERTIES;
+								continue;
+							}
+						}
 						
 						if (currentToken() == null)
 							throw new ParseException("Expected second argument after property \"" + property + "\"");
 
-						String value2 = currentToken().getLexeme();
+						String value2 = currentLexeme();
 						nextToken();
 
 						state = STATE_PROPERTIES;
@@ -693,7 +751,7 @@ public class HexenMapInfoParser implements TextObject
 						if (currentToken() == null)
 							throw new ParseException("Expected first argument after property \"" + property + "\"");
 
-						tokens.add(currentToken().getLexeme());
+						tokens.add(currentLexeme());
 						nextToken();
 						
 						while (currentType(InfoKernel.TYPE_COMMA))

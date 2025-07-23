@@ -1,9 +1,7 @@
 /*******************************************************************************
- * Copyright (c) 2015-2023 Matt Tropiano
- * This program and the accompanying materials are made available under the 
- * terms of the GNU Lesser Public License v2.1 which accompanies this 
- * distribution, and is available at
- * http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
+ * Copyright (c) 2020-2025 Matt Tropiano
+ * This program and the accompanying materials are made available under 
+ * the terms of the MIT License, which accompanies this distribution.
  ******************************************************************************/
 package net.mtrop.doom.struct;
 
@@ -17,6 +15,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Breaks up a stream of characters into lexicographical tokens.
@@ -31,7 +30,7 @@ import java.util.Set;
  * <p>
  * Other implementations of this class may manipulate the stack as well (such as ones that do in-language stream inclusion).
  * <p>
- * If the system property <code>net.mtrop.doom.struct.Lexer.debug</code> is set to <code>true</code>, this does debugging output to {@link System#out}.
+ * If the system property <code>com.blackrook.base.Lexer.debug</code> is set to <code>true</code>, this does debugging output to {@link System#out}.
  * <p>
  * Lexer functions are NOT thread-safe.
  * @author Matthew Tropiano
@@ -54,13 +53,19 @@ public class Lexer
 	
 	// ============ STATE =============
 	
-	/** The current state. */
-	private int state;
 	/** Current token builder. */
 	private StringBuilder tokenBuffer;
-	/** Current string end char. */
-	private char stringEnd;
 
+	/**
+	 * Creates a new lexer with no streams.
+	 * This will also assign this lexer a default name.
+	 * @param kernel the lexer kernel to use for defining how to parse the input text.
+	 */
+	public Lexer(Kernel kernel)
+	{
+		this(kernel, null, (Reader)null);
+	}
+	
 	/**
 	 * Creates a new lexer around a String, that will be wrapped into a StringReader.
 	 * This will also assign this lexer a default name.
@@ -98,15 +103,15 @@ public class Lexer
 	 * Creates a new lexer around a reader.
 	 * @param kernel the kernel to use for this lexer.
 	 * @param name the name of this lexer.
-	 * @param in the reader to read from.
+	 * @param in the reader to read from. If null, does not push a stream.
 	 */
 	public Lexer(Kernel kernel, String name, Reader in)
 	{
 		this.kernel = kernel;
 		readerStack = new ReaderStack();
-		state = Kernel.TYPE_UNKNOWN;
 		tokenBuffer = new StringBuilder();
-		pushStream(name, in);
+		if (in != null)
+			pushStream(name, in);
 	}
 	
 	/**
@@ -160,12 +165,17 @@ public class Lexer
 	{
 		int lineNumber = -1;
 		int charIndex = 0;
+		int state = Kernel.TYPE_UNKNOWN;
 		boolean breakloop = false;
+		Character stringEnd = null;
+		String commentEnd = null;
+		int commentEndIndex = 0;
+		
 		while (!breakloop)
 		{
 			char c = readChar();
 			
-			switch (getState())
+			switch (state)
 			{
 				case Kernel.TYPE_END_OF_LEXER:
 				{
@@ -177,14 +187,14 @@ public class Lexer
 				{
 					if (isLexerEnd(c))
 					{
-						setState(Kernel.TYPE_END_OF_LEXER);
+						state = Kernel.TYPE_END_OF_LEXER;
 						breakloop = true;
 					}
 					else if (isStreamEnd(c))
 					{
 						if (kernel.willEmitStreamBreak())
 						{
-							setState(Kernel.TYPE_END_OF_STREAM);
+							state = Kernel.TYPE_END_OF_STREAM;
 							charIndex = readerStack.getCurrentLineCharacterIndex();
 							lineNumber = readerStack.getCurrentLineNumber();
 							breakloop = true;
@@ -195,7 +205,7 @@ public class Lexer
 					{
 						if (kernel.willEmitNewlines())
 						{
-							setState(Kernel.TYPE_DELIM_NEWLINE);
+							state = Kernel.TYPE_NEWLINE;
 							charIndex = readerStack.getCurrentLineCharacterIndex();
 							lineNumber = readerStack.getCurrentLineNumber();
 							breakloop = true;
@@ -205,7 +215,7 @@ public class Lexer
 					{
 						if (kernel.willEmitSpaces())
 						{
-							setState(Kernel.TYPE_DELIM_SPACE);
+							state = Kernel.TYPE_SPACE;
 							charIndex = readerStack.getCurrentLineCharacterIndex();
 							lineNumber = readerStack.getCurrentLineNumber();
 							breakloop = true;
@@ -215,7 +225,7 @@ public class Lexer
 					{
 						if (kernel.willEmitTabs())
 						{
-							setState(Kernel.TYPE_DELIM_TAB);
+							state = Kernel.TYPE_TAB;
 							charIndex = readerStack.getCurrentLineCharacterIndex();
 							lineNumber = readerStack.getCurrentLineNumber();
 							breakloop = true;
@@ -223,52 +233,53 @@ public class Lexer
 					}
 					else if (isWhitespace(c))
 					{
+						// Eat leading whitespace.
 					}
 					else if (isPoint(c) && isDelimiterStart(c))
 					{
-						setState(Kernel.TYPE_POINT);
+						state = Kernel.TYPE_POINT;
 						charIndex = readerStack.getCurrentLineCharacterIndex();
 						lineNumber = readerStack.getCurrentLineNumber();
 						saveChar(c);
 					}
 					else if (isPoint(c) && !isDelimiterStart(c))
 					{
-						setState(Kernel.TYPE_FLOAT);
+						state = Kernel.TYPE_FLOAT;
 						charIndex = readerStack.getCurrentLineCharacterIndex();
 						lineNumber = readerStack.getCurrentLineNumber();
 						saveChar(c);
 					}
 					else if (isStringStart(c))
 					{
-						setState(Kernel.TYPE_STRING);
+						state = Kernel.TYPE_STRING;
 						charIndex = readerStack.getCurrentLineCharacterIndex();
 						lineNumber = readerStack.getCurrentLineNumber();
-						setStringStartAndEnd(c);
+						stringEnd = getStringStartAndEnd(c);
 					}
 					else if (isRawStringStart(c))
 					{
-						setState(Kernel.TYPE_RAWSTRING);
+						state = Kernel.TYPE_RAWSTRING;
 						charIndex = readerStack.getCurrentLineCharacterIndex();
 						lineNumber = readerStack.getCurrentLineNumber();
-						setMultilineStringStartAndEnd(c);
+						stringEnd = getRawStringStartAndEnd(c);
 					}
 					else if (isDelimiterStart(c))
 					{
-						setState(Kernel.TYPE_DELIMITER);
+						state = Kernel.TYPE_DELIMITER;
 						charIndex = readerStack.getCurrentLineCharacterIndex();
 						lineNumber = readerStack.getCurrentLineNumber();
 						saveChar(c);
 					}
 					else if (c == '0')
 					{
-						setState(Kernel.TYPE_HEX_INTEGER0);
+						state = Kernel.TYPE_HEX_INTEGER0;
 						charIndex = readerStack.getCurrentLineCharacterIndex();
 						lineNumber = readerStack.getCurrentLineNumber();
 						saveChar(c);
 					}
 					else if (isDigit(c))
 					{
-						setState(Kernel.TYPE_NUMBER);
+						state = Kernel.TYPE_NUMBER;
 						charIndex = readerStack.getCurrentLineCharacterIndex();
 						lineNumber = readerStack.getCurrentLineNumber();
 						saveChar(c);
@@ -276,7 +287,7 @@ public class Lexer
 					// anything else starts an identifier.
 					else
 					{
-						setState(Kernel.TYPE_IDENTIFIER);
+						state = Kernel.TYPE_IDENTIFIER;
 						charIndex = readerStack.getCurrentLineCharacterIndex();
 						lineNumber = readerStack.getCurrentLineNumber();
 						saveChar(c);
@@ -326,14 +337,6 @@ public class Lexer
 						setDelimBreak(c);
 						breakloop = true;
 					}
-					else if (isLetter(c))
-					{
-						saveChar(c);
-					}
-					else if (isDigit(c))
-					{
-						saveChar(c);
-					}
 					else
 					{
 						saveChar(c);
@@ -346,54 +349,54 @@ public class Lexer
 				{
 					if (isStreamEnd(c))
 					{
-						setState(Kernel.TYPE_DELIMITER);
+						state = Kernel.TYPE_DELIMITER;
 						setDelimBreak(c);
 						breakloop = true;
 					}
 					else if (isNewline(c))
 					{
-						setState(Kernel.TYPE_DELIMITER);
+						state = Kernel.TYPE_DELIMITER;
 						setDelimBreak(c);
 						breakloop = true;
 					}
 					else if (isSpace(c))
 					{
-						setState(Kernel.TYPE_DELIMITER);
+						state = Kernel.TYPE_DELIMITER;
 						setDelimBreak(c);
 						breakloop = true;
 					}
 					else if (isTab(c))
 					{
-						setState(Kernel.TYPE_DELIMITER);
+						state = Kernel.TYPE_DELIMITER;
 						setDelimBreak(c);
 						breakloop = true;
 					}
 					else if (isWhitespace(c))
 					{
-						setState(Kernel.TYPE_DELIMITER);
+						state = Kernel.TYPE_DELIMITER;
 						setDelimBreak(c);
 						breakloop = true;
 					}
 					else if (isStringStart(c))
 					{
-						setState(Kernel.TYPE_DELIMITER);
+						state = Kernel.TYPE_DELIMITER;
 						setDelimBreak(c);
 						breakloop = true;
 					}
 					else if (isRawStringStart(c))
 					{
-						setState(Kernel.TYPE_DELIMITER);
+						state = Kernel.TYPE_DELIMITER;
 						setDelimBreak(c);
 						breakloop = true;
 					}
 					else if (isDigit(c))
 					{
-						setState(Kernel.TYPE_FLOAT);
+						state = Kernel.TYPE_FLOAT;
 						saveChar(c);
 					}
 					else
 					{
-						setState(Kernel.TYPE_DELIMITER);
+						state = Kernel.TYPE_DELIMITER;
 						if (kernel.getDelimTable().containsKey(getCurrentLexeme() + c))
 							saveChar(c);
 						else
@@ -409,48 +412,48 @@ public class Lexer
 				{
 					if (isStreamEnd(c))
 					{
-						setState(Kernel.TYPE_NUMBER);
+						state = Kernel.TYPE_NUMBER;
 						setDelimBreak(c);
 						breakloop = true;
 					}
 					else if (isNewline(c))
 					{
-						setState(Kernel.TYPE_NUMBER);
+						state = Kernel.TYPE_NUMBER;
 						setDelimBreak(c);
 						breakloop = true;
 					}
 					else if (isSpace(c))
 					{
-						setState(Kernel.TYPE_NUMBER);
+						state = Kernel.TYPE_NUMBER;
 						setDelimBreak(c);
 						breakloop = true;
 					}
 					else if (isTab(c))
 					{
-						setState(Kernel.TYPE_NUMBER);
+						state = Kernel.TYPE_NUMBER;
 						setDelimBreak(c);
 						breakloop = true;
 					}
 					else if (isWhitespace(c))
 					{
-						setState(Kernel.TYPE_NUMBER);
+						state = Kernel.TYPE_NUMBER;
 						setDelimBreak(c);
 						breakloop = true;
 					}
 					else if (isExponent(c))
 					{
-						setState(Kernel.TYPE_EXPONENT);
+						state = Kernel.TYPE_EXPONENT;
 						saveChar(c);
 					}
 					else if (isStringStart(c))
 					{
-						setState(Kernel.TYPE_NUMBER);
+						state = Kernel.TYPE_NUMBER;
 						setDelimBreak(c);
 						breakloop = true;
 					}
 					else if (isRawStringStart(c))
 					{
-						setState(Kernel.TYPE_NUMBER);
+						state = Kernel.TYPE_NUMBER;
 						setDelimBreak(c);
 						breakloop = true;
 					}
@@ -460,13 +463,13 @@ public class Lexer
 					}
 					else if (isDelimiterStart(c))
 					{
-						setState(Kernel.TYPE_NUMBER);
+						state = Kernel.TYPE_NUMBER;
 						setDelimBreak(c);
 						breakloop = true;
 					}
 					else
 					{
-						setState(Kernel.TYPE_ILLEGAL);
+						state = Kernel.TYPE_ILLEGAL;
 						saveChar(c);
 					}
 					break; // end Kernel.TYPE_FLOAT
@@ -514,21 +517,8 @@ public class Lexer
 						setDelimBreak(c);
 						breakloop = true;
 					}
-					else if (isLetter(c))
-					{
-						saveChar(c);
-					}
-					else if (isDigit(c))
-					{
-						saveChar(c);
-					}
-					else if (isUnderscore(c))
-					{
-						saveChar(c);
-					}
 					else
 					{
-						setState(Kernel.TYPE_ILLEGAL);
 						saveChar(c);
 					}
 					break; // end Kernel.TYPE_IDENTIFIER
@@ -538,75 +528,75 @@ public class Lexer
 				{
 					if (isStreamEnd(c))
 					{
-						setState(Kernel.TYPE_NUMBER);
+						state = Kernel.TYPE_NUMBER;
 						setDelimBreak(c);
 						breakloop = true;
 					}
 					else if (isNewline(c))
 					{
-						setState(Kernel.TYPE_NUMBER);
+						state = Kernel.TYPE_NUMBER;
 						setDelimBreak(c);
 						breakloop = true;
 					}
 					else if (isSpace(c))
 					{
-						setState(Kernel.TYPE_NUMBER);
+						state = Kernel.TYPE_NUMBER;
 						setDelimBreak(c);
 						breakloop = true;
 					}
 					else if (isTab(c))
 					{
-						setState(Kernel.TYPE_NUMBER);
+						state = Kernel.TYPE_NUMBER;
 						setDelimBreak(c);
 						breakloop = true;
 					}
 					else if (isWhitespace(c))
 					{
-						setState(Kernel.TYPE_NUMBER);
+						state = Kernel.TYPE_NUMBER;
 						setDelimBreak(c);
 						breakloop = true;
 					}
 					else if (isPoint(c))
 					{
-						setState(Kernel.TYPE_FLOAT);
+						state = Kernel.TYPE_FLOAT;
 						saveChar(c);
 					}
 					else if (isStringStart(c))
 					{
-						setState(Kernel.TYPE_NUMBER);
+						state = Kernel.TYPE_NUMBER;
 						setDelimBreak(c);
 						breakloop = true;
 					}
 					else if (isRawStringStart(c))
 					{
-						setState(Kernel.TYPE_NUMBER);
+						state = Kernel.TYPE_NUMBER;
 						setDelimBreak(c);
 						breakloop = true;
 					}
 					else if (isDelimiterStart(c))
 					{
-						setState(Kernel.TYPE_NUMBER);
+						state = Kernel.TYPE_NUMBER;
 						setDelimBreak(c);
 						breakloop = true;
 					}
 					else if (c == 'x' || c == 'X')
 					{
-						setState(Kernel.TYPE_HEX_INTEGER1);
+						state = Kernel.TYPE_HEX_INTEGER1;
 						saveChar(c);
 					}
 					else if (isLetter(c))
 					{
-						setState(Kernel.TYPE_ILLEGAL);
+						state = Kernel.TYPE_ILLEGAL;
 						saveChar(c);
 					}
 					else if (isDigit(c))
 					{
-						setState(Kernel.TYPE_NUMBER);
+						state = Kernel.TYPE_NUMBER;
 						saveChar(c);
 					}
 					else
 					{
-						setState(Kernel.TYPE_ILLEGAL);
+						state = Kernel.TYPE_ILLEGAL;
 						saveChar(c);
 					}
 					break; // end Kernel.TYPE_HEX_INTEGER0
@@ -616,71 +606,71 @@ public class Lexer
 				{
 					if (isStreamEnd(c))
 					{
-						setState(Kernel.TYPE_ILLEGAL);
+						state = Kernel.TYPE_ILLEGAL;
 						setDelimBreak(c);
 						breakloop = true;
 					}
 					else if (isNewline(c))
 					{
-						setState(Kernel.TYPE_ILLEGAL);
+						state = Kernel.TYPE_ILLEGAL;
 						setDelimBreak(c);
 						breakloop = true;
 					}
 					else if (isSpace(c))
 					{
-						setState(Kernel.TYPE_ILLEGAL);
+						state = Kernel.TYPE_ILLEGAL;
 						setDelimBreak(c);
 						breakloop = true;
 					}
 					else if (isTab(c))
 					{
-						setState(Kernel.TYPE_ILLEGAL);
+						state = Kernel.TYPE_ILLEGAL;
 						setDelimBreak(c);
 						breakloop = true;
 					}
 					else if (isWhitespace(c))
 					{
-						setState(Kernel.TYPE_ILLEGAL);
+						state = Kernel.TYPE_ILLEGAL;
 						setDelimBreak(c);
 						breakloop = true;
 					}
 					else if (isPoint(c))
 					{
-						setState(Kernel.TYPE_ILLEGAL);
+						state = Kernel.TYPE_ILLEGAL;
 						setDelimBreak(c);
 						breakloop = true;
 					}
 					else if (isStringStart(c))
 					{
-						setState(Kernel.TYPE_ILLEGAL);
+						state = Kernel.TYPE_ILLEGAL;
 						setDelimBreak(c);
 						breakloop = true;
 					}
 					else if (isRawStringStart(c))
 					{
-						setState(Kernel.TYPE_ILLEGAL);
+						state = Kernel.TYPE_ILLEGAL;
 						setDelimBreak(c);
 						breakloop = true;
 					}
 					else if (isDelimiterStart(c))
 					{
-						setState(Kernel.TYPE_ILLEGAL);
+						state = Kernel.TYPE_ILLEGAL;
 						setDelimBreak(c);
 						breakloop = true;
 					}
 					else if (isHexDigit(c))
 					{
-						setState(Kernel.TYPE_HEX_INTEGER);
+						state = Kernel.TYPE_HEX_INTEGER;
 						saveChar(c);
 					}
 					else if (isLetter(c))
 					{
-						setState(Kernel.TYPE_ILLEGAL);
+						state = Kernel.TYPE_ILLEGAL;
 						saveChar(c);
 					}
 					else
 					{
-						setState(Kernel.TYPE_ILLEGAL);
+						state = Kernel.TYPE_ILLEGAL;
 						saveChar(c);
 					}
 					break; // end Kernel.TYPE_HEX_INTEGER1
@@ -690,49 +680,49 @@ public class Lexer
 				{
 					if (isStreamEnd(c))
 					{
-						setState(Kernel.TYPE_NUMBER);
+						state = Kernel.TYPE_NUMBER;
 						setDelimBreak(c);
 						breakloop = true;
 					}
 					else if (isNewline(c))
 					{
-						setState(Kernel.TYPE_NUMBER);
+						state = Kernel.TYPE_NUMBER;
 						setDelimBreak(c);
 						breakloop = true;
 					}
 					else if (isSpace(c))
 					{
-						setState(Kernel.TYPE_NUMBER);
+						state = Kernel.TYPE_NUMBER;
 						setDelimBreak(c);
 						breakloop = true;
 					}
 					else if (isTab(c))
 					{
-						setState(Kernel.TYPE_NUMBER);
+						state = Kernel.TYPE_NUMBER;
 						setDelimBreak(c);
 						breakloop = true;
 					}
 					else if (isWhitespace(c))
 					{
-						setState(Kernel.TYPE_NUMBER);
+						state = Kernel.TYPE_NUMBER;
 						setDelimBreak(c);
 						breakloop = true;
 					}
 					else if (isStringStart(c))
 					{
-						setState(Kernel.TYPE_NUMBER);
+						state = Kernel.TYPE_NUMBER;
 						setDelimBreak(c);
 						breakloop = true;
 					}
 					else if (isRawStringStart(c))
 					{
-						setState(Kernel.TYPE_NUMBER);
+						state = Kernel.TYPE_NUMBER;
 						setDelimBreak(c);
 						breakloop = true;
 					}
 					else if (isDelimiterStart(c))
 					{
-						setState(Kernel.TYPE_NUMBER);
+						state = Kernel.TYPE_NUMBER;
 						setDelimBreak(c);
 						breakloop = true;
 					}
@@ -742,12 +732,12 @@ public class Lexer
 					}
 					else if (isLetter(c))
 					{
-						setState(Kernel.TYPE_ILLEGAL);
+						state = Kernel.TYPE_ILLEGAL;
 						saveChar(c);
 					}
 					else
 					{
-						setState(Kernel.TYPE_ILLEGAL);
+						state = Kernel.TYPE_ILLEGAL;
 						saveChar(c);
 					}
 					break; // end Kernel.TYPE_HEX_INTEGER
@@ -782,12 +772,12 @@ public class Lexer
 					}
 					else if (isPoint(c))
 					{
-						setState(Kernel.TYPE_FLOAT);
+						state = Kernel.TYPE_FLOAT;
 						saveChar(c);
 					}
 					else if (isExponent(c))
 					{
-						setState(Kernel.TYPE_EXPONENT);
+						state = Kernel.TYPE_EXPONENT;
 						saveChar(c);
 					}
 					else if (isStringStart(c))
@@ -807,7 +797,7 @@ public class Lexer
 					}
 					else if (isLetter(c))
 					{
-						setState(Kernel.TYPE_ILLEGAL);
+						state = Kernel.TYPE_ILLEGAL;
 						saveChar(c);
 					}
 					else if (isDigit(c))
@@ -816,7 +806,7 @@ public class Lexer
 					}
 					else
 					{
-						setState(Kernel.TYPE_ILLEGAL);
+						state = Kernel.TYPE_ILLEGAL;
 						saveChar(c);
 					}
 					break; // end Kernel.TYPE_NUMBER
@@ -826,70 +816,70 @@ public class Lexer
 				{
 					if (isStreamEnd(c))
 					{
-						setState(Kernel.TYPE_ILLEGAL);
+						state = Kernel.TYPE_ILLEGAL;
 						setDelimBreak(c);
 						breakloop = true;
 					}
 					else if (isNewline(c))
 					{
-						setState(Kernel.TYPE_ILLEGAL);
+						state = Kernel.TYPE_ILLEGAL;
 						setDelimBreak(c);
 						breakloop = true;
 					}
 					else if (isSpace(c))
 					{
-						setState(Kernel.TYPE_ILLEGAL);
+						state = Kernel.TYPE_ILLEGAL;
 						setDelimBreak(c);
 						breakloop = true;
 					}
 					else if (isTab(c))
 					{
-						setState(Kernel.TYPE_ILLEGAL);
+						state = Kernel.TYPE_ILLEGAL;
 						setDelimBreak(c);
 						breakloop = true;
 					}
 					else if (isWhitespace(c))
 					{
-						setState(Kernel.TYPE_ILLEGAL);
+						state = Kernel.TYPE_ILLEGAL;
 						setDelimBreak(c);
 						breakloop = true;
 					}
 					else if (isExponentSign(c))
 					{
-						setState(Kernel.TYPE_EXPONENT_POWER);
+						state = Kernel.TYPE_EXPONENT_POWER;
 						saveChar(c);
 					}
 					else if (isStringStart(c))
 					{
-						setState(Kernel.TYPE_ILLEGAL);
+						state = Kernel.TYPE_ILLEGAL;
 						setDelimBreak(c);
 						breakloop = true;
 					}
 					else if (isRawStringStart(c))
 					{
-						setState(Kernel.TYPE_ILLEGAL);
+						state = Kernel.TYPE_ILLEGAL;
 						setDelimBreak(c);
 						breakloop = true;
 					}
 					else if (isDelimiterStart(c))
 					{
-						setState(Kernel.TYPE_ILLEGAL);
+						state = Kernel.TYPE_ILLEGAL;
 						setDelimBreak(c);
 						breakloop = true;
 					}
 					else if (isLetter(c))
 					{
-						setState(Kernel.TYPE_ILLEGAL);
+						state = Kernel.TYPE_ILLEGAL;
 						saveChar(c);
 					}
 					else if (isDigit(c))
 					{
-						setState(Kernel.TYPE_EXPONENT_POWER);
+						state = Kernel.TYPE_EXPONENT_POWER;
 						saveChar(c);
 					}
 					else
 					{
-						setState(Kernel.TYPE_ILLEGAL);
+						state = Kernel.TYPE_ILLEGAL;
 						saveChar(c);
 					}
 					break; // end Kernel.TYPE_EXPONENT
@@ -899,43 +889,43 @@ public class Lexer
 				{
 					if (isStreamEnd(c))
 					{
-						setState(Kernel.TYPE_NUMBER);
+						state = Kernel.TYPE_NUMBER;
 						setDelimBreak(c);
 						breakloop = true;
 					}
 					else if (isNewline(c))
 					{
-						setState(Kernel.TYPE_NUMBER);
+						state = Kernel.TYPE_NUMBER;
 						setDelimBreak(c);
 						breakloop = true;
 					}
 					else if (isSpace(c))
 					{
-						setState(Kernel.TYPE_NUMBER);
+						state = Kernel.TYPE_NUMBER;
 						setDelimBreak(c);
 						breakloop = true;
 					}
 					else if (isTab(c))
 					{
-						setState(Kernel.TYPE_NUMBER);
+						state = Kernel.TYPE_NUMBER;
 						setDelimBreak(c);
 						breakloop = true;
 					}
 					else if (isWhitespace(c))
 					{
-						setState(Kernel.TYPE_NUMBER);
+						state = Kernel.TYPE_NUMBER;
 						setDelimBreak(c);
 						breakloop = true;
 					}
 					else if (isStringStart(c))
 					{
-						setState(Kernel.TYPE_NUMBER);
+						state = Kernel.TYPE_NUMBER;
 						setDelimBreak(c);
 						breakloop = true;
 					}
 					else if (isRawStringStart(c))
 					{
-						setState(Kernel.TYPE_NUMBER);
+						state = Kernel.TYPE_NUMBER;
 						setDelimBreak(c);
 						breakloop = true;
 					}
@@ -945,13 +935,13 @@ public class Lexer
 					}
 					else if (isDelimiterStart(c))
 					{
-						setState(Kernel.TYPE_NUMBER);
+						state = Kernel.TYPE_NUMBER;
 						setDelimBreak(c);
 						breakloop = true;
 					}
 					else
 					{
-						setState(Kernel.TYPE_ILLEGAL);
+						state = Kernel.TYPE_ILLEGAL;
 						saveChar(c);
 					}
 					break; // end Kernel.TYPE_EXPONENT_POWER
@@ -961,24 +951,24 @@ public class Lexer
 				{
 					if (isStreamEnd(c))
 					{
-						setState(Kernel.TYPE_ILLEGAL);
+						state = Kernel.TYPE_ILLEGAL;
 						setDelimBreak(c);
 						breakloop = true;
 					}
-					else if (isStringEnd(c))
+					else if (stringEnd == c)
 					{
 						breakloop = true;
 					}
 					else if (isNewline(c))
 					{
-						setState(Kernel.TYPE_ILLEGAL);
+						state = Kernel.TYPE_ILLEGAL;
 						setDelimBreak(c);
 						breakloop = true;
 					}
 					else if (isStringEscape(c))
 					{
 						c = readChar();
-						if (isStringEnd(c))
+						if (stringEnd == c)
 							saveChar(c);
 						else if (isStringEscape(c))
 							saveChar(c);
@@ -1013,7 +1003,7 @@ public class Lexer
 									c = readChar();
 									if (!isHexDigit(c))
 									{
-										setState(Kernel.TYPE_ILLEGAL);
+										state = Kernel.TYPE_ILLEGAL;
 										setDelimBreak(c);
 										breakloop = true;
 									}
@@ -1036,7 +1026,7 @@ public class Lexer
 									c = readChar();
 									if (!isHexDigit(c))
 									{
-										setState(Kernel.TYPE_ILLEGAL);
+										state = Kernel.TYPE_ILLEGAL;
 										setDelimBreak(c);
 										breakloop = true;
 									}
@@ -1064,13 +1054,13 @@ public class Lexer
 				{
 					if (isStreamEnd(c))
 					{
-						setState(Kernel.TYPE_ILLEGAL);
+						state = Kernel.TYPE_ILLEGAL;
 						setDelimBreak(c);
 						breakloop = true;
 					}
-					else if (isStringEnd(c))
+					else if (stringEnd == c)
 					{
-						setState(Kernel.TYPE_STRING);
+						state = Kernel.TYPE_STRING;
 						breakloop = true;
 					}
 					else
@@ -1082,32 +1072,25 @@ public class Lexer
 				
 				case Kernel.TYPE_DELIMITER:
 				{
+					String lookAheadDelimiter = getCurrentLexeme() + c;
+					
 					if (isStreamEnd(c))
 					{
 						setDelimBreak(c);
 						breakloop = true;
 					}
-					else if (kernel.getCommentStartTable().containsKey(getCurrentLexeme()))
+					else if (kernel.getCommentTable().containsKey(lookAheadDelimiter))
+					{
+						commentEnd = kernel.getCommentTable().get(lookAheadDelimiter);
+						clearCurrentLexeme();
+						state = Kernel.TYPE_COMMENT;
+					}
+					else if (kernel.getCommentLineSet().contains(lookAheadDelimiter))
 					{
 						clearCurrentLexeme();
-						setState(Kernel.TYPE_COMMENT);
+						state = Kernel.TYPE_LINE_COMMENT;
 					}
-					else if (kernel.getCommentStartTable().containsKey(getCurrentLexeme()+c))
-					{
-						clearCurrentLexeme();
-						setState(Kernel.TYPE_COMMENT);
-					}
-					else if (kernel.getCommentLineTable().containsKey(getCurrentLexeme()))
-					{
-						clearCurrentLexeme();
-						setState(Kernel.TYPE_LINE_COMMENT);
-					}
-					else if (kernel.getCommentLineTable().containsKey(getCurrentLexeme()+c))
-					{
-						clearCurrentLexeme();
-						setState(Kernel.TYPE_LINE_COMMENT);
-					}
-					else if (kernel.getDelimTable().containsKey(getCurrentLexeme()+c))
+					else if (kernel.getDelimTable().containsKey(lookAheadDelimiter))
 					{
 						saveChar(c);
 					}
@@ -1156,48 +1139,71 @@ public class Lexer
 						if (!kernel.willEmitComments())
 						{
 							clearCurrentLexeme();
-							setState(Kernel.TYPE_UNKNOWN);
+							state = Kernel.TYPE_UNKNOWN;
 						}
-					}
-					else if (kernel.getCommentEndTable().containsKey(getCurrentLexeme()))
-					{
-						if (!kernel.willEmitComments())
+						else
 						{
-							clearCurrentLexeme();
-							setState(Kernel.TYPE_UNKNOWN);
+							saveChar(c);
+							breakloop = true;
 						}
 					}
-					else if (isCommentEndDelimiterStart(c))
+					else if (commentEnd.charAt(0) == c)
 					{
-						setState(Kernel.TYPE_DELIM_COMMENT);
+						if (commentEnd.length() == 1)
+						{
+							state = Kernel.TYPE_COMMENT;
+						}
+						else
+						{
+							state = Kernel.TYPE_ENDING_COMMENT;
+							commentEndIndex = 1;
+							saveChar(c);
+						}
+					}
+					else
+					{
 						saveChar(c);
 					}
 					break; // end Kernel.TYPE_COMMENT
 				}
 
-				case Kernel.TYPE_DELIM_COMMENT:
+				case Kernel.TYPE_ENDING_COMMENT:
 				{
 					if (isStreamEnd(c))
 					{
-						clearCurrentLexeme();
-						setState(Kernel.TYPE_COMMENT);
+						state = Kernel.TYPE_UNKNOWN;
+						breakloop = true;
 					}
-					else if (kernel.getCommentEndTable().containsKey(getCurrentLexeme()+c))
+					else if (commentEnd.charAt(commentEndIndex) == c)
 					{
-						clearCurrentLexeme();
-						setState(Kernel.TYPE_UNKNOWN);
+						if (commentEndIndex < commentEnd.length() - 1)
+						{
+							commentEndIndex++;
+							saveChar(c);
+						}
+						else if (kernel.willEmitComments())
+						{
+							tokenBuffer.delete(tokenBuffer.length() - commentEnd.length(), tokenBuffer.length());
+							state = Kernel.TYPE_COMMENT;
+							breakloop = true;
+						}
+						else
+						{
+							clearCurrentLexeme();
+							state = Kernel.TYPE_UNKNOWN;
+						}
 					}
-					else if (isWhitespace(c))
+					else if (commentEnd.charAt(0) == c)
 					{
-						clearCurrentLexeme();
-						setState(Kernel.TYPE_COMMENT);
+						commentEndIndex = 1;
+						saveChar(c);
 					}
 					else
 					{
-						clearCurrentLexeme();
+						state = Kernel.TYPE_COMMENT;
 						saveChar(c);
 					}
-					break; // end Kernel.TYPE_DELIM_COMMENT
+					break; // end Kernel.TYPE_ENDING_COMMENT
 				}
 					
 				case Kernel.TYPE_LINE_COMMENT:
@@ -1207,7 +1213,11 @@ public class Lexer
 						if (!kernel.willEmitComments())
 						{
 							clearCurrentLexeme();
-							setState(Kernel.TYPE_UNKNOWN);
+							state = Kernel.TYPE_UNKNOWN;
+						}
+						else
+						{
+							breakloop = true;
 						}
 					}
 					else if (isNewline(c))
@@ -1215,26 +1225,33 @@ public class Lexer
 						if (!kernel.willEmitComments())
 						{
 							clearCurrentLexeme();
-							setState(Kernel.TYPE_UNKNOWN);
+							state = Kernel.TYPE_UNKNOWN;
+						}
+						else
+						{
+							breakloop = true;
 						}
 					}
-					break; // end Kernel.TYPE_DELIM_COMMENT
+					else
+					{
+						saveChar(c);
+					}
+					break; // end Kernel.TYPE_LINE_COMMENT
 				}
 			}
 		}
 
 		// send token.
-		int type = getState();
+		int type = state;
 		String lexeme = getCurrentLexeme();
 		clearCurrentLexeme();
 		
 		Token out = null;
-		if (getState() != Kernel.TYPE_END_OF_LEXER)
+		if (state != Kernel.TYPE_END_OF_LEXER)
 		{
 			String streamName = readerStack.getCurrentStreamName();
 			out = new Token(streamName, type, lexeme, lineNumber, charIndex);
 			modifyType(out);
-			setState(Kernel.TYPE_UNKNOWN);
 		}
 		
 		if (DEBUG)
@@ -1262,19 +1279,19 @@ public class Lexer
 	{
 		switch (token.getType())
 		{
-			case Kernel.TYPE_DELIM_SPACE:
+			case Kernel.TYPE_SPACE:
 			{
 				token.setLexeme(" ");
 				return true;
 			}
 			
-			case Kernel.TYPE_DELIM_TAB:
+			case Kernel.TYPE_TAB:
 			{
 				token.setLexeme("\t");
 				return true;
 			}
 			
-			case Kernel.TYPE_DELIM_NEWLINE:
+			case Kernel.TYPE_NEWLINE:
 			{
 				token.setLexeme("");
 				return true;
@@ -1283,22 +1300,7 @@ public class Lexer
 			case Kernel.TYPE_DELIMITER:
 			{
 				String lexeme = token.getLexeme();
-				if (kernel.getCommentStartTable().containsKey(lexeme))
-				{
-					token.setType(kernel.getCommentStartTable().get(lexeme));
-					return true;
-				}
-				else if (kernel.getCommentEndTable().containsKey(lexeme))
-				{
-					token.setType(kernel.getCommentEndTable().get(lexeme));
-					return true;
-				}
-				else if (kernel.getCommentLineTable().containsKey(lexeme))
-				{
-					token.setType(kernel.getCommentLineTable().get(lexeme));
-					return true;
-				}
-				else if (kernel.getDelimTable().containsKey(lexeme))
+				if (kernel.getDelimTable().containsKey(lexeme))
 				{
 					token.setType(kernel.getDelimTable().get(lexeme));
 					return true;
@@ -1349,23 +1351,6 @@ public class Lexer
 	}
 
 	/**
-	 * @return the current state.
-	 */
-	protected int getState()
-	{
-		return state;
-	}
-	
-	/**
-	 * Sets the current state.
-	 * @param state the new state.
-	 */
-	protected void setState(int state)
-	{
-		this.state = state;
-	}
-	
-	/**
 	 * Sets if we are in a delimiter break.
 	 * @param delimChar the delimiter character that starts the break.
 	 */
@@ -1385,23 +1370,23 @@ public class Lexer
 	}
 	
 	/**
-	 * Sets the end character for a string.
-	 * @param c the character to set.
+	 * Gets the end character for a string start character.
+	 * @param c the start delimiter character.
+	 * @return the corresponding end, or null if no character.
 	 */
-	protected void setStringStartAndEnd(char c)
+	protected Character getStringStartAndEnd(char c)
 	{
-		if (isStringStart(c))
-			stringEnd = getStringEnd(c);
+		return isStringStart(c) ? getStringEnd(c) : null;
 	}
 
 	/**
-	 * Sets the end character for a string.
-	 * @param c the character to set.
+	 * Gets the end character for a multi-line, "raw" string start character.
+	 * @param c the start delimiter character.
+	 * @return the corresponding end, or null if no character.
 	 */
-	protected void setMultilineStringStartAndEnd(char c)
+	protected Character getRawStringStartAndEnd(char c)
 	{
-		if (isRawStringStart(c))
-			stringEnd = getRawStringEnd(c);
+		return isRawStringStart(c) ? getRawStringEnd(c) : null;
 	}
 
 	/**
@@ -1554,24 +1539,12 @@ public class Lexer
 	}
 	
 	/**
-	 * Checks if this is a character that ends a String.
-	 * @param c the character to test.
-	 * @return true if so, false if not.
-	 */
-	protected boolean isStringEnd(char c)
-	{
-		return stringEnd == c;
-	}
-	
-	/**
 	 * Gets the character that ends a String, using the starting character.
 	 * @param c the starting character.
 	 * @return the corresponding end character, or the null character ('\0') if this does not end a string.
 	 */
 	protected char getStringEnd(char c)
 	{
-		if (!isStringStart(c))
-			return '\0';
 		return kernel.getStringDelimTable().get(c);
 	}
 	
@@ -1582,8 +1555,6 @@ public class Lexer
 	 */
 	protected char getRawStringEnd(char c)
 	{
-		if (!isRawStringStart(c))
-			return '\0';
 		return kernel.getRawStringDelimTable().get(c);
 	}
 	
@@ -1595,16 +1566,6 @@ public class Lexer
 	protected boolean isDelimiterStart(char c)
 	{
 		return kernel.getDelimStartTable().contains(c);
-	}
-	
-	/**
-	 * Checks if this is a (or the start of a) block-comment-ending delimiter character.
-	 * @param c the character input.
-	 * @return true if so, false if not.
-	 */
-	protected boolean isCommentEndDelimiterStart(char c)
-	{
-		return kernel.getEndCommentDelimStartTable().contains(c);
 	}
 	
 	/**
@@ -1839,6 +1800,11 @@ public class Lexer
 				return charIndex;
 			}
 			
+			private boolean isNewlineChar(int c)
+			{
+				return c == '\r' || c == '\n';
+			}
+			
 			/**
 			 * Reads the next char from the stream.
 			 * Eats all manner of newline combos into '\n'.
@@ -1856,12 +1822,19 @@ public class Lexer
 				else
 				{
 					c = reader.read();
-					
-					if (c == '\r') // skip carriage return
+					boolean newline = false;
+					while (isNewlineChar(c))
+					{
+						if (c == (int)'\n')
+							line++;
+
+						newline = true;
 						c = reader.read();
-					
-					if (c == (int)'\n')
-						line++;
+						if (!isNewlineChar(c))
+							pushChar(c);
+					}
+					if (newline)
+						c = (int)NEWLINE;
 				}
 				
 				if (c == (int)NEWLINE)
@@ -1889,63 +1862,53 @@ public class Lexer
 		public static final int TYPE_END_OF_LEXER = 			-1;
 		/** Reserved token type: End of stream. */
 		public static final int TYPE_END_OF_STREAM =			-2;
-		/** Reserved token type: Number. */
-		public static final int TYPE_NUMBER = 					-3;
-		/** Reserved token type: Space. */
-		public static final int TYPE_DELIM_SPACE = 				-4;
-		/** Reserved token type: Tab. */
-		public static final int TYPE_DELIM_TAB = 				-5;
-		/** Reserved token type: New line character. */
-		public static final int TYPE_DELIM_NEWLINE = 			-6;
-		/** Reserved token type: Open comment. */
-		public static final int TYPE_DELIM_OPEN_COMMENT = 		-7;
-		/** Reserved token type: Close comment. */
-		public static final int TYPE_DELIM_CLOSE_COMMENT =	 	-8;
-		/** Reserved token type: Line comment. */
-		public static final int TYPE_DELIM_LINE_COMMENT = 		-9;
-		/** Reserved token type: Identifier. */
-		public static final int TYPE_IDENTIFIER = 				-10;
 		/** Reserved token type: Unknown token. */
-		public static final int TYPE_UNKNOWN = 					-11;
+		public static final int TYPE_UNKNOWN = 					-3;
+		/** Reserved token type: Number. */
+		public static final int TYPE_NUMBER = 					-4;
+		/** Reserved token type: Space. */
+		public static final int TYPE_SPACE = 					-5;
+		/** Reserved token type: Tab. */
+		public static final int TYPE_TAB = 						-6;
+		/** Reserved token type: New line character. */
+		public static final int TYPE_NEWLINE =					-7;
+		/** Reserved token type: Identifier. */
+		public static final int TYPE_IDENTIFIER = 				-8;
 		/** Reserved token type: Illegal token. */
-		public static final int TYPE_ILLEGAL = 					-12;
+		public static final int TYPE_ILLEGAL = 					-9;
 		/** Reserved token type: Comment. */
-		public static final int TYPE_COMMENT = 					-13;
+		public static final int TYPE_COMMENT = 					-10;
 		/** Reserved token type: Line Comment. */
-		public static final int TYPE_LINE_COMMENT = 			-14;
+		public static final int TYPE_LINE_COMMENT = 			-11;
 		/** Reserved token type: String. */
-		public static final int TYPE_STRING = 					-15;
+		public static final int TYPE_STRING = 					-12;
+		
 		/** Reserved token type: Raw String (never returned). */
-		public static final int TYPE_RAWSTRING = 				-16;
+		private static final int TYPE_RAWSTRING = 				-16;
 		/** Reserved token type: Delimiter (never returned). */
-		public static final int TYPE_DELIMITER = 				-17;
+		private static final int TYPE_DELIMITER = 				-17;
 		/** Reserved token type: Point state (never returned). */
-		public static final int TYPE_POINT = 					-19;
+		private static final int TYPE_POINT = 					-18;
 		/** Reserved token type: Floating point state (never returned). */
-		public static final int TYPE_FLOAT = 					-20;
+		private static final int TYPE_FLOAT = 					-19;
 		/** Reserved token type: Delimiter Comment (never returned). */
-		public static final int TYPE_DELIM_COMMENT = 			-21;
+		private static final int TYPE_ENDING_COMMENT = 			-20;
 		/** Reserved token type: hexadecimal integer (never returned). */
-		public static final int TYPE_HEX_INTEGER0 = 			-22;
+		private static final int TYPE_HEX_INTEGER0 = 			-21;
 		/** Reserved token type: hexadecimal integer (never returned). */
-		public static final int TYPE_HEX_INTEGER1 = 			-23;
+		private static final int TYPE_HEX_INTEGER1 = 			-22;
 		/** Reserved token type: hexadecimal integer (never returned). */
-		public static final int TYPE_HEX_INTEGER = 				-24;
+		private static final int TYPE_HEX_INTEGER = 			-23;
 		/** Reserved token type: Exponent state (never returned). */
-		public static final int TYPE_EXPONENT = 				-25;
+		private static final int TYPE_EXPONENT = 				-24;
 		/** Reserved token type: Exponent power state (never returned). */
-		public static final int TYPE_EXPONENT_POWER = 			-26;
+		private static final int TYPE_EXPONENT_POWER = 			-25;
 	
 		/**
 		 * Table of single-character (or beginning character of) significant
 		 * delimiters. Delimiters immediately break the current token if encountered.
 		 */
 		private Set<Character> delimStartTable;
-		/**
-		 * Table of single-character (or beginning character of) significant end comment
-		 * delimiters.
-		 */
-		private Set<Character> endCommentDelimStartTable;
 		/** 
 		 * Table of significant delimiters.
 		 */
@@ -1953,15 +1916,11 @@ public class Lexer
 		/** 
 		 * Table of comment-starting delimiters.
 		 */
-		private Map<String, Integer> commentStartTable;
+		private Map<String, String> commentTable;
 		/** 
 		 * Table of line-comment delimiters.
 		 */
-		private Map<String, Integer> commentLineTable;
-		/** 
-		 * Table of comment-ending delimiters.
-		 */
-		private Map<String, Integer> commentEndTable;
+		private Set<String> commentLineTable;
 		/**
 		 * Table of identifiers mapped to token ids (used for reserved keywords).
 		 */
@@ -2004,11 +1963,9 @@ public class Lexer
 		{
 			decimalSeparator = DecimalFormatSymbols.getInstance().getDecimalSeparator();
 			delimStartTable = new HashSet<Character>();
-			endCommentDelimStartTable = new HashSet<Character>();
 			delimTable = new HashMap<String, Integer>();
-			commentStartTable = new HashMap<String, Integer>(2);
-			commentLineTable = new HashMap<String, Integer>(2);
-			commentEndTable = new HashMap<String, Integer>(2);
+			commentTable = new HashMap<String, String>(2);
+			commentLineTable = new TreeSet<String>();
 			stringDelimTable = new HashMap<Character, Character>();
 			rawStringDelimTable = new HashMap<Character, Character>();
 			keywordTable = new HashMap<String, Integer>();
@@ -2069,41 +2026,29 @@ public class Lexer
 		}
 
 		/**
-		 * Adds a comment-starting delimiter to this lexer.
-		 * @param delimiter		the delimiter lexeme.
-		 * @param type			the type id.
-		 * @throws IllegalArgumentException if type is &lt; 0 or delimiter is null or empty.
+		 * Adds a comment-starting (and ending) delimiter to this lexer.
+		 * @param delimiterStart the comment starting delimiter. 
+		 * @param delimiterEnd the comment ending sequence.
 		 */
-		public void addCommentStartDelimiter(String delimiter, int type)
+		public void addCommentDelimiter(String delimiterStart, String delimiterEnd)
 		{
-			addDelimiter(delimiter, type);
-			commentStartTable.put(delimiter, type);
-		}
-	
-		/**
-		 * Adds a comment-ending delimiter to this lexer.
-		 * @param delimiter		the delimiter lexeme.
-		 * @param type			the type id.
-		 * @throws IllegalArgumentException if type is &lt; 0 or delimiter is null or empty.
-		 */
-		public void addCommentEndDelimiter(String delimiter, int type)
-		{
-			addDelimiter(delimiter, type);
-			if (!endCommentDelimStartTable.contains(delimiter.charAt(0)))
-				endCommentDelimStartTable.add(delimiter.charAt(0));
-			commentEndTable.put(delimiter, type);
+			keyCheck(delimiterStart);
+			commentTable.put(delimiterStart, delimiterEnd);
+			if (!delimStartTable.contains(delimiterStart.charAt(0)))
+				delimStartTable.add(delimiterStart.charAt(0));
 		}
 	
 		/**
 		 * Adds a line comment delimiter to this lexer.
 		 * @param delimiter		the delimiter lexeme.
-		 * @param type			the type id.
 		 * @throws IllegalArgumentException if type is &lt; 0 or delimiter is null or empty.
 		 */
-		public void addCommentLineDelimiter(String delimiter, int type)
+		public void addCommentLineDelimiter(String delimiter)
 		{
-			addDelimiter(delimiter, type);
-			commentLineTable.put(delimiter, type);
+			keyCheck(delimiter);
+			commentLineTable.add(delimiter);
+			if (!delimStartTable.contains(delimiter.charAt(0)))
+				delimStartTable.add(delimiter.charAt(0));
 		}
 	
 		/**
@@ -2247,29 +2192,19 @@ public class Lexer
 			return delimStartTable;
 		}
 	
-		private Set<Character> getEndCommentDelimStartTable()
-		{
-			return endCommentDelimStartTable;
-		}
-	
 		private Map<String, Integer> getDelimTable()
 		{
 			return delimTable;
 		}
 	
-		private Map<String, Integer> getCommentStartTable()
+		private Map<String, String> getCommentTable()
 		{
-			return commentStartTable;
+			return commentTable;
 		}
 	
-		private Map<String, Integer> getCommentLineTable()
+		private Set<String> getCommentLineSet()
 		{
 			return commentLineTable;
-		}
-	
-		private Map<String, Integer> getCommentEndTable()
-		{
-			return commentEndTable;
 		}
 	
 		private Map<String, Integer> getKeywordTable()
@@ -2333,6 +2268,15 @@ public class Lexer
 		}
 
 		/**
+		 * @return the current token's lexeme, or null if no current token.
+		 * @see Lexer.Token#getLexeme()
+		 */
+		protected String currentLexeme()
+		{
+			return currentToken != null ? currentToken.getLexeme() : null;
+		}
+
+		/**
 		 * Matches the current token. If matched, this returns true and advances
 		 * to the next token. Else, this returns false.
 		 * @param tokenType the type to match.
@@ -2348,6 +2292,54 @@ public class Lexer
 			return false;
 		}
 
+		/**
+		 * Attempts to match the type of the current token. If matched, this returns true.
+		 * This DOES NOT ADVANCE to the next token.
+		 * @param tokenType the token type.
+		 * @return true if matched, false if not.
+		 */
+		protected boolean currentType(int tokenType)
+		{
+			if (currentToken != null)
+			{
+				return currentToken.getType() == tokenType;
+			}
+			return false;
+		}
+		
+		/**
+		 * Attempts to match the type of the current token. If matched, this returns true.
+		 * This DOES NOT ADVANCE to the next token.
+		 * @param tokenType1 the first token type.
+		 * @param tokenType2 the second token type.
+		 * @return true if one was matched, false if not.
+		 */
+		protected boolean currentType(int tokenType1, int tokenType2)
+		{
+			if (currentToken != null)
+			{
+				return currentToken.getType() == tokenType1 || currentToken.getType() == tokenType2;
+			}
+			return false;
+		}
+		
+		/**
+		 * Attempts to match the type of the current token. If matched, this returns true.
+		 * This DOES NOT ADVANCE to the next token.
+		 * @param tokenType1 the first token type.
+		 * @param tokenType2 the second token type.
+		 * @param tokenType3 the third token type.
+		 * @return true if one was matched, false if not.
+		 */
+		protected boolean currentType(int tokenType1, int tokenType2, int tokenType3)
+		{
+			if (currentToken != null)
+			{
+				return currentToken.getType() == tokenType1 || currentToken.getType() == tokenType2 || currentToken.getType() == tokenType3;
+			}
+			return false;
+		}
+		
 		/**
 		 * Attempts to match the type of the current token. If matched, this returns true.
 		 * This DOES NOT ADVANCE to the next token.
@@ -2377,6 +2369,16 @@ public class Lexer
 			} catch (IOException e) {
 				throw new Parser.Exception(e.getMessage(), e);
 			}
+		}
+		
+		/**
+		 * Changes the current token's type to a different type.
+		 * Only useful after {@link #nextToken()} but before it is parsed by your parser.
+		 * @param type the new type id.
+		 */
+		protected void changeTokenType(int type)
+		{
+			currentToken.type = type;
 		}
 		
 		/**

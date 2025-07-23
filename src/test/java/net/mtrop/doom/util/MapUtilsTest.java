@@ -7,17 +7,11 @@
  ******************************************************************************/
 package net.mtrop.doom.util;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-
-import javax.sound.sampled.AudioFileFormat.Type;
-import javax.sound.sampled.UnsupportedAudioFileException;
 
 import net.mtrop.doom.Wad;
 import net.mtrop.doom.WadEntry;
 import net.mtrop.doom.WadFile;
-import net.mtrop.doom.sound.DMXSound;
 
 public final class MapUtilsTest
 {

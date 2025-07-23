@@ -168,8 +168,8 @@ public interface TextObject
 	 * @param <TO> the object type, a subtype of {@link TextObject}.
 	 * @param toClass the class to create.
 	 * @param string the string.
-	 * @return an array of length <code>count</code> of the created objects.
-	 * @throws IOException if an error occurs during the read - most commonly "not enough bytes".
+	 * @return a new instance of the provided class.
+	 * @throws IOException if an error occurs during the read - most commonly a ParseException.
 	 */
 	static <TO extends TextObject> TO create(Class<TO> toClass, String string) throws IOException
 	{
@@ -181,8 +181,8 @@ public interface TextObject
 	 * @param <TO> the object type, a subtype of {@link TextObject}.
 	 * @param toClass the class to create.
 	 * @param reader the reader.
-	 * @return an array of length <code>count</code> of the created objects.
-	 * @throws IOException if an error occurs during the read - most commonly "not enough bytes".
+	 * @return a new instance of the provided class.
+	 * @throws IOException if an error occurs during the read - most commonly a ParseException.
 	 */
 	static <TO extends TextObject> TO read(Class<TO> toClass, Reader reader) throws IOException
 	{

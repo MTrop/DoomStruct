@@ -16,12 +16,12 @@ import net.mtrop.doom.struct.utils.ValueUtils;
  */
 public class MapInfoData implements Iterable<MapInfoData>
 {
-	private static final String[] NO_VALUES = new String[0];
+	private static final Value[] NO_VALUES = new Value[0];
 	
 	/** Item name. */
 	private String name;
 	/** Item values (if any). */
-	private String[] values;
+	private Value[] values;
 	/** Item data (if any). */
 	private List<MapInfoData> children;
 
@@ -38,11 +38,10 @@ public class MapInfoData implements Iterable<MapInfoData>
 	
 	/**
 	 * Creates MapInfoData with a specific name and values.
-	 * The values are converted to Strings.
 	 * @param name the name of the data.
 	 * @param values the values.
 	 */
-	public MapInfoData(String name, Object ... values)
+	public MapInfoData(String name, Value ... values)
 	{
 		this(name);
 		setValues(values);
@@ -60,14 +59,12 @@ public class MapInfoData implements Iterable<MapInfoData>
 	
 	/**
 	 * Sets/replaces the values on this data.
-	 * The values are converted to Strings.
 	 * @param values the values to set.
 	 */
-	public void setValues(Object ... values)
+	public void setValues(Value ... values)
 	{
-		this.values = new String[values.length];
-		for (int i = 0; i < values.length; i++)
-			this.values[i] = String.valueOf(values[i]);
+		this.values = new Value[values.length];
+		System.arraycopy(values, 0, this.values, 0, values.length);
 	}
 	
 	/**
@@ -81,7 +78,7 @@ public class MapInfoData implements Iterable<MapInfoData>
 	/**
 	 * @return the array of values, or null if purely a data structure or directive.
 	 */
-	public String[] getValues() 
+	public Value[] getValues() 
 	{
 		return values;
 	}
@@ -93,7 +90,7 @@ public class MapInfoData implements Iterable<MapInfoData>
 	 * @return the created empty set.
 	 * @throws IndexOutOfBoundsException if the index is less than 0 or greater than or equal to the amount of sets in this MapInfo.
 	 */
-	public MapInfoData addChild(String type, Object ... typeValues)
+	public MapInfoData addChild(String type, Value ... typeValues)
 	{
 		if (children == null)
 			children = new ArrayList<>(4);
@@ -111,7 +108,7 @@ public class MapInfoData implements Iterable<MapInfoData>
 	 * @return the created empty set.
 	 * @throws IndexOutOfBoundsException if the index is less than 0 or greater than or equal to the amount of sets in this MapInfo.
 	 */
-	public MapInfoData addChildAt(int index, String type, Object ... typeValues)
+	public MapInfoData addChildAt(int index, String type, Value ... typeValues)
 	{
 		if (children == null)
 			children = new ArrayList<>(4);
@@ -197,79 +194,21 @@ public class MapInfoData implements Iterable<MapInfoData>
 	}
 	
 	/**
-	 * Gets a value from this item as a String.
-	 * @param valueIndex the value index.
-	 * @return the property's value as a String, or null if no value.
+	 * Gets the value at a particular index.
+	 * @param valueIndex the value's index.
+	 * @return the corresponding value, or null if no value.
 	 */
-	public String getStringValue(int valueIndex)
+	public Value getValue(int valueIndex)
 	{
 		return values != null && values.length > valueIndex ? values[valueIndex] : null;
 	}
-
-	/**
-	 * Gets the first value from this item as a String.
-	 * @return the property's value as a String, or null if no value.
-	 */
-	public String getStringValue()
-	{
-		return getStringValue(0);
-	}
-
-	/**
-	 * Checks if a value is a numeric one.
-	 * @param valueIndex the value index.
-	 * @return true if so, false if not.
-	 */
-	public boolean isNumeric(int valueIndex)
-	{
-		return !Double.isNaN(getDoubleValue(valueIndex));
-	}
 	
 	/**
-	 * Checks if the first value is a numeric one.
-	 * @return true if so, false if not.
+	 * @return the first value.
 	 */
-	public boolean isNumeric()
+	public Value getValue()
 	{
-		return isNumeric(0);
-	}
-	
-	/**
-	 * Gets a value from this item as a double.
-	 * @param valueIndex the value index.
-	 * @return the property's value as a double, or NaN if no value, or not parseable as a double.
-	 */
-	public double getDoubleValue(int valueIndex)
-	{
-		return values != null && values.length > valueIndex ? ValueUtils.parseDouble(values[valueIndex], Double.NaN) : Double.NaN;
-	}
-
-	/**
-	 * Gets the first value from this item as a double.
-	 * @return the property's value as a double, or NaN if no value, or not parseable as a double.
-	 */
-	public double getDoubleValue()
-	{
-		return getDoubleValue(0);
-	}
-
-	/**
-	 * Gets a value from this item as an integer.
-	 * @param valueIndex the value index.
-	 * @return the property's value as an integer, or 0 if no value, or not parseable as an integer.
-	 */
-	public int getIntValue(int valueIndex)
-	{
-		return values != null && values.length > valueIndex ? ValueUtils.parseInt(values[valueIndex], 0) : 0;
-	}
-
-	/**
-	 * Gets a value from this item as an integer.
-	 * @return the property's value as an integer, or 0 if no value, or not parseable as an integer.
-	 */
-	public double getIntValue()
-	{
-		return getIntValue(0);
+		return getValue(0);
 	}
 	
 	@Override
@@ -281,7 +220,7 @@ public class MapInfoData implements Iterable<MapInfoData>
 		{
 			boolean first = false;
 			sb.append(" [");
-			for (String value : values)
+			for (Value value : values)
 			{
 				if (first)
 					sb.append(", ");
@@ -294,4 +233,119 @@ public class MapInfoData implements Iterable<MapInfoData>
 			sb.append(" ...");
 		return sb.toString();
 	}
+	
+	public static class Value
+	{
+		private final String token;
+		private final Type type;
+		
+		public enum Type
+		{
+			NUMERIC,
+			IDENTIFIER,
+			STRING;
+		}
+		
+		/**
+		 * Creates a new value.
+		 * @param token the token value.
+		 * @param type the value type.
+		 */
+		private Value(String token, Type type)
+		{
+			this.token = token;
+			this.type = type;
+		}
+
+		/**
+		 * Creates a new value.
+		 * @param number the numeric value.
+		 * @return a new value.
+		 */
+		public static Value create(Number number)
+		{
+			return new Value(String.valueOf(number), Type.NUMERIC);
+		}
+		
+		/**
+		 * Creates a new value (string type).
+		 * @param token the token value.
+		 * @return a new value.
+		 */
+		public static Value create(String token)
+		{
+			return new Value(token, Type.STRING);
+		}
+		
+		/**
+		 * Creates a new value.
+		 * @param token the token value.
+		 * @param identifier if true, this is an identifier.
+		 * @return a new value.
+		 */
+		public static Value create(String token, boolean identifier)
+		{
+			return new Value(token, identifier ? Type.IDENTIFIER : Type.STRING);
+		}
+		
+		/**
+		 * @return this value's string token.
+		 */
+		public String getToken() 
+		{
+			return token;
+		}
+		
+		/**
+		 * @return this value's type.
+		 */
+		public Type getType() 
+		{
+			return type;
+		}
+		
+		/**
+		 * Gets this value as a String.
+		 * @return the value as a String, or null if no value.
+		 */
+		public String getStringValue()
+		{
+			return token;
+		}
+
+		/**
+		 * Checks if this value is a numeric one.
+		 * @return true if so, false if not.
+		 */
+		public boolean isNumeric()
+		{
+			return type == Type.NUMERIC;
+		}
+		
+		/**
+		 * Gets this value as a double.
+		 * @return the value as a double, or NaN if no value, or not parseable as a double.
+		 */
+		public double getDoubleValue()
+		{
+			return ValueUtils.parseDouble(token, Double.NaN);
+		}
+
+		/**
+		 * Gets this value as an integer.
+		 * @return the value as an integer, or 0 if no value, or not parseable as an integer.
+		 */
+		public double getIntValue()
+		{
+			return ValueUtils.parseInt(token, 0);
+		}
+		
+		@Override
+		public String toString() 
+		{
+			return type == Type.STRING ? '"' + token + '"' : token;
+		}
+		
+	}
+	
 }

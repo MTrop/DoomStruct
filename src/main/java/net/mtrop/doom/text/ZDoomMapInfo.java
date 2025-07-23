@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015-2023 Matt Tropiano
+ * Copyright (c) 2015-2025 Matt Tropiano
  * This program and the accompanying materials are made available under the 
  * terms of the GNU Lesser Public License v2.1 which accompanies this 
  * distribution, and is available at
@@ -19,8 +19,8 @@ import net.mtrop.doom.object.TextObject;
 import net.mtrop.doom.struct.Lexer;
 import net.mtrop.doom.struct.Lexer.Kernel;
 import net.mtrop.doom.struct.Lexer.Parser;
-import net.mtrop.doom.struct.utils.ValueUtils;
 import net.mtrop.doom.text.data.MapInfoData;
+import net.mtrop.doom.text.data.MapInfoData.Value;
 
 /**
  * An abstraction of the ZDoom Map Info entry (ZMAPINFO/MAPINFO).
@@ -29,7 +29,7 @@ import net.mtrop.doom.text.data.MapInfoData;
  * @author Matthew Tropiano
  * @since [NOW]
  */
-public class ZDoomMapInfoParser implements TextObject, Iterable<MapInfoData>
+public class ZDoomMapInfo implements TextObject, Iterable<MapInfoData>
 {
 	public static final String SETTYPE_INCLUDE = "include";
 	
@@ -56,7 +56,7 @@ public class ZDoomMapInfoParser implements TextObject, Iterable<MapInfoData>
 	/**
 	 * Creates a new, blank ZDoom-style MapInfo.
 	 */
-	public ZDoomMapInfoParser()
+	public ZDoomMapInfo()
 	{
 		this.mapInfoDataList = new ArrayList<>(16);
 	}
@@ -68,7 +68,7 @@ public class ZDoomMapInfoParser implements TextObject, Iterable<MapInfoData>
 	 * @return the created empty set.
 	 * @throws IndexOutOfBoundsException if the index is less than 0 or greater than or equal to the amount of sets in this MapInfo.
 	 */
-	public MapInfoData addChild(String type, Object ... typeValues)
+	public MapInfoData addChild(String type, Value ... typeValues)
 	{
 		MapInfoData out = new MapInfoData(type, typeValues);
 		mapInfoDataList.add(out);
@@ -83,7 +83,7 @@ public class ZDoomMapInfoParser implements TextObject, Iterable<MapInfoData>
 	 * @return the created empty set.
 	 * @throws IndexOutOfBoundsException if the index is less than 0 or greater than or equal to the amount of sets in this MapInfo.
 	 */
-	public MapInfoData addChildAt(int index, String type, Object ... typeValues)
+	public MapInfoData addChildAt(int index, String type, Value ... typeValues)
 	{
 		MapInfoData out = new MapInfoData(type, typeValues);
 		mapInfoDataList.add(index, out);
@@ -145,19 +145,19 @@ public class ZDoomMapInfoParser implements TextObject, Iterable<MapInfoData>
 				{
 					writer.append(" = ");
 					boolean first = true;
-					for (String value : data.getValues())
+					for (Value value : data.getValues())
 					{
 						if (!first)
 							writer.append(", ");
-						writer.append("\"").append(value).append("\"");
+						writer.append(value.toString());
 						first = false;
 					}
 				}
 				else
 				{
-					for (String value : data.getValues())
+					for (Value value : data.getValues())
 					{
-						writer.append(" ").append(value);
+						writer.append(" ").append(value.toString());
 					}
 					
 					writer.append("\n{\n");
@@ -181,30 +181,21 @@ public class ZDoomMapInfoParser implements TextObject, Iterable<MapInfoData>
 	{
 		writer.append(tab).append(body.getName());
 		boolean first = true;
-		for (String value : body.getValues())
+		for (Value value : body.getValues())
 		{
 			if (!first)
 				writer.append(", ");
 			else
 				writer.append(" = ");
 			
-			if (isNumeric(value))
-				writer.append(value);
-			else
-				writer.append("\"").append(value).append("\"");
+			writer.append(value.toString());
 			first = false;
 		}
 		writer.append("\n");
 	}
 
-	private static boolean isNumeric(String value)
-	{
-		return !Double.isNaN(ValueUtils.parseDouble(value, Double.NaN));
-	}
-	
 	private static class InfoKernel extends Kernel
 	{
-		private static final int TYPE_COMMENT = 0;
 		private static final int TYPE_LBRACE = 1;
 		private static final int TYPE_RBRACE = 2;
 		private static final int TYPE_EQUAL = 3;
@@ -221,9 +212,8 @@ public class ZDoomMapInfoParser implements TextObject, Iterable<MapInfoData>
 			addCaseInsensitiveKeyword("clearepisodes", TYPE_CLEAREPISODES);
 			addCaseInsensitiveKeyword("clearskills", TYPE_CLEARSKILLS);
 			
-			addCommentLineDelimiter("//", TYPE_COMMENT);
-			addCommentStartDelimiter("/*", TYPE_COMMENT);
-			addCommentEndDelimiter("*/", TYPE_COMMENT);
+			addCommentDelimiter("/*", "*/");
+			addCommentLineDelimiter("//");
 			
 			addStringDelimiter('"', '"');
 
@@ -242,7 +232,7 @@ public class ZDoomMapInfoParser implements TextObject, Iterable<MapInfoData>
 			super(new Lexer(new InfoKernel(), in));
 		}
 		
-		private void parseInto(ZDoomMapInfoParser mapInfo) throws ParseException
+		private void parseInto(ZDoomMapInfo mapInfo) throws ParseException
 		{
 			nextToken();
 			while (currentToken() != null)
@@ -251,12 +241,12 @@ public class ZDoomMapInfoParser implements TextObject, Iterable<MapInfoData>
 			}
 		}
 		
-		private void parseValueSet(ZDoomMapInfoParser mapInfo) throws ParseException
+		private void parseValueSet(ZDoomMapInfo mapInfo) throws ParseException
 		{
 			if (matchType(InfoKernel.TYPE_INCLUDE))
 			{
-				String entry = currentToken().getLexeme();
-				mapInfo.addChild("include", entry);
+				String entry = currentLexeme();
+				mapInfo.addChild("include", Value.create(entry));
 			}
 			else if (matchType(InfoKernel.TYPE_CLEAREPISODES))
 			{
@@ -267,17 +257,25 @@ public class ZDoomMapInfoParser implements TextObject, Iterable<MapInfoData>
 				mapInfo.addChild("clearskills");
 			}
 			else if (!currentType(InfoKernel.TYPE_IDENTIFIER))
+			{
 				throw new ParseException(getTokenInfoLine("Expected definition name."));
+			}
 			
-			String type = currentToken().getLexeme();
-			List<String> tokens = new LinkedList<>(); 
+			String type = currentLexeme();
+			List<Value> valueList = new LinkedList<>(); 
 			nextToken();
+			
 			while (!currentType(InfoKernel.TYPE_LBRACE))
 			{
-				tokens.add(currentToken().getLexeme());
+				if (currentType(InfoKernel.TYPE_STRING))
+					valueList.add(Value.create(currentLexeme()));
+				else if (currentType(InfoKernel.TYPE_IDENTIFIER))
+					valueList.add(Value.create(currentLexeme(), true));
+				else if (currentType(InfoKernel.TYPE_NUMBER))
+					valueList.add(Value.create(parseNumber()));
 				nextToken();
 			}
-			parseBody(mapInfo.addChild(type, tokens.toArray(new Object[tokens.size()])));
+			parseBody(mapInfo.addChild(type, valueList.toArray(new Value[valueList.size()])));
 		}
 		
 		private void parseBody(MapInfoData data) throws ParseException
@@ -287,21 +285,27 @@ public class ZDoomMapInfoParser implements TextObject, Iterable<MapInfoData>
 
 			while (currentType(InfoKernel.TYPE_IDENTIFIER, InfoKernel.TYPE_NUMBER, InfoKernel.TYPE_STRING))
 			{
-				String property = currentToken().getLexeme();
+				String property = currentLexeme();
 				nextToken();
 				
 				if (matchType(InfoKernel.TYPE_EQUAL))
 				{
-					List<String> tokens = new LinkedList<>();
+					List<Value> values = new LinkedList<>();
 					if (!currentType(InfoKernel.TYPE_IDENTIFIER, InfoKernel.TYPE_NUMBER, InfoKernel.TYPE_STRING))
 						throw new ParseException(getTokenInfoLine("Expected value after '='."));
-					
-					tokens.add(currentToken().getLexeme());
+
+					if (currentType(InfoKernel.TYPE_STRING))
+						values.add(Value.create(currentLexeme()));
+					else if (currentType(InfoKernel.TYPE_IDENTIFIER))
+						values.add(Value.create(currentLexeme(), true));
+					else if (currentType(InfoKernel.TYPE_NUMBER))
+						values.add(Value.create(parseNumber()));
+
 					nextToken();
 					
 					if (currentType(InfoKernel.TYPE_LBRACE))
 					{
-						parseBody(data.addChild(property, tokens.toArray(new Object[tokens.size()])));
+						parseBody(data.addChild(property, values.toArray(new Value[values.size()])));
 					}
 					else
 					{
@@ -310,11 +314,18 @@ public class ZDoomMapInfoParser implements TextObject, Iterable<MapInfoData>
 							nextToken();
 							if (!currentType(InfoKernel.TYPE_IDENTIFIER, InfoKernel.TYPE_NUMBER, InfoKernel.TYPE_STRING))
 								throw new ParseException(getTokenInfoLine("Expected value after ','."));
-							tokens.add(currentToken().getLexeme());
+
+							if (currentType(InfoKernel.TYPE_STRING))
+								values.add(Value.create(currentLexeme()));
+							else if (currentType(InfoKernel.TYPE_IDENTIFIER))
+								values.add(Value.create(currentLexeme(), true));
+							else if (currentType(InfoKernel.TYPE_NUMBER))
+								values.add(Value.create(parseNumber()));
+							
 							nextToken();
 						}
 						
-						data.addChild(property, tokens.toArray(new Object[tokens.size()]));
+						data.addChild(property, values.toArray(new Value[values.size()]));
 					}
 				}
 				else if (currentType(InfoKernel.TYPE_LBRACE))
@@ -329,6 +340,28 @@ public class ZDoomMapInfoParser implements TextObject, Iterable<MapInfoData>
 			
 			if (!matchType(InfoKernel.TYPE_RBRACE))
 				throw new ParseException(getTokenInfoLine("Expected '}'."));
+		}
+		
+		private Number parseNumber()
+		{
+			Number currentValue;
+			String lexeme = currentLexeme();
+
+			if (lexeme.startsWith("0X") || lexeme.startsWith("0x"))
+			{
+				currentValue = Integer.parseInt(lexeme.substring(2), 16);
+				return currentValue;
+			}
+			else if (lexeme.contains("."))
+			{
+				currentValue = Double.parseDouble(lexeme);
+				return currentValue;
+			}
+			else
+			{
+				currentValue = Integer.parseInt(lexeme);
+				return currentValue;
+			}
 		}
 		
 	}

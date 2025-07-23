@@ -293,7 +293,6 @@ class UDMFParser extends Parser
 	 */
 	private static class ULexerKernel extends Lexer.Kernel
 	{
-		public static final int TYPE_COMMENT =		0;
 		public static final int TYPE_TRUE = 		1;
 		public static final int TYPE_FALSE = 		2;
 		public static final int TYPE_EQUALS = 		3;
@@ -305,9 +304,8 @@ class UDMFParser extends Parser
 	
 		private ULexerKernel()
 		{
-			addCommentStartDelimiter("/*", TYPE_COMMENT);
-			addCommentLineDelimiter("//", TYPE_COMMENT);
-			addCommentEndDelimiter("*/", TYPE_COMMENT);
+			addCommentDelimiter("/*", "*/");
+			addCommentLineDelimiter("//");
 			
 			addCaseInsensitiveKeyword("true", TYPE_TRUE);
 			addCaseInsensitiveKeyword("false", TYPE_FALSE);
