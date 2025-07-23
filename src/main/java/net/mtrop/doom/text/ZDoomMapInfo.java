@@ -27,7 +27,7 @@ import net.mtrop.doom.text.data.MapInfoData.Value;
  * All of the data sets in this info are stored in order, as the ordering matters when read.
  * "Include" directives are not followed - they are instead stored as objects.
  * @author Matthew Tropiano
- * @since [NOW]
+ * @since 2.19.0
  */
 public class ZDoomMapInfo implements TextObject, Iterable<MapInfoData>
 {

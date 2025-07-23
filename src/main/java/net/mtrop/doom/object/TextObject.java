@@ -193,7 +193,7 @@ public interface TextObject
 
 	/**
 	 * Specific IOException for when a parsing exception occurs on read. 
-	 * @since [NOW]
+	 * @since 2.19.0
 	 */
 	public static class ParseException extends IOException
 	{

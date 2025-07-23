@@ -15,7 +15,7 @@ import net.mtrop.doom.struct.io.IOUtils;
  * A generic text object.
  * Contains only a StringBuilder that can be written to or read from.
  * @author Matthew Tropiano
- * @since [NOW]
+ * @since 2.19.0
  */
 public class Text implements TextObject, CharSequence
 {

@@ -3,6 +3,16 @@ Doom Struct (C) 2015-2025
 by Matt Tropiano et al. (see AUTHORS.txt)
 
 
+Changed in 2.19.0
+-----------------
+
+- `Added` Text.
+- `Added` HexenMapInfo.
+- `Added` EternityMapInfo.
+- `Added` ZDoomMapInfo.
+- `Added` UniversalMapInfo.
+
+
 Changed in 2.18.1
 -----------------
 

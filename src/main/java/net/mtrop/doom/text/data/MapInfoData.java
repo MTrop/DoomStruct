@@ -12,7 +12,7 @@ import net.mtrop.doom.struct.utils.ValueUtils;
  * MapInfo data is mostly a mapping of names to values, however they are stored in an order that
  * may matter to the host program (especially structures).
  * @author Matthew Tropiano
- * @since [NOW]
+ * @since 2.19.0
  */
 public class MapInfoData implements Iterable<MapInfoData>
 {

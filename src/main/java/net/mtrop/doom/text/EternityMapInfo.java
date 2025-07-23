@@ -28,7 +28,7 @@ import net.mtrop.doom.text.data.MapInfoData.Value;
  * An abstraction of the Eternity Map Info entry (EMAPINFO).
  * Entry headers are stored case-insensitively, for convenience.
  * @author Matthew Tropiano
- * @since [NOW]
+ * @since 2.19.0
  */
 public class EternityMapInfo implements TextObject, Iterable<Map.Entry<String, MapInfoData[]>>
 {

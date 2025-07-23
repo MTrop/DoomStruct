@@ -29,7 +29,7 @@ import net.mtrop.doom.struct.io.IOUtils;
  * is procedural and not serializable. 
  * All data is buffered into memory on read through {@link #readText(Reader)}.
  * @author Matthew Tropiano
- * @since [NOW]
+ * @since 2.19.0
  */
 public class HexenMapInfo implements TextObject
 {
