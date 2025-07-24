@@ -108,6 +108,8 @@ public final class NameUtils
 			}
 			else if (Character.isDigit(c))
 				sb.append(c);
+			else if (Character.isWhitespace(c))
+				sb.append(' ');
 			else if (c == '[')
 				sb.append(c);
 			else if (c == ']')
@@ -162,7 +164,7 @@ public final class NameUtils
 	public static void checkValidEntryName(String name)
 	{
 		if (!isValidEntryName(name))
-			throw new IllegalArgumentException("The provided entry name, \""+name+"\", is invalid. It must be up to 8 characters long; all characters must be A-Z (uppercase only), 0-9, and [ ] - _ ^ plus the backslash \\.");
+			throw new IllegalArgumentException("The provided entry name, \""+name+"\", is invalid.");
 	}
 
 	/**
@@ -212,7 +214,7 @@ public final class NameUtils
 	public static void checkValidTextureName(String name)
 	{
 		if (!isValidTextureName(name))
-			throw new IllegalArgumentException("The provided texture name, \""+name+"\", is invalid. It must be up to 8 characters long; all characters must be A-Z (uppercase only), 0-9, and [ ] - _ ^ + plus the backslash \\.");
+			throw new IllegalArgumentException("The provided texture name, \""+name+"\", is invalid.");
 	}
 
 	/**
