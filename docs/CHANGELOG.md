@@ -3,6 +3,15 @@ Doom Struct (C) 2015-2025
 by Matt Tropiano et al. (see AUTHORS.txt)
 
 
+Changed in 2.19.1
+-----------------
+
+- `Added` TextObject.read(Class<TO>, InputStream)
+- `Added` TextObject.read(Class<TO>, InputStream, Charset)
+- `Added` TextObject.read(Class<TO>, File)
+- `Added` TextObject.read(Class<TO>, File, Charset)
+
+
 Changed in 2.19.0
 -----------------
 

@@ -164,6 +164,74 @@ public interface TextObject
 	}
 
 	/**
+	 * Creates a single object of a specific class from from an {@link InputStream}, default encoding.
+	 * @param <TO> the object type, a subtype of {@link TextObject}.
+	 * @param toClass the class to create.
+	 * @param in the input stream.
+	 * @return a single instance of the created object.
+	 * @throws IOException if an error occurs during the read - most commonly a ParseException.
+	 * @since 2.19.1
+	 */
+	static <TO extends TextObject> TO read(Class<TO> toClass, InputStream in) throws IOException
+	{
+		return read(toClass, in, Charset.defaultCharset());
+	}
+
+	/**
+	 * Creates a single object of a specific class from from an {@link InputStream}.
+	 * @param <TO> the object type, a subtype of {@link TextObject}.
+	 * @param toClass the class to create.
+	 * @param in the input stream.
+	 * @param charset the charset encoding to use for reading.
+	 * @return a single instance of the created object.
+	 * @throws IOException if an error occurs during the read - most commonly a ParseException.
+	 * @since 2.19.1
+	 */
+	static <TO extends TextObject> TO read(Class<TO> toClass, InputStream in, Charset charset) throws IOException
+	{
+		try (InputStreamReader reader = new InputStreamReader(in, charset))
+		{
+			return read(toClass, reader);
+		}
+	}
+
+	/**
+	 * Creates a single object of a specific class from from a {@link File}.
+	 * @param <TO> the object type, a subtype of {@link TextObject}.
+	 * @param toClass the class to create.
+	 * @param file the source file.
+	 * @return a single instance of the created object.
+	 * @throws FileNotFoundException if the file could not be found.
+	 * @throws IOException if an error occurs during the read - most commonly a ParseException.
+	 * @throws SecurityException if the file could not be opened due to OS permissions.
+	 * @since 2.19.1
+	 */
+	static <TO extends TextObject> TO read(Class<TO> toClass, File file) throws IOException
+	{
+		return read(toClass, file, Charset.defaultCharset());
+	}
+
+	/**
+	 * Creates a single object of a specific class from from a {@link File}, default encoding.
+	 * @param <TO> the object type, a subtype of {@link TextObject}.
+	 * @param toClass the class to create.
+	 * @param file the source file.
+	 * @param charset the charset encoding to use for reading.
+	 * @return a single instance of the created object.
+	 * @throws FileNotFoundException if the file could not be found.
+	 * @throws IOException if an error occurs during the read - most commonly a ParseException.
+	 * @throws SecurityException if the file could not be opened due to OS permissions.
+	 * @since 2.19.1
+	 */
+	static <TO extends TextObject> TO read(Class<TO> toClass, File file, Charset charset) throws IOException
+	{
+		try (FileInputStream fis = new FileInputStream(file))
+		{
+			return read(toClass, fis, charset);
+		}
+	}
+
+	/**
 	 * Creates a single object of a specific class from a string.
 	 * @param <TO> the object type, a subtype of {@link TextObject}.
 	 * @param toClass the class to create.
