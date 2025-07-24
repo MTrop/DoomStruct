@@ -63,6 +63,17 @@ public class UniversalMapInfo implements TextObject, Iterable<Map.Entry<String, 
 	}
 	
 	/**
+	 * Fetches an entry from this map info by map header.
+	 * @param header the header name.
+	 * @return the corresponding data, or null if no data.
+	 * @since 2.19.2
+	 */
+	public MapInfoData[] getEntry(String header)
+	{
+		return entryMap.get(header);
+	}
+	
+	/**
 	 * Removes an entry from this map info and returns the associated data, if it existed.
 	 * @param header the entry name to remove.
 	 * @return the associated data from the removed entry, or null if no corresponding entry.

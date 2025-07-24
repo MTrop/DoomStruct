@@ -3,6 +3,14 @@ Doom Struct (C) 2015-2025
 by Matt Tropiano et al. (see AUTHORS.txt)
 
 
+Changed in 2.19.2
+-----------------
+
+- `Fixed` HexenMapInfo.nextTokens() would skip `sky1` or `sky2` entries with a single value.
+- `Added` EternityMapInfo.getEntry(String).
+- `Added` UniversalMapInfo.getEntry(String).
+
+
 Changed in 2.19.1
 -----------------
 

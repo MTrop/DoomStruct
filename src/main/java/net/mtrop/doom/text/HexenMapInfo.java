@@ -729,7 +729,7 @@ public class HexenMapInfo implements TextObject
 							if (isArgumentProperty(currentLexeme()))
 							{
 								state = STATE_PROPERTIES;
-								continue;
+								return new String[]{property, value1};
 							}
 						}
 						
