@@ -16,6 +16,9 @@ net.mtrop.doom.struct
 net.mtrop.doom.struct.io
 net.mtrop.doom.struct.map
 net.mtrop.doom.struct.trie
+net.mtrop.doom.struct.utils
 net.mtrop.doom.struct.vector
+net.mtrop.doom.text
+net.mtrop.doom.text.data
 net.mtrop.doom.texture
 net.mtrop.doom.util
