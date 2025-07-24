@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 public final class NameUtils
 {
 	/** A regex pattern that matches valid entry names. */
-	public static final Pattern ENTRY_NAME = Pattern.compile("[A-Z0-9@#%&=\\{\\}\\(\\)\\$\\*\\!\\[\\]\\-\\_\\^+\\\\]{1,8}");
+	public static final Pattern ENTRY_NAME = Pattern.compile("[A-Z0-9@#%&=\\s\\{\\}\\(\\)\\$\\*\\!\\[\\]\\-\\_\\^+\\\\]{1,8}");
 	/** A regex pattern that matches valid texture names. */
 	public static final Pattern TEXTURE_NAME = ENTRY_NAME;
 

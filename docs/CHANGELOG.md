@@ -3,6 +3,12 @@ Doom Struct (C) 2015-2025
 by Matt Tropiano et al. (see AUTHORS.txt)
 
 
+Changed in 2.19.3
+-----------------
+
+- `Changed` Spaces are now allowed in Texture/Entry names.
+
+
 Changed in 2.19.2
 -----------------
 
