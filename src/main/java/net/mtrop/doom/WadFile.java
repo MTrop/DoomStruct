@@ -416,7 +416,7 @@ public class WadFile implements Wad, AutoCloseable
 				dataOffset += readAmount;
 			}
 		
-			entryListOffset = dataOffset;
+			entryListOffset = dataOffset - entry.getSize();
 		
 			// adjust offsets.
 			for (int i = 0; i < entries.size(); i++)
