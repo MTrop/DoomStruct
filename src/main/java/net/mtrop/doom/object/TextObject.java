@@ -196,7 +196,7 @@ public interface TextObject
 	}
 
 	/**
-	 * Creates a single object of a specific class from from a {@link File}.
+	 * Creates a single object of a specific class from from a {@link File}, default encoding.
 	 * @param <TO> the object type, a subtype of {@link TextObject}.
 	 * @param toClass the class to create.
 	 * @param file the source file.
@@ -212,7 +212,7 @@ public interface TextObject
 	}
 
 	/**
-	 * Creates a single object of a specific class from from a {@link File}, default encoding.
+	 * Creates a single object of a specific class from from a {@link File}.
 	 * @param <TO> the object type, a subtype of {@link TextObject}.
 	 * @param toClass the class to create.
 	 * @param file the source file.
@@ -245,7 +245,7 @@ public interface TextObject
 	}
 
 	/**
-	 * Creates a single object of a specific class from from an {@link InputStream}.
+	 * Creates a single object of a specific class from from a {@link Reader}.
 	 * @param <TO> the object type, a subtype of {@link TextObject}.
 	 * @param toClass the class to create.
 	 * @param reader the reader.
