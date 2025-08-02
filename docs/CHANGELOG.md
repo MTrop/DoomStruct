@@ -3,6 +3,12 @@ Doom Struct (C) 2015-2025
 by Matt Tropiano et al. (see AUTHORS.txt)
 
 
+Changed in 2.19.5
+-----------------
+
+- `Fixed` Allow C-style comments in UMAPINFO.
+
+
 Changed in 2.19.4
 -----------------
 

@@ -139,6 +139,9 @@ public class UniversalMapInfo implements TextObject, Iterable<Map.Entry<String, 
 			
 			addStringDelimiter('"', '"');
 			
+			addCommentDelimiter("/*", "*/");
+			addCommentLineDelimiter("//");
+			
 			addDelimiter("{", TYPE_LBRACE);
 			addDelimiter("}", TYPE_RBRACE);
 			addDelimiter("=", TYPE_EQUAL);
