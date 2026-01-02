@@ -39,6 +39,21 @@ public class HexenLinedef extends CommonLinedef
 	public static final int ACTIVATION_PROJECTILE_CROSSES = 5;
 	/** Special activation: player uses (with passthru). */
 	public static final int ACTIVATION_PLAYER_USES_PASSTHRU = 6;
+	/** 
+	 * Special activation: anything crosses line. 
+	 * @since 2.20.0 
+	 */
+	public static final int ACTIVATION_ANY_CROSSES = 7;
+	/** 
+	 * Special activation: monster uses.
+	 * @since 2.20.0 
+	 */
+	public static final int ACTIVATION_MONSTER_USES = 8;
+	/** 
+	 * Special activation: monster bumps.
+	 * @since 2.20.0 
+	 */
+	public static final int ACTIVATION_MONSTER_BUMPS = 9;
 	
 	public static final String[] ACTIVATION_NAME = new String[]{
 		"PlayerCrosses",
