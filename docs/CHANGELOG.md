@@ -1,6 +1,13 @@
-Doom Struct (C) 2015-2025
+Doom Struct (C) 2015-2026
 =========================
 by Matt Tropiano et al. (see AUTHORS.txt)
+
+
+Changed in 2.21.0
+-----------------
+
+- `Fixed` Pictures would nullify the 255th palette index as a viable pixel color.
+- `Deprecated` Palette.getNearestColorIndex(...) calls that exclude the 255th index.
 
 
 Changed in 2.20.0

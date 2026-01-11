@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015-2023 Matt Tropiano
+ * Copyright (c) 2015-2026 Matt Tropiano
  * This program and the accompanying materials are made available under the 
  * terms of the GNU Lesser Public License v2.1 which accompanies this 
  * distribution, and is available at
@@ -1176,7 +1176,7 @@ public final class GraphicUtils
 					out.setPixel(x, y, Picture.PIXEL_TRANSLUCENT);
 				else
 				{
-					int index = palette.getNearestColorIndex((argb & 0x00ff0000) >> 16, (argb & 0x0000ff00) >> 8, (argb & 0x000000ff), true);
+					int index = palette.getNearestColorIndex((argb & 0x00ff0000) >> 16, (argb & 0x0000ff00) >> 8, (argb & 0x000000ff));
 					index = colormap != null ? colormap.getPaletteIndex(index) : index;
 					out.setPixel(x, y, index);
 				}

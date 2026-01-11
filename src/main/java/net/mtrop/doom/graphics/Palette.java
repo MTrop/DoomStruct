@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015-2023 Matt Tropiano
+ * Copyright (c) 2015-2026 Matt Tropiano
  * This program and the accompanying materials are made available under the 
  * terms of the GNU Lesser Public License v2.1 which accompanies this 
  * distribution, and is available at
@@ -103,6 +103,7 @@ public class Palette implements BinaryObject
 	 * @param exclude255 if true, exclude the 255th color in the palette as a candidate (for patches).
 	 * @since 2.16.0
 	 * @return the closest index.
+	 * @deprecated since 2.21.0, misleading call for patches - patches can contain the 255h index!
 	 */
 	public int getNearestColorIndex(int argb, boolean exclude255)
 	{
@@ -129,6 +130,7 @@ public class Palette implements BinaryObject
 	 * @param exclude255 if true, exclude the 255th color in the palette as a candidate (for patches).
 	 * @since 2.16.0
 	 * @return the closest index.
+	 * @deprecated since 2.21.0, misleading call for patches - patches can contain the 255h index!
 	 */
 	public int getNearestColorIndex(int red, int green, int blue, boolean exclude255)
 	{

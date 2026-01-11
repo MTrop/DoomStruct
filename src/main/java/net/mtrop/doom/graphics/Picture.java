@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015-2024 Matt Tropiano
+ * Copyright (c) 2015-2026 Matt Tropiano
  * This program and the accompanying materials are made available under the 
  * terms of the GNU Lesser Public License v2.1 which accompanies this 
  * distribution, and is available at
@@ -33,10 +33,10 @@ public class Picture implements BinaryObject, GraphicObject
 	private static final ThreadLocal<byte[]> TEMP_POST = ThreadLocal.withInitial(()->new byte[257]);
 
 	/** Transparent pixel value. */
-	public static final byte PIXEL_TRANSLUCENT = -1;
+	public static final short PIXEL_TRANSLUCENT = -1;
 	
 	/** The pixel data. */
-	private byte[][] pixels; 
+	private short[][] pixels; 
 	/** The offset from the center, horizontally, in pixels. */
 	private int offsetX; 
 	/** The offset from the center, vertically, in pixels. */
@@ -79,7 +79,7 @@ public class Picture implements BinaryObject, GraphicObject
 		if (height > 65535)
 			throw new IllegalArgumentException("Height cannot be greater than 65535.");
 		
-		pixels = new byte[width][height];
+		pixels = new short[width][height];
 		for (int i = 0; i < pixels.length; i++)
 			Arrays.fill(pixels[i], PIXEL_TRANSLUCENT);
 	}
@@ -136,7 +136,7 @@ public class Picture implements BinaryObject, GraphicObject
 	
 	/**
 	 * Sets the pixel data at a location in the picture.
-	 * Valid values are in the range of -1 to 255, with 0 to 254 being palette indexes and -1 / 255 being translucent pixels.
+	 * Valid values are in the range of -1 to 255, with 0 to 255 being palette indexes and -1 being translucent pixels.
 	 * Note that palette value 255 does not get used as a color! 
 	 * @param x	picture x-coordinate.
 	 * @param y	picture y-coordinate.
@@ -147,14 +147,14 @@ public class Picture implements BinaryObject, GraphicObject
 	public void setPixel(int x, int y, int value)
 	{
 		RangeUtils.checkRange("Pixel ("+x+", "+y+")", -1, 255, value);
-		pixels[x][y] = (byte)value;
+		pixels[x][y] = (short)value;
 	}
 	
 	/**
 	 * Gets the pixel data at a location in the picture.
 	 * @param x	picture x-coordinate.
 	 * @param y	picture y-coordinate.
-	 * @return a palette index value from 0 to 254 or {@link #PIXEL_TRANSLUCENT} if the pixel is not filled in.
+	 * @return a palette index value from 0 to 255 or {@link #PIXEL_TRANSLUCENT} if the pixel is not filled in.
 	 * @throws ArrayIndexOutOfBoundsException if the provided coordinates is outside the graphic.
 	 */
 	public int getPixel(int x, int y)
@@ -219,7 +219,7 @@ public class Picture implements BinaryObject, GraphicObject
 			int length = postBytes[1] & 0x0ff;
 			while (i < length)
 			{
-				pixels[column][y++] = postBytes[i + 2];
+				pixels[column][y++] = (short)(postBytes[i + 2] & 0x0ff);
 				i++;
 			}
 			
@@ -273,7 +273,7 @@ public class Picture implements BinaryObject, GraphicObject
 	}
 	
 	// Writes a column of pixels.
-	private static void writeColumn(byte[] columnPixels, ByteArrayOutputStream buffer) throws IOException
+	private static void writeColumn(short[] columnPixels, ByteArrayOutputStream buffer) throws IOException
 	{
 		// Lovingly converted from SLADE3 because dealing with tall patches is a nightmare. Thanks, Judd and co.!
 		// See: https://github.com/sirjuddington/SLADE/blob/master/src/Graphics/SImage/Formats/SIFDoom.h
@@ -325,7 +325,7 @@ public class Picture implements BinaryObject, GraphicObject
 				}
 				
 				// Add pixel to post.
-				postPixels.write(b);
+				postPixels.write(b & 0x0ff);
 			}
 			// Else, if it is translucent and we are already building a post...
 			else if (isPost)
