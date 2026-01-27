@@ -52,7 +52,7 @@ public interface GraphicObject
 	/**
 	 * Sets the pixel data at a location in the graphic.
 	 * <p>For indexed color graphics, valid values are in the range of -1 to 255, 
-	 * with 0 to 254 being palette indexes and {@link Picture#PIXEL_TRANSLUCENT} / 255 being translucent pixels (if supported).
+	 * with 0 to 255 being palette indexes and {@link Picture#PIXEL_TRANSLUCENT} being translucent pixels (if supported).
 	 * <p>For full-color graphics, the value is an ARGB integer value representing the pixel color in RGB space (with Alpha).
 	 * @param x	picture x-coordinate.
 	 * @param y	picture y-coordinate.
