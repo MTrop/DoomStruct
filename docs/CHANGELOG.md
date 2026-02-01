@@ -3,6 +3,15 @@ Doom Struct (C) 2015-2026
 by Matt Tropiano et al. (see AUTHORS.txt)
 
 
+Changed in 2.22.0
+-----------------
+
+- `Added` GraphicObject.setOffsetX().
+- `Added` GraphicObject.setOffsetY(). 
+- `Added` GraphicObject.getPixelAlpha(int, int). 
+- `Added` GraphicObject.isOpaque(int, int). 
+
+
 Changed in 2.21.0
 -----------------
 

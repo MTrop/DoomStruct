@@ -163,6 +163,12 @@ public class Picture implements BinaryObject, GraphicObject
 	}
 	
 	@Override
+	public int getPixelAlpha(int x, int y) 
+	{
+		return pixels[x][y] == PIXEL_TRANSLUCENT ? 0 : 255;
+	}
+
+	@Override
 	public void readBytes(InputStream in) throws IOException
 	{
 		SerialReader sr = new SerialReader(SerialReader.LITTLE_ENDIAN);

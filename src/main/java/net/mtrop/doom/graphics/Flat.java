@@ -24,6 +24,8 @@ import net.mtrop.doom.util.RangeUtils;
  * dimensions (in this case, 320x200). This class can read both, and its dimensions can
  * be arbitrarily set by the programmer regardless of the amount of data inside.
  * <p>
+ * Trying to set the offsets on this object will result in a no-op - flats have no offset information.
+ * <p>
  * NOTE: The {@link Flat#readBytes(InputStream)} method will only read as many bytes as possible to fill the
  * current dimensions of the flat, as this information is not found in the byte data.
  * @author Matthew Tropiano
@@ -95,6 +97,18 @@ public class Flat implements BinaryObject, GraphicObject
 	}
 
 	@Override
+	public void setOffsetX(int offset) 
+	{
+		// Do nothing.
+	}
+	
+	@Override
+	public void setOffsetY(int offset) 
+	{
+		// Do nothing.
+	}
+
+	@Override
 	public int getWidth()
 	{
 		return width;
@@ -154,6 +168,13 @@ public class Flat implements BinaryObject, GraphicObject
 		return pixels[y*width + x] & 0x0ff;
 	}
 	
+	@Override
+	public int getPixelAlpha(int x, int y) 
+	{
+		// always opaque.
+		return 255;
+	}
+
 	@Override
 	public void readBytes(InputStream in) throws IOException
 	{

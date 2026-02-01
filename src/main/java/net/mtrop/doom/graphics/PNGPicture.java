@@ -125,6 +125,12 @@ public class PNGPicture implements BinaryObject, GraphicObject
 		image.setRGB(x, y, value);
 	}
 
+	@Override
+	public int getPixelAlpha(int x, int y) 
+	{
+		return (image.getRGB(x, y) & 0xff000000) >>> 24;
+	}
+
 	/**
 	 * Sets the pixel data for this graphic using an Image.
 	 * @param newImage the image to copy from. 
