@@ -208,6 +208,8 @@ public class ZDoomMapInfo implements TextObject, Iterable<MapInfoData>
 
 		private InfoKernel()
 		{
+			setDecimalSeparator('.');
+			
 			addCaseInsensitiveKeyword("include", TYPE_INCLUDE);
 			addCaseInsensitiveKeyword("clearepisodes", TYPE_CLEAREPISODES);
 			addCaseInsensitiveKeyword("clearskills", TYPE_CLEARSKILLS);

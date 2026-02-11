@@ -3,6 +3,12 @@ Doom Struct (C) 2015-2026
 by Matt Tropiano et al. (see AUTHORS.txt)
 
 
+Changed in 2.22.1
+-----------------
+
+- `Fixed` The MapInfos now use '.' as the decimal separator, instead of locale default.
+
+
 Changed in 2.22.0
 -----------------
 

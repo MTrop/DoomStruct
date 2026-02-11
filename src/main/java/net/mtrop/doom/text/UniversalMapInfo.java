@@ -135,6 +135,8 @@ public class UniversalMapInfo implements TextObject, Iterable<Map.Entry<String, 
 		
 		private InfoKernel()
 		{
+			setDecimalSeparator('.');
+			
 			addCaseInsensitiveKeyword("map", TYPE_MAP);
 			
 			addStringDelimiter('"', '"');

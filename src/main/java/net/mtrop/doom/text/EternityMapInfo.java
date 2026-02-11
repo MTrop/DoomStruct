@@ -131,6 +131,8 @@ public class EternityMapInfo implements TextObject, Iterable<Map.Entry<String, M
 
 		private InfoKernel()
 		{
+			setDecimalSeparator('.');
+			
 			addCommentLineDelimiter("//");
 			addCommentLineDelimiter("#");
 			addCommentLineDelimiter(";");

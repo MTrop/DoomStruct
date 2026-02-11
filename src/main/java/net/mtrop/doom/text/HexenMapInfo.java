@@ -150,6 +150,8 @@ public class HexenMapInfo implements TextObject
 
 		private InfoKernel()
 		{
+			setDecimalSeparator('.');
+			
 			addCaseInsensitiveKeyword(SETTYPE_ADDDEFAULTMAP, TYPE_ADDDEFAULTMAP);
 			addCaseInsensitiveKeyword(SETTYPE_CLEAREPISODES, TYPE_CLEAREPISODES);
 			addCaseInsensitiveKeyword(SETTYPE_CLEARSKILLS, TYPE_CLEARSKILLS);
