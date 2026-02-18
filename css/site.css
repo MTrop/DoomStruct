@@ -17,6 +17,19 @@ BODY {
 	margin-right: auto;
 }
 
+PRE {
+	font-family: 'Courier New', Courier, monospace;
+	background-color: rgb(32, 32, 32);
+	width: 100%;
+	text-align: left !important;
+	color: #dddddd;
+	padding: 16px;
+	overflow-x: auto;
+	font-size: 85%;
+	line-height: 1.45;
+	border-radius: 3px;
+}
+
 A:hover {
 	color: #ffffff;
 }
@@ -103,17 +116,4 @@ A:hover {
 
 .octicon {
 	display: none;
-}
-
-PRE {
-	font-family: 'Courier New', Courier, monospace;
-	background-color: rgb(32, 32, 32);
-	width: 100%;
-	text-align: left !important;
-	color: #dddddd;
-	padding: 16px;
-	overflow-x: auto;
-	font-size: 85%;
-	line-height: 1.45;
-	border-radius: 3px;
 }

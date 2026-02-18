@@ -80,7 +80,8 @@ function display_release_data(release, release_section_element, release_version_
 
 		let link = $Element('a', {
 			"href": asset.browser_download_url, 
-			"class": 'w3-button w3-round-large w3-margin download-link'
+			"class": 'w3-button w3-round-large download-link',
+			"style": 'width:99%; margin-bottom: 16px;'
 		});
 		link.innerHTML = linkhtml;
 
