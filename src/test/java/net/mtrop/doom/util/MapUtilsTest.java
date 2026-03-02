@@ -7,19 +7,89 @@
  ******************************************************************************/
 package net.mtrop.doom.util;
 
-import java.io.IOException;
+import java.io.File;
 
-import net.mtrop.doom.Wad;
-import net.mtrop.doom.WadEntry;
-import net.mtrop.doom.WadFile;
+import net.mtrop.doom.map.MapFormat;
+import net.mtrop.doom.test.TestUtils.Test;
+
+import static net.mtrop.doom.test.TestUtils.assertEqual;
 
 public final class MapUtilsTest
 {
-	public static void main(String[] args) throws IOException
+	private static final File TEST_DOOM = new File("src/test/resources/doommap.wad");
+	private static final File TEST_HEXEN = new File("src/test/resources/hexenmap.wad");
+	private static final File TEST_UDMF = new File("src/test/resources/udmfmap.wad");
+
+	@Test
+	public void doMapFormatDoomTest() throws Exception
 	{
-		Wad wad = new WadFile(args[0]);
-		for (WadEntry e : MapUtils.getMapEntries(wad, args[1]))
-			System.out.println(e.getName());
-		wad.close();
+		assertEqual(WadUtils.openWadAndGet(TEST_DOOM, (wad) -> 
+			MapUtils.getMapFormat(wad, 0)
+		), MapFormat.DOOM);
 	}
+
+	@Test
+	public void doMapFormatHexenTest() throws Exception
+	{
+		assertEqual(WadUtils.openWadAndGet(TEST_HEXEN, (wad) -> 
+			MapUtils.getMapFormat(wad, 0)
+		), MapFormat.HEXEN);
+	}
+	
+	@Test
+	public void doMapFormatUDMFTest() throws Exception
+	{
+		assertEqual(WadUtils.openWadAndGet(TEST_UDMF, (wad) -> 
+			MapUtils.getMapFormat(wad, 0)
+		), MapFormat.UDMF);
+	}
+	
+	@Test
+	public void doMapEntryCountDoomTest() throws Exception
+	{
+		assertEqual(WadUtils.openWadAndGet(TEST_DOOM, (wad) -> 
+			MapUtils.getMapEntryCount(wad, 0)
+		), 11);
+	}
+	
+	@Test
+	public void doMapEntryCountHexenTest() throws Exception
+	{
+		assertEqual(WadUtils.openWadAndGet(TEST_HEXEN, (wad) -> 
+			MapUtils.getMapEntryCount(wad, 0)
+		), 13);
+	}
+	
+	@Test
+	public void doMapEntryCountUDMFTest() throws Exception
+	{
+		assertEqual(WadUtils.openWadAndGet(TEST_UDMF, (wad) -> 
+			MapUtils.getMapEntryCount(wad, 0)
+		), 7);
+	}
+
+	@Test
+	public void doMapEntryDoomTest() throws Exception
+	{
+		assertEqual(WadUtils.openWadAndGet(TEST_DOOM, (wad) -> 
+			MapUtils.getAllMapHeaders(wad)[0]
+		), "MAP07");
+	}
+	
+	@Test
+	public void doMapEntryHexenTest() throws Exception
+	{
+		assertEqual(WadUtils.openWadAndGet(TEST_HEXEN, (wad) -> 
+			MapUtils.getAllMapHeaders(wad)[0]
+		), "MAP01");
+	}
+	
+	@Test
+	public void doMapEntryUDMFTest() throws Exception
+	{
+		assertEqual(WadUtils.openWadAndGet(TEST_UDMF, (wad) -> 
+			MapUtils.getAllMapHeaders(wad)[0]
+		), "DM01");
+	}
+
 }

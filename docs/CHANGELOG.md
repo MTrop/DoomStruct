@@ -3,6 +3,14 @@ Doom Struct (C) 2015-2026
 by Matt Tropiano et al. (see AUTHORS.txt)
 
 
+Changed in 2.22.2
+-----------------
+
+- `Changed` Better lightmap lump detection in maps.
+- `Changed` Slightly more correct map format detection.
+- `Changed` Slightly more correct map header detection.
+
+
 Changed in 2.22.1
 -----------------
 

@@ -8,10 +8,9 @@
 package net.mtrop.doom.util;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Deque;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
+import java.util.LinkedList;
 import java.util.Set;
 
 import net.mtrop.doom.Wad;
@@ -69,35 +68,43 @@ public final class MapUtils
 	public static final String LUMP_DIALOGUE = "DIALOGUE";
 	public static final String LUMP_PWADINFO = "PWADINFO";
 
+	public static final String LUMP_LIGHTMAP = "LIGHTMAP";
+
 	public static final String LUMP_ENDMAP = "ENDMAP";
 	
 	public static final Set<String> MAP_SPECIAL = new HashSet<String>(20) 
 	{
 		private static final long serialVersionUID = 1L;
-	{
-		add("THINGS");
-		add("LINEDEFS");
-		add("SIDEDEFS");
-		add("VERTEXES");
-		add("SECTORS");
-		add("SSECTORS");
-		add("NODES");
-		add("SEGS");
-		add("REJECT");
-		add("BLOCKMAP");
-		add("BEHAVIOR");
-		add("SCRIPTS");
-		add("TEXTMAP");
-		add("ENDMAP");
-		add("ZNODES");
-		add("DIALOGUE");
-		add("GL_VERT");
-		add("GL_SEGS");
-		add("GL_SSECT");
-		add("GL_NODES");
-		add("GL_PVS");
-		add("PWADINFO");
-	}};
+		{
+			add("THINGS");
+			add("LINEDEFS");
+			add("SIDEDEFS");
+			add("VERTEXES");
+			add("SECTORS");
+			add("SSECTORS");
+			add("NODES");
+			add("SEGS");
+			add("REJECT");
+			add("BLOCKMAP");
+			add("BEHAVIOR");
+			add("SCRIPTS");
+			add("TEXTMAP");
+			add("ENDMAP");
+			add("ZNODES");
+			add("DIALOGUE");
+			add("GL_VERT");
+			add("GL_SEGS");
+			add("GL_SSECT");
+			add("GL_NODES");
+			add("GL_PVS");
+			add("PWADINFO");
+			add("LIGHTMAP");
+			add("LM_CELLS");
+			add("LM_SUN");
+			add("LM_TXCRD");
+			add("LM_LMAPS");
+		}
+	};
 
 	private MapUtils() {}
 
@@ -381,14 +388,15 @@ public final class MapUtils
 	 */
 	public static int[] getAllMapIndices(Wad wad)
 	{
-		List<Integer> indices = new ArrayList<Integer>(32);
-		WadEntry e = null;
+		Deque<Integer> indices = new LinkedList<Integer>();
 		int z = 0;
+		
 		boolean map = false;
-		Iterator<WadEntry> it = wad.iterator();
-		while (it.hasNext())
+		boolean sawThings = false;
+		boolean sawTextMap = false;
+		
+		for (WadEntry e : wad)
 		{
-			e = it.next();
 			String name = e.getName();
 			if (isMapDataLump(name) && z > 0)
 			{
@@ -397,10 +405,25 @@ public final class MapUtils
 					indices.add(z - 1);
 					map = true;
 				}
+				
+				if (name.equals(LUMP_THINGS))
+					sawThings = true;
+				else if (name.equals(LUMP_TEXTMAP))
+					sawTextMap = true;
 			}
-			else
+			else // stopped seeing map lumps
 			{
+				if (map)
+				{
+					if (!sawThings && !sawTextMap)
+					{
+						indices.removeLast();
+					}
+				}
+				
 				map = false;
+				sawThings = false;
+				sawTextMap = false;
 			}
 			
 			z++;
@@ -442,18 +465,20 @@ public final class MapUtils
 		if (count <= 1)
 			return null;
 		
+		MapFormat out = MapFormat.DOOM;
+		
 		for (int i = 0; i < count; i++)
 		{
 			String name = wad.getEntry(i + index).getName();
 			if (name.equals(LUMP_BEHAVIOR))
-				return MapFormat.HEXEN;
+				out = MapFormat.HEXEN;
 			else if (name.equals(LUMP_TEXTMAP))
 				return MapFormat.UDMF;
 			else if (name.equals(LUMP_ENDMAP))
 				return MapFormat.UDMF;
 		}
 
-		return MapFormat.DOOM;
+		return out;
 	}
 
 	/**
@@ -538,6 +563,7 @@ public final class MapUtils
 			&& (
 				name.startsWith("GX_") 
 				|| name.startsWith("GL_") 
+				|| name.startsWith("LM_") 
 				|| name.startsWith("SCRIPT") 
 				|| MAP_SPECIAL.contains(name.toUpperCase())
 			);
