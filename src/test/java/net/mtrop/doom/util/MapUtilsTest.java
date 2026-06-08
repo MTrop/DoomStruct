@@ -7,12 +7,14 @@
  ******************************************************************************/
 package net.mtrop.doom.util;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.io.File;
 
-import net.mtrop.doom.map.MapFormat;
-import net.mtrop.doom.test.TestUtils.Test;
+import org.junit.jupiter.api.Test;
 
-import static net.mtrop.doom.test.TestUtils.assertEqual;
+import net.mtrop.doom.map.MapFormat;
+
 
 public final class MapUtilsTest
 {
@@ -23,7 +25,7 @@ public final class MapUtilsTest
 	@Test
 	public void doMapFormatDoomTest() throws Exception
 	{
-		assertEqual(WadUtils.openWadAndGet(TEST_DOOM, (wad) -> 
+		assertEquals(WadUtils.openWadAndGet(TEST_DOOM, (wad) -> 
 			MapUtils.getMapFormat(wad, 0)
 		), MapFormat.DOOM);
 	}
@@ -31,7 +33,7 @@ public final class MapUtilsTest
 	@Test
 	public void doMapFormatHexenTest() throws Exception
 	{
-		assertEqual(WadUtils.openWadAndGet(TEST_HEXEN, (wad) -> 
+		 assertEquals(WadUtils.openWadAndGet(TEST_HEXEN, (wad) -> 
 			MapUtils.getMapFormat(wad, 0)
 		), MapFormat.HEXEN);
 	}
@@ -39,7 +41,7 @@ public final class MapUtilsTest
 	@Test
 	public void doMapFormatUDMFTest() throws Exception
 	{
-		assertEqual(WadUtils.openWadAndGet(TEST_UDMF, (wad) -> 
+		 assertEquals(WadUtils.openWadAndGet(TEST_UDMF, (wad) -> 
 			MapUtils.getMapFormat(wad, 0)
 		), MapFormat.UDMF);
 	}
@@ -47,31 +49,31 @@ public final class MapUtilsTest
 	@Test
 	public void doMapEntryCountDoomTest() throws Exception
 	{
-		assertEqual(WadUtils.openWadAndGet(TEST_DOOM, (wad) -> 
+		 assertEquals(WadUtils.openWadAndGet(TEST_DOOM, (wad) -> 
 			MapUtils.getMapEntryCount(wad, 0)
-		), 11);
+		), Integer.valueOf(11));
 	}
 	
 	@Test
 	public void doMapEntryCountHexenTest() throws Exception
 	{
-		assertEqual(WadUtils.openWadAndGet(TEST_HEXEN, (wad) -> 
+		 assertEquals(WadUtils.openWadAndGet(TEST_HEXEN, (wad) -> 
 			MapUtils.getMapEntryCount(wad, 0)
-		), 13);
+		), Integer.valueOf(13));
 	}
 	
 	@Test
 	public void doMapEntryCountUDMFTest() throws Exception
 	{
-		assertEqual(WadUtils.openWadAndGet(TEST_UDMF, (wad) -> 
+		 assertEquals(WadUtils.openWadAndGet(TEST_UDMF, (wad) -> 
 			MapUtils.getMapEntryCount(wad, 0)
-		), 7);
+		), Integer.valueOf(7));
 	}
 
 	@Test
 	public void doMapEntryDoomTest() throws Exception
 	{
-		assertEqual(WadUtils.openWadAndGet(TEST_DOOM, (wad) -> 
+		 assertEquals(WadUtils.openWadAndGet(TEST_DOOM, (wad) -> 
 			MapUtils.getAllMapHeaders(wad)[0]
 		), "MAP07");
 	}
@@ -79,7 +81,7 @@ public final class MapUtilsTest
 	@Test
 	public void doMapEntryHexenTest() throws Exception
 	{
-		assertEqual(WadUtils.openWadAndGet(TEST_HEXEN, (wad) -> 
+		 assertEquals(WadUtils.openWadAndGet(TEST_HEXEN, (wad) -> 
 			MapUtils.getAllMapHeaders(wad)[0]
 		), "MAP01");
 	}
@@ -87,7 +89,7 @@ public final class MapUtilsTest
 	@Test
 	public void doMapEntryUDMFTest() throws Exception
 	{
-		assertEqual(WadUtils.openWadAndGet(TEST_UDMF, (wad) -> 
+		 assertEquals(WadUtils.openWadAndGet(TEST_UDMF, (wad) -> 
 			MapUtils.getAllMapHeaders(wad)[0]
 		), "DM01");
 	}

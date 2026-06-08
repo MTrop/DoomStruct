@@ -40,7 +40,6 @@ thumbs.db
 /deps
 /dist
 
-/classes
 /target
 
 *.cmd

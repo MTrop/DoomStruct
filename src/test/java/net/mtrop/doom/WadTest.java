@@ -7,39 +7,40 @@
  ******************************************************************************/
 package net.mtrop.doom;
 
-import static net.mtrop.doom.test.TestUtils.assertEqual;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 
-import net.mtrop.doom.test.TestUtils.AfterAllTests;
-import net.mtrop.doom.test.TestUtils.BeforeAllTests;
-import net.mtrop.doom.test.TestUtils.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
 
 public final class WadTest
 {
 	private static final File TEST_DIR = new File("testjunk");
 
-	@BeforeAllTests
+	@BeforeAll
 	public static void beforeAllTests() throws Exception
 	{
-		assertEqual(TEST_DIR.mkdirs(), true);
+		assertEquals(TEST_DIR.mkdirs(), true);
 	}
 
-	@AfterAllTests
+	@AfterAll
 	public static void afterAllTests() throws Exception
 	{
-		assertEqual(TEST_DIR.delete(), true);
+		assertEquals(TEST_DIR.delete(), true);
 	}
 	
 	@Test
 	public void isWadTest() throws Exception
 	{
-		assertEqual(Wad.isWAD(new File("src/test/resources/doommap.wad")), true);
-		assertEqual(Wad.isWAD(new File("src/test/resources/hexenmap.wad")), true);
-		assertEqual(Wad.isWAD(new File("src/test/resources/udmfmap.wad")), true);
-		assertEqual(Wad.isWAD(new File("src/test/resources/viscerus.pk3")), false);
-		assertEqual(Wad.isWAD(new File("src/test/resources/does-not-exist.wad")), false);
-		assertEqual(Wad.isWAD(new File("src/test/resources")), false); // is dir
+		assertEquals(Wad.isWAD(new File("src/test/resources/doommap.wad")), true);
+		assertEquals(Wad.isWAD(new File("src/test/resources/hexenmap.wad")), true);
+		assertEquals(Wad.isWAD(new File("src/test/resources/udmfmap.wad")), true);
+		assertEquals(Wad.isWAD(new File("src/test/resources/viscerus.pk3")), false);
+		assertEquals(Wad.isWAD(new File("src/test/resources/does-not-exist.wad")), false);
+		assertEquals(Wad.isWAD(new File("src/test/resources")), false); // is dir
 	}
 
 	@Test

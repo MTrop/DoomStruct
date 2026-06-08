@@ -7,7 +7,7 @@
  ******************************************************************************/
 package net.mtrop.doom;
 
-import static net.mtrop.doom.test.TestUtils.assertEqual;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.io.InputStream;
@@ -15,12 +15,13 @@ import java.io.Reader;
 import java.nio.charset.Charset;
 import java.util.List;
 
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import net.mtrop.doom.sound.DMXSound;
-import net.mtrop.doom.test.TestUtils.AfterAllTests;
-import net.mtrop.doom.test.TestUtils.AfterEachTest;
-import net.mtrop.doom.test.TestUtils.BeforeAllTests;
-import net.mtrop.doom.test.TestUtils.BeforeEachTest;
-import net.mtrop.doom.test.TestUtils.Test;
 
 public final class PK3Test
 {
@@ -29,27 +30,27 @@ public final class PK3Test
 	
 	private static DoomPK3 pk3;
 	
-	@BeforeAllTests
+	@BeforeAll
 	public static void beforeAllTests() throws Exception
 	{
 		pk3 = new DoomPK3(TEST_PK3);
-		assertEqual(TEST_DIR.mkdirs(), true);
+		assertEquals(TEST_DIR.mkdirs(), true);
 	}
 
-	@AfterAllTests
+	@AfterAll
 	public static void afterAllTests() throws Exception
 	{
-		assertEqual(TEST_DIR.delete(), true);
+		assertEquals(TEST_DIR.delete(), true);
 		pk3.close();
 	}
 	
-	@BeforeEachTest
+	@BeforeEach
 	public void beforeEachTest() throws Exception
 	{
 		// Nothing.
 	}
 	
-	@AfterEachTest
+	@AfterEach
 	public void afterEachTest() throws Exception
 	{
 		for (File f : TEST_DIR.listFiles())
@@ -59,46 +60,46 @@ public final class PK3Test
 	@Test
 	public void getFilePath() throws Exception
 	{
-		assertEqual(pk3.getFilePath(), TEST_PK3.getPath());
+		assertEquals(pk3.getFilePath(), TEST_PK3.getPath());
 	}
 
 	@Test
 	public void getFileName() throws Exception
 	{
-		assertEqual(pk3.getFileName(), TEST_PK3.getName());
+		assertEquals(pk3.getFileName(), TEST_PK3.getName());
 	}
 
 	@Test
 	public void getEntriesStartingWith() throws Exception
 	{
 		List<String> entries = pk3.getEntriesStartingWith("maps/");
-		assertEqual(entries.get(0), "maps/map01.wad");
-		assertEqual(entries.get(1), "maps/map02.wad");
-		assertEqual(entries.get(2), "maps/map03.wad");
-		assertEqual(entries.get(3), "maps/map04.wad");
-		assertEqual(entries.get(4), "maps/map05.wad");
-		assertEqual(entries.get(5), "maps/map06.wad");
-		assertEqual(entries.get(6), "maps/map07.wad");
+		assertEquals(entries.get(0), "maps/map01.wad");
+		assertEquals(entries.get(1), "maps/map02.wad");
+		assertEquals(entries.get(2), "maps/map03.wad");
+		assertEquals(entries.get(3), "maps/map04.wad");
+		assertEquals(entries.get(4), "maps/map05.wad");
+		assertEquals(entries.get(5), "maps/map06.wad");
+		assertEquals(entries.get(6), "maps/map07.wad");
 	}
 
 	@Test
 	public void getEntryCount() throws Exception
 	{
-		assertEqual(pk3.getEntryCount(), 82);
+		assertEquals(pk3.getEntryCount(), 82);
 	}
 
 	@Test
 	public void containsEntry() throws Exception
 	{
-		assertEqual(pk3.contains("maps/map01.wad"), true);
-		assertEqual(pk3.contains("maps/map08.wad"), false);
+		assertEquals(pk3.contains("maps/map01.wad"), true);
+		assertEquals(pk3.contains("maps/map08.wad"), false);
 	}
 
 	@Test
 	public void getData() throws Exception
 	{
 		byte[] data = pk3.getData("maps/map02.wad");
-		assertEqual(data.length, 250034);
+		assertEquals(data.length, 250034);
 	}
 
 	@Test
@@ -111,7 +112,7 @@ public final class PK3Test
 	public void getDataAsWadMap() throws Exception
 	{
 		WadMap wad = pk3.getDataAsWadMap("maps/map01.wad");
-		assertEqual(wad.getEntryCount(), 13);
+		assertEquals(wad.getEntryCount(), Integer.valueOf(13));
 		wad.close();
 	}
 
@@ -120,18 +121,18 @@ public final class PK3Test
 	{
 		File tempFile = new File("testjunk/tempwad.wad");
 		WadFile wad = pk3.getDataAsTempWadFile("maps/map01.wad", tempFile);
-		assertEqual(tempFile.exists(), true);
-		assertEqual(wad.getEntryCount(), 13);
+		assertEquals(tempFile.exists(), true);
+		assertEquals(wad.getEntryCount(), Integer.valueOf(13));
 		wad.close();
-		assertEqual(tempFile.exists(), false);
+		assertEquals(tempFile.exists(), false);
 	}
 
 	@Test
 	public void getDataAsWadBuffer() throws Exception
 	{
 		WadBuffer wad = pk3.getDataAsWadBuffer("maps/map01.wad");
-		assertEqual(wad.getEntryCount(), 13);
-		assertEqual(wad.getContentLength(), 442359);
+		assertEquals(wad.getEntryCount(), Integer.valueOf(13));
+		assertEquals(wad.getContentLength(), Integer.valueOf(442359));
 		wad.close();
 	}
 
@@ -140,9 +141,9 @@ public final class PK3Test
 	{
 		File tempFile = new File("testjunk/tempwad.wad");
 		File file = pk3.getFile("maps/map01.wad", tempFile);
-		assertEqual(file.exists(), true);
+		assertEquals(file.exists(), true);
 		file.delete();
-		assertEqual(file.exists(), false);
+		assertEquals(file.exists(), false);
 	}
 
 	@Test
@@ -155,7 +156,7 @@ public final class PK3Test
 		while ((b = in.read(buf)) > 0)
 			out += b;
 		in.close();
-		assertEqual(out, 250034);
+		assertEquals(out, Integer.valueOf(250034));
 	}
 
 	@Test
@@ -174,7 +175,7 @@ public final class PK3Test
 		StringBuilder sb = new StringBuilder();
 		while ((c = r.read(buf)) > 0)
 			sb.append(buf, 0, c);
-		assertEqual(sb.toString(), pk3.getTextData("decorate.txt", Charset.forName("ASCII")));
+		assertEquals(sb.toString(), pk3.getTextData("decorate.txt", Charset.forName("ASCII")));
 	}
 
 }

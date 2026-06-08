@@ -7,58 +7,58 @@
  ******************************************************************************/
 package net.mtrop.doom.util;
 
-import static net.mtrop.doom.test.TestUtils.assertEqual;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import net.mtrop.doom.test.TestUtils.Test;
+import org.junit.jupiter.api.Test;
 
 public final class NameUtilsTest
 {
 	@Test
 	public void isValidEntryName() throws Exception
 	{
-		assertEqual(NameUtils.isValidEntryName("-"), true);
-		assertEqual(NameUtils.isValidEntryName("WALL00_3"), true);
-		assertEqual(NameUtils.isValidEntryName("SFALL1"), true);
-		assertEqual(NameUtils.isValidEntryName("_SFALL1"), true);
-		assertEqual(NameUtils.isValidEntryName("SFALL[1]"), true);
-		assertEqual(NameUtils.isValidEntryName("^SFALL1"), true);
-		assertEqual(NameUtils.isValidEntryName("METAL-2"), true);
-		assertEqual(NameUtils.isValidEntryName("--------"), true);
-		assertEqual(NameUtils.isValidEntryName("\\MARKER"), true);
-		assertEqual(NameUtils.isValidEntryName("\\\\MARKER"), true);
-		assertEqual(NameUtils.isValidEntryName("O2V+35_0"), true);
-		assertEqual(NameUtils.isValidEntryName("12345678"), true);
-		assertEqual(NameUtils.isValidEntryName("\\FLAT**"), true);
-		assertEqual(NameUtils.isValidEntryName("!@#$%^&*"), true);
+		assertEquals(NameUtils.isValidEntryName("-"), true);
+		assertEquals(NameUtils.isValidEntryName("WALL00_3"), true);
+		assertEquals(NameUtils.isValidEntryName("SFALL1"), true);
+		assertEquals(NameUtils.isValidEntryName("_SFALL1"), true);
+		assertEquals(NameUtils.isValidEntryName("SFALL[1]"), true);
+		assertEquals(NameUtils.isValidEntryName("^SFALL1"), true);
+		assertEquals(NameUtils.isValidEntryName("METAL-2"), true);
+		assertEquals(NameUtils.isValidEntryName("--------"), true);
+		assertEquals(NameUtils.isValidEntryName("\\MARKER"), true);
+		assertEquals(NameUtils.isValidEntryName("\\\\MARKER"), true);
+		assertEquals(NameUtils.isValidEntryName("O2V+35_0"), true);
+		assertEquals(NameUtils.isValidEntryName("12345678"), true);
+		assertEquals(NameUtils.isValidEntryName("\\FLAT**"), true);
+		assertEquals(NameUtils.isValidEntryName("!@#$%^&*"), true);
 
-		assertEqual(NameUtils.isValidEntryName("123456789"), false);
-		assertEqual(NameUtils.isValidEntryName("wall00_3"), false);
-		assertEqual(NameUtils.isValidEntryName(" "), false);
-		assertEqual(NameUtils.isValidEntryName(""), false);
-		assertEqual(NameUtils.isValidEntryName("NOUMLÄUT"), false);
+		assertEquals(NameUtils.isValidEntryName("123456789"), false);
+		assertEquals(NameUtils.isValidEntryName("wall00_3"), false);
+		assertEquals(NameUtils.isValidEntryName(" "), false);
+		assertEquals(NameUtils.isValidEntryName(""), false);
+		assertEquals(NameUtils.isValidEntryName("NOUMLÄUT"), false);
 	}
 
 	@Test
 	public void isValidTextureName() throws Exception
 	{
-		assertEqual(NameUtils.isValidTextureName("-"), true);
-		assertEqual(NameUtils.isValidTextureName("AASTINKY"), true);
-		assertEqual(NameUtils.isValidTextureName("SFALL1"), true);
-		assertEqual(NameUtils.isValidTextureName("_SFALL1"), true);
-		assertEqual(NameUtils.isValidTextureName("METAL-2"), true);
-		assertEqual(NameUtils.isValidTextureName("--------"), true);
-		assertEqual(NameUtils.isValidTextureName("O2V+35_0"), true);
-		assertEqual(NameUtils.isValidTextureName("12345678"), true);
-		assertEqual(NameUtils.isValidTextureName("SFALL[1]"), true);
-		assertEqual(NameUtils.isValidTextureName("^SFALL1"), true);
-		assertEqual(NameUtils.isValidTextureName("\\MARKER"), true);
-		assertEqual(NameUtils.isValidTextureName("\\FLAT**"), true);
-		assertEqual(NameUtils.isValidTextureName("!@#$%^&*"), true);
+		assertEquals(NameUtils.isValidTextureName("-"), true);
+		assertEquals(NameUtils.isValidTextureName("AASTINKY"), true);
+		assertEquals(NameUtils.isValidTextureName("SFALL1"), true);
+		assertEquals(NameUtils.isValidTextureName("_SFALL1"), true);
+		assertEquals(NameUtils.isValidTextureName("METAL-2"), true);
+		assertEquals(NameUtils.isValidTextureName("--------"), true);
+		assertEquals(NameUtils.isValidTextureName("O2V+35_0"), true);
+		assertEquals(NameUtils.isValidTextureName("12345678"), true);
+		assertEquals(NameUtils.isValidTextureName("SFALL[1]"), true);
+		assertEquals(NameUtils.isValidTextureName("^SFALL1"), true);
+		assertEquals(NameUtils.isValidTextureName("\\MARKER"), true);
+		assertEquals(NameUtils.isValidTextureName("\\FLAT**"), true);
+		assertEquals(NameUtils.isValidTextureName("!@#$%^&*"), true);
 
-		assertEqual(NameUtils.isValidTextureName("123456789"), false);
-		assertEqual(NameUtils.isValidTextureName("sfall1"), false);
-		assertEqual(NameUtils.isValidTextureName(" "), false);
-		assertEqual(NameUtils.isValidTextureName(""), false);
-		assertEqual(NameUtils.isValidTextureName("NOUMLÄUT"), false);
+		assertEquals(NameUtils.isValidTextureName("123456789"), false);
+		assertEquals(NameUtils.isValidTextureName("sfall1"), false);
+		assertEquals(NameUtils.isValidTextureName(" "), false);
+		assertEquals(NameUtils.isValidTextureName(""), false);
+		assertEquals(NameUtils.isValidTextureName("NOUMLÄUT"), false);
 	}
 }

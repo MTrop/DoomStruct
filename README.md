@@ -286,7 +286,11 @@ try (WadFile source = new WadFile("DOOM2.WAD")) {
 
 ### Compiling with Maven
 
-To compile this library with Apache Maven, type:
+To install/compile this library and make all artifacts with Apache Maven, type:
+
+	mvn install
+
+To compile this library, type:
 
 	mvn compile
 
@@ -298,13 +302,23 @@ To make Javadocs:
 
 	mvn javadoc:javadoc
 
+To run tests, type:
+
+	mvn test
+
+To generate a coverage report, type:
+
+	mvn test jacoco:report
+
 To clean up everything:
 
 	mvn clean
 
+
 ### Javadocs
 
 Online Javadocs can be found at: [https://mtrop.github.io/DoomStruct/javadoc/](https://mtrop.github.io/DoomStruct/javadoc/)
+
 
 ### Other
 
