@@ -1,0 +1,54 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<!-- Project Info -->
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>net.mtrop</groupId>
+	<artifactId>doomstruct</artifactId>
+	<version>2.22.2</version>
+	<name>DoomStruct</name>
+	<description>A library for reading Doom Engine data structures.</description>
+	<url>https://mtrop.github.io/DoomStruct/</url>
+
+	<licenses>
+		<license>
+			<name>LGPL 2.1</name>
+			<url>https://www.gnu.org/licenses/old-licenses/lgpl-2.1.en.html</url>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<name>Matthew Tropiano</name>
+			<email>mtropiano@gmail.com</email>
+		</developer>
+	</developers>
+	
+	<scm>
+		<connection>scm:git:git://github.com/MTrop/DoomStruct.git</connection>
+		<developerConnection>scm:git:git@github.com:MTrop/DoomStruct.git</developerConnection>
+		<url>https://github.com/MTrop/DoomStruct</url>
+	</scm>
+
+	<!-- Properties -->
+	<properties>
+		<project.build.sourceEncoding>windows-1252</project.build.sourceEncoding>
+		<maven.compiler.release>8</maven.compiler.release>
+	</properties>
+
+	<!-- Build -->
+	<build>
+		<!-- Build Plugins -->
+		<plugins>
+			<plugin>
+				<groupId>org.sonatype.central</groupId>
+				<artifactId>central-publishing-maven-plugin</artifactId>
+				<version>0.9.0</version>
+				<extensions>true</extensions>
+				<configuration>
+					<publishingServerId>central</publishingServerId>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+  	
+</project>

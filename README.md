@@ -284,35 +284,23 @@ try (WadFile source = new WadFile("DOOM2.WAD")) {
 ```
 
 
-### Compiling with Ant
+### Compiling with Maven
 
-To compile this library with Apache Ant, type:
+To compile this library with Apache Maven, type:
 
-	ant compile
+	mvn compile
 
-To make Maven-compatible JARs of this library (placed in the *build/jar* directory), type:
+To make Maven-compatible JARs of this library, type:
 
-	ant jar
+	mvn jar:jar
 
-To make Javadocs (placed in the *build/docs* directory):
+To make Javadocs:
 
-	ant javadoc
-
-To compile main and test code and run tests (if any):
-
-	ant test
-
-To make Zip archives of everything (main src/resources, bin, javadocs, placed in the *build/zip* directory):
-
-	ant zip
-
-To compile, JAR, test, and Zip up everything:
-
-	ant release
+	mvn javadoc:javadoc
 
 To clean up everything:
 
-	ant clean
+	mvn clean
 
 ### Javadocs
 
