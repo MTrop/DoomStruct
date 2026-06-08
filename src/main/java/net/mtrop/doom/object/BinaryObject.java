@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Array;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -31,6 +32,22 @@ import net.mtrop.doom.struct.io.IOUtils;
  */
 public interface BinaryObject
 {
+	/**
+	 * Gets the consistent byte length of this object, if each instance of this object has the same byte length.
+	 * @return the length of this object in bytes, or -1 if this object's length is variable.
+	 * @since [NOW]
+	 */
+	default int getByteLength()
+	{
+		Class<? extends BinaryObject> clazz = getClass();
+		try {
+			Field staticLengthField = clazz.getField("LENGTH");
+			return (int)Reflect.getFieldValue(null, staticLengthField);
+		} catch (NoSuchFieldException | SecurityException e) {
+			return -1;
+		} 
+	}
+	
 	/**
 	 * Reads from an {@link InputStream} and sets this object's fields.
 	 * Only reads the amount of bytes that it takes to read a single instance of the object.
@@ -469,6 +486,30 @@ public interface BinaryObject
 			
 			return clazz.cast(out);
 		}
+		
+		/**
+		 * Gets the value of a field on an object.
+		 * @param instance the object instance to get the field value of.
+		 * @param field the field to get the value of.
+		 * @return the current value of the field.
+		 * @throws NullPointerException if the field or object provided is null.
+		 * @throws RuntimeException if anything goes wrong (bad target, bad argument, 
+		 * or can't access the field).
+		 * @see Field#set(Object, Object)
+		 */
+		private static Object getFieldValue(Object instance, Field field)
+		{
+			try {
+				return field.get(instance);
+			} catch (SecurityException e) {
+				throw new RuntimeException(e);
+			} catch (IllegalArgumentException e) {
+				throw new RuntimeException(e);
+			} catch (IllegalAccessException e) {
+				throw new RuntimeException(e);
+			}
+		}
+
 	}
 	
 }

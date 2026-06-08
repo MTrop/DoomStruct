@@ -3,6 +3,12 @@ Doom Struct (C) 2015-2026
 by Matt Tropiano et al. (see AUTHORS.txt)
 
 
+Changed in [NOW]
+----------------
+
+- `Added` BinaryObject.getByteLength() for per-object method consistency across BinaryObjects.
+
+
 Changed in 2.22.2
 -----------------
 

@@ -8,6 +8,8 @@
 package net.mtrop.doom.util;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -15,6 +17,7 @@ import java.util.Set;
 
 import net.mtrop.doom.Wad;
 import net.mtrop.doom.WadEntry;
+import net.mtrop.doom.bsp.BSPFormat;
 import net.mtrop.doom.bsp.BSPTree;
 import net.mtrop.doom.bsp.data.BSPNode;
 import net.mtrop.doom.bsp.data.BSPSegment;
@@ -106,6 +109,16 @@ public final class MapUtils
 		}
 	};
 
+	private static final byte[] BSPNODE_DEEP = "xNd4\0\0\0\0".getBytes(StandardCharsets.US_ASCII);
+	private static final byte[] BSPNODE_XNOD = "XNOD".getBytes(StandardCharsets.US_ASCII);
+	private static final byte[] BSPNODE_XGLN = "XGLN".getBytes(StandardCharsets.US_ASCII);
+	private static final byte[] BSPNODE_XGL2 = "XGL2".getBytes(StandardCharsets.US_ASCII);
+	private static final byte[] BSPNODE_XGL3 = "XGL3".getBytes(StandardCharsets.US_ASCII);
+	private static final byte[] BSPNODE_ZNOD = "ZNOD".getBytes(StandardCharsets.US_ASCII);
+	private static final byte[] BSPNODE_ZGLN = "ZGLN".getBytes(StandardCharsets.US_ASCII);
+	private static final byte[] BSPNODE_ZGL2 = "ZGL2".getBytes(StandardCharsets.US_ASCII);
+	private static final byte[] BSPNODE_ZGL3 = "ZGL3".getBytes(StandardCharsets.US_ASCII);
+	
 	private MapUtils() {}
 
 	/**
@@ -569,4 +582,87 @@ public final class MapUtils
 			);
 	}
 	
+	/**
+	 * Figures out a map's primary BSP format by its entry listing.
+	 * @param wad the WAD to read from.
+	 * @param index the index of the map header entry.
+	 * @return a {@link BSPFormat} that details the map BSP format type, or null if it cannot be figured out.
+	 * @throws IOException if the Wad's data could not be read.
+	 */
+	public static BSPFormat getBSPFormat(Wad wad, int index) throws IOException
+	{
+		int count = getMapEntryCount(wad, index);
+
+		if (count <= 1)
+			return null;
+		
+		BSPFormat out = null;
+		
+		for (int i = 0; i < count; i++)
+		{
+			WadEntry e = wad.getEntry(i + index);
+			String name = e.getName();
+			if (name.equals(LUMP_NODES))
+			{
+				// lump can be 0-size if BSP type is Z/XGL*
+				if (e.getSize() >= 4)
+				{
+					byte[] nodes8 = wad.getContent(e.getOffset(), 8);
+					byte[] nodes4 = new byte[4]; 
+					System.arraycopy(nodes8, 0, nodes4, 0, 4);
+					
+					if (Arrays.equals(BSPNODE_XNOD, nodes4))
+						return BSPFormat.XNOD;
+					else if (Arrays.equals(BSPNODE_ZNOD, nodes4))
+						return BSPFormat.ZNOD;
+					else if (Arrays.equals(BSPNODE_DEEP, nodes8))
+						return BSPFormat.DEEP;
+					else
+						out = BSPFormat.DOOM;
+				}
+			}
+			else if (name.equals(LUMP_SSECTORS))
+			{
+				byte[] nodes4 = wad.getContent(e.getOffset(), 4);
+				
+				if (Arrays.equals(BSPNODE_XGLN, nodes4))
+					return BSPFormat.XGLN;
+				else if (Arrays.equals(BSPNODE_XGL2, nodes4))
+					return BSPFormat.XGL2;
+				else if (Arrays.equals(BSPNODE_XGL3, nodes4))
+					return BSPFormat.XGL3;
+				else if (Arrays.equals(BSPNODE_ZGLN, nodes4))
+					return BSPFormat.ZGLN;
+				else if (Arrays.equals(BSPNODE_ZGL2, nodes4))
+					return BSPFormat.ZGL2;
+				else if (Arrays.equals(BSPNODE_ZGL3, nodes4))
+					return BSPFormat.ZGL3;
+				else
+					out = BSPFormat.DOOM;
+			}
+			else if (name.equals(LUMP_SEGS))
+			{
+				out = BSPFormat.DOOM;
+			}
+		}
+
+		return out;
+	}
+
+	/**
+	 * Figures out a map's primary BSP format by its entry listing.
+	 * @param wad the WAD to read from.
+	 * @param headerName the map header name to search for.
+	 * @return a {@link BSPFormat} that details the map BSP format type, or null if it cannot be figured out, nor if the header can be found.
+	 * @throws IOException if the Wad's data could not be read.
+	 */
+	public static BSPFormat getBSPFormat(Wad wad, String headerName) throws IOException
+	{
+		int index = wad.lastIndexOf(headerName);
+		if (index < 0)
+			return null;
+	
+		return getBSPFormat(wad, index);
+	}
+
 }
