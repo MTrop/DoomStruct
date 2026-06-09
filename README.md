@@ -23,6 +23,13 @@ NONE
 * [java.datatransfer](https://docs.oracle.com/en/java/javase/11/docs/api/java.datatransfer/module-summary.html)  
 * [java.base](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/module-summary.html)  
 
+
+### Where to Get
+
+[Maven Central](https://central.sonatype.com/artifact/net.mtrop/doomstruct)
+[GitHub Releases](https://github.com/MTrop/DoomStruct/releases/latest)
+
+
 ### Source
 
 The `master` branch contains stable code (I hope). Until a release is cut, the `master` branch will be shifting. 
