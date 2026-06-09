@@ -26,8 +26,8 @@ NONE
 
 ### Where to Get
 
-[Maven Central](https://central.sonatype.com/artifact/net.mtrop/doomstruct)
-[GitHub Releases](https://github.com/MTrop/DoomStruct/releases/latest)
+* [Maven Central](https://central.sonatype.com/artifact/net.mtrop/doomstruct)  
+* [GitHub Releases](https://github.com/MTrop/DoomStruct/releases/latest)
 
 
 ### Source
